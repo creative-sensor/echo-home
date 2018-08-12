@@ -1,0 +1,90 @@
+#!/bin/bash
+
+DROOT=
+
+BACKUP_LIST=/datum/backup-list
+
+NODE=`hostname -s`
+
+SERVER=$1
+
+USERNAME=backup-agent-$NODE
+
+NAMESPACE="TARGET=backup/NODE=$NODE"
+
+SINK="$USERNAME@$SERVER"
+
+METADIR=.meta
+
+VERSION_DIR=$METADIR/version
+
+NEW_VERSION=`date +%Y-%m-%d.%H-%M-%S`.`date +%s`
+
+STATUS_MSG=
+
+
+
+#DRY_RUN="--dry-run"
+
+
+
+
+#----- MANUAL SETUP -----
+#useradd $USERNAME
+#passwd $USERNAME
+#ssh-copy-id $USERNAME@$SERVER
+#mkdir -p $DROOT/$NAMESPACE
+
+#----- END OF MANUAL SETUP -----
+
+
+
+
+#----- MODULES -----
+
+trap  postcheck EXIT
+
+function postcheck {
+   local code=$?
+   case $code in
+       10)
+           echo "Node name not found!"
+           ;;
+       11)
+           echo "Data root not found!"
+           ;;
+       *)
+           ;;
+
+   esac
+}
+
+
+
+
+#----- MAIN START -----
+
+#Find data root
+DROOT=`ssh $SINK 'echo $DROOT'`
+test -z $DROOT && exit 11
+
+#PreRun Check
+STATUS_MSG=$DROOT/$NAMESPACE/$VERSION_DIR/.status.$NEW_VERSION
+#\__ values: committed or started
+
+test -z $NODE  &&  exit 10
+ssh $SINK "mkdir -p $DROOT/$NAMESPACE/$VERSION_DIR"
+ssh $SINK "echo started > $STATUS_MSG"
+
+while read entry; do
+    #rsync  $DRY_RUN --archive --verbose --relative --compress --delete -A -X --info=all2 --stats "$entry" "$SINK:/datum/$NAMESPACE/"
+    if test $entry = "/"; then continue ; fi
+
+    if test -e $entry ; then
+        rsync  --backup --backup-dir=$VERSION_DIR/$NEW_VERSION  --archive --verbose  --relative --compress --delete  -A -X  --stats \
+                "$entry" "$SINK:$DROOT/$NAMESPACE/"
+    fi
+
+done < $BACKUP_LIST &&
+
+ssh $SINK "echo committed > $STATUS_MSG"
