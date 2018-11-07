@@ -1,2 +1,2 @@
 #move list of file to folder
-find . -type f | grep 'mp4$' | grep -v moved | xargs -I '{}'  mv {}  transfer/
+find . -type f | grep 'mp4$'  xargs -I '{}'  mv {}  transfer/
