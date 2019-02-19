@@ -1,19 +1,41 @@
-#!/bin/bash
+#!/bin/bash -e
 
 DEV=$1
 SNAPSHOT=$2
-PART=0
-ERROR_MSG=
+
+
+
+### Check Snapshot
+if test  -b $SNAPSHOT || test -f $SNAPSHOT ; then
+	echo "$SNAPSHOT already exist or is block device"
+	exit 1
+fi
+
+
+
+### Check size of $DEV and create same-size block device for $SNAPSHOT
+if test -b $DEV ; then
+        DEV_SIZE=$(parted $DEV -s 'unit s' -s ' print' | \
+                grep "Disk $DEV" | grep -o '[0-9]\+s' | grep -o '[0-9]\+')
+        dd if=/dev/zero of=$SNAPSHOT count=$DEV_SIZE
+else
+        echo "$DEV is not block device."
+        exit 1
+fi
+
+
+
+### Create loopback device for $SNAPSHOT
+SNAPSHOT_LOOPDEV=$(losetup -f --show $SNAPSHOT)
+
+
+
+### Dump while skipping bad sector
 SKIP=0
 IO_ERR=1
-
-#if test -f $SNAPSHOT ; then
-#	echo "$SNAPSHOT exist"
-#	exit 1
-#fi
-
+ERROR_MSG=
 while [ $IO_ERR == 1 ]; do
-	ERROR_MSG=`dd if=$DEV of=${SNAPSHOT} skip=$SKIP seek=$SKIP 2>&1`
+	ERROR_MSG=`dd if=$DEV of=${SNAPSHOT_LOOPDEV} skip=$SKIP seek=$SKIP 2>&1`
 	IO_ERR=$?
 	COPIED_SECTORS=$(( `echo $ERROR_MSG | grep -o  'out [0-9]\+ bytes' | grep  -o '[0-9]\+'` / 512 ))
 	if [ $COPIED_SECTORS == 0 ] ; then
@@ -25,5 +47,7 @@ while [ $IO_ERR == 1 ]; do
 done
 
 
+### Cleanup
+losetup -d $SNAPSHOT_LOOPDEV
 
 
