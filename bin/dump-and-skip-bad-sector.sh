@@ -1,5 +1,11 @@
 #!/bin/bash -e
 
+###############################################################
+# I can dump entire a block device into a normal snapshot file
+# Use me as a backup or snapshot tool. Good luck!
+###############################################################
+
+
 DEV=$1
 SNAPSHOT=$2
 
