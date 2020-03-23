@@ -12,10 +12,30 @@ syntax on
 "highlight CursorLine cterm=NONE ctermbg=24
 highlight CursorLine cterm=NONE ctermbg=251
 
+let g:netrw_browse_split = 3
+    "netrw open file in a new tab
 
 
+" VUNDLE PLUGIN """""""""""""""""""""""""""""
+set nocompatible              " be iMproved, required
+filetype off                  " required
+ set rtp+=~/.vim/bundle/Vundle.vim
+ call vundle#begin()
+" " let Vundle manage Vundle, required
+ Plugin 'VundleVim/Vundle.vim'
+ Plugin 'vim-scripts/taglist.vim'
+ Plugin 'jreybert/vimagit'
+ Plugin 'gregsexton/gitv'
+ Plugin 'gabrielelana/vim-markdown'
+ Plugin 'godlygeek/tabular'
+ Plugin 'tpope/vim-fugitive'
+ call vundle#end()            " required
+ filetype plugin indent on    " required
+""""""""""""""""""""""""""""""""""""""""""""""
 
- " FIND FILES AND POPULATE THE QUICKFIX LIST
+
+ 
+" FIND FILES AND POPULATE THE QUICKFIX LIST
 fun! FindGrep(filename)
   let error_file = tempname()
   exe '!find "./"| grep -i "'.a:filename.'" | xargs file | sed "s/:/:1:/" > '.error_file
