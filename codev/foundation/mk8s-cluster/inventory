@@ -1,0 +1,14 @@
+[mk8s_cluster]
+master ansible_host=
+worker_1 ansible_host=    id=1
+worker_2 ansible_host=    id=2
+worker_3 ansible_host=    id=3
+
+
+[mk8s_cluster:vars]
+ansible_ssh_user=ubuntu
+ansible_ssh_port=22
+ansible_ssh_private_key_file=~/.ssh/id_rsa
+
+
+
