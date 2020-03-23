@@ -1,0 +1,15 @@
+[mongodb_cluster]
+node_1 ansible_host=172.31.21.XXX
+node_2 ansible_host=172.31.25.XXX
+node_3 ansible_host=172.31.27.XXX
+
+
+[mongodb_cluster:vars]
+ansible_ssh_user=ubuntu
+ansible_ssh_port=22
+ansible_ssh_private_key_file=~/.ssh/id_rsa
+
+shared_key=8c6731aa8XXX
+db_user=test5
+db_password=e7388XXX
+replica_set=test_rs

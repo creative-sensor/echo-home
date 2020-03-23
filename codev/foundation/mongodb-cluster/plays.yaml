@@ -1,0 +1,61 @@
+- name: CONSTRUCT 3-NODE MONGODB CLUSTER
+  hosts: mongodb_cluster
+  vars:
+    temp_mongo_dir: "/tmp/mongo"
+  tasks:
+    - name: INSTALL MONGODB SERVER
+      shell: |
+        apt-get install -y libcurl3 openssl
+        apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+        echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.6 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.6.list
+        apt-get update
+        apt-get install -y mongodb-org
+        systemctl enable mongod
+      become: yes
+
+    - name: GENERATE HOST FILE
+      shell: |
+        echo "{{ hostvars['node_1'].ansible_host}} node_1" >> /etc/hosts
+        echo "{{ hostvars['node_2'].ansible_host}} node_2" >> /etc/hosts
+        echo "{{ hostvars['node_3'].ansible_host}} node_3" >> /etc/hosts
+      become: yes
+
+
+    - name: IMPORT MONGO CONFIG
+      copy:
+        src: ./sysroot/etc/mongod.conf
+        dest: /etc/mongod.conf
+        backup: yes
+      become: yes
+
+    - name: INSERT SHARED KEY
+      shell: |
+        echo {{ shared_key }}  > /etc/mongo-rs.key
+        chown  mongodb.mongodb /etc/mongo-rs.key
+        chmod  600 /etc/mongo-rs.key
+      become: yes
+
+
+    - name: UPLOAD MONGO SCRIPTS
+      copy:
+        src: ./mongo-scripts/
+        dest: "{{temp_mongo_dir}}"
+
+
+    - name: CONFIGURE MONGO
+      shell: |
+        sed -i "s,REPLICA_SET,{{ replica_set }}," /etc/mongod.conf
+        systemctl restart mongod
+      become: yes
+
+    - name: CONFIGURE MONGO / PRIMARY NODE
+      shell: |
+        sleep 3
+        mongo --eval 'var replica_set="{{ replica_set }}"'  {{temp_mongo_dir}}/rs-init.js
+        sleep 15
+        mongo --eval 'var db_user="{{db_user}}" , db_password="{{db_password}}"' admin  {{temp_mongo_dir}}/create-initial-user.js
+      when: "'node_1' in inventory_hostname" 
+      become: yes
+
+
+        

@@ -1,0 +1,14 @@
+- name: WIPE OUT MONGO CLUSTER
+  hosts: mongodb_cluster
+  vars:
+    temp_mongo_dir: "/tmp/mongo"
+  tasks:
+    - name: REMOVE MONGODB SERVER
+      shell: |
+        cp /etc/mongod.conf.bk /etc/mongod.conf
+        systemctl restart mongod
+        sleep 5
+        mongo --eval 'db.dropDatabase()' local
+      become: yes
+
+        
