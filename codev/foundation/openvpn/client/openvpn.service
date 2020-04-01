@@ -1,0 +1,15 @@
+[Unit]
+Description={{CLIENT_NAME}} VPN Client
+After=network.target
+
+[Service]
+Type=exec
+WorkingDirectory=/{{ORG_NAME}}/vpn/
+ExecStart=/sbin/openvpn  --config vpn.conf
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+RestartSec=60s
+
+[Install]
+WantedBy=multi-user.target
