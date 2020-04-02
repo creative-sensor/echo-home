@@ -1,0 +1,18 @@
+vpn_endpoints:
+    vars:
+#        ORG_NAME:  {{ORG_NAME}}
+#        LISTEN_IP:  {{LISTEN_IP}} 
+#        LISTEN_PORT:  {{LISTEN_PORT}}
+#        PROTOCOL:  {{LISTEN_PORT}}
+#        SERVER_NAME:  {{SERVER_NAME}
+#        TLS_AUTH_KEY:  {{TLS_AUTH_KEY}}
+#        PKI_CA_CERT:  {{PKI_CA_CERT}}
+#        PKI_CLIENT_CERT:  {{PKI_CLIENT_CERT}}
+#        PKI_CLIENT_KEY:  {{PKI_CLIENT_KEY}}
+#        DH:
+    hosts:
+        host_1:
+            ansible_host:  {{SSH_PUBLIC_IP}}
+            ansible_ssh_user: {{SSH_USER}}
+            ansible_ssh_port: {{SSH_PORT}}
+            ansible_ssh_private_key_file: {{SSH_KEY}}

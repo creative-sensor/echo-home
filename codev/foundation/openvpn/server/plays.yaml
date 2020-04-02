@@ -1,0 +1,16 @@
+- name: SET UP VPN SERVER
+  hosts: vpn_endpoints
+  vars:
+  tasks:
+    - name: UPLOAD BUILD SCRIPTS
+      copy:
+        src: ./
+        dest: /tmp/build/
+        #backup: yes
+      become: yes
+
+    - name: MAKE
+      shell: |
+        cd /tmp/build
+        make remote-install
+      become: yes
