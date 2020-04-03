@@ -2,7 +2,7 @@ This page presents networking perspective of EKS.
 
 ## MODEL
 
-![networ-layout](network-layout.svg)
+![./network-layout.svg](./network-layout.svg)
 
 
 
