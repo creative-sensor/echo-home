@@ -1,0 +1,93 @@
+HOME = .
+RANDFILE = $ENV::HOME/.rnd
+DATUM = ./data
+[ ca ]
+default_ca = CA_default            
+
+[ CA_default ]
+
+dir = ./data/{{CA_NAME}}
+certs = $dir/cert-db
+new_certs_dir = $certs
+database = $dir/index.txt
+certificate = $dir/ca.cert.pem
+private_key = $dir/ca.key.pem
+serial = $dir/serial
+x509_extensions = {{EXTENSION}}
+copy_extensions = copy
+name_opt = ca_default
+cert_opt = ca_default
+default_days = 730
+default_crl_days = 30                    
+default_md = sha256                  
+default_bits = 4096
+preserve = no                    
+policy = policy_match
+
+[ policy_match ]
+countryName = optional         
+stateOrProvinceName = optional         
+organizationalUnitName = optional      
+commonName = optional      
+emailAddress = optional      
+
+[ policy_anything ]
+countryName = optional
+stateOrProvinceName = optional
+localityName = optional
+organizationName = supplied
+organizationalUnitName = optional
+commonName = supplied
+emailAddress = optional
+
+
+[ req ]
+default_bits = 2048
+distinguished_name = req_distinguished_name 
+attributes = req_attributes         
+x509_extensions = v3_ca  
+req_extensions = {{EXTENSION}}
+prompt = no
+encrypt_key = no
+string_mask = nombstr
+
+
+[ req_distinguished_name ]
+countryName = PK
+stateOrProvinceName = I-SELF
+organizationName = {{ORG_NAME}}
+commonName = {{SUBJECT}}
+
+[ req_attributes ]
+
+
+[ usr_cert ]
+basicConstraints=CA:false
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer
+
+
+[ v3_req ]
+subjectAltName = email:move
+
+
+[ v3_ca ]
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer:always
+basicConstraints = CA:true
+keyUsage = cRLSign, keyCertSign
+nsCertType = sslCA, emailCA
+
+
+[ openvpn_remote_cert_tls_server ]
+basicConstraints = CA:FALSE
+subjectKeyIdentifier = hash
+extendedKeyUsage = serverAuth
+keyUsage = digitalSignature, keyEncipherment
+
+[ standard ]
+basicConstraints = CA:FALSE
+subjectKeyIdentifier = hash
+extendedKeyUsage = serverAuth
+keyUsage = digitalSignature, keyEncipherment
+
