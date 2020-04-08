@@ -109,6 +109,7 @@ subject-export:
 	cp ${subject_dir}/cert.pem    ${subject_dir}/tmp/${SUBJECT}.cert.pem
 	cp ${subject_dir}/key.pem    ${subject_dir}/tmp/${SUBJECT}.key.pem
 	cp ${ca_dir}/ca.cert.pem    ${subject_dir}/tmp/ca.cert.${ISSUER}.pem
+	if test -s ${ca_dir}/crl.pem ; then cp ${ca_dir}/crl.pem   ${subject_dir}/tmp/crl.pem ; fi
 	cd ${subject_dir}/tmp;   zip ${ORG_NAME}.${SUBJECT}.zip    *.pem ; \
 	    echo "EXPORTED:";    realpath ${ORG_NAME}.${SUBJECT}.zip
 
