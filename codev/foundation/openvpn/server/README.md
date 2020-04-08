@@ -1,4 +1,7 @@
-This install and configure OPENVPN client
+This install and configure OPENVPN server endpoint
+
+![Model](./docs/model.svg)
+
 
 ### INSTALL
 Edit ```INPUT-CONFIGURE.mk```
