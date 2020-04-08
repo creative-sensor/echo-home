@@ -1,6 +1,7 @@
 HOME = .
-RANDFILE = $ENV::HOME/.rnd
 DATUM = ./data
+RANDFILE = $DATUM/.rnd
+
 [ ca ]
 default_ca = CA_default            
 

@@ -2,8 +2,8 @@
 include INPUT-SET.mk
 #--------------------------------
 
-
-ca_dir = ./data/${ISSUER}
+datum = ./data
+ca_dir = ${datum}/${ISSUER}
 subject_dir = ${ca_dir}/subjects/${SUBJECT}
 subject_openssl_config = openssl.cnf.${ORG_NAME}.${SUBJECT}
 initial_serial = CCCCAAAA77770000
@@ -33,6 +33,7 @@ ifeq ("$(wildcard ${ca_dir}/ca.key.pem)","")
 	mkdir -p ${ca_dir}/cert-db
 	touch  ${ca_dir}/index.txt
 	echo ${initial_serial}  > ${ca_dir}/serial
+	./randfile-gen.sh > ${datum}/.rnd
 
 	openssl  req -config openssl.cnf.ca.${ISSUER} \
 	    -x509 \
@@ -56,6 +57,7 @@ ca-list:
 csr: openssl-config
 ifeq ("$(wildcard ${subject_dir}/key.pem)","")
 	mkdir -p ${subject_dir}
+	./randfile-gen.sh > ${datum}/.rnd
 	openssl req -config ${subject_openssl_config} \
 	    -new \
 	    -keyout "${subject_dir}/key.pem" \
