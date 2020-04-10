@@ -26,17 +26,16 @@ preserve = no
 policy = policy_match
 
 [ policy_match ]
-countryName = optional         
-stateOrProvinceName = optional         
-organizationalUnitName = optional      
-commonName = optional      
-emailAddress = optional      
+countryName = match
+stateOrProvinceName = match
+organizationName = optional
+commonName = optional
 
 [ policy_anything ]
 countryName = optional
 stateOrProvinceName = optional
 localityName = optional
-organizationName = supplied
+organizationName = optional
 organizationalUnitName = optional
 commonName = supplied
 emailAddress = optional
