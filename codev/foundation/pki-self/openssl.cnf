@@ -79,7 +79,7 @@ keyUsage = cRLSign, keyCertSign
 nsCertType = sslCA, emailCA
 
 
-[ openvpn_remote_cert_tls_server ]
+[ server ]
 basicConstraints = CA:FALSE
 subjectKeyIdentifier = hash
 extendedKeyUsage = serverAuth
@@ -88,6 +88,5 @@ keyUsage = digitalSignature, keyEncipherment
 [ standard ]
 basicConstraints = CA:FALSE
 subjectKeyIdentifier = hash
-extendedKeyUsage = serverAuth
 keyUsage = digitalSignature, keyEncipherment
 
