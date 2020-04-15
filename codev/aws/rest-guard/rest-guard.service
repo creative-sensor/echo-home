@@ -1,0 +1,6 @@
+[Unit]
+Description=Rest Guard
+
+[Service]
+Type=oneshot
+ExecStart=/{{ORG_NAME}}/rest-guard/rest.sh

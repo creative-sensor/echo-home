@@ -1,0 +1,10 @@
+[Unit]
+Description=Run on boot
+
+[Timer]
+OnBootSec={{FIRST_REST}}min
+OnUnitActiveSec={{PERIODIC_REST}}min
+Unit=rest-guard.service
+
+[Install]
+WantedBy=timers.target
