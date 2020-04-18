@@ -1,0 +1,5 @@
+#!/bin/bash -xe
+
+aws ec2 start-instances --instance-ids ${id}
+sleep 10
+aws ec2 describe-instances | jq '.Reservations[].Instances[].State.Name'
