@@ -1,0 +1,21 @@
+
+persistentVolume:
+  enabled: true
+  storageClass: manual
+  accessModes:
+    - ReadWriteOnce
+  size: 1Gi
+
+
+replicaSetName: rstest
+
+auth:
+  enabled: true
+  #existingKeySecret: ""
+  #existingAdminSecret: ""
+  #existingMetricsSecret: ""
+  adminUser: "testuser"
+  adminPassword: "123"
+  # metricsUser: metrics
+  # metricsPassword: password
+  key: "123456"

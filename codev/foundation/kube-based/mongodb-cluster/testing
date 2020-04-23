@@ -1,0 +1,1 @@
+mongo 'mongodb://testuser:123@mgdb-mongodb-replicaset-1.mgdb-mongodb-replicaset,mgdb-mongodb-replicaset-2.mgdb-mongodb-replicaset,mgdb-mongodb-replicaset-0.mgdb-mongodb-replicaset/?authSource=admin&replicaSet=rstest'
