@@ -16,6 +16,9 @@ auth:
   #existingMetricsSecret: ""
   adminUser: "testuser"
   adminPassword: "123"
-  # metricsUser: metrics
-  # metricsPassword: password
+  metricsUser: "metrics"
+  metricsPassword: "123"
   key: "123456"
+
+metrics:
+  enabled: true

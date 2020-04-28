@@ -1,1 +1,10 @@
 mongo 'mongodb://testuser:123@mgdb-mongodb-replicaset-1.mgdb-mongodb-replicaset,mgdb-mongodb-replicaset-2.mgdb-mongodb-replicaset,mgdb-mongodb-replicaset-0.mgdb-mongodb-replicaset/?authSource=admin&replicaSet=rstest'
+
+NODE=
+PORT_X=
+PORT_Y=
+PORT_Z=
+POD_NAME_0=$NODE:PORT_X
+POD_NAME_1=$NODE:PORT_Y
+POD_NAME_2=$NODE:PORT_Z
+
