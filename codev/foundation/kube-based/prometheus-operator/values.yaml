@@ -1,0 +1,6 @@
+prometheus:
+  prometheusSpec:
+    additionalScrapeConfigs:
+      - job_name: "mongodb-replicaset"
+        static_configs:
+          - targets: ["mgdb-mongodb-replicaset-client:9216"]
