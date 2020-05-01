@@ -13,7 +13,7 @@ kubectl  get pod "${NAME}" -n ${NAMESPACE} -o=json | \
 
 echo -e ${BOLD}"* POD CONTAINTERS -----"${STOP}
 kubectl  get pod "${NAME}" -n ${NAMESPACE} -o=json | \
-    jq ' .spec.containers[] | { "Container": .name   ,   "Port": .ports[].containerPort   ,  "Command": .command }'
+    jq ' .spec.containers[] | { "Container": .name   ,   "Port": .ports   ,  "Command": .command }'
 
 
 echo -e ${BOLD}"* SERVICE -----"${STOP}
