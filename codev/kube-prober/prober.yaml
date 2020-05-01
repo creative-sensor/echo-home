@@ -1,0 +1,9 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: prober
+spec:
+  containers:
+    - name: prober
+      image: ubuntu:18.04
+      command: ["/bin/bash" , "-c" , "sleep infinity"]
