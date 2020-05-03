@@ -1,22 +1,36 @@
 This page presents usage of prometheus-operator atop kube cluster
 
 ### 0 INPUT
-* Edit ```values.yaml```: add scape config as needed
 * Edit ```INPUT-SET```: helm prefix and kube namespace
 
 
 ### 1 INSTALL
+Install operator:
 ```bash
-bash> make operator
+make operator
 ```
 
-### 2 UPDATE VALUES
-Prometheus can be updated with new values in yaml file
+### 2 INGRESS
+Create ingress for prometheus operator:
 ```bash
-bash> make update
+make ingress
 ```
 
-### 3 ADDITIONAL SCRAPE BY SECRET CONFIG
-TODO: make scrape
+
+### 3 PERSISTENT VOLUME
+Store prometheus data in local hostpath.
+
+* Create data directory: run ```mkdir-data.sh``` on each kube node
+* Create volume:
+```
+make pv
+```
+
+
+### 4 ADDITIONAL SCRAPE
+Append scrape-config in  ```values-scrape-configs.yaml``` :
+```bash
+make scrape
+```
 
 

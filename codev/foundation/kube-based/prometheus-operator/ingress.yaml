@@ -1,43 +1,43 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: prome
+  name: {{PREFIX}}
   annotations:
     # use the shared ingress-nginx
     kubernetes.io/ingress.class: "nginx"
 spec:
   rules:
-  - host: prome.alert
+  - host: {{PREFIX}}.alert
     http:
       paths:
       - path: /
         pathType: Exact
         backend:
-          serviceName: prome-prometheus-operator-alertmanager
+          serviceName: {{PREFIX}}-prometheus-operator-alertmanager
           servicePort: 9093
-  - host: prome.metrics
+  - host: {{PREFIX}}.metrics
     http:
       paths:
       - path: /
         pathType: Exact
         backend:
-          serviceName: prome-prometheus-operator-prometheus 
+          serviceName: {{PREFIX}}-prometheus-operator-prometheus 
           servicePort: 9090
-  - host: prome.grafana
+  - host: {{PREFIX}}.grafana
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
-          serviceName: prome-grafana
+          serviceName: {{PREFIX}}-grafana
           servicePort: 80
-  - host: prome.operator
+  - host: {{PREFIX}}.operator
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
-          serviceName: prome-prometheus-operator-operator
+          serviceName: {{PREFIX}}-prometheus-operator-operator
           servicePort: 8080
 
 ---
