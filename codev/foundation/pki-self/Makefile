@@ -73,6 +73,7 @@ csr-about: csr
 
 ca-signing: openssl-config   ca   csr
 	openssl ca -config ${subject_openssl_config} \
+	    -notext \
 	    -in ${subject_dir}/csr.pem \
 	    -out ${subject_dir}/cert.pem
 
@@ -130,3 +131,6 @@ subject-revoke:
 crl-about:
 	openssl crl  -text -noout -in ${ca_dir}/crl.pem
 
+base64:
+	echo -e "\n\n* CERT: $$(cat ${subject_dir}/cert.pem | base64 - | tr -d '\n')\n"
+	echo -e "\n\n* KEY: $$(cat ${subject_dir}/key.pem | base64 - | tr -d '\n')\n"
