@@ -132,5 +132,6 @@ crl-about:
 	openssl crl  -text -noout -in ${ca_dir}/crl.pem
 
 base64:
-	echo -e "\n\n* CERT: $$(cat ${subject_dir}/cert.pem | base64 - | tr -d '\n')\n"
-	echo -e "\n\n* KEY: $$(cat ${subject_dir}/key.pem | base64 - | tr -d '\n')\n"
+	echo -e "\n\n \e[1m\e[38;5;161m * CA-CERT\e[0m:  $$(cat ${ca_dir}/ca.cert.pem | base64 - | tr -d '\n')\n"
+	echo -e "\n\n \e[1m\e[38;5;34m * CERT\e[0m:  $$(cat ${subject_dir}/cert.pem | base64 - | tr -d '\n')\n"
+	echo -e "\n\n \e[1m\e[38;5;34m * KEY\e[0m:  $$(cat ${subject_dir}/key.pem | base64 - | tr -d '\n')\n"
