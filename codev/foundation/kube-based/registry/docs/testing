@@ -1,0 +1,6 @@
+curl regis-docker-registry:5000/v2/_catalog
+
+
+HOST="NAME IN /etc/hosts"
+PORT=
+curl -k https://${HOST}:${PORT}/v2/_catalog
