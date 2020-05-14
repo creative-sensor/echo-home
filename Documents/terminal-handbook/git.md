@@ -87,3 +87,9 @@ git push <remote>  --delete <branch>
 git checkout master
 git cherry-pick 62ecb336cbfd629
 ```
+
+
+### print-git-root-dir ,
+```bash
+git rev-parse --show-toplevel
+```
