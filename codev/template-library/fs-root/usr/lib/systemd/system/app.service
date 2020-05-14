@@ -1,0 +1,19 @@
+[Unit]
+Description="Application name"
+After=network.target
+
+[Service]
+Type=exec
+Environment="HOME=/home/ubuntu/"
+WorkingDirectory=/home/ubuntu/app
+User=ubuntu
+ExecStart=/home/ubuntu/app/run.sh
+ExecReload=/usr/bin/pkill -15 -g $MAINPID
+ExecStop=/usr/bin/pkill -15 -g $MAINPID
+KillMode=process
+Restart=on-failure
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target
+

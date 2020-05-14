@@ -1,0 +1,43 @@
+pipeline { 
+    agent { label 'env-master' } 
+
+
+    environment {
+        TYPE="DEV"
+    }
+
+
+    options {
+        skipStagesAfterUnstable()
+    }
+
+
+    stages {
+        stage('BUILD') { 
+            steps { 
+                dir("src/app") {
+                    sh "./build.sh"
+                    sh './package.sh'
+                }
+            }
+        }
+
+
+        stage('DEPLOY') {
+           steps {
+                dir("src/ci") {
+                    sh './deploy.sh $TYPE  $GIT_COMMIT'
+                }
+           }
+        }
+
+
+        stage('TESTING') {
+            steps {
+                dir("src/testing") {
+                    sh './test.sh $TYPE'
+                }
+            }
+        }
+    }
+}
