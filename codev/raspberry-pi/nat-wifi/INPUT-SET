@@ -1,0 +1,4 @@
+SSID = public-wifi
+PSK = shared-key
+DHCP_NET = 10.55.0.0/16
+
