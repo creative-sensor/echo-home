@@ -1,6 +1,39 @@
-rfkill
+##### README
+sudo apt install git -y
+make nat-wifi ; sed VALUE
+
+
+
+
+##### MAKE
+sudo=sudo
+${sudo} cp -b fs-root/etc/interface /etc/network/interfaces.d/nat-wifi-gateway
+${sudo} cp -b fs-root/wpa     /etc/wpa.conf
+
+rfkill unblock all
 lshw -class network
+
+#sudo ip link set wlan0 up
+#sudo iw wlan0 scan
+systemctl restart networking
 
 
 apt update
-apt install isc-dhcp-server 
+apt install isc-dhcp-server-y
+cp -b fs-root/dhcp /etc/dhcpd.conf
+cp -b fs-root/default/isc-dhcp /etc/default/isc-dhcp
+systemctl start isc-dhcp-server
+systemctl enable isc-dhcp-server
+
+
+systemctl start ssh
+systemctl enable ssh
+
+sudo apt install iptables-persistent -y
+sudo mkdir -p /etc/iptables/
+cp fs-root/etc/iptables/rules.v4 /etc/iptables/rules.v4
+sudo iptables-restore < /etc/iptables/rules.v4
+sudo sysctl -w net.ipv4.ip_forward=1
+sudo sed -i 's/^#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/' /etc/sysctl.conf
+
+
