@@ -1,0 +1,6 @@
+rfkill
+lshw -class network
+
+
+apt update
+apt install isc-dhcp-server 
