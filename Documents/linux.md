@@ -101,3 +101,23 @@ sed 's,/,\\/,g'
 ```
 cat bitbucket-pipelines.yml |  yq   '.pipelines.branches."build-initial-ci"[1].step.script = { "helikon-tex" : "no1", "x" : [{"e1" : "00"} , "e2"]}'
 ```
+
+### change-root-password-forgotten
+```
+1. Boot console: edit grub entry (press e)
+2. Grub entry:
+   - replace  ro  with  rw  in linux,linux16,linuxefi
+   - append in linux,linux16,linuxefi
+        rw init=/bin/bash
+
+        or (disk encrypted)
+        rw init=/bin/bash plymouth.enable=0
+3. Bash up and running:
+    passwd
+4. Relabel:
+    touch /.autorelabel
+5. Reboot:
+    /sbin/reboot -f
+```
+
+
