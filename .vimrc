@@ -1,3 +1,14 @@
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"------ [MISC]
+syntax on
+highlight CursorLine cterm=NONE ctermbg=251
+    "highlight CursorLine cterm=NONE ctermbg=24
+filetype on
+
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"------ [SET]
 set laststatus=2
 set ruler
 set cursorline
@@ -7,36 +18,44 @@ set expandtab
 set tabstop=4
 set mouse=a
 
-filetype plugin on
-syntax on
-"highlight CursorLine cterm=NONE ctermbg=24
-highlight CursorLine cterm=NONE ctermbg=251
-
-let g:netrw_browse_split = 3
-    "netrw open file in a new tab
 
 
-" VUNDLE PLUGIN """""""""""""""""""""""""""""
-set nocompatible              " be iMproved, required
-filetype off                  " required
- set rtp+=~/.vim/bundle/Vundle.vim
- call vundle#begin()
-" " let Vundle manage Vundle, required
- Plugin 'VundleVim/Vundle.vim'
- Plugin 'vim-scripts/taglist.vim'
- Plugin 'jreybert/vimagit'
- Plugin 'gregsexton/gitv'
- Plugin 'gabrielelana/vim-markdown'
- Plugin 'godlygeek/tabular'
- Plugin 'tpope/vim-fugitive'
- call vundle#end()            " required
- filetype plugin indent on    " required
-""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"----- [PLUGIN]
+"filetype plugin on
+
+""NETRW
+"let g:netrw_browse_split = 3
+"    "netrw open file in a new tab
+"let g:netrw_altv = 1
+"let g:netrw_winsize = 25
+"augroup ProjectDrawer
+"  autocmd!
+"  autocmd VimEnter * :Vexplore
+"augroup END
 
 
- 
-" FIND FILES AND POPULATE THE QUICKFIX LIST
+"----- [PLUGIN / VUNDLE]
+"set nocompatible              " be iMproved, required
+"filetype off                  " required
+"set rtp+=~/.vim/bundle/Vundle.vim
+"call vundle#begin()
+"Plugin 'VundleVim/Vundle.vim'
+"Plugin 'tpope/vim-fugitive'
+"Plugin 'git://git.wincent.com/command-t.git'
+"Plugin 'file:///home/gmarik/path/to/plugin'
+"Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
+"Plugin 'jreybert/vimagit'
+"call vundle#end()            " required
+"filetype plugin indent on    " required
+
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"------ [FUNCTIONS]
+"
 fun! FindGrep(filename)
+  " FIND FILES AND POPULATE THE QUICKFIX LIST
   let error_file = tempname()
   exe '!find "./"| grep -i "'.a:filename.'" | xargs file | sed "s/:/:1:/" > '.error_file
   set errorformat=%f:%l:%m
@@ -47,14 +66,22 @@ endfun
 command! -nargs=1 FindGrep call FindGrep(<q-args>)
 
 
+fun! GrepSource(text)
+  " GREP SOURCE CODE WHICH CONTAINS TEXT
+  " :Grin text  " open window of search results
+  " CTRLw gf    " open file in new tab
+  let error_file = tempname()
+  exe '!grep -rin '.a:text.' >  '.error_file
+  set errorformat=%f:%l:%m
+  exe "cfile ". error_file
+  copen
+  call delete(error_file)
+endfun
+command! -nargs=1 Grin call GrepSource(<q-args>)
 
 
-"""""""""""""""""""""""""""""""""""""""""""""""
-"
-" FUNCTION TO SEARCH INDEX IN ADM-NOTES
-"
-"""""""""""""""""""""""""""""""""""""""""""""""
 function SearchIndex(...)
+    " SEARCH INDEX IN ADM-NOTES
     if @% == ""
         echo "Select window to search first!"
         return
@@ -81,5 +108,21 @@ function SearchIndex(...)
     "Open quickfix window for search results
     execute "cw"
 endfunction
-
 command -nargs=* SearchIndex call SearchIndex (<f-args>)
+
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"------ [AUTOCMD]
+"autocmd BufNewFile * :set filetype=txt
+autocmd FileType yaml  : set tabstop=2
+"autocmd VimEnter *      : let g:netrw_winsize=25
+"autocmd VimEnter *      : Vexplore
+
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"------ [KEYMAP]
+map T : tabnew . <CR>
+map C : s/^/#/<CR>
+map uc : s/^#//<CR>
