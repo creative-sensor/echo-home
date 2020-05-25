@@ -15,12 +15,11 @@ echo ${IP} | grep -E "${OCTET}\.${OCTET}\.${OCTET}\.${OCTET}"
 
 
 #_V6_
-#                           1st-octet [0 -> FFFF/ffff]
-#                           |                          6 nested-octets (":"   or   "[0: -> FFFF/ffff:]"
-#                           |                          |
-#                           |                          |                  last-octet
-#                           |                          |                  |
-PATTERN_v6='[A-Fa-f0-9]{1,4}:(([A-Fa-f0-9]{1,4})?:){0,6}([A-Fa-f0-9]{1,4})?'
+#                              1st-segment [0 -> FFFF/ffff   or   ":"]
+#                              |                     6 middle-segment (":"   or   "[0: -> FFFF/ffff:]")
+#                              |                     |                       last-segment
+#                              |                     |                       |
+PATTERN_v6='([A-Fa-f0-9]{1,4})?:(([A-Fa-f0-9]{1,4})?:){1,6}([A-Fa-f0-9]{1,4})?'
 IPv6=
 echo ${IPv6} | grep -E  "${PATTERN_v6}"
 ```
