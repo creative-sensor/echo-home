@@ -126,3 +126,10 @@ autocmd FileType yaml  : set tabstop=2
 map T : tabnew . <CR>
 map C : s/^/#/<CR>
 map uc : s/^#//<CR>
+map Bp : bp<CR>
+map Bn : bn<CR>
+"map <C-I> : tabnew . <CR>
+
+vnoremap --    "+y : Grin <C-R>+ <CR>
+    "copy selected text into register '+' and call function Grin which take
+    "content of '+' as argument
