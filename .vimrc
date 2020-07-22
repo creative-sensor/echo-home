@@ -17,7 +17,7 @@ set nowrap
 set expandtab
 set tabstop=4
 set mouse=a
-
+set splitright
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -130,6 +130,12 @@ map Bp : bp<CR>
 map Bn : bn<CR>
 "map <C-I> : tabnew . <CR>
 
-vnoremap --    "+y : Grin <C-R>+ <CR>
-    "copy selected text into register '+' and call function Grin which take
+vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
+    "LOOK UP KEYWORD
+    ":copy selected text into register '+'
+    ":vertical split window
+    ":and call function Grin which take
     "content of '+' as argument
+
+vnoremap --    "+y : vsplit <C-R>+ <CR>
+    "JUMP TO PATH
