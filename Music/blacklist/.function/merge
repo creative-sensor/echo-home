@@ -1,0 +1,14 @@
+#!/bin/bash -ex
+
+
+STAGE_DIR=./blacklist
+FINAL_DIR=./
+
+for playlist in $(ls $STAGE_DIR); do
+    if test -e $FINAL_DIR/$playlist ; then
+        sort -u $FINAL_DIR/$playlist $STAGE_DIR/$playlist > $FINAL_DIR/${playlist}.tmp
+        mv $FINAL_DIR/${playlist}.tmp $FINAL_DIR/$playlist
+    else
+        cp $STAGE_DIR/$playlist  $FINAL_DIR/
+    fi
+done
