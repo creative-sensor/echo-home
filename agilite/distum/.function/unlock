@@ -1,0 +1,18 @@
+#!/bin/bash -xe
+
+GIT_REV=mkgit
+GIT_BASE=mkgit.base
+
+#DECRYPT
+gpg2 -d --output ${GIT_BASE}.tar.gz   ${GIT_BASE}.tar.gz.gpg
+tar xf ${GIT_BASE}.tar.gz
+rm ${GIT_BASE}.tar.gz
+
+#MOVE EXISTING
+if test -d $GIT_REV; then
+    mv $GIT_REV "${GIT_REV}.moved.$(date +%s)"
+fi
+
+#CHECKOUT
+mv $GIT_BASE $GIT_REV
+

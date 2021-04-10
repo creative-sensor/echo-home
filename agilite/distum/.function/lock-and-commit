@@ -1,0 +1,40 @@
+#!/bin/bash -xe
+
+GIT_REV=mkgit
+GIT_BASE=mkgit.base
+PGP_RECIPIENT="Creativ Sensor <creativ.sensor@gmail.com>"
+
+
+#BASE EXTRACT
+if test -f ${GIT_BASE}.tar.gz.gpg ; then
+    rm -rf $GIT_BASE
+    gpg2 -d --output ${GIT_BASE}.tar.gz   ${GIT_BASE}.tar.gz.gpg
+    tar xf ${GIT_BASE}.tar.gz
+    rm ${GIT_BASE}.tar.gz
+else
+    echo "WARN: no base found"
+    mkdir -p $GIT_BASE
+    cd $GIT_BASE
+    git init
+    cd -
+fi
+
+#REVISE BASE
+cp $GIT_REV/*  ${GIT_BASE}/
+cd ${GIT_BASE}
+git add .
+git commit -m "mk-update $(date +%s)"
+git show > ../git.show
+cd -
+echo "BASE REVISED!"
+
+
+#COMMIT
+tar czf   ${GIT_BASE}.tar.gz  $GIT_BASE
+gpg2 -e -r "$PGP_RECIPIENT"  ${GIT_BASE}.tar.gz
+rm ${GIT_BASE}.tar.gz
+rm -rf ${GIT_BASE}
+
+
+git add ${GIT_BASE}.tar.gz.gpg
+git commit --amend -m "Status Update $(date +%s)"
