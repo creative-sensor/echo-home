@@ -1,10 +1,11 @@
 #!/bin/bash -ex
 
 
-STAGE_DIR=./blacklist
+STAGE_DIR=$1
 FINAL_DIR=./
 
-for playlist in $(ls $STAGE_DIR); do
+for item in $(ls $STAGE_DIR/Playlist_*); do
+    playlist=$(basename $item)
     if test -e $FINAL_DIR/$playlist ; then
         sort -u $FINAL_DIR/$playlist $STAGE_DIR/$playlist > $FINAL_DIR/${playlist}.tmp
         mv $FINAL_DIR/${playlist}.tmp $FINAL_DIR/$playlist
