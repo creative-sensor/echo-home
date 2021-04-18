@@ -1,0 +1,16 @@
+
+echo -e "\n------------------------- WHATS IN THE BOX? ----------------------------------"
+
+echo "\${RUN_ID} is ID of run session  [$RUN_ID]"
+
+echo "\${DATUM} is persistent storage [mountpoint: $DATUM]"
+
+echo "\${DATUM_SHARED} is shared persistent storage [mountpoint: $DATUM_SHARED]"
+
+
+echo "Arguments:"
+for i in $@ ; do
+    echo "    - $i"
+done
+
+echo "Feel free to do anything inside the box!"
