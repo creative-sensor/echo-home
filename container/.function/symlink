@@ -1,0 +1,5 @@
+#!/bin/bash -xe
+FULL_PATH=$(readlink -f $1)
+ALIAS=$(basename $FULL_PATH)
+test -d /usr/bin && ln -sf ${FULL_PATH} /usr/bin/${ALIAS} && exit 1
+test -d /usr/local/bin && ln -sf ${FULL_PATH}  /usr/local/bin/${ALIAS}  && exit 1

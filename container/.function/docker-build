@@ -1,0 +1,19 @@
+#!/bin/bash -xe
+
+#DOCKERFILE=[exported]
+SOURCE_DIR=$1
+HEX_DATE=$(printf '%x' $(date +%s))
+BASE_IMAGE=$(head -1 $DOCKERFILE | awk '{print $2}')
+SUBTAG=$2
+FINAL_IMAGE=${BASE_IMAGE}${SUBTAG}.${HEX_DATE}
+
+docker build \
+    -f $DOCKERFILE \
+    -t ${FINAL_IMAGE} \
+    $SOURCE_DIR
+
+
+docker save ${FINAL_IMAGE} | gzip > .function/.embedded/${FINAL_IMAGE}.tar.gz
+
+
+docker images ${FINAL_IMAGE}

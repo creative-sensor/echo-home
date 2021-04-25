@@ -1,0 +1,5 @@
+FROM fedora:32
+
+RUN dnf install jq -y        && dnf clean all && rm -rf /var/cache/dnf
+
+COPY * /
