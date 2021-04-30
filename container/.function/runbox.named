@@ -1,0 +1,38 @@
+#!/bin/bash -xe
+
+NAME=$1
+#DATUM_SHARED=[optional exported]
+#ENV_FILE=[optional exported]
+#DKR_IMAGE=[optional exported]
+#__RM=[optional exported]
+STDIO="-i -t"
+CONTEXT_DIR=$(readlink -f ./)
+RUN_ID=$NAME
+DATUM=.datum/${RUN_ID}
+
+
+test -z "$DKR_IMAGE" && DKR_IMAGE=fedora:32
+test -z "$DATUM_SHARED" && DATUM_SHARED=${CONTEXT_DIR}/.datum/shared
+test -n "$ENV_FILE" && ENV_FILE="--env-file $ENV_FILE"
+mkdir -p $CONTEXT_DIR/$DATUM
+mkdir -p $DATUM_SHARED
+
+#EXISTED
+if sudo docker container start ${NAME} ; then
+    sudo docker attach $NAME
+    exit 0
+fi
+
+#NEW
+sudo docker run \
+        ${__RM} \
+        ${STDIO} \
+        --name ${NAME} \
+        --mount  type=bind,source=${CONTEXT_DIR},target=/matrix  \
+        --mount  type=bind,source=${DATUM_SHARED},target=/datum_shared  \
+        --env  RUN_ID=${RUN_ID} \
+        --env  DATUM=/matrix/$DATUM \
+        --env  DATUM_SHARED=/datum_shared \
+        ${ENV_FILE} \
+        $DKR_IMAGE \
+        bash
