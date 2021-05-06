@@ -5,7 +5,7 @@ Distributed Datum        This is ```RAID-10XL```!
 - Multi-version
 - Fault-tolerant
 - Flat
-- Accessible
+- Granular accessible
 - Loose coupling
 - Personal affordable
 
@@ -82,3 +82,35 @@ find .  >  ${DATUM_}/fs-[UUID_B]
 cd ${MOUNTPOINT_UUID_C}
 find .  >  ${DATUM_}/fs-[UUID_C]
 ```
+
+
+### INCREMENTAL WRITE
+```YAML
+DISK_FILE_SYSTEM_UUID_ICOW:
+    - ./[FOLDER]:
+        - ./[YYYY-01-20]-cat:
+            - ./kitty
+            - ./tom
+        - ./[YYYY-03-07]-ibex:
+            - ./mountain
+            - ./climber
+        - ./[YYYY-03-25]-dog:
+            - ./puppy
+            - ./hunter
+        - ./[YYYY-04-13]-lion:
+            - ./king
+            - ./hairy-cat
+        - ./[YYYY-05-18]-dog-bites-cat:
+            - ./food
+            - ./sleeping
+        - ./[YYYY-07-21]-lion-dies:
+            - ./shot
+            - ./fight
+        - ./[YYYY-09-01]-tiger-leads:
+            - ./arrival
+            - ./stripe
+        - ./[YYYY-12-31]-man-watches:
+            - ./think
+            - ./stupid
+```
+
