@@ -1,34 +1,52 @@
 #!/bin/bash -xe
 
+
+# ---- DEVICE ID
 MOUNTPOINT=$1
-VIRTUAL=$2
 DEVICE_PATH=$(mount | grep "on ${MOUNTPOINT} " | awk '{print $1}')
 MKGIT=./mkgit
+mkdir -p $MKGIT
 test -n "$DEVICE_PATH" || exit 1
 UUID=$(blkid  -o  value $DEVICE_PATH | head -1)
 test -n "$UUID" || exit 1
-
 STATUS_FILE=$(readlink -f ./${MKGIT}/fs-${UUID})
 
 
-
-#META
-AVAIL=$(df -h --output=avail  $MOUNTPOINT | tail -1)
-USED=$(df -h --output=used  $MOUNTPOINT | tail -1)
+# ---- META FIELDS
 SIZE=$(df -h --output=size  $MOUNTPOINT | tail -1)
+USED=$(df -h --output=used  $MOUNTPOINT | tail -1)
+AVAIL=$(df -h --output=avail  $MOUNTPOINT | tail -1)
+#VIRTUAL=[exported]
+DATE=$(date -u '+%Y-%m-%dT%H-%M-%SZ')
+LOCATION=$HOSTNAME
+test -z "$LOCATION" && LOCATION="unknown"
+test -z "${VIRTUAL}" && VIRTUAL="false"
 
-printf '{"Size": "%s"  ,  "Used": "%s"  ,  "Avail": "%s"  ,  "Virtual": "%s"}\n' \
+
+
+# ---- PRINT
+FORMAT_STR='{
+    "Size": "%s",
+    "Used": "%s",
+    "Avail": "%s",
+    "Virtual": "%s",
+    "Date": "%s",
+    "Location": "%s"
+    }\n'
+printf "$FORMAT_STR" \
     $SIZE \
     $USED \
     $AVAIL \
     $VIRTUAL \
-    > $STATUS_FILE
+    $DATE \
+    $LOCATION \
+    | jq --compact-output  >  $STATUS_FILE
 
 
-#LISTING
+# ---- LISTING
 cd $MOUNTPOINT
 find >> $STATUS_FILE
 
-#STATUS
+# ---- STATUS
 head -1 $STATUS_FILE | jq
 
