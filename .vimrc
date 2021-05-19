@@ -123,6 +123,21 @@ autocmd FileType yaml  : set tabstop=2
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "------ [KEYMAP]
+"let @u = "◢◢  ◣◣" 
+"
+"u276e , u276f
+let @u = "❮❮  ❯❯" 
+"
+"let @u = "◖◖ ◗◗" 
+"
+"let @u = "◤◤  ◥◥" 
+
+"u2770
+"let @u = "❰ ❱" 
+
+"u3010
+"let @u = "【 】" 
+"map [[ :execute 'normal i<C-R>u'<CR>F i
 map T : tabnew . <CR>
 map C : s/^/#/<CR>
 map uc : s/^#//<CR>
@@ -139,3 +154,9 @@ vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
 
 vnoremap --    "+y : vsplit <C-R>+ <CR>
     "JUMP TO PATH
+
+noremap []    :execute 'normal i<C-R>u'<CR>F i
+    "NORMAL_MODE,
+    "INSERT AT CURSOR CONTENT OF REGISTER u,
+    "MOVE CURSOR TO PREVIOUS SPACE CHAR,
+    "INSERT_MODE.
