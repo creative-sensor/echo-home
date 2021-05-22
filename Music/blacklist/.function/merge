@@ -7,6 +7,9 @@ FINAL_DIR=./
 for item in $(ls $STAGE_DIR/Playlist_*); do
     playlist=$(basename $item)
     if test -e $FINAL_DIR/$playlist ; then
+        # skip those with date hardcoded
+        [[ "$playlist" =~ [0-9]{4}.[0-9]{2}.[0-9]{2} ]] && continue
+
         sort -u $FINAL_DIR/$playlist $STAGE_DIR/$playlist > $FINAL_DIR/${playlist}.tmp
         mv $FINAL_DIR/${playlist}.tmp $FINAL_DIR/$playlist
     else
