@@ -1,0 +1,18 @@
+#!/bin/bash -xe
+
+DIR_PATH=$1
+NAME=$(basename $DIR_PATH)
+OUTPUT_DIR=$(readlink -f ./)
+PLAYLIST=$OUTPUT_DIR/Playlist_$NAME.m3u
+test -z "$PREFIX" && PREFIX=/accounts/1000/removable/sdcard/Music
+
+
+cd $DIR_PATH
+find . -type f  > $PLAYLIST
+sed -i  "s,^.,${PREFIX}/${NAME},"  $PLAYLIST
+
+
+echo "$PLAYLIST generated"
+
+
+
