@@ -1,0 +1,16 @@
+#!/bin/bash -xe
+
+MOUNTPOINT=$1
+DEVICE_PATH=$(mount | grep "on ${MOUNTPOINT} " | awk '{print $1}')
+UUID=$(blkid  -o  value $DEVICE_PATH | head -1)
+
+META_DIR=$MOUNTPOINT/.meta.${UUID}
+
+if test -f $META_DIR/json ; then
+    cat $META_DIR/json | jq --indent 4
+    exit 0
+fi
+
+mkdir -p $META_DIR
+cp -b .template/meta-fields.json   $META_DIR/json
+

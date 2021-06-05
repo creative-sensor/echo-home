@@ -1,0 +1,10 @@
+{
+    "location": "Earth/US",
+    "role": "autonomous",
+    "secrecy": "classified",
+    "health": "unknown",
+    "device-type": "hdd",
+    "device-id": "0000-0000",
+    "list-critical": [
+    ]
+}
