@@ -1,0 +1,12 @@
+#!/bin/bash -xe
+
+NEWFIX=$1
+DATUM=$(readlink -f ./.datum)
+CURRENT=/accounts/1000/removable/sdcard/
+
+mkdir -p $DATUM
+for playlist in Playlist_* ; do
+    sed  "s,${CURRENT},${NEWFIX},g"  $playlist > $DATUM/$playlist
+done
+
+echo Refixed!!!
