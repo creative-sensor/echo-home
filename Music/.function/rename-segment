@@ -1,0 +1,8 @@
+#!/bin/bash -xe
+
+SOURCE_NAME=$(echo $1 | tr -d "/")
+TARGET_NAME=$2
+
+mv $SOURCE_NAME $TARGET_NAME
+
+sed -i  "s,Music/${SOURCE_NAME},Music/${TARGET_NAME},"  ./blacklist/Playlist_*
