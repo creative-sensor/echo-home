@@ -13,7 +13,9 @@
 
 [merge]
     tool = kdiff3
-
+    ff = only
+[pull]
+    ff = only
 [alias]
     cm = commit
     co = checkout
