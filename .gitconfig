@@ -13,11 +13,14 @@
 
 [merge]
     tool = kdiff3
-
+    ff = only
+[pull]
+    ff = only
 [alias]
     cm = commit
     co = checkout
     st = status
     br = branch
     rb = rebase
+    rbia = rebase -i --autosquash
     mg = merge
