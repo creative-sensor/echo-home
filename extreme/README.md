@@ -1,0 +1,4 @@
+Durable
+Tough
+Unreachability
+Isolation
