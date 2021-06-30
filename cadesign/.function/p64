@@ -1,0 +1,9 @@
+#!/bin/bash -xe
+
+FILE_PATH=$(readlink -f $1)
+FILE_NAME=$(basename $FILE_PATH)
+if [[ "$FILE_PATH" =~ .base64$ ]] ; then
+    cat $FILE_PATH | base64 -d > ./${FILE_NAME/.base64/}
+else
+    echo "Filename must end with .base64"
+fi
