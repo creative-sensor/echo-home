@@ -3,6 +3,7 @@
 #DATUM_SHARED=[optional exported]
 #ENV_FILE=[optional exported]
 #DKR_IMAGE=[optional exported] 
+#DKR_EXPOSE=[optional exported] 
 
 test -z "$DKR_IMAGE" && DKR_IMAGE=fedora:32
 
@@ -13,6 +14,7 @@ if [[ "$1" =~ ^.function/ ]]; then
     RUN_ID=$(date -u '+%Y-%m-%dT%H-%M-%SZ')
     DATUM=.datum/${RUN_ID}
     test -z "$DATUM_SHARED" && DATUM_SHARED=${CONTEXT_DIR}/.datum/shared
+    test -n "$DKR_EXPOSE" && PORT_PUBLISH="--publish $DKR_EXPOSE:$DKR_EXPOSE"
     test -n "$ENV_FILE" && ENV_FILE="--env-file $ENV_FILE"
     NEO=$1
     NEO_PARAMS=${*:2}
@@ -25,6 +27,7 @@ if [[ "$1" =~ ^.function/ ]]; then
             --env  RUN_ID=${RUN_ID} \
             --env  DATUM=/matrix/$DATUM \
             --env  DATUM_SHARED=/datum_shared \
+            ${PORT_PUBLISH} \
             ${ENV_FILE} \
             $DKR_IMAGE \
             bash -c "cd matrix;   /matrix/$NEO $NEO_PARAMS " \

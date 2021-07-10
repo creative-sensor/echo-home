@@ -1,0 +1,5 @@
+#!/bin/bash -xe
+
+CONFIG=/matrix/nginx.conf
+
+nginx -c $CONFIG -g "daemon off;"

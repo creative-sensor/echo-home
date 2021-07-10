@@ -1,0 +1,7 @@
+#!/bin/bash
+
+sudo docker container ls
+
+echo -n "ID? = "
+read ID
+sudo docker stop $ID

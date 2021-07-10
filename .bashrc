@@ -12,7 +12,7 @@ fi
 
 alias vim='vimx'
 alias git-glog='git log --all --decorate --oneline --graph'
-alias git-root='cd $(git rev-parse --show-toplevel)'
+alias gitroot='cd $(git rev-parse --show-toplevel)'
 
 
 

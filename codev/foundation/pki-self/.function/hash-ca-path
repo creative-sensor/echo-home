@@ -1,0 +1,8 @@
+#!/bin/bash -xe
+
+CAPATH=$1
+
+cd $CAPATH
+for file in *.pem; do
+    ln -sf $file `openssl x509 -hash -noout -in $file`.0
+done

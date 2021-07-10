@@ -1,0 +1,6 @@
+#!/bin/bash
+
+CA_PATH=./ssl/ca
+curl -L --capath $CA_PATH  -v https://meteor/redir
+curl -L --capath $CA_PATH  -v https://earth/
+curl -L --capath $CA_PATH  -v https://earth/launch

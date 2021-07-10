@@ -1,0 +1,11 @@
+#!/bin/bash
+
+sudo docker container ls
+
+echo -n "ID? = "
+read ID
+
+echo -n "Save as name? = "
+read NAME
+
+sudo docker commit $ID $NAME

@@ -35,3 +35,9 @@ Run a ```.function``` script: (```runbox``` must be ```symlink``` beforehand)
 cd ${CONTEXT_DIR}
 DKR_IMAGE=fedora:32.6084fb96    runbox .function/${FUNCTION_NAME}  ${ARGS}
 ```
+
+Run with port published:
+```
+cd ${CONTEXT_DIR}
+DKR_EXPOSE=443    runbox .function/${FUNCTION_NAME} ${ARGS}
+```
