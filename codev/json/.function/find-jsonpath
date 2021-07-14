@@ -1,0 +1,15 @@
+#!/bin/bash
+
+
+#warning: alien code
+FILE_PATH=$(test -n "$1" && readlink -f $1)
+
+
+jq  -r '
+            paths(scalars) as $p
+            | [ ( [ $p[] | tostring ] | join(".") )
+            , ( getpath($p) | tojson )
+            ]
+            | join(" : ")
+       ' \
+    $FILE_PATH

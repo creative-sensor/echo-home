@@ -1,0 +1,15 @@
+#!/bin/bash 
+
+NAMESPACE=$1
+
+test -z "$NAMESPACE" && NAMESPACE_OPTION="--all-namespaces"
+test -n "$NAMESPACE" && NAMESPACE_OPTION="-n $NAMESPACE"
+kubectl get pods -o=jsonpath='{range .items[*]}{.metadata.namespace}{"/"}{.metadata.name}{"\n"}{end}'  $NAMESPACE_OPTION
+
+echo -n "Path [NAMESPACE/POD] ?= "
+
+read path
+
+space=$(echo $path | awk -F "/" '{print $1}')
+pod=$(echo $path | awk -F "/" '{print $2}')
+

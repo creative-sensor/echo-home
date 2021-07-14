@@ -1,0 +1,8 @@
+#!/bin/bash
+
+#echo -n  "Namespace ?= [default/all]"
+#read namespace
+
+source .function/find-pods $namespace
+
+kubectl get pod $pod -n $space -o json | .function/find-jsonpath

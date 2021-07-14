@@ -1,0 +1,8 @@
+#!/bin/bash -x
+
+for format in json yaml; do
+    FULL_PATH=$(readlink -f .function/find-${format}path)
+    ALIAS=find-${format}path
+    ln -sf ${FULL_PATH} /usr/bin/${ALIAS} || \
+    ln -sf ${FULL_PATH}  /usr/local/bin/${ALIAS}
+done

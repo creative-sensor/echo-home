@@ -1,0 +1,14 @@
+#!/bin/bash 
+FILE_PATH=$(test -n "$1" && readlink -f $1)
+
+which yq &>/dev/null || pip3 install yq --user
+
+cat $FILE_PATH | ~/.local/bin/yq . | \
+jq  -r '
+            paths(scalars) as $p
+            | [ ( [ $p[] | tostring ] | join(".") )
+            , ( getpath($p) | tojson )
+            ]
+            | join(" : ")
+       '
+
