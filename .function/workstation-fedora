@@ -13,8 +13,9 @@ sudo dnf install -y \
 
 # ---- PACKAGE ---- 
 sudo dnf install -y \
+    jq \
     vim \
-    blender.x86_64
+    blender.x86_64 \
     vlc \
     vim-X11 \
     transmission \
