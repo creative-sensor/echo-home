@@ -1,0 +1,24 @@
+#!/bin/bash
+
+BASE="Fedora release 32"
+
+grep -q "$BASE" /etc/redhat-release || exit 1
+
+
+# ---- PACKAGE ---- 
+sudo dnf update -y
+
+sudo dnf install -y \
+    git \
+    telnet \
+    python3-pip \
+    jq \
+    vim \
+    vim-X11 \
+
+sudo pip3 install --no-cache-dir \
+    yq 
+
+
+# ---- CLEANUP ----
+sudo dnf clean all && rm -rf /var/cache/dnf

@@ -1,8 +1,4 @@
 #!/bin/bash
 
-EMBED_DIR=./.function/.embedded/
-IMAGE=fedora:32
-test -z "$1" || IMAGE=$1
-test -f $EMBED_DIR/${IMAGE}.tar.gz || exit 1 
-
-sudo docker load < ${EMBED_DIR}/${IMAGE}.tar.gz
+IMAGE_FILE=$1
+sudo docker load < $IMAGE_FILE

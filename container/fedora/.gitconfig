@@ -1,0 +1,26 @@
+[user]
+	name = Creativ
+	email = vietbao.telescope@gmail.com
+[core]
+	editor = vim
+
+[color]
+    ui = true
+    status = auto
+    branch = auto
+    interactive = auto
+    diff = auto
+
+[merge]
+    tool = kdiff3
+    ff = only
+[pull]
+    ff = only
+[alias]
+    cm = commit
+    co = checkout
+    st = status
+    br = branch
+    rb = rebase
+    rbia = rebase -i --autosquash
+    mg = merge

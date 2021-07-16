@@ -1,19 +1,22 @@
 #!/bin/bash -xe
 
-#DOCKERFILE=[exported]
-SOURCE_DIR=$1
+DOCKERFILE_PATH=$(readlink -f $1)
+DOCKERFILE=$(basename $DOCKERFILE_PATH)
 HEX_DATE=$(printf '%x' $(date +%s))
-BASE_IMAGE=$(head -1 $DOCKERFILE | awk '{print $2}')
-SUBTAG=$2
-FINAL_IMAGE=${BASE_IMAGE}${SUBTAG}.${HEX_DATE}
+COMMIT=$(git rev-parse --verify HEAD)
+BASE_IMAGE=$(head -1 $DOCKERFILE_PATH | awk '{print $2}')
+FINAL_IMAGE=${BASE_IMAGE}_${HEX_DATE}_${COMMIT:0:8}
 
+test -z "$OUT_DIR" && OUT_DIR="$(readlink -f ./)/.datum"
+mkdir -p $OUT_DIR
+
+cd $(dirname $DOCKERFILE_PATH)
 docker build \
+    --no-cache \
     -f $DOCKERFILE \
     -t ${FINAL_IMAGE} \
-    $SOURCE_DIR
+    ./
 
-
-docker save ${FINAL_IMAGE} | gzip > .function/.embedded/${FINAL_IMAGE}.tar.gz
-
+docker save ${FINAL_IMAGE} | gzip > $OUT_DIR/${FINAL_IMAGE}.tar.gz
 
 docker images ${FINAL_IMAGE}
