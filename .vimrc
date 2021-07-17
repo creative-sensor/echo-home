@@ -54,6 +54,29 @@ set splitright
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "------ [FUNCTIONS]
 "
+
+fun! FindJsonPath()
+  " FIND JSON PATH
+  let path_file = tempname()
+  let @j = expand("%:p")
+  exec '!find-jsonpath '.getreg('j').' > '.path_file
+  exec 'vsplit '.path_file
+  call delete(path_file)
+endfun
+command! -nargs=0 Jpath call FindJsonPath()
+
+
+fun! FindYamlPath()
+  " FIND YAML PATH
+  let path_file = tempname()
+  let @y = expand("%:p")
+  exe '!find-yamlpath '.getreg('y').' > '.path_file
+  exe 'vsplit '.path_file
+  call delete(path_file)
+endfun
+command! -nargs=0 Ypath call FindYamlPath()
+
+
 fun! FindGrep(filename)
   " FIND FILES AND POPULATE THE QUICKFIX LIST
   let error_file = tempname()
