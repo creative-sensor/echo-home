@@ -1,20 +1,14 @@
 ### docker-pull
-Pull image name from compressed archives in ```.embedded``` directory
+Pull image from path of compressed archives
 ```
-.function/.embedded/
-.function/.embedded/fedora:32.tar.gz
-.function/.embedded/ubuntu:20.04.tar.gz
-.function/.embedded/fedora:32.sens.608500a7.tar.gz
-.function/.embedded/fedora:32.nothing.60850069.tar.gz
-
-.function/docker-pull  fedora:32.sens.608500a7
+.function/docker-pull  fedora:32.tar.gz
 ```
 
 
 
 ### docker-build
 ```
-DOCKERFILE=Dockerfile.${NAME}    .function/docker-build  ${SOURCE_DIR} ${SUBTAG}
+.function/docker-build  ${PATH_TO_DOCKERFILE}
 ```
 
 ### symlink

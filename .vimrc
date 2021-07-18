@@ -61,6 +61,7 @@ fun! FindJsonPath()
   let @j = expand("%:p")
   exec '!find-jsonpath '.getreg('j').' > '.path_file
   exec 'vsplit '.path_file
+  exec 'set filetype=yaml'
   call delete(path_file)
 endfun
 command! -nargs=0 Jpath call FindJsonPath()
@@ -68,7 +69,7 @@ command! -nargs=0 Jpath call FindJsonPath()
 
 fun! FindYamlPath()
   " FIND YAML PATH
-  let path_file = tempname()
+  let path_file = tempname() . '.yaml'
   let @y = expand("%:p")
   exe '!find-yamlpath '.getreg('y').' > '.path_file
   exe 'vsplit '.path_file
