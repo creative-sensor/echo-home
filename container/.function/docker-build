@@ -4,7 +4,7 @@ DOCKERFILE_PATH=$(readlink -f $1)
 DOCKERFILE=$(basename $DOCKERFILE_PATH)
 HEX_DATE=$(printf '%x' $(date +%s))
 COMMIT=$(git rev-parse --verify HEAD)
-BASE_IMAGE=$(head -1 $DOCKERFILE_PATH | awk '{print $2}')
+BASE_IMAGE=$(echo $(head -1 $DOCKERFILE_PATH | awk '{print $2}') | sed s,/,_,)
 FINAL_IMAGE=${BASE_IMAGE}_${HEX_DATE}_${COMMIT:0:8}
 
 test -z "$OUT_DIR" && OUT_DIR="$(readlink -f ./)/.datum"
