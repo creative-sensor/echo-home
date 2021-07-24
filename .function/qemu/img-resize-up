@@ -1,0 +1,5 @@
+#!/bin/bash -xe
+IMAGE=$1
+SIZE_GB=$2
+test -z "$SIZE_GB" && SIZE_GB=2
+qemu-img resize -f raw $IMAGE +${SIZE_GB}G
