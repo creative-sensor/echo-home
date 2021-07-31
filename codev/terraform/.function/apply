@@ -1,0 +1,5 @@
+PROJECT_PATH=$1
+cd $PROJECT_PATH
+terraform init \
+    && terraform fmt \
+    && terraform apply 
