@@ -1,0 +1,10 @@
+#!/bin/bash
+
+POOL_PATH=/datum/vdisk
+mkdir -p $POOL_PATH
+chown  ${USER}.${USER} $POOL_PATH
+
+virsh pool-destroy vdisk
+virsh pool-undefine vdisk
+
+mkdir -p /var/lib/libvirt/qemu/nvram

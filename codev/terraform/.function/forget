@@ -4,8 +4,12 @@ PROJECT_PATH=$1
 test -z "$PROJECT_PATH" && exit 1
 cd $PROJECT_PATH
 
+# TFSTATE
 rm -rf .terraform*
 rm *tfstate
-
 TFSTATE_PATH=$(grep terraform.tfstate main.tf | awk -F '"' '{print $2}')
 rm $TFSTATE_PATH
+
+# LIBVIRT
+RESET=.function/reset
+test -x $RESET && sudo $RESET
