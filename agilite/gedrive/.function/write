@@ -1,13 +1,19 @@
-#!/bin/bash -e
+#!/bin/bash
 
 source .function/rcloner
 
 SUB_FILE_PATH=$1
+if ! test -f $VOLUME_CACHE/$SUB_FILE_PATH; then
+    echo "Subpath must be file!"
+    exit 1
+fi
 
-EXTENT=$(grep -l  $SUB_FILE_PATH .meta/*  | awk -F "/" '{print $2}')
+EXTENT=$(basename $(grep -l  $SUB_FILE_PATH $META_DIR/*  | head -1)  2>/dev/null)
+test -z "$EXTENT" && EXTENT=$(.function/pick-random-extent.py)
 
 mkdir -p $(dirname $VOLUME_CACHE/$SUB_FILE_PATH)
-rclone copy  $VOLUME_CACHE/$SUB_FILE_PATH   ${EXTENT}$(dirname $SUB_FILE_PATH)
+rclone copy  $VOLUME_CACHE/$SUB_FILE_PATH   ${EXTENT}"$(dirname $SUB_FILE_PATH)"
+rclone ls $EXTENT > $META_DIR/$EXTENT
 
 echo "SUBPATH UPATED <<" 
 echo $SUB_FILE_PATH

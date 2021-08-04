@@ -2,7 +2,6 @@
 
 source .function/rcloner
 
-META_DIR=.meta
 mkdir -p $META_DIR
 for i in $LIST_REMOTES ; do
     rclone ls $i > $META_DIR/$i

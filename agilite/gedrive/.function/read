@@ -4,7 +4,7 @@ source .function/rcloner
 
 SUB_FILE_PATH=$1
 
-EXTENT=$(grep -l  $SUB_FILE_PATH .meta/*  | awk -F "/" '{print $2}')
+EXTENT=$(basename $(grep -l  $SUB_FILE_PATH $META_DIR/*  | head -1))
 
 mkdir -p $(dirname $VOLUME_CACHE/$SUB_FILE_PATH)
 rclone cat ${EXTENT}${SUB_FILE_PATH} > $VOLUME_CACHE/$SUB_FILE_PATH

@@ -1,8 +1,9 @@
-#!/bin/bash
+#!/bin/bash -e
 export RCLONE_CONFIG=$(readlink -f ./rclone.conf)
-META_DIR=$(readlink -f .meta)
-VOLUME_CACHE=$(readlink -f .cache/volume)
-LIST_REMOTES=$(rclone listremotes)
+export META_DIR=$(readlink -f .cache/meta)
+VOLUME_CACHE_SHORT=.cache/volume
+VOLUME_CACHE=$(readlink -f $VOLUME_CACHE_SHORT)
+export LIST_REMOTES=$(rclone listremotes)
 
 
 
