@@ -1,0 +1,16 @@
+#!/bin/bash -e
+
+source .function/rcloner
+
+SUB_FILE_PATH=$1
+
+echo "List of extents:"
+echo $LIST_REMOTES | sed "s,: \|:,\n,g"
+echo -n "Extent to write ?= "
+read EXTENT
+
+mkdir -p $(dirname $VOLUME_CACHE/$SUB_FILE_PATH)
+rclone copy  $VOLUME_CACHE/$SUB_FILE_PATH   ${EXTENT}:$(dirname $SUB_FILE_PATH)
+
+echo "SUBPATH UPATED <<" 
+echo $SUB_FILE_PATH

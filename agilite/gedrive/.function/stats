@@ -1,0 +1,7 @@
+#!/bin/bash 
+source .function/rcloner
+
+for i in $LIST_REMOTES; do
+    echo -e "\n\n $i \n------------------"
+    rclone about $i | yq
+done

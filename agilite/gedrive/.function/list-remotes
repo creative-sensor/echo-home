@@ -1,0 +1,4 @@
+#!/bin/bash
+
+source .function/rcloner 
+echo $LIST_REMOTES | sed 's,: *,\n,g'

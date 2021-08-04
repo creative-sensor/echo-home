@@ -41,6 +41,7 @@ echo '# ---- REPO ----'
 # ---- PACKAGE ---- 
 sudo dnf update -y
 sudo dnf install -y \
+    rclone \
     freecad \
     ffmpeg \
     ffmpeg-devel \

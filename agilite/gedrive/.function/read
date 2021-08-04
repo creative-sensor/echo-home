@@ -1,0 +1,13 @@
+#!/bin/bash -e
+
+source .function/rcloner
+
+SUB_FILE_PATH=$1
+
+EXTENT=$(grep -l  $SUB_FILE_PATH .meta/*  | awk -F "/" '{print $2}')
+
+mkdir -p $(dirname $VOLUME_CACHE/$SUB_FILE_PATH)
+rclone cat ${EXTENT}${SUB_FILE_PATH} > $VOLUME_CACHE/$SUB_FILE_PATH
+
+echo "FILE READY >>" 
+echo $(readlink -f $VOLUME_CACHE/$SUB_FILE_PATH)

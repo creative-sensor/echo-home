@@ -1,0 +1,34 @@
+#!/bin/bash
+export RCLONE_CONFIG=$(readlink -f ./rclone.conf)
+META_DIR=$(readlink -f .meta)
+VOLUME_CACHE=$(readlink -f .cache/volume)
+LIST_REMOTES=$(rclone listremotes)
+
+
+
+function fill_in_the_blank(){
+    # "{{CAT}} is chasing {{MOUSE}}"  ---->  "Tom is chasing Jerry"
+    local str=$1
+    list_blank_name=$(echo $str | awk '{gsub("(}}[^{}]+{{)|[^{}]*{{|}}[^{}]*"," "); print}')
+    for name in $list_blank_name; do
+        str=$(echo $str | sed s,{{$name}},${!name},g)
+    done
+    echo $str
+}
+
+function volume_exec_with_extent(){
+    local cmd=$1
+    for extent in $(rclone listremotes); do
+        $cmd $extent
+    done
+}
+
+function volume_exec_freely(){
+    local cmd=$1
+    for EXTENT in $(rclone listremotes); do
+        run_cmd="$(fill_in_the_blank "$cmd")"
+        bash -c "$run_cmd"
+    done
+}
+
+

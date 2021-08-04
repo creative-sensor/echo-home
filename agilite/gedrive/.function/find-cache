@@ -1,0 +1,4 @@
+#!/bin/bash 
+source .function/rcloner
+cd $VOLUME_CACHE
+find  -type f | sed 's,^./,,'

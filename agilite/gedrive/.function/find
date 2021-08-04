@@ -1,0 +1,3 @@
+#!/bin/bash 
+source .function/rcloner
+cat $META_DIR/* | awk '{print $2}' | sort -u

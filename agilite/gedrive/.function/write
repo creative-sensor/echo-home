@@ -1,0 +1,13 @@
+#!/bin/bash -e
+
+source .function/rcloner
+
+SUB_FILE_PATH=$1
+
+EXTENT=$(grep -l  $SUB_FILE_PATH .meta/*  | awk -F "/" '{print $2}')
+
+mkdir -p $(dirname $VOLUME_CACHE/$SUB_FILE_PATH)
+rclone copy  $VOLUME_CACHE/$SUB_FILE_PATH   ${EXTENT}$(dirname $SUB_FILE_PATH)
+
+echo "SUBPATH UPATED <<" 
+echo $SUB_FILE_PATH

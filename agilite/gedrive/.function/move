@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+source .function/rcloner
+
+SUB_FILE_PATH=$1
+SUB_FILE_PATH_NEW=$2
+EXTENT=$(grep -l  $SUB_FILE_PATH .meta/*  | awk -F "/" '{print $2}')
+
+rclone move ${EXTENT}${SUB_FILE_PATH} ${EXTENT}${SUB_FILE_PATH_NEW}
+mkdir -p $VOLUME_CACHE/$SUB_FILE_PATH_NEW
+mv $VOLUME_CACHE/$SUB_FILE_PATH $VOLUME_CACHE/$SUB_FILE_PATH_NEW
+.function/mount
+echo "SUBPATH RENAMED |m|" 
+echo $SUB_FILE_PATH_NEW
