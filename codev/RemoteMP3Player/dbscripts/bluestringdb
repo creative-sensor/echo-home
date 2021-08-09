@@ -1,0 +1,1111 @@
+--
+-- PostgreSQL database dump
+--
+
+SET statement_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = off;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET escape_string_warning = off;
+
+SET search_path = public, pg_catalog;
+
+--
+-- Name: combination_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE combination_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.combination_id_seq OWNER TO postgres;
+
+--
+-- Name: combination_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('combination_id_seq', 9, false);
+
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: mp3item; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE mp3item (
+    id integer NOT NULL,
+    name text,
+    artist text,
+    lyrics text,
+    path text
+);
+
+
+ALTER TABLE public.mp3item OWNER TO postgres;
+
+--
+-- Name: mp3item_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE mp3item_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.mp3item_id_seq OWNER TO postgres;
+
+--
+-- Name: mp3item_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE mp3item_id_seq OWNED BY mp3item.id;
+
+
+--
+-- Name: mp3item_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('mp3item_id_seq', 774, true);
+
+
+--
+-- Name: playlist_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE playlist_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.playlist_id_seq OWNER TO postgres;
+
+--
+-- Name: playlist_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('playlist_id_seq', 10, true);
+
+
+--
+-- Name: playlist; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE playlist (
+    id integer DEFAULT nextval('playlist_id_seq'::regclass) NOT NULL,
+    name text,
+    description text
+);
+
+
+ALTER TABLE public.playlist OWNER TO postgres;
+
+--
+-- Name: playlist_mp3item; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE playlist_mp3item (
+    playlist_id integer NOT NULL,
+    mp3item_id integer NOT NULL
+);
+
+
+ALTER TABLE public.playlist_mp3item OWNER TO postgres;
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY mp3item ALTER COLUMN id SET DEFAULT nextval('mp3item_id_seq'::regclass);
+
+
+--
+-- Data for Name: mp3item; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY mp3item (id, name, artist, lyrics, path) FROM stdin;
+279	Feeling	Various Artists	\N	1/Feeling - Guitar.mp3
+76	Lời giới thiệu	Thy Vân	\N	1/01. Loi gioi thieu_Thy Van.mp3
+77	Lost In The Echo	Linkin Park	\N	1/01 - Linkin Park - Lost In The Echo.mp3
+78	Đường dài miệt mài tôi đi	Duy Quang	\N	1/02. Duong dai miet mai toi di.mp3
+79	Ai nhớ chăng ai	Duy Quang	\N	1/03. Ai nho chang ai.mp3
+80	Burn It Down	Linkin Park	\N	1/03 - Linkin Park - Burn It Down.mp3
+81	Những ngày xưa thân ái	Duy Quang	\N	1/04. Nhung ngay xua than ai.mp3
+82	Đêm tiền đồn	Duy Quang	\N	1/05. Dem tien don.mp3
+83	Một người đi xa	Duy Quang	\N	1/06. Mot nguoi di xa.mp3
+84	6, 8, 12	Brian McKnight	\N	1/6 - 8 - 12 - Brian Knight.mp3
+85	Lính trận miền xa	Duy Quang	\N	1/07. Linh tran mien xa.mp3
+86	Tâm sự người hát bài quê hương	Duy Quang	\N	1/08. Tam su nguoi hat bai que huong.mp3
+87	Đa tạ	Duy Quang	\N	1/09. Da ta.mp3
+88	Thư về em gái thành đô	Duy Quang	\N	1/10. Thu ve em gai thanh do.mp3
+89	Kẻ ở miền xa	Duy Quang	\N	1/11. Ke o mien xa.mp3
+90	Trăng tàn trên hè phố	Duy Quang	\N	1/12. Trang tan tren he pho.mp3
+91	Sương trắng miền quê ngoại	Duy Quang	\N	1/13. Suong trang mien que ngoai.mp3
+92	Lời cảm tạ	Thy Vân	\N	1/14. Loi cam ta_Thy Van.mp3
+93	25 Minutes	Michael Learns To Rock	\N	1/25 Minutes - Michael Learns To Rock [MP3 320kbps].mp3
+94	Airs Bohemiens (Sarasate)	Paul Mauriat	\N	1/Airs Bohemiens (Sarasate) - Paul Mauriat.mp3
+95	Aline	Vô Thường	\N	1/Aline - Vo Thuong [MP3 320kbps].mp3
+96	Alla Figaro	Paul Mauriat	\N	1/Alla figaro - Paul Mauriat.mp3
+97	All Or Nothing 	Westlife	\N	1/All or nothing - Westlife.mp3
+98	All Out Of Love	Air Supply	\N	1/All Out Of Love - Air Supply [MP3 320kbps].mp3
+99	Alouette		\N	1/Alouette.mp3
+100	Alouette 'La Peregrinacion'	Paul Mauriat	\N	1/Alouette La Peregrinacion - Paul Mauriat.mp3
+101	A Love For Life	Yanni	\N	1/A Love For Life - Yanni [MP3 320kbps].mp3
+102	Amor Guitaro	Vô Thường	\N	1/Amor Guitaro - Vo Thuong [MP3 320kbps].mp3
+103	Amor Per Nada	Vô Thường	\N	1/Amor Per Nada - Vo Thuong [MP3 320kbps].mp3
+104	Anh chỉ biết câm nín nghe tiếng em khóc	Ưng Hoàng Phúc	\N	1/Anh Chi Biet Cam Nin Nghe Tieng Em Khoc [MP3 320kbps].mp3
+105	Anh là tất cả	Ngọc Lan	\N	1/Anh La Tat Ca - Ngoc Lan.mp3
+106	Anh là tia nắng trong em	Lâm Thúy Vân	\N	1/Anh La Tia Nang Trong Em - Lam Thuy Van [MP3 320kbps].mp3
+107	Anh vẫn đợi chờ	Đan Trường	\N	1/Anh Van Doi Cho - Dan Truong [MP3 320kbps].mp3
+108	Animal Instinct	The Cranberries	\N	1/Animal instinct - The Cranberries.mp3
+109	Another Day In Paradise	Phil Collins	\N	1/Another Day In Paradise - Phil Collins [MP3 320kbps].mp3
+110	Ảo ảnh	Lệ Quyên	\N	1/Ao anh-Le Quyen.mp3
+111	Ảo ảnh	Vô Thường	\N	1/Ao Anh - Vo Thuong [MP3 320kbps].mp3
+112	Ảo mộng tình yêu	Đan Trường, Cẩm Ly	\N	1/Ao Mong Tinh Yeu - Dan Truong_ Cam Ly [MP3 320kbps].mp3
+113	Apologize	Timbaland, One Republic	\N	1/Apologies - One Republic - Timbaland.mp3
+114	Apres Toi	Paul Mauriat	\N	1/Apres Toi - Paul Mauriat.mp3
+115	Apres Toi	Vicky Leandros	\N	1/Apres Toi - Vicky Leandros [MP3 320kbps].mp3
+116	Aranjuez (Rodrigo)	Paul Mauriat	\N	1/ARANJUEZ (Rodrigo) - Paul Mauriat.mp3
+117	Aria (Bach)	Paul Mauriat	\N	1/Aria (Bach) - Paul Mauriat.mp3
+118	As Long As You Love Me	Backstreet Boys	\N	1/As Long As You Love Me - Backstreet Boys [MP3 320kbps].mp3
+119	Atlantis Is Calling	Modern Talking	\N	1/Atlantis Is Calling - Modern Talking [MP3 320kbps].mp3
+120	Auld Lang Syne	Boney M	\N	1/Auld Lang Syne - Boney M [MP3 320kbps].mp3
+121	Ave Maria (Schubert)	Paul Mauriat	\N	1/AVE MARIA (Schubert) - Paul Mauriat.mp3
+122	Ave Maria	Vô Thường	\N	1/Ave Maria - Vo Thuong [MP3 320kbps].mp3
+123	Bad Day	Daniel Powter	\N	1/Bad Day - Daniel Powter [MP3 320kbps].mp3
+124	Bad	Michael Jackson	\N	1/Bad - Michael Jackson [MP3 320kbps].mp3
+125	Bahama Mama	Boney M	\N	1/Bahama Mama - Boney M [MP3 320kbps].mp3
+126	Bài ca Trường Sơn	Trung Kiên	\N	1/BaiCaTruongSon_TrungKien.mp3
+127	Bài không tên cuối cùng	Vô Thường	\N	1/Bai Khong Ten Cuoi Cung - Vo Thuong [MP3 320kbps].mp3
+128	Bài không tên số 1	Duy Quang	\N	1/Bai Khong Ten So 1 - Duy Quang [MP3 320kbps].mp3
+129	Bài không tên số 2	Tuấn Ngọc	\N	1/Bai Khong Ten So 2 - Tuan Ngoc [MP3 320kbps].mp3
+130	Bài không tên số 2	Vô Thường	\N	1/Bai Khong Ten So 2 - Vo Thuong [MP3 320kbps].mp3
+131	Bài không tên số 3	Tuấn Ngọc	\N	1/Bai Khong Ten So 3 - Tuan Ngoc [MP3 320kbps].mp3
+132	Bài không tên số 4	Tuấn Ngọc	\N	1/Bai Khong Ten So 4 - Tuan Ngoc [MP3 320kbps].mp3
+133	Bài không tên số 4	Vô Thường	\N	1/Bai Khong Ten So 4 - Vo Thuong [MP3 320kbps].mp3
+134	Bài không tên số 5	Tuấn Ngọc	\N	1/Bai Khong Ten So 5 - Tuan Ngoc [MP3 320kbps].mp3
+135	Bài không tên số 6	Duy Quang	\N	1/Bai Khong Ten So 6 - Duy Quang [MP3 320kbps].mp3
+136	Bài không tên số 7	Tuấn Ngọc	\N	1/Bai Khong Ten So 7 - Tuan Ngoc [MP3 320kbps].mp3
+137	Bài không tên số 8	Tuấn Ngọc	\N	1/Bai Khong Ten So 8 - Tuan Ngoc [MP3 320kbps].mp3
+280	Feliz Navidad	Boney M	\N	1/Feliz Navidad - Boney M [MP3 320kbps].mp3
+281	Fernando - ABBA	ABBA	\N	1/Fernando - ABBA.mp3
+282	For All We Know	Carpenters	\N	1/For all we know - Carpenters.mp3
+283	For Elise		\N	1/For Elise - Beethoven.mp3
+284	For Sure	Scooch	\N	1/For Sure - Scooch [MP3 320kbps].mp3
+286	Frere Jacques		\N	1/Frère Jacques.mp3
+287	Gặp bà bóng	Văn Hường	\N	1/Gap ba bong - Van Huong.mp3
+288	Get Down	Backstreet Boys	\N	1/Get Down - Backstreet Boys [MP3 320kbps].mp3
+289	Giấc mơ tình yêu	Mỹ Tâm	\N	1/Giac Mo Tinh Yeu - My Tam [MP3 320kbps].mp3
+290	Giáng Ngọc	Ngọc Lan	\N	1/Giang Ngoc - Ngoc Lan.mp3
+291	Gia tài của mẹ	Khánh Ly	\N	1/Gia Tai Cua Me - Khanh Ly [MP3 320kbps].mp3
+138	Bài không tên số 8	Vô Thường	\N	1/Bai Khong Ten So 8 - Vo Thuong [MP3 320kbps].mp3
+139	Bài không tên cuối cùng	Tuấn Ngọc	\N	1/Bai Khong Ten Tro Lai Cuoi Cung - Tuan N [MP3 320kbps].mp3
+140	Bài thánh ca buồn	Elvis Phương	\N	1/Bai Thanh Ca Buon - Elvis Phuong [MP3 320kbps].mp3
+141	Bản tình cuối	Ngọc Lan	\N	1/Ban Tinh Cuoi - Ngoc Lan.mp3
+142	Bạn tôi	Quang Linh	\N	1/Ban Toi - Quang Linh [MP3 320kbps].mp3
+143	Bao giờ biết tương tư	Vô Thường	\N	1/Bao Gio Biet Tuong Tu - Vo Thuong [MP3 320kbps].mp3
+144	Barbie Girl	Aqua	\N	1/Barbie Girl - Aqua [MP3 320kbps].mp3
+145	Beat It	Michael Jackson	\N	1/Beat It - Michael Jackson [MP3 320kbps].mp3
+146	Beautiful World	Westlife	\N	1/Beautiful World - Westlife.mp3
+147	Because Of You	Kelly Clarkson	\N	1/Because Of You - Kelly Clarkson [MP3 320kbps].mp3
+148	Because You Loved Me	Celine Dion	\N	1/Because You Loved Me - Celine Dion [MP3 320kbps].mp3
+149	Bên đời hiu quạnh	Ngọc Lan	\N	1/Ben Doi Hiu Quanh - Ngoc Lan.mp3
+150	Besame Mucho	Vô Thường	\N	1/Besame Mucho - Vo Thuong [MP3 320kbps].mp3
+151	Best In Me	Blue	\N	1/Best In Me - Blue [MP3 320kbps].mp3
+152	Best Of Me	Daniel Powter	\N	1/Best Of Me - Daniel Powter [MP3 320kbps].mp3
+153	Billie Jean	Michael Jackson	\N	1/Billie Jean - Michael Jackson [MP3 320kbps].mp3
+154	Black Or White	Michael Jackson	\N	1/Black Or White - Michael Jackson [MP3 320kbps].mp3
+155	Bleeding Love	Leona Lewis	\N	1/Bleeding Love - Leona Lewis [MP3 320kbps].mp3
+156	Johann Strauss (Son). The Beautiful Danube, Waltz, Op. 314	London Philarmonic Orchestra	\N	1/Blue Danube - Johann Strauss.mp3
+157	Blue Eyes	Paul Mauriat	\N	1/Blue Eyes - Paul Mauriat [MP3 128kbps].mp3
+158	Bóng biển	Đan Trường	\N	1/Bong Bien - Dan Truong [MP3 320kbps].mp3
+159	Bóng dáng thiên thần	Đan Trường	\N	1/Bong Dang Thien Than - Dan Truong [MP3 320kbps].mp3
+160	Bông điên điển	Phi Nhung	\N	1/Bong Dien Dien - Phi Nhung [MP3 320kbps].mp3
+161	Breaking My Heart	Michael Learns To Rock	\N	1/Breaking My Heart - Michael Learns To Ro [MP3 320kbps].mp3
+162	Breaking The Habit	Linkin Park	\N	1/Breaking The Habit - Linkin Park [MP3 320kbps].mp3
+163	Brother Louie	Modern Talking	\N	1/Brother Louie - Modern Talking [MP3 320kbps].mp3
+164	Brown Girl In The Ring	Boney M	\N	1/Brown Girl In The Ring - Boney M [MP3 320kbps].mp3
+165	Bức thư tư ếch	Văn Hường	\N	1/Buc thu tu Ech - Van Huong.mp3
+166	Bước chân lẻ loi	Đan Trường	\N	1/Buoc Chan Le Loi - Dan Truong [MP3 320kbps].mp3
+167	Bước chân trên dãy Trường Sơn	Tốp ca quân khu 7	\N	1/BuocChanTrenDayTruongSon_TopCaQuanKhu7.mp3
+168	Buồn	Lệ Quyên	\N	1/Buon-Le Quyen.mp3
+169	Buồn ơi chào mi	Nguyễn Hưng	\N	1/Buon Oi Chao Mi - Nguyen Hung [MP3 320kbps].mp3
+170	Buồn trong kỷ niệm	Vô Thường	\N	1/Buon Trong Ky Niem - Vo Thuong [MP3 320kbps].mp3
+171	Buồn	Vô Thường	\N	1/Buon - Vo Thuong [MP3 320kbps].mp3
+172	Búp bê bằng sứ	Ngọc Lan	\N	1/Bup Be Bang Su - Ngoc Lan.mp3
+173	Bye Bye Bye	N'Sync	\N	1/Bye Bye Bye - N Sync [MP3 320kbps].mp3
+174	Cái trâm em cài	Tốp ca	\N	1/Cai tram em cai - top ca.mp3
+175	Căn nhà ngoại ô	Trường Vũ	\N	1/Can Nha Ngoai O - Truong Vu [MP3 320kbps].mp3
+176	Careless Whisper	Romantic Guitar	\N	1/Careless Whisper - Romantic Guitar [MP3 320kbps].mp3
+177	Careless Whisper	Wham	\N	1/Careless Whisper - Wham [MP3 320kbps].mp3
+178	Carmenita	Vô Thường	\N	1/Carmenita - Vo Thuong [MP3 320kbps].mp3
+179	Casablanca	Vô Thường	\N	1/Casablanca - Vo Thuong [MP3 320kbps].mp3
+180	Cây đàn bỏ quên	Vô Thường	\N	1/Cay Dan Bo Quen - Vo Thuong [MP3 320kbps].mp3
+181	Cây đàn sinh viên	Mỹ Tâm	\N	1/Cay Dan Sinh Vien - My Tam [MP3 320kbps].mp3
+182	Chân tình	Vân Trường	\N	1/Chan Tinh - Van Truong [MP3 320kbps].mp3
+183	Chere Feuilles Que Tu Est Loin	Vô Thường	\N	1/Chere Feuilles Que Tu Est Loin - Vo Thuo [MP3 320kbps].mp3
+184	Cheri Cheri Lady	Modern Talking	\N	1/Cheri Cheri Lady - Modern Talking [MP3 320kbps].mp3
+185	Cherry Pink	Vô Thường	\N	1/Cherry Pink - Vo Thuong [MP3 320kbps].mp3
+186	Chiếc áo bà ba	Hương Lan	\N	1/Chiec ao ba ba - Huong Lan.mp3
+187	Chiếc lá cuối cùng	Lệ Quyên	\N	1/Chiec la cuoi cung-Le Quyen.mp3
+188	Chiếc lá thu phai	Vô Thường	\N	1/Chiec La Thu Phai - Vo Thuong [MP3 320kbps].mp3
+189	Chiều cuối tuần	Vô Thường	\N	1/Chieu Cuoi Tuan - Vo Thuong [MP3 320kbps].mp3
+191	Chiều nay không có em	Vô Thường	\N	1/Chieu Nay Khong Co Em - Vo Thuong [MP3 320kbps].mp3
+192	Chiều tím	Ngọc Lan	\N	1/Chieu Tim - Ngoc Lan.mp3
+193	China In Her Eyes (feat. Eric Singleton)	Modern Talking	\N	1/China in her eyes - Modern Talking ft Eric Singleton.mp3
+194	Chị tôi	Quang Linh	\N	1/Chi Toi - Quang Linh [MP3 320kbps].mp3
+195	Chó mực đầu cáo	Văn Hường	\N	1/Cho Muc Dau Cao - Van Huong.mp3
+196	Chôn dấu yêu thương	Đan Trường	\N	1/Chon Dau Yeu Thuong - Dan Truong [MP3 320kbps].mp3
+197	Chờ người	Như Quỳnh	\N	1/Cho Nguoi - Nhu Quynh [MP3 320kbps].mp3
+198	Chờ nhìn quê hương sáng chói	Khánh Ly	\N	1/Cho Nhin Que Huong Sang Choi - Khanh Ly [MP3 320kbps].mp3
+199	Cho tình mãi xa	Đan Trường	\N	1/Cho Tinh Mai Xa - Dan Truong [MP3 320kbps].mp3
+200	Chuyện ba người	Nhật Trường, Mỹ Lan; Quốc Anh	\N	1/Chuyen Ba Nguoi - Nhat Truong_ My Lan_ Q [MP3 320kbps].mp3
+201	Chuyện buồn tình yêu	Như Quỳnh, Thái Châu	\N	1/Chuyen buon tinh yeu - Nhu Quynh - Thai Chau.mp3
+202	Chuyến đò vĩ tuyến	Hoàng Oanh	\N	1/Chuyen Do Vi Tuyen - Hoang Oanh [MP3 320kbps].mp3
+203	Chuyện giàn thiên lý	Mạnh Đình	\N	1/Chuyen Gian Thien Ly - Manh Dinh [MP3 320kbps].mp3
+204	Chuyện hoa sim	Như Quỳnh	\N	1/Chuyen hoa sim - Nhu Quynh.mp3
+205	Chuyên hoa sim	Như Quỳnh	\N	1/Chuyen Hoa Sim - Nhu Quynh [MP3 320kbps].mp3
+206	Chuyện hợp tan	Như Quỳnh	\N	1/Chuyen Hop Tan - Nhu Quynh [MP3 320kbps].mp3
+207	Chuyện tình hoa trắng	Như Quỳnh	\N	1/Chuyen tinh hoa trang - Nhu Quynh.mp3
+208	Cietito Lindo	Various Artists	\N	1/Cietito Lindo - Guitar.mp3
+209	Có điều gì gần như niềm tuyệt vọng	Vô Thường	\N	1/Co Dieu Gi Gan Nhu Niem Tuyet Vong - Vo [MP3 320kbps].mp3
+210	Cô gái đến từ hôm qua	Mỹ Tâm	\N	1/Co Gai Den Tu Hom Qua - My Tam [MP3 320kbps].mp3
+211	Cô lái đò bên hạ	Thúy Hằng	\N	1/Co Lai Do Ben Ha - Thuy Hang [MP3 320kbps].mp3
+212	Coming Home	Stratovarius	\N	1/Coming Home - Stratovarius [MP3 320kbps].mp3
+213	Comment Te Dire Adieu	Francoise Hardy	\N	1/Comment Te Dire Adieu - Fran__oise Hardy [MP3 320kbps].mp3
+214	Còn chút gì để nhớ	Vô Thường	\N	1/Con Chut Gi De Nho - Vo Thuong [MP3 320kbps].mp3
+215	Còn lại một mình	Đan Trường	\N	1/Con Lai Mot Minh - Dan Truong [MP3 320kbps].mp3
+216	Contigo mi vida D'apres Le Concerto Nr.21 (Mozart)	Paul Mauriat	\N	1/CONTIGO MI VIDA D'apres Le Concerto Nr.21 (Mozart) - Paul Mauriat.mp3
+217	Cô thắm về làng	Như Quỳnh	\N	1/Co Tham Ve Lang - Nhu Quynh [MP3 320kbps].mp3
+218	Cry On My Shoulder	Super Stars	\N	1/Cry on my shoulder - Super Stars.mp3
+219	Cuộc tình cay đắng	Đan Trường	\N	1/Cuoc Tinh Cay Dang - Dan Truong [MP3 320kbps].mp3
+220	Cuộc tình trong cơn mưa	Đan Trường	\N	1/Cuoc Tinh Trong Con Mua - Dan Truong [MP3 320kbps].mp3
+221	Cuối cùng cho một tình yêu	Vô Thường	\N	1/Cuoi Cung Cho Mot Tinh Yeu - Vo Thuong [MP3 320kbps].mp3
+222	Daddy Cool	Boney M	\N	1/Daddy Cool - Boney M [MP3 320kbps].mp3
+223	Dấu chân mùa thu	Đan Trường	\N	1/Dau Chan Mua Thu - Dan Truong [MP3 320kbps].mp3
+224	Dấu tình sầu	Vô Thường	\N	1/Dau Tinh Sau - Vo Thuong [MP3 320kbps].mp3
+225	Đêm đô thị	Shayla	\N	1/Dem Do Thi - Shayla [MP3 320kbps].mp3
+226	Đêm đô thị	Vô Thường	\N	1/Dem Do Thi - Vo Thuong [MP3 320kbps].mp3
+227	Đêm thấy ta là thác đổ	Tuấn Ngọc	\N	1/Dem Thay Ta La Thac Do - Tuan Ngoc [MP3 320kbps].mp3
+228	Departure Station (Ga Tau Ly Biet; Li Bie De Che Zhan)	Triệu Vy	\N	1/Departure Station Ga Tau Ly Biet_ Li Bie [MP3 320kbps].mp3
+230	Despedida Jamaica	Vô Thường	\N	1/Despedida Jamaica - Vo Thuong [MP3 320kbps].mp3
+231	Desperado	Carpenters	\N	1/Desperado - Carpenters.mp3
+232	Diễm xưa	Ngọc Lan	\N	1/Diem Xua - Ngoc Lan.mp3
+233	Diễm xưa	Trần Mạnh Tuấn	\N	1/Diem Xua - Tran Manh Tuan [MP3 320kbps].mp3
+234	Dịu dàng sắc xuân	Ngọc Linh	\N	1/Diu Dang Sac Xuan - Ngoc Linh [MP3 320kbps].mp3
+235	Đi về nơi xa	Đan Trường	\N	1/Di Ve Noi Xa - Dan Truong [MP3 320kbps].mp3
+236	Đoạn tái bút	Trường Vũ	\N	1/Doan Tai But - Truong Vu [MP3 320kbps].mp3
+237	Doctor Zivago	Vô Thường	\N	1/Doctor Zivago - Vo Thuong [MP3 320kbps].mp3
+238	Does Your Mother Know	ABBA	\N	1/Does Your Mother Know - ABBA [MP3 320kbps].mp3
+239	Does your mother knows	ABBA	\N	1/Does your mother knows.mp3
+240	Đợi chờ phố xưa	Đan Trường	\N	1/Doi Cho Pho Xua - Dan Truong [MP3 320kbps].mp3
+241	Đôi giày vải	Lam Trường	\N	1/Doi Giay Vai - Lam Truong [MP3 320kbps].mp3
+242	Dỗi hờn	Đan Trường	\N	1/Doi Hon - Dan Truong [MP3 320kbps].mp3
+243	Đồi thông hai mộ	Lệ Quyên	\N	1/Doi thong hai mo-Le Quyen.mp3
+244	Dòng sông xanh	Thái Thanh	\N	1/Dong Song Xanh - Thai Thanh [MP3 320kbps].mp3
+245	Dòng sông xưa	Đan Trường	\N	1/Dong Song Xua - Dan Truong [MP3 320kbps].mp3
+246	Donna Donna	Claude Francois	\N	1/Donna donna - Claude Francois .mp3
+247	Donna Donna	Claude Francois	\N	1/Donna Donna - Claude Francois [MP3 320kbps].mp3
+248	Don't Cry Me Arghentina	Various Artists	\N	1/Don_t Cry Me Arghentina - Guitar.mp3
+249	Don't Want You Back	Backstreet Boys	\N	1/Dont Want You Back - Backstreet Boys [MP3 320kbps].mp3
+250	Dư âm	Tuấn Ngọc	\N	1/Du Am - Tuan Ngoc [MP3 320kbps].mp3
+251	Dừng bước giang hồ		\N	1/DungBuocGiangHo_instru.mp3
+252	Dừng bước giang hồ	Khánh Ly	\N	1/Dung buoc giang - instru.mp3
+253	Dường như ta đã	Mỹ Tâm	\N	1/Duong Nhu Ta Da - My Tam [MP3 320kbps].mp3
+254	Đường xa ướt mưa	Đức Huy	\N	1/Duong Xa Uot Mua - Duc Huy [MP3 320kbps].mp3
+255	Đường xa ướt mưa	Nguyễn Hưng	\N	1/Duong Xa Uot Mua - Nguyen Hung [MP3 320kbps].mp3
+229	Để quên con tim	Ngọc Lan	\N	1/De Quen Con Tim - Ngoc Lan.mp3
+256	Eagle  	ABBA	\N	1/Eagle - ABBA.mp3
+257	Eagle	ABBA	\N	1/Eagle - ABBA [MP3 320kbps].mp3
+258	Earth Song	Michael Jackson	\N	1/Earth Song - Michael Jackson [MP3 320kbps].mp3
+259	El Bimbo	Paul Mauriat	\N	1/El Bimbo - Paul Mauriat [MP3 320kbps].mp3
+260	El Condor Pasa	Paul Mauriat	\N	1/El Condor Pasa - Paul Mauriat.mp3
+261	El Condor Pasa	Vô Thường	\N	1/El Condor Pasa - Vo Thuong [MP3 320kbps].mp3
+262	Email tình yêu	Đan Trường	\N	1/Email Tinh Yeu - Dan Truong [MP3 320kbps].mp3
+263	Em còn nhớ hay em đã quên	Tuấn Ngọc	\N	1/Em Con Nho Hay Em Da Quen - Tuan Ngoc [MP3 320kbps].mp3
+264	Em đã cho tôi bầu trời	Vô Thường	\N	1/Em Da Cho Toi Bau Troi - Vo Thuong [MP3 320kbps].mp3
+265	Em về kẻo mưa	Lệ Quyên	\N	1/Em ve keo mua-Le Quyen.mp3
+266	Em về tinh khôi	Phương Thanh, Bằng Kiều	\N	1/Em Ve Tinh Khoi - Phuong Thanh_ Bang Kie [MP3 320kbps].mp3
+267	Endless love - Diana Ross - Lionel Richie		\N	1/Endless love - Diana Ross - Lionel Richie.mp3
+268	Endless Love	Various Artists	\N	1/Endless Love - Guitar.mp3
+269	Et Jentends Siffler Le Train	Vô Thường	\N	1/Et Jentends Siffler Le Train - Vo Thuong [MP3 320kbps].mp3
+271	Etude en mi (Chopin)	Paul Mauriat	\N	1/ETUDE en Mi (Chopin) - Paul Mauriat.mp3
+272	Etude In A New Form	Paul Mauriat	\N	1/Etude In A New Form - Paul Mauriat.mp3
+274	Every Day I Love You	Boyzone	\N	1/Everyday i love you - Boyzone.mp3
+275	Everything You Do	M2M	\N	1/Everything You Do - M2M [MP3 320kbps].mp3
+276	Everytime You Go Away	Paul Young	\N	1/Everytime You Go Away - Paul Young [MP3 320kbps].mp3
+277	Fallen	Lauren Wood	\N	1/Fallen - Lauren Wood [MP3 320kbps].mp3
+278	Fall For You	Secondhand Serenade	\N	1/Fall For You - Secondhand Serenade [MP3 320kbps].mp3
+273	Everybody (Backstreet's Back; Extended Version)	Backstreet Boys	\N	1/Everybody Backstreet_s Back_ Extended Ve [MP3 320kbps].mp3
+293	Giết người trong mộng	Duy Quang	\N	1/Giet Nguoi Trong Mong - Duy Quang [MP3 320kbps].mp3
+294	Giọt lệ đài trang	Vô Thường	\N	1/Giot Le Dai Trang - Vo Thuong [MP3 320kbps].mp3
+295	Giọt nước mắt cho quê hương	Khánh Ly	\N	1/Giot Nuoc Mat Cho Que Huong - Khanh Ly [MP3 320kbps].mp3
+296	Giọt nước mắt ngà	Ngọc Lan	\N	1/Giot Nuoc Mat Nga (Ngo Thuy Mien) - Ngoc Lan.mp3
+297	Giọt nước mắt ngà	Vô Thường	\N	1/Giot Nuoc Mat Nga - Vo Thuong [MP3 320kbps].mp3
+298	God Father	Various Artists	\N	1/God Father - Guitar.mp3
+299	Gửi gió cho mây ngàn bay		\N	1/Goi gio cho may ngay bay - instru.mp3
+300	Gọi tên bốn mùa	Khánh Ly	\N	1/Goi Ten Bon Mua - Khanh Ly [MP3 320kbps].mp3
+301	Gót hồng	Lam Trường	\N	1/Got Hong - Lam Truong [MP3 320kbps].mp3
+302	Gotta Go Home	Boney M	\N	1/Gotta Go Home - Boney M [MP3 320kbps].mp3
+303	Guantanamera	Paul Mauriat	\N	1/Guantanamera - Paul Mauriat.mp3
+304	Gửi gió cho mây ngàn bay		\N	1/GuiGioChoMayNganBay_instru.mp3
+305	Hands	Jewel	\N	1/Hands - Jewel.mp3
+306	Hàn Mặc Tử	Lệ Quyên	\N	1/Han Mac Tu-Le Quyen.mp3
+307	Happy New Year	ABBA	\N	1/Happy new year - ABBA.mp3
+308	Hasta Manana	ABBA	\N	1/Hasta manana - ABBA.mp3
+309	Hasta Manana	ABBA	\N	1/Hasta Manana - ABBA [MP3 320kbps].mp3
+310	Hát nữa đi em	Trường Vũ	\N	1/Hat Nua Di Em - Truong Vu [MP3 320kbps].mp3
+311	Hạ trắng	Ngọc Lan	\N	1/Ha Trang - Ngoc Lan.mp3
+312	Hạ trắng	Trần Mạnh Tuấn	\N	1/Ha Trang - Tran Manh Tuan [MP3 320kbps].mp3
+313	Hát trên những xác người	Khánh Ly	\N	1/Hat Tren Nhung Xac Nguoi - Khanh Ly [MP3 320kbps].mp3
+314	Hát về cây lúa hôm nay	Đan Trường	\N	1/Hat Ve Cay Lua Hom Nay - Dan Truong [MP3 320kbps].mp3
+315	Hát với dòng sông	Mỹ Tâm	\N	1/Hat Voi Dong Song - My Tam [MP3 320kbps].mp3
+316	Hãy ngước mặt nhìn đời	Elvis Phương	\N	1/Hay Nguoc Mat Nhin Doi - Elvis Phuong [MP3 320kbps].mp3
+317	Hãy nhìn xuống chân	Elvis Phương	\N	1/Hay Nhin Xuong Chan - Elvis Phuong [MP3 320kbps].mp3
+318	Hãy vui lên bạn ơi	Elvis Phương	\N	1/Hay Vui Len Ban Oi - Elvis Phuong [MP3 320kbps].mp3
+319	Hãy yêu như chưa yêu lần nào	Elvis Phương	\N	1/Hay Yeu Nhu Chua Yeu Lan Nao - Elvis Phu [MP3 320kbps].mp3
+320	Head over heels	ABBA	\N	1/Head over heels.mp3
+321	Heal The World	Michael Jackson	\N	1/Heal The World - Michael Jackson [MP3 320kbps].mp3
+322	Hello	Lionel Richie	\N	1/Hello - Lionel Richie [MP3 320kbps].mp3
+323	Hello	Romantic Guitar	\N	1/Hello - Romantic Guitar [MP3 320kbps].mp3
+324	Hey Jude	The Beatles	\N	1/Hey Jude - The Beatles [MP3 320kbps].mp3
+325	Hoa cỏ mùa xuân	Bằng Kiều	\N	1/Hoa co mua xuan - Bang Kieu.mp3
+326	Họa mi tóc nâu	Mỹ Tâm	\N	1/Hoa Mi Toc Nau - My Tam [MP3 320kbps].mp3
+327	Hoa nắng	Mỹ Dung	\N	1/Hoa nang - My Dung.mp3
+328	Hối tiếc	Đan Trường	\N	1/Hoi Tiec - Dan Truong [MP3 320kbps].mp3
+329	Holiday	Bee Gees	\N	1/Holiday - Bee Gees.mp3
+330	Holler	Spice Girls	\N	1/Holler - Spice Girls [MP3 320kbps].mp3
+331	Home	Michael Buble	\N	1/Home - Michael Buble [MP3 320kbps].mp3
+332	Honey honey - ABBA	ABBA	\N	1/Honey honey - ABBA.mp3
+333	Hôn môi xa	Đan Trường	\N	1/Hon Moi Xa - Dan Truong [MP3 320kbps].mp3
+334	Hooray! Hooray! It's a Holi-Holiday	Boney M	\N	1/Hooray_ Hooray_ It_s a Holi-Holiday - Bo [MP3 257kbps].mp3
+335	Hotel California	The Eagles	\N	1/Hotel California - The Eagles [MP3 320kbps].mp3
+336	Hotel California	Various Artists	\N	1/Hotel California - Various Artists [MP3 320kbps].mp3
+337	How Can I Tell Her	Lobo	\N	1/How Can I Tell Her - Lobo [MP3 320kbps].mp3
+338	How Deep Is Your Love	Bee Gees	\N	1/How Deep Is Your Love - Bee Gees [MP3 320kbps].mp3
+339	How Do I Live	Trisha Yearwood	\N	1/How Do I Live - Trisha Yearwood [MP3 320kbps].mp3
+340	Huế - Sài Gòn - Hà Nội	Khánh Ly	\N	1/Hue - Sai Gon - Ha Noi - Khanh Ly [MP3 320kbps].mp3
+341	Hungarian Rhapsody No. 2	Franz Liszt	\N	1/Hungarian Rhapsody No. 2 - Franz Liszt.mp3
+342	Hurting Each Other	Carpenters	\N	1/Hurting each other - Carpenters.mp3
+343	Huyền thoại mẹ	Trần Mạnh Tuấn	\N	1/Huyen Thoai Me - Tran Manh Tuan [MP3 320kbps].mp3
+344	I'd Love You To Want Me	Lobo	\N	1/I_d Love You To Want Me - Lobo [MP3 320kbps].mp3
+345	I Do, I Do, I Do, I Do, I Do	ABBA	\N	1/I do I do I do - ABBA.mp3
+346	I Don't Want To Miss A Thing	Aerosmith	\N	1/I Don_t Want To Miss A Thing - Aerosmith [MP3 320kbps].mp3
+347	If I Left You Go 	Westlife	\N	1/If i let you go - Westlife.mp3
+348	If We Ever Meet Again	Timbaland; Katy Perry	\N	1/If We Ever Meet Again - Timbaland_ Katy [MP3 320kbps].mp3
+349	I Have A Dream	ABBA	\N	1/I Have A Dream -  ABBA.mp3
+350	I Have A Dream	ABBA	\N	1/I Have A Dream - ABBA [MP3 320kbps].mp3
+351	I have a dream	Westlife	\N	1/I have a dream - Westlife.mp3
+352	I Just Called To Say I Love You	Stevie Wonder	\N	1/I Just Called To Say I Love You - Stevie [MP3 320kbps].mp3
+353	I Lay My Love On You	Westlife	\N	1/I lay my love on you - Westlife.mp3
+354	I Like Chopin	Gazebo	\N	1/I Like Chopin - Gazebo [MP3 320kbps].mp3
+355	I like Chopin	Paul Mauriat	\N	1/I like Chopin - Paul Mauriat.mp3
+356	Je t'aime	Lorie	\N	1/I Love You - Lorie [MP3 320kbps].mp3
+357	Imagine	John Lenon	\N	1/Imagine - John Lenon [MP3 320kbps].mp3
+358	Imagine	Romantic Guitar	\N	1/Imagine - Romantic Guitar [MP3 320kbps].mp3
+359	Incomplete	Backstreet Boys	\N	1/Incomplete - Backstreet Boys [MP3 320kbps].mp3
+360	Inconsolable	Backstreet Boys	\N	1/Inconsolable - Backstreet boys [MP3 320kbps].mp3
+361	In The End	Linkin Park	\N	1/In The End - Linkin Park [MP3 320kbps].mp3
+362	Iridescent	Linkin Park	\N	1/Iridescent - Linkin Park [MP3 320kbps].mp3
+363	I See The Light	Mandy Moore, Zachary Levi	\N	1/I See The Light - Mandy Moore_ Zachary L [MP3 320kbps].mp3
+364	I Still	Backstreet Boys	\N	1/I Still - Backstreet Boys [MP3 320kbps].mp3
+365	It's My Life	Bon Jovi	\N	1/It_s My Life - Bon Jovi [MP3 320kbps].mp3
+366	I've Been Waiting For You	ABBA	\N	1/Ive been waiting for you - ABBA .mp3
+367	I Want It That Way	Backstreet Boys	\N	1/I Want It That Way - Backstreet Boys [MP3 320kbps].mp3
+368	I Will Follow You	Various Artists	\N	1/I Will Follow You - Various Artists [MP3 320kbps].mp3
+369	I Won't Last A Day Without You	Carpenters	\N	1/I wont last a day without you - Carpenters.mp3
+370	Je Reviendrai	Sheryfa Luna	\N	1/Je Reviendrai - Sheryfa Luna .mp3
+371	J'espère	Marc Lavoine	\N	1/J'espère - Marc Lavoine.mp3
+372	Jet Lag	Simple Plan, Natasha Bedingfield	\N	1/Jet Lag - Simple Plan_ Natasha Bedingfie [MP3 320kbps].mp3
+373	Jingle Bells	Boney M	\N	1/Jingle Bells - Boney M [MP3 320kbps].mp3
+374	Joe Le Taxi	Vanessa Paradis	\N	1/Joe Le Taxi -  Vanessa Paradis.mp3
+375	Just Call To Say I Love You	Various Artists	\N	1/Just Call To Say I Love You - Various Ar [MP3 320kbps].mp3
+376	Just My Imagination	The Cranberries	\N	1/Just my imagination - The Cranbarries.mp3
+377	Katy Katy (Katie)	Lam Trường	\N	1/Katy Katy Katie_ - Lam Truong [MP3 320kbps].mp3
+378	Không còn ai	Đan Trường	\N	1/Khong Con Ai - Dan Truong [MP3 320kbps].mp3
+379	Không giờ rồi	Trường Vũ, Như Quỳnh	\N	1/Khong Gio Roi - Truong Vu_ Nhu Quynh [MP3 320kbps].mp3
+380	Khúc nhạc vui	Mắt Ngọc	\N	1/Khuc nhac vui - Mat Ngoc.mp3
+381	Khúc thụy du	Vô Thường	\N	1/Khuc Thuy Du - Vo Thuong [MP3 320kbps].mp3
+382	Kiếp lữ hành	GMC	\N	1/Kiep Lu Hanh - GMC [MP3 320kbps].mp3
+383	Kiếp rong buồn	Đan Trường	\N	1/Kiep Rong Buon - Dan Truong [MP3 320kbps].mp3
+384	Kiếp ve sầu	Đan Trường	\N	1/Kiep Ve Sau - Dan Truong [MP3 320kbps].mp3
+385	Killing Me Softly	Susan Wong	\N	1/Killing Me Softly - Susan Wong [MP3 320kbps].mp3
+386	Killing me softly with his song	Paul Mauriat	\N	1/Killing me softly with his song - Paul Mauriat.mp3
+387	Kiss From A Rose	Seal	\N	1/Kiss From A Rose - Seal [MP3 320kbps].mp3
+388	Knowing Me, Knowing You	ABBA	\N	1/Knowing me knowing you - ABBA.mp3
+389	Knowing Me, Knowing You	ABBA	\N	1/Knowing Me_ Knowing You - ABBA [MP3 320kbps].mp3
+390	Knowing Me, Knowing You	Paul Mauriat	\N	1/Knowing me knowing you - Paul Mauriat.mp3.mp3
+391	La Chan Son Dorphee	Vô Thường	\N	1/La Chan Son Dorphee - Vo Thuong [MP3 320kbps].mp3
+392	La Chanson Pour Ana	Vô Thường	\N	1/La Chanson Pour Ana - Vo Thuong [MP3 320kbps].mp3
+393	Lady In Red	Chris de Burgh	\N	1/Lady in red - Chris De Burgh.mp3
+394	La Isla Bonita	Madonna	\N	1/La Isla Bonita - Madonna [MP3 320kbps].mp3
+395	Lambada	Various Artists	\N	1/Lambada - Guitar.mp3
+396	Lamucho Que Tiero	Vô Thường	\N	1/Lamucho Que Tiero - Vo Thuong [MP3 320kbps].mp3
+397	La Paloma	Various Artists	\N	1/La Paloma - Guitar.mp3
+398	La Paloma	Julio Iglesias	\N	1/La Paloma - Julio Iglesias [MP3 320kbps].mp3
+399	La Paloma	Vô Thường	\N	1/La Paloma - Vo Thuong [MP3 320kbps].mp3
+400	La Riviere Sans Retour	Vô Thường	\N	1/La Riviere Sans Retour - Vo Thuong [MP3 320kbps].mp3
+401	Last Christmas	Wham	\N	1/Last Christmas - Wham [MP3 320kbps].mp3
+402	La travita [Prelude] (Verdi)	Paul Mauriat	\N	1/LA TRAVIATA [Prelude] (Verdi) - Paul Mauriat.mp3
+404	La Vie Comme Elle Vient	Clémence	\N	1/La Vie Comme Elle Vient - Clémence.mp3
+405	Leave Out All The Rest	Linkin Park	\N	1/Leave Out All The Rest - Linkin Park [MP3 320kbps].mp3
+406	Le Festin (Patatouille)	Camille	\N	1/Le Festin Patatouille_ - Camille [MP3 320kbps].mp3
+407	Le Geant De Papier	Jean-Jacquer Lafont	\N	1/Le Geant De Papier - Jean-Jacquer Lafont [MP3 320kbps].mp3
+408	Le Printemps, Les Quatre Saisons (Vivaldi)	Paul Mauriat	\N	1/LE PRINTEMPS, Les Quatre Saisons (Vivaldi) - Paul Mauriat.mp3
+409			\N	1/Les Enchaînés.mp3
+410	Les Feuilles Mort	Vô Thường	\N	1/Les Feuilles Mort - Vo Thuong [MP3 320kbps].mp3
+411	Les Rois Du Monde	Philippe d'Avilla, Damien Sarg	\N	1/Les Rois Du Monde - P D'avilla.mp3
+412	Les Rois Du Monde	Romeo; Julliet	\N	1/Les Rois Du Monde - Romeo_ Julliet [MP3 320kbps].mp3
+413	Let It Be	The Beatles	\N	1/Let It Be - The Beatles [MP3 320kbps].mp3
+414	Let Love Lead The Way	Spice Girls	\N	1/Let love lead the way - Spice girls.mp3
+415	Linh hồn tượng đá	Elvis Phương	\N	1/Linh hon tuong da - Elvis Phuong.mp3
+416	Linh hồn tượng đá	Vô Thường	\N	1/Linh Hon Tuong Da - Vo Thuong [MP3 320kbps].mp3
+417	Lòng mẹ	Vô Thường	\N	1/Long Me - Vo Thuong [MP3 320kbps].mp3
+418	Love Is Blue	Paul Mauriat	\N	1/Love is blue - Paul Mauriat.mp3
+419	Love Is Blue	Romantic Guitar	\N	1/Love Is Blue - Romantic Guitar [MP3 320kbps].mp3
+420	Love Is Blue	Vô Thường	\N	1/Love Is Blue - Vo Thuong [MP3 320kbps].mp3
+421	Love Story	Various Artists	\N	1/Love Story - Guitar.mp3
+422	Love Story	Romantic Guitar	\N	1/Love Story - Romantic Guitar [MP3 320kbps].mp3
+423	Love The Way You Lie	Eminem; Rihanna	\N	1/Love The Way You Lie - Eminem_ Rihanna [MP3 320kbps].mp3
+424	Love To Be Loved By You	Marc Terenzi	\N	1/Love To Be Loved By You - Marc Terenzi [MP3 320kbps].mp3
+425	Lựa chọn một vì sao	Ngọc Linh	\N	1/Lua Chon Mot Vi Sao - Ngoc Linh [MP3 320kbps].mp3
+426	Ma Baker	Boney M	\N	1/Ma Baker - Boney M [MP3 320kbps].mp3
+427	Mãi cho em mùa xuân	Đan Trường	\N	1/Mai Cho Em Mua Xuan - Dan Truong [MP3 320kbps].mp3
+428	Mandy	Paul Mauriat	\N	1/Mandy - Paul Mauriat.mp3
+429	Mandy	Westlife	\N	1/Mandy - Westlife.mp3
+430	Man In The Mirror	Michael Jackson	\N	1/Man In The Mirror - Michael Jackson [MP3 320kbps].mp3
+431	Mary`s Boy Child, Oh My Lord.	Boney M	\N	1/Mary_s Boy Child_ Oh My Lord_ - Boney M [MP3 320kbps].mp3
+432	Massachussets	Various Artists	\N	1/Massacbussets - Various Artists [MP3 320kbps].mp3
+433	Massachusetts	Bee Gees	\N	1/Massachusetts - Bee Gees [MP3 320kbps].mp3
+434	Mắt biếc	Tuấn Ngọc	\N	1/Mat Biec - Tuan Ngoc [MP3 320kbps].mp3
+435	Mắt biếc	Vô Thường	\N	1/Mat Biec - Vo Thuong [MP3 320kbps].mp3
+436	Mây lang thang	Kiều Nga	\N	1/May lang thang - Kieu Nga.mp3
+437	Menvet D Dur (Mozart)		\N	1/Menvet D Dur - Mozart.mp3
+438	Minuetto	Paul Mauriat	\N	1/Minuetto - Paul Mauriat.mp3
+439	Miss Well (Hao Xiang, Hao Xiang)	Cổ Cự Cơ	\N	1/Miss Well Hao Xiang_ Hao Xiang_ - Co Cu [MP3 320kbps].mp3
+440	Mon Amour	Romantic Guitar	\N	1/Mon Amour - Romantic Guitar [MP3 320kbps].mp3
+441	More Than I Can Say	Leo Sayer	\N	1/More Than I Can Say - Leo Sayer [MP3 320kbps].mp3
+442	More Than I Can Say	Various Artists	\N	1/More Than I Can Say - Various Artists [MP3 320kbps].mp3
+443	Một cõi đi về	Trần Mạnh Tuấn	\N	1/Mot Coi Di Ve - Tran Manh Tuan [MP3 320kbps].mp3
+444	Một cõi đi về	Vô Thường	\N	1/Mot Coi Di Ve - Vo Thuong [MP3 320kbps].mp3
+445	Một ngày như mọi ngày	Vô Thường	\N	1/Mot Ngay Nhu Moi Ngay - Vo Thuong [MP3 320kbps].mp3
+446	Một trăm phần trăm	Lê Tâm	\N	1/Mot Tram Phan Tram - Le Tam [MP3 320kbps].mp3
+447	Mưa buồn	Đan Trường, Cẩm Ly	\N	1/Mua Buon - Dan Truong_ Cam Ly [MP3 320kbps].mp3
+448	Mưa đêm ngoại ô	Như Quỳnh	\N	1/Mua Dem Ngoai O - Nhu Quynh [MP3 320kbps].mp3
+449	Mùa đông của anh	Lệ Quyên	\N	1/Mua dong cua anh-Le Quyen.mp3
+450	Mùa đông tàn phai	Đan Trường	\N	1/Mua Dong Tan Phai - Dan Truong [MP3 320kbps].mp3
+451	Mưa nửa đêm	Lệ Quyên	\N	1/Mua nua dem-Le Quyen.mp3
+452	Mưa nửa đêm	Vô Thường	\N	1/Mua Nua Dem - Vo Thuong [MP3 320kbps].mp3
+453	Mưa phi trường	Lam Trường	\N	1/Mua Phi Truong - Lam Truong [MP3 320kbps].mp3
+454	Mưa rừng	Như Quỳnh	\N	1/Mua Rung - Nhu Quynh [MP3 320kbps].mp3
+455	Mùa thu cho em	Vô Thường	\N	1/Mua Thu Cho Em - Vo Thuong [MP3 320kbps].mp3
+456	Mùa thu cho em	Ý Lan	\N	1/Mua Thu Cho Em - Y Lan [MP3 320kbps].mp3
+457	Mùa thu dưới mưa	Đan Trường	\N	1/Mua Thu Duoi Mua - Dan Truong [MP3 320kbps].mp3
+458	Mua Thu Paris	Thái Thanh	\N	1/Mua Thu Paris - Thai Thanh [MP3 320kbps].mp3
+459	Mùa thu Paris	Ý Lan	\N	1/Mua Thu Paris - Y Lan [MP3 320kbps].mp3
+460	Mưa trên cuộc tình 3	Đan Trường	\N	1/Mua Tren Cuoc Tinh 3 - Dan Truong [MP3 320kbps].mp3
+461	Mưa trên cuộc tình	Đan Trường	\N	1/Mua Tren Cuoc Tinh - Dan Truong [MP3 320kbps].mp3
+462	My Heart Will Go On	Celine Dion	\N	1/My Heart Will Go On - Celine Dion [MP3 320kbps].mp3
+463	My love	Westlife	\N	1/My love - Westlife.mp3
+464	My Way	Various Artists	\N	1/My Way - Guitar.mp3
+285	Freaky time	Point break	\N	1/Freaky time - Point break.mp3
+465	Nắng sân trường	Đan Trường	\N	1/Nang San Truong - Dan Truong [MP3 320kbps].mp3
+466	Nắng thủy tinh	Vô Thường	\N	1/Nang Thuy Tinh - Vo Thuong [MP3 320kbps].mp3
+467	Nerver On Sunday	Shayla; Trish; Thanh Truc;  Jacqueline Thuy Tram	\N	1/Nerver On Sunday - Shayla_ Trish_ Thanh [MP3 320kbps].mp3
+468	Nếu phôi pha ngày mai	Đan Trường, Cẩm Ly	\N	1/Neu Phoi Pha Ngay Mai - Dan Truong_ Cam [MP3 320kbps].mp3
+469	Never Gone	Backstreet Boys	\N	1/Never Gone - Backstreet Boys [MP3 320kbps].mp3
+470	Never Had A Dream Come True	S Club 7	\N	1/Never Had A Dream Come True - S Club 7 [MP3 320kbps].mp3
+471	New Divide	Linkin Park	\N	1/New Divide - Linkin Park [MP3 320kbps].mp3
+472	Ngã ba tình	Thiên Trường	\N	1/Nga ba tinh - Thien Truong.mp3
+473	Ngậm ngùi	Quang Dũng	\N	1/Ngam Ngui - Quang Dung [MP3 320kbps].mp3
+474	Ngậm ngùi	Vô Thường	\N	1/Ngam Ngui - Vo Thuong [MP3 320kbps].mp3
+475	Ngàn năm vẫn đợi	Kiều Nga	\N	1/Ngan Nam Van Doi - Kieu Nga [MP3 320kbps].mp3
+476	Ngày trở về	Hoàng Oanh	\N	1/Ngay Tro Ve - Hoang Oanh [MP3 320kbps].mp3
+477	Ngày xưa Hoàng Thị	Thái Thanh	\N	1/Ngay Xua Hoang Thi - Thai Thanh [MP3 320kbps].mp3
+478	Nghìn trùng xa cách	Thái Thanh	\N	1/Nghin Trung Xa Cach - Thai Thanh [MP3 320kbps].mp3
+479	Ngọn trúc đào	Lệ Quyên	\N	1/Ngon truc dao-Le Quyen.mp3
+480	Người con gái Việt Nam da vàng	Khánh Ly	\N	1/Nguoi Con Gai Viet Nam Da Vang - Khanh L [MP3 320kbps].mp3
+481	Người già em bé	Khánh Ly	\N	1/Nguoi Gia Em Be - Khanh Ly [MP3 320kbps].mp3
+482	Người ngoài phố	Như Quỳnh	\N	1/Nguoi Ngoai Pho - Nhu Quynh [MP3 320kbps].mp3
+483	Người tình mùa đông	Như Quỳnh	\N	1/Nguoi Tinh Mua Dong - Nhu Quynh [MP3 320kbps].mp3
+484	Người tình trăm năm	Đức Huy	\N	1/Nguoi Tinh Tram Nam - Duc Huy [MP3 320kbps].mp3
+485	Người tình trăm năm	Ngọc Lan	\N	1/Nguoi Tinh Tram Nam - Ngoc Lan [MP3 320kbps].mp3
+486	Nguyệt ca	Vô Thường	\N	1/Nguyet Ca - Vo Thuong [MP3 320kbps].mp3
+487	Nhật ký đời tôi	Hương Lan	\N	1/Nhat ky doi toi - Huong Lan.mp3
+488	Nhật ký đời tôi	Phi Nhung	\N	1/Nhat ky doi toi - Phi Nhung.mp3
+489	Nhật ký đời tôi	Trường Vũ	\N	1/Nhat Ky Doi Toi - Truong Vu [MP3 320kbps].mp3
+490	Nhật ký đời tôi	Vô Thường	\N	1/Nhat Ky Doi Toi - Vo Thuong [MP3 320kbps].mp3
+491	Nhé anh	Mỹ Tâm	\N	1/Nhe Anh - My Tam [MP3 320kbps].mp3
+492	Nhìn những mùa thu đi	Vô Thường	\N	1/Nhin Nhung Mua Thu Di - Vo Thuong [MP3 320kbps].mp3
+493	Như cánh vạc bay	Trần Mạnh Tuấn	\N	1/Nhu Canh Vac Bay - Tran Manh Tuan [MP3 320kbps].mp3
+494	Những đồi hoa sim	Hoàng Oanh	\N	1/Nhung Doi Hoa Sim - Hoang Oanh [MP3 320kbps].mp3
+495	Những đồi hoa sim	Như Quỳnh	\N	1/Nhung Doi Hoa Sim - Nhu Quynh [MP3 320kbps].mp3
+496	Niệm khúc cuối	Lê Hiếu	\N	1/Niem Khuc Cuoi - Le Hieu [MP3 320kbps].mp3
+497	Niệm khúc cuối	Vô Thường	\N	1/Niem Khuc Cuoi - Vo Thuong [MP3 320kbps].mp3
+498	Nightflight To Venus	Boney M	\N	1/Nightflight To Venus - Boney M [MP3 320kbps].mp3
+499	Nỗi đau chia xa	Đan Trường	\N	1/Noi Dau Chia Xa - Dan Truong [MP3 320kbps].mp3
+500	Nối lại tình xưa	Như Quỳnh, Mạnh Quỳnh	\N	1/Noi Lai Tinh Xua - Nhu Quynh_ Manh Quynh [MP3 320kbps].mp3
+501	Nỗi nhớ dịu êm	Lam Trường	\N	1/Noi Nho Diu Em - Lam Truong [MP3 320kbps].mp3
+502	Nỗi sầu đêm vắng	GMC	\N	1/Noi Sau Dem Vang - GMC [MP3 320kbps].mp3
+503	Nối vòng tay lớn	Tốp ca quân khu 7	\N	1/NoiVongTayLon.mp3
+504	No Promises	Shayne Ward	\N	1/No Promises - Shayne Ward [MP3 320kbps].mp3
+505	Nothing is gonna change my love for you	George Benson	\N	1/Nothing gonna change my love for you - George Benson.mp3
+506	Nửa đêm ngoài phố	Vô Thường	\N	1/Nua Dem Ngoai Pho - Vo Thuong [MP3 320kbps].mp3
+507	Nửa hồn thương đau	Vô Thường	\N	1/Nua Hon Thuong Dau - Vo Thuong [MP3 320kbps].mp3
+508	Numb	Linkin Park	\N	1/Numb - Linkin Park [MP3 320kbps].mp3
+509	Oh! Mon Amour	Christophe	\N	1/Oh_ Mon Amour - Christophe [MP3 320kbps].mp3
+510	Olive Tree	Paul Mauriat	\N	1/Olive tree - Paul Mariat.mp3
+511	One Man One Woman	ABBA	\N	1/one man one woman - ABBA.mp3
+512	One Man One Woman	ABBA	\N	1/One man one woman - ABBA.mp3
+513	One More Time	The Carpenters	\N	1/One more time - Carpenters.mp3
+514	One Voice	Billy Gilman	\N	1/One voice - Billy Gilman.mp3
+515	Only Love	Trademark	\N	1/Only Love - Trademark [MP3 320kbps].mp3
+516	Only Yesterday	Carpenters	\N	1/Only yesterday - Carpenters.mp3
+517	Our Last Summer	ABBA	\N	1/Our last summer - ABBA.mp3
+518	Over And Over Roule SEnroule	Nana Mouskouri	\N	1/Over And Over (Roule S'Enroule) - Nana Mouskouri.mp3
+519	Owner of My Heart	Sasha	\N	1/Owner of My Heart - Sasha.mp3
+520	Paint My Love	Michael Learns To Rock	\N	1/Paint My Love - Michael Learns To Rock [MP3 320kbps].mp3
+521	Papa	Paul Anka	\N	1/Papa - Paul Anka [MP3 320kbps].mp3
+522	Paris có gì lạ không em	Vô Thường	\N	1/Paris Co Gi La Khong Em - Vo Thuong [MP3 320kbps].mp3
+523	Part-Time Lover	Paul Mauriat	\N	1/Part time lover - Paul Mauriat.mp3
+524	Pearl Fishers (Bizet)	Paul Mauriat	\N	1/PEARL FISHERS (Bizet) - Paul Mauriat.mp3
+525	Phố đêm	Như Quỳnh, Trường Vũ	\N	1/Pho Dem - Nhu Quynh_ Truong Vu [MP3 320kbps].mp3
+526	Phố Hoa	Cẩm Ly	\N	1/Pho Hoa - Cam Ly [MP3 320kbps].mp3
+527	Phôi pha	Tuấn Ngọc	\N	1/Phoi Pha - Tuan Ngoc [MP3 320kbps].mp3
+528	Phong ba tình đời	Đan Trường	\N	1/Phong Ba Tinh Doi - Dan Truong [MP3 320kbps].mp3
+529	Phố Xuân	Cẩm Ly	\N	1/Pho Xuan - Cam Ly [MP3 320kbps].mp3
+530	Picture Perfect	Angela Via	\N	1/Picture perfect - Angela via.mp3
+531	Please Mister Postman	The Beatles	\N	1/Please Mister Postman - The Beatles.mp3
+532	Please Mr. Postman	Carpenters	\N	1/Please Mr Postman - Carpenters.mp3
+533	Pocketful Of Sunshine	Natasha Bedingfield	\N	1/Pocketful Of Sunshine - Natasha Bedingfield [MP3 320kbps].mp3
+534	Poupee De Cire, Poupee De Son	France Gall	\N	1/Poupee De Cire_ Poupee De Son - France G [MP3 320kbps].mp3
+535	Pretty Boy	M2M	\N	1/Pretty Boy - M2M [MP3 320kbps].mp3
+536	Proud Of You	Fiona Fung	\N	1/Proud Of You - Fiona Fung [MP3 320kbps].mp3
+537	Quand Le Film Est Triste	Vô Thường	\N	1/Quand Le Film Est Triste - Vo Thuong [MP3 320kbps].mp3
+538	Quê hương	Trần Mạnh Tuấn	\N	1/Que Huong - Tran Manh Tuan [MP3 320kbps].mp3
+539	Quelques Notes Pour Anna	Various Artists	\N	1/Quelques Notes Pour Anna - Various Artis [MP3 320kbps].mp3
+540			\N	1/Qui Sait, Qui Sait.mp3
+541	Quisaz Quisaz	Vô Thường	\N	1/Quisaz Quisaz - Vo Thuong [MP3 320kbps].mp3
+542	Quizas, Quizas, Quizas	Various Artists	\N	1/Quizas_ Quizas_ Quizas - Various Artists [MP3 320kbps].mp3
+543	Quỳnh Hương	Tuấn Ngọc	\N	1/Quynh Huong - Tuan Ngoc [MP3 320kbps].mp3
+544	Quỳnh hương	Vô Thường	\N	1/Quynh Huong - Vo Thuong [MP3 320kbps].mp3
+545	Rainy Days And Mondays	Carpenters	\N	1/Rainy days and Mondays - Carpenters.mp3
+546	Rango Theme Song	Los Lobos	\N	1/Rango Theme Song - rango film.mp3
+547	Rasputin	Boney M	\N	1/Rasputin - Boney M [MP3 320kbps].mp3
+548	Remember The Name	Fort Minor	\N	1/Remember The Name - Fort Minor [MP3 320kbps].mp3
+549	Remember The Time	Michael Jackson	\N	1/Remember The Time - Michael Jackson [MP3 320kbps].mp3
+550	Rhythm Of The Rain	Cascades	\N	1/Rhythm Of The Rain - Cascades [MP3 320kbps].mp3
+551	Right Here Waiting	Richard Marx	\N	1/Right Here Waiting - Richard Marx [MP3 320kbps].mp3
+552	Right Here Waiting	Romantic Guitar	\N	1/Right Here Waiting - Romantic Guitar [MP3 320kbps].mp3
+553	Ring Ring (Bara Du Slog En Sig	ABBA	\N	1/Ring ring - ABBA.mp3
+554	Ring Ring	ABBA	\N	1/Ring Ring - ABBA [MP3 320kbps].mp3
+555	Rivers Of Babylon	Boney M	\N	1/Rivers Of Babylon - Boney M [MP3 320kbps].mp3
+556	Rồi từ đây	Ngọc Linh	\N	1/Roi Tu Day - Ngoc Linh [MP3 320kbps].mp3
+557	Romance In The Rain (Tinh Sau Tham Mua Bui Nhoa; ææ·±æ·±é¨æ¿æ¿)	Triệu Vy	\N	1/Romance In The Rain Tinh Sau Tham Mua Bu [MP3 320kbps].mp3
+558	Romance	Romantic Guitar	\N	1/Romance - Romantic Guitar [MP3 320kbps].mp3
+559	Romantic Guitar	Romantic Guitar	\N	1/Romantic Guitar - Romantic Guitar [MP3 320kbps].mp3
+560	Romeo And Juliette	Vô Thường	\N	1/Romeo And Juliette - Vo Thuong [MP3 320kbps].mp3
+561	Roule s'enroule	Nana Mouskouri	\N	1/Roule S'enroule - Nana Mouskouri.mp3
+562	Ru Em	Vô Thường	\N	1/Ru Em - Vo Thuong [MP3 320kbps].mp3
+563	Rừng lá thấp	Trường Vũ	\N	1/Rung La Thap - Truong Vu [MP3 320kbps].mp3
+564	Said Goodbye	Châu Kiệt Luân	\N	1/Said Goodbye  - Chau Kiet Luan [MP3 320kbps].mp3
+565	Sài Gòn đẹp lắm		\N	1/Sai gon dep lam - Thanh Ha.mp3
+566	Sài Gòn Quật Khởi		\N	1/SaiGonQuatKhoi.mp3
+567	Samba Mambo	Vô Thường	\N	1/Samba Mambo - Vo Thuong [MP3 320kbps].mp3
+568	San Francisco	Paul Mauriat	\N	1/San Francisco - Paul Mauriat.mp3
+569	San Francisco	Scott McKenzie	\N	1/San Francisco - Scott McKenzie [MP3 320kbps].mp3
+570	Sao chưa thấy hồi âm	Hoàng Oanh	\N	1/Sao Chua Thay Hoi Am - Hoang Oanh [MP3 320kbps].mp3
+571	Sầu lẻ bóng	Lệ Quyên	\N	1/Sau le bong-Le Quyen.mp3
+572	Sầu lẻ bóng	Vô Thường	\N	1/Sau Le Bong - Vo Thuong [MP3 320kbps].mp3
+573	Say you say me	Lionel Richie	\N	1/Say you say me - Lionel Richie.mp3
+574	Say You, Say Me (1986)	Paul Mauriat	\N	1/Say you say me - Paul Mauriat.mp3
+575	Scandinavia	Michael Learns To Rock	\N	1/Scandinavia - Michael Learns To Rock [MP3 320kbps].mp3
+576	Seasons In The Sun 	Westlife	\N	1/Seasons in the sun - Westlife.mp3
+577	Se Donner La Main	Lorie	\N	1/Se Donner La Main - Lorie.mp3
+578	Self Control	Laura Branigan	\N	1/Self Control - Laura Branigan [MP3 320kbps].mp3
+579	Self control	Paul Mauriat	\N	1/Self Control - Paul Mauriat.mp3
+580	Sexy Sexy Lover (feat. Eric Singleton)	Modern Talking	\N	1/Sexy sexy lover - Modern Talking.mp3
+581	Shadow Of The Day	Linkin Park	\N	1/Shadow Of The Day - Linkin Park [MP3 320kbps].mp3
+582	Shape Of My Heart	Backstreet Boys	\N	1/Shape Of My Heart - Backstreet Boys [MP3 320kbps].mp3
+583	She Bangs	Ricky Martin	\N	1/She bangs - Ricky Martin.mp3
+656	Tình phai	Lam Trường	\N	1/Tinh Phai - Lam Truong [MP3 320kbps].mp3
+584	Show Me The Meaning Of Being Lonely	Backstreet Boys	\N	1/Show Me The Meaning Of Being Lonely - Backstreet boys [MP3 320kbps].mp3
+585	S'il Suffisait D'aimer	Celine Dion	\N	1/S_il Suffisait D_aimer - Celine Dion [MP3 320kbps].mp3
+586	Sleeping Child	Michael Learns To Rock	\N	1/Sleeping Child - Michael Learns To Rock [MP3 320kbps].mp3
+587	Solamente Una Vez	Vô Thường	\N	1/Solamente Una Vez - Vo Thuong [MP3 320kbps].mp3
+588	Soledad	Westlife	\N	1/Soledad - Westlife.mp3
+589	Somebody That I Used To Know	Gotye, Kimbra	\N	1/Somebody That I Used To Know - Gotye_ Ki [MP3 320kbps].mp3
+590	Somewhere I Belong	Linkin Park	\N	1/Somewhere I Belong - Linkin Park [MP3 320kbps].mp3
+591	Song For Anna	Paul Mauriat	\N	1/Song for Anna - Paul Mauriat.mp3
+592	So Real	Mandy Moore	\N	1/So real - Mandy Moore.mp3
+593	Sound Of Silence	Various Artists	\N	1/Sound Of Silence - Guitar.mp3
+594	Spanish Eyes	Vô Thường	\N	1/Spanish Eyes - Vo Thuong [MP3 320kbps].mp3
+595	Spanish Guitar	Toni Braxton	\N	1/Spanish guitar - Toni Braxton.mp3
+596	Stand By Me	Ben E. King	\N	1/Stand By Me - Ben E_ King [MP3 320kbps].mp3
+597	Still Loving You	Scorpions	\N	1/Still Loving You - Scorpions [MP3 320kbps].mp3
+598	Sunny	Boney M	\N	1/Sunny - Boney M [MP3 320kbps].mp3
+599	Superstar	Carpenters	\N	1/Super star - Carpenters.mp3
+600	Super Trouper	ABBA	\N	1/Super Trouper - ABBA.mp3
+601	Sutter Mill	Dan Fogelberg	\N	1/Sutter Mill - Dan Fogelberg [MP3 320kbps].mp3
+602	Sweet, Sweet Smile	Carpenters	\N	1/Sweet sweet smile - Carpenters.mp3
+603	Symphony No.3 (Brahms)	Paul Mauriat	\N	1/SYMPHONIE No.3 (Brahms) - Paul Mauriat.mp3
+604	Symphony No.40, 1er Mouvement (Mozart)	Paul Mauriat	\N	1/SYMPHONIE No.40, 1er Mouvement (Mozart) - Paul Mauriat.mp3
+605	Symphony No.5 In C Minor Opus 67	Paul Mauriat	\N	1/Symphony No.5 In C Minor Opus 67 - Paul Mauriat.mp3
+606	Tại tôi tuổi sửu	Văn Hường	\N	1/Tai Toi Tuoi Suu - Van Huong.mp3
+607	Take Me Home Country Home	Various Artists	\N	1/Take Me Home Country Home - Various Arti [MP3 320kbps].mp3
+608	Take Me To Your Heart	Michael Learns To Rock	\N	1/Take Me To Your Heart - Michael Learns T [MP3 320kbps].mp3
+609	Tám điệp khúc	Hoàng Oanh	\N	1/Tam Diep Khuc - Hoang Oanh [MP3 320kbps].mp3
+610	Tào Tháo chạy rau	Văn Hường	\N	1/Tao Thao Chay Rau - Van Huong.mp3
+611	Tears I Heaven	Various Artists	\N	1/Tears I Heaven - Various Artists [MP3 320kbps].mp3
+612	Tề Thiên Đại Thánh	Văn Hường	\N	1/Te Thien Dai Thanh - Van Huong.mp3
+613	Thành phố buồn	Chế Linh	\N	1/Thanh Pho Buon - Che Linh [MP3 320kbps].mp3
+614	Thà như giọt mưa	Elvis Phương	\N	1/Tha Nhu Giot Mua - Elvis Phuong [MP3 320kbps].mp3
+615	Thà như giọt mưa	Vô Thường	\N	1/Tha Nhu Giot Mua - Vo Thuong [MP3 320kbps].mp3
+616	That's Me	ABBA	\N	1/Thats me - ABBA.mp3
+617	That`s What Friends Are For	Dionne Warwick	\N	1/That_s What Friends Are For - Dionne War [MP3 320kbps].mp3
+618	That's What Friends Are For (1986)	Paul Mauriat	\N	1/Thats what friends are for - Paul Mauriat.mp3
+619	That's Why You Go Away	Michael Learns To Rock	\N	1/That_s Why You Go Away - Michael Learns [MP3 320kbps].mp3
+620	The Actor	Michael Learns To Rock	\N	1/The Actor - Michael Learns To Rock [MP3 320kbps].mp3
+621	The Color Of The Night	Lauren Christy	\N	1/The Color Of The Night - Lauren Christy [MP3 320kbps].mp3
+622	The Cup Of Life	Ricky Martin	\N	1/The Cup of life  - Ricky Martin.mp3
+623	The day before you came - ABBA	ABBA	\N	1/The day before you came - ABBA.mp3
+624	The Day You Went Away	M2M	\N	1/The Day You Went Away - M2M [MP3 320kbps].mp3
+625	The End Of The World	Carpenters	\N	1/The end of the world - Carpenters.mp3
+626	The End Of The World	Romantic Guitar	\N	1/The End Of The World - Romantic Guitar [MP3 320kbps].mp3
+627	The House Of The Rising Sun	The Animals	\N	1/The House Of The Rising Sun - The Animal [MP3 320kbps].mp3
+628	The Power Of Love	Celine Dion	\N	1/The Power Of Love - Celine Dion [MP3 320kbps].mp3
+629	The Sound Of San Francisco	Deefays	\N	1/The Sound Of San Francisco - Deefays.mp3
+630	The Winner Takes It All	ABBA	\N	1/The Winner takes it all - ABBA.mp3
+631	The Winner Takes It All	ABBA	\N	1/The Winner Takes It All - ABBA [MP3 320kbps].mp3
+632	(They Long To Be) Close To You	Carpenters	\N	1/They Long To Be - Close To You - The Carpenters.mp3
+633	This I Promise You	N'Sync	\N	1/This I Promise You - N Sync [MP3 320kbps].mp3
+634	Thôi anh hãy về	Thu Phương, Lam Trường	\N	1/Thoi Anh Hay Ve - Thu Phuong_ Lam Truong [MP3 320kbps].mp3
+635	Thôi	Vô Thường	\N	1/Thoi - Vo Thuong [MP3 320kbps].mp3
+636	Those Were The Days	Paul Mauriat	\N	1/Those Were The Days - Paul Mauriat.mp3
+637	Thriller	Michael Jackson	\N	1/Thriller - Michael Jackson.mp3
+638	Thriller	Michael Jackson	\N	1/Thriller - Michael Jackson [MP3 320kbps].mp3
+639	Tiền bạc bạc tiền	Văn Hường	\N	1/Tien bac bac tien - Van Huong.mp3
+640	Tiễn bạn lên đường	Lam Trường	\N	1/Tien Ban Len Duong - Lam Truong [MP3 320kbps].mp3
+641	Tiến về Sài Gòn	Tốp ca quân khu 7	\N	1/TienVeSaiGon_TopNamNuQK7.mp3
+642	Tik Tok	Kesha	\N	1/Tik Tok - Kesha [MP3 320kbps].mp3
+643	Tình bạn	Đan Trường	\N	1/Tinh Ban - Dan Truong [MP3 320kbps].mp3
+644	Tình Ca	Trung Kiên	\N	1/TinhCa_TrungKien.mp3
+645	Tình có như không	Nguyễn Hưng	\N	1/Tinh Co Nhu Khong - Nguyen Hung [MP3 320kbps].mp3
+646	Tình đời	Lệ Quyên	\N	1/Tinh doi-Le Quyen.mp3
+647	Tình Đơn Phương	Đan Trường	\N	1/Tinh don phuong - Dan Truong.mp3
+648	Tín hiệu trái tim	Đan Trường	\N	1/Tin Hieu Trai Tim - Dan Truong [MP3 320kbps].mp3
+649	Tình khúc buồn	Ngọc Lan	\N	1/Tinh Khuc Buon - Ngoc Lan [MP3 320kbps].mp3
+650	Tình khúc buồn	Vô Thường	\N	1/Tinh Khuc Buon - Vo Thuong [MP3 320kbps].mp3
+651	Tình khúc tháng 6	Vô Thường	\N	1/Tinh Khuc Thang 6 - Vo Thuong [MP3 320kbps].mp3
+652	Tình lính	Trish Thùy Trang	\N	1/Tinh Linh - Trish Thuy Trang [MP3 128kbps].mp3
+653	Tình lỡ	Lệ Quyên	\N	1/Tinh lo-Le Quyen.mp3
+654	Tình mênh mang	Đan Trường	\N	1/Tinh Menh Mang - Dan Truong [MP3 320kbps].mp3
+655	Tình nhớ	Elvis Phương	\N	1/Tinh nho - Elvis Phuong.mp3
+657	Tình quay gót	Đan Trường	\N	1/Tinh Quay Got - Dan Truong [MP3 320kbps].mp3
+658	Tình sầu	Vô Thường	\N	1/Tinh Sau - Vo Thuong [MP3 320kbps].mp3
+659	Tình thôi xót xa	Lam Trường	\N	1/Tinh Thoi Xot Xa - Lam Truong [MP3 320kbps].mp3
+660	Tình thơ	Ngọc Linh, Diễm Quyên	\N	1/Tinh Tho - Ngoc Linh_ Diem Quyen [MP3 320kbps].mp3
+661	Tình vỗ cánh bay	Đan Trường	\N	1/Tinh Vo Canh Bay - Dan Truong [MP3 320kbps].mp3
+662	Tình xa	Elvis Phương	\N	1/Tinh xa - Elvis Phuong.mp3
+663	Tình xuân	Đan Trường	\N	1/Tinh Xuan - Dan Truong [MP3 320kbps].mp3
+664	Tình yêu chưa nói	Mỹ Tâm	\N	1/Tinh Yeu Chua Noi - My Tam [MP3 320kbps].mp3
+665	To Be With You	Mr Big	\N	1/To be with you - Mr Big.mp3
+666	Toccata	Paul Mauriat	\N	1/Toccata - Paul Mauriat [MP3 320kbps].mp3
+667	Tóc em đuôi gà	Quang Linh	\N	1/Toc Em Duoi Ga - Quang Linh [MP3 320kbps].mp3
+668	Tôi đi hớt tóc	Văn Hường	\N	1/Toi di hot toc - Van Huong.mp3
+669	Tôi nhớ tên anh	Trish Thùy Trang	\N	1/Toi Nho Ten Anh - Trish Thuy Trang [MP3 320kbps].mp3
+670	Tôi sẽ đi thăm	Khánh Ly	\N	1/Toi Se Di Tham - Khanh Ly [MP3 320kbps].mp3
+671	Tôi thua số đuôi	Văn Hường	\N	1/Toi thua so duoi - Van Huong.mp3
+672	Tombe La Neige	Vô Thường	\N	1/Tombe La Neige - Vo Thuong [MP3 320kbps].mp3
+673	Tomorrow Will Come	Trish Thùy Trang	\N	1/Tomorrow Will Come - Trish Thuy Trang [MP3 320kbps].mp3
+675	Too Much Heaven	Bee Gees	\N	1/Too Much Heaven - Bee Gees [MP3 320kbps].mp3
+676	Too Much Heaven	Paul Mauriat	\N	1/Too much heaven - Paul Mauriat.mp3
+677	Top Of The World	Carpenters	\N	1/Top of the world - Carpenters.mp3
+678	Total Eclipse of the heart	Westlife	\N	1/Total eclipse of the heart - Westlife.mp3
+679	Tous Les Garcons Et Les Filles	Francoise Hardy	\N	1/Tous Les Garcons Et Les Filles - Francoi [MP3 320kbps].mp3
+680	Toy Soldiers	Martika	\N	1/Toy Soldiers - Martika [MP3 320kbps].mp3
+681	Tragedy	Bee Gees	\N	1/Tragedy - Bee Gees [MP3 320kbps].mp3
+682	Trái tim không ngủ yên	Mỹ Linh, Bằng Kiều	\N	1/Trai Tim Khong Ngu Yen - My Linh_ Bang K [MP3 320kbps].mp3
+683	Trả lại em yêu	Duy Quang	\N	1/Tra Lai Em Yeu - Duy Quang [MP3 320kbps].mp3
+684	Trăng tàn trên hè phố	Vô Thường	\N	1/Trang Tan Tren He Pho - Vo Thuong [MP3 320kbps].mp3
+685	Trả nợ tình xa	Nguyễn Hưng, Lưu Bích	\N	1/Tra No Tinh Xa - Luu Bich_ Nguyen Hung [MP3 320kbps].mp3
+686	Tristes	Vô Thường	\N	1/Tristes - Vo Thuong [MP3 320kbps].mp3
+687	Trở lại phố cũ	Đan Trường, Cẩm Ly	\N	1/Tro Lai Pho Cu - Dan Truong_ Cam Ly [MP3 320kbps].mp3
+688	Trộm nhìn nhau	Hoàng Oanh	\N	1/Trom Nhin Nhau - Hoang Oanh [MP3 320kbps].mp3
+689	Trống cơm	Như Quỳnh, Thanh Trúc, Shayla	\N	1/Trong Com - Nhu Quynh_ Thanh Truc_ Shayl [MP3 320kbps].mp3
+690	Trong Vang	Phuong Thanh	\N	1/Trong Vang - Phuong Thanh [MP3 320kbps].mp3
+691	Trúc đào	Mạnh Đình	\N	1/Truc Dao - Manh Dinh [MP3 320kbps].mp3
+692	Trúc đào	Vô Thường	\N	1/Truc Dao - Vo Thuong [MP3 320kbps].mp3
+693	Tựa tuồng sân khấu	Văn Hường	\N	1/Tua Tuong San Khau - Van Huong.mp3
+694	Tư Ếch Ba Râu đi xem đại nhạc hội	Văn Hường	\N	1/Tu Ech Ba Rau Di Xem Dai Nhac Hoi (voi Ba Van) - Van Huong.mp3
+695	Tư ếch đại chiến Văn Hường	Văn Hường	\N	1/Tu Ech Dai Chien Van Huong.mp3
+696	Văn Hường đi xe gắn máy	Văn Hường	\N	1/Tu ech di xe gan may - Van Huong.mp3
+697	Tuổi 13	Vô Thường	\N	1/Tuoi 13 - Vo Thuong [MP3 320kbps].mp3
+698	Tưởng rằng đã quên	Vô Thường	\N	1/Tuong Rang Da Quen - Vo Thuong [MP3 320kbps].mp3
+699	Turkish March		\N	1/Turkish March.mp3
+700	Unbreakable	Westlife	\N	1/Unbreakable - Westlife.mp3
+701	Une Femme Amoureuse	Sylvie Vartan	\N	1/Une Femme Amoureuse - Sylvie Vartan.mp3
+702	Une Histoire D`amour	Mireille Mathieu	\N	1/Une Histoire D_amour - Mireille Mathieu [MP3 320kbps].mp3
+703	Unwritten	Natasha Bedingfield	\N	1/Unwritten - Natasha Bedingfield [MP3 320kbps].mp3
+704	Ước gì	Mỹ Tâm	\N	1/Uoc Gi - My Tam [MP3 320kbps].mp3
+705	Uptown Girl	Westlife	\N	1/Uptown girls - Westlife.mp3
+706	Và con tim đã vui trở lại	Đức Huy	\N	1/Va Con Tim Da Vui Tro Lai - Duc Huy [MP3 320kbps].mp3
+707	Valse en do dieze mineur Op.64-2 (Chopin)	Paul Mauriat	\N	1/VALSE EN DO DIEZE MINEUR Op.64-2 (Chopin) - Paul Mauriat.mp3
+708	Vầng trăng cô đơn	Ưng Hoàng Phúc	\N	1/Vang Trang Co Don - Ung Hoang Phuc [MP3 320kbps].mp3
+709	Văn Hường đi chúc Tết	Văn Hường	\N	1/Văn Hường Đi Chúc Tết - Văn Hường.mp3
+710	Văn Hường đi coi hát cải lương	Văn Hường	\N	1/Van Huong Di Coi Hat Cai Luong - Van Huong.mp3
+711	Văn Hường đi hát	Văn Hường	\N	1/Van Huong Di Hat - Van Huong.mp3
+712	Vào hạ	Tam Ca Áo Trắng	\N	1/Vao Ha - Tam Ca Ao Trang [MP3 320kbps].mp3
+713	Và tôi cũng yêu em	Duy Quang	\N	1/Va Toi Cung Yeu Em - Duy Quang [MP3 320kbps].mp3
+714	Và tôi cũng yêu em	Lê Hiếu	\N	1/Va toi cung yeu em - Le Hieu.mp3
+715	Và tôi cũng yêu em	Ngọc Lan	\N	1/Va Toi Cung Yeu Em - Ngoc Lan [MP3 320kbps].mp3
+716	Venus Des Abribus	Patricia Kaas	\N	1/Venus Des Abribus - Patricia Kaas.mp3
+717	Vết thù trên lưng ngựa hoang	Elvis Phương	\N	1/Vet Thu Tren Lung Ngua Hoang - Elvis Phu [MP3 320kbps].mp3
+718			\N	1/Vet thu tren lung ngua hoang - Elvis Phuong.mp3
+719	Viva Forever	Spice Girls	\N	1/Viva Forever - Spice Girls [MP3 320kbps].mp3
+720	Viva la Vida (Radio Edit)	Coldplay	\N	1/Viva la Vida Radio Edit_ - Coldplay [MP3 320kbps].mp3
+721	Vợ Tôi Mê Tân Nhạc	Văn Hường	\N	1/Vợ Tôi Mê Tân Nhạc - Văn Hường.mp3
+722	Vợ tôi nói tiếng tây	Văn Hường	\N	1/Vo Toi Noi Tieng Tay - Van Huong.mp3
+723	Vợ tui tui sợ	Văn Hường	\N	1/Vo Tui Tui So - Van Huong.mp3
+724	Vùng trời bình yên	Đàm Vĩnh Hưng	\N	1/Vung Troi Binh Yen - Dam Vinh Hung [MP3 320kbps].mp3
+725	Walk Don't Rango	Los Lobos Featuring Arturo San	\N	1/Walk Don't Rango - rango film.mp3
+726	Wannabe	Spice Girls	\N	1/Wannabe - Spice Girls [MP3 320kbps].mp3
+727	Waterloo - ABBA	ABBA	\N	1/Waterloo - ABBA.mp3
+728	We Are Never Ever Getting Back Together	Taylor Swift	\N	1/We Are Never Ever Getting Back Together [MP3 320kbps].mp3
+729	We Are The World	USA For Africa	\N	1/We Are The World - Usa For Africa [MP3 320kbps].mp3
+730	We Are Young	Fun, Janelle Monae	\N	1/We Are Young - Fun_ Janelle Monae [MP3 320kbps].mp3
+731	We've Only Just Begun	Carpenters	\N	1/We ve only just begun - Carpenters.mp3
+732	What About Now	Westlife	\N	1/What about now - Westlife.mp3
+733	What I've Done	Linkin Park	\N	1/What I_ve Done - Linkin Park [MP3 320kbps].mp3
+734	When A Woman Loves A Man	Westlife	\N	1/When a woman loves a man - Westlife.mp3
+735	When I Need You	Paul Mauriat	\N	1/When i need you - Paul Mauriat.mp3
+736	When You Say Nothing At All	Ronan Keating	\N	1/When You Say Nothing At All - Ronan Keat [MP3 320kbps].mp3
+737	When You Tell Me That You Love Me	Diana Ross	\N	1/When you tell that you love me - Diana Ross.mp3
+738	Where Do You Go	No Mercy	\N	1/Where Do You Go - No Mercy [MP3 320kbps].mp3
+739	Why	Tiggy	\N	1/Why - Tiggy [MP3 320kbps].mp3
+740	Windy	Paul Mauriat	\N	1/Windy - Paul Mauriat.mp3
+741	Without You	Mariah Carey	\N	1/Without You - Mariah Carey [MP3 320kbps].mp3
+742	Words	Bee Gees	\N	1/Words - Bee Gees [MP3 320kbps].mp3
+743	Written in the stars	Westlife	\N	1/Written in the stars - Westlife.mp3
+744	Xin lỗi tình yêu	Đàm Vĩnh Hưng	\N	1/Xin Loi Tinh Yeu - Dam Vinh Hung [MP3 320kbps].mp3
+745	Xin mặt trời ngủ yên	Ngọc Lan	\N	1/Xin Mat Troi Ngu Yen - Ngoc Lan [MP3 320kbps].mp3
+746	Xin trả nợ người	Vô Thường	\N	1/Xin Tra No Nguoi - Vo Thuong [MP3 320kbps].mp3
+747	Xóm đêm	Vô Thường	\N	1/Xom Dem - Vo Thuong [MP3 320kbps].mp3
+748	Yesterday	Various Artists	\N	1/Yesterday - Guitar.mp3
+749	Yesterday Once More	Paul Mauriat	\N	1/Yesterday Once More - Paul Mauriat [MP3 320kbps].mp3
+750	Yesterday Once More	Carpenters	\N	1/Yesterday Once More - The Carpenters.mp3
+751	Yêu em	Elvis Phương	\N	1/Yeu Em - Elvis Phuong [MP3 320kbps].mp3
+752	Yêu em trọn đời	Đan Trường	\N	1/Yeu Em Tron Doi - Dan Truong [MP3 320kbps].mp3
+753	You Are My World	Paul Mauriat	\N	1/You are my world - Paul Mauriat.mp3
+754	You Are Not Alone	Michael Jackson	\N	1/You Are Not Alone - Michael Jackson [MP3 320kbps].mp3
+755	You Can Win If You Want	Modern Talking	\N	1/You Can Win If You Want - Modern Talking [MP3 320kbps].mp3
+756	You Raise Me Up	Westlife	\N	1/You raise me up - Westlife.mp3
+757	You're My Heart, You're My Soul - Modern Talking 	Various Artists - Album: 80's Disco Legend	\N	1/Youre my heart youre my soul - Modern Talking.mp3
+758	You're My Heart, You're My Soul (Version 2)	Modern Talking	\N	1/You_re My Heart_ You_re My Soul - Modern Talking [MP3 320kbps].mp3
+759	You`re My Number One	S Club 7	\N	1/You_re My Number One - S Club 7 [MP3 320kbps].mp3
+760	You're Still The One	Shania Twain	\N	1/You_re Still The One - Shania Twain [MP3 320kbps].mp3
+761	You Are The Love Of My Life...	George Benson, Roberta Flack	\N	1/Youre the love of my life - George Benson - Roberta Flack.mp3
+762	Zaide (Mozart)	Paul Mauriat	\N	1/Zaide (Mozart) - Paul Mauriat.mp3
+763	Zombie	The Cranberries	\N	1/Zombie - The Cranberries [MP3 320kbps].mp3
+764	Knockin' On Heaven's Door	Bob Dylan	\N	1/Knockin_ On Heaven_s Door - Bob Dylan [MP3 320kbps].mp3
+674	Tonight I Celebrate My Love For You	Peabo Bryson, Roberta Flack	\N	1/Tonight I Celebrate My Love For You - Pe [MP3 320kbps].mp3
+766	Last Friday Night	Katy Perry	\N	1/Last Friday Night - Katy Perry [MP3 320kbps].mp3
+767	\N	\N	\N	\N
+765	We kill the world (Don't kill the world)	Boney M	\N	1/13114114867_6679.mp3
+768	Còn thương rau đắng mọc sau hè	Phi Nhung	\N	1/Con Thuong Rau Dang Moc Sau He - Phi Nhu [MP3 320kbps].mp3
+190	Chiều một mình qua phố	Ngọc Lan		1/Chieu Mot Minh Qua Pho - Ngoc Lan.mp3
+403	L'Aventura	Stone, Eric Charden	\N	1/L'Aventura - Stone et Charden.mp3
+769	\N	\N	\N	\N
+770	\N	\N	\N	\N
+771	Mùa đông của anh	Ngọc Lan, Duy Quang	\N	1/Mua Dong Cua Anh - Ngoc Lan_ Duy Quang [MP3 320kbps].mp3
+773	J'ai la quequette qui colle	Les mules	\N	1/ca_colle.mp3
+774	Hello Vietnam	Phạm Quỳnh Anh	\N	1/Hello Vietnam - Quynh Anh_ Pham [MP3 128kbps].mp3
+270	Et Si Tu N'existais Pas	Joe Dassin	\N	1/Et Si Tu N_existais Pas - Joe Dassin [MP3 320kbps].mp3
+\.
+
+
+--
+-- Data for Name: playlist; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY playlist (id, name, description) FROM stdin;
+1	10 bài không tên	\N
+2	Romantic Guitar	\N
+3	Khúc tình xưa - Lệ Quyên	\N
+4	Nhạc Pháp	\N
+5	Paul Mauriat	\N
+6	Quê mẹ 2 - Tình anh lính chiến	\N
+7	Văn Hường	\N
+8	Nhẹ nhàng	\N
+9	Love Songs	\N
+10	deep blue	\N
+\.
+
+
+--
+-- Data for Name: playlist_mp3item; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY playlist_mp3item (playlist_id, mp3item_id) FROM stdin;
+1	128
+1	129
+1	131
+1	132
+1	134
+1	135
+1	136
+1	137
+2	279
+2	208
+2	248
+2	268
+2	298
+2	336
+2	368
+2	375
+2	395
+2	397
+2	421
+2	432
+2	442
+2	464
+2	539
+2	542
+2	593
+2	607
+2	611
+2	748
+3	110
+3	168
+3	187
+3	243
+3	265
+3	306
+3	449
+3	451
+3	479
+3	571
+3	646
+4	115
+4	213
+4	404
+4	270
+4	356
+4	371
+4	374
+4	398
+4	403
+4	407
+4	411
+4	561
+4	585
+4	577
+4	701
+4	702
+5	96
+5	114
+5	116
+5	117
+5	121
+5	157
+5	216
+5	259
+5	260
+5	272
+5	271
+5	303
+5	355
+5	386
+5	390
+5	402
+5	408
+5	418
+5	428
+5	438
+5	510
+5	523
+5	524
+5	568
+5	574
+5	579
+5	591
+5	603
+5	604
+5	605
+5	618
+5	636
+5	666
+5	676
+5	707
+5	735
+5	740
+5	749
+5	753
+6	78
+6	79
+6	81
+6	82
+6	83
+6	85
+6	86
+6	87
+6	88
+6	89
+6	90
+6	91
+7	287
+7	165
+7	195
+7	606
+7	610
+7	612
+7	639
+7	668
+7	671
+7	693
+7	694
+7	695
+7	696
+7	709
+7	710
+7	711
+7	721
+7	722
+8	106
+8	149
+8	159
+8	160
+8	169
+8	180
+8	182
+8	197
+8	199
+8	205
+8	227
+9	463
+9	505
+9	267
+9	761
+9	674
+9	752
+9	737
+9	736
+9	682
+9	659
+9	657
+9	643
+9	640
+9	634
+9	608
+9	597
+9	586
+9	656
+9	550
+9	551
+9	501
+10	771
+10	190
+10	752
+10	750
+10	742
+10	731
+10	704
+10	682
+10	659
+10	657
+10	640
+10	634
+10	633
+10	609
+10	597
+10	593
+10	585
+10	584
+10	656
+10	578
+10	576
+10	563
+10	556
+10	551
+10	550
+10	545
+10	543
+8	774
+8	215
+\.
+
+
+--
+-- Name: pk_combi_id; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY playlist
+    ADD CONSTRAINT pk_combi_id PRIMARY KEY (id);
+
+
+--
+-- Name: pk_mp3item; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY mp3item
+    ADD CONSTRAINT pk_mp3item PRIMARY KEY (id);
+
+
+--
+-- Name: pk_playlist_mp3item; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY playlist_mp3item
+    ADD CONSTRAINT pk_playlist_mp3item PRIMARY KEY (playlist_id, mp3item_id);
+
+
+--
+-- Name: fki_mp3item_id; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX fki_mp3item_id ON playlist_mp3item USING btree (mp3item_id);
+
+
+--
+-- Name: fk_mp3item_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY playlist_mp3item
+    ADD CONSTRAINT fk_mp3item_id FOREIGN KEY (mp3item_id) REFERENCES mp3item(id) ON DELETE CASCADE;
+
+
+--
+-- Name: fk_playlist_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY playlist_mp3item
+    ADD CONSTRAINT fk_playlist_id FOREIGN KEY (playlist_id) REFERENCES playlist(id) ON DELETE CASCADE;
+
+
+--
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
+-- PostgreSQL database dump complete
+--
+

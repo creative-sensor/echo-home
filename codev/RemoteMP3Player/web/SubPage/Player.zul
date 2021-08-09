@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul">
+    <!--flash player-->
+    <div apply="org.zkoss.bind.BindComposer"
+         viewModel="@id('vm') @init('vmodel.MediaPlayer')"
+         style="text-align:center;">
+        <hlayout style="height:400px;padding-bottom:20px;position:relative;top:100px" spacing="20px">
+            
+            <!--playlist-->
+            <listbox height="300px" width="300px" model="@load(vm.playlists) @template('playlist')" mold="paging" pageSize="8"
+                     style="text-align:left;box-shadow: 10px 10px 7px #B2C2D1;">
+                <listhead>
+                    <listheader>                            
+                    </listheader>
+                            
+                </listhead>          
+                
+                <template name="playlist" var="item">
+                    <listitem onClick="@command('play', record=self.value)" >
+                        <listcell >
+                            <label style="font-weight:200;font-size:1.4em;color:#00536E;font-family: 'Open Sans Light',sans-serif;" value="@load(item.name)"></label>
+                        </listcell>
+                    </listitem>
+                </template>                
+            
+            </listbox>
+            
+            <!--HTML code for flash player-->
+            <html content="@load(vm.playerHTML)">
+            </html>
+        </hlayout>
+    </div>
+</zk>

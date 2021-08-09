@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul">
+    
+    <div  apply="org.zkoss.bind.BindComposer"
+          viewModel="@id('vm') @init('vmodel.PlaylistComposer')"
+          style="text-align:center;padding:50px">
+        
+        <vlayout spacing="10px">
+            
+            <hlayout spacing="20px" >
+                <div style="background-color: #005C5C" width="300px" height="200px"/>
+                
+                <!--Search pool-->
+                <vlayout height="250px">
+                    <hlayout>
+                        <image src="Widgets/lenz.png"/>
+                        <textbox  value="Search pool" height="40px" width="300px" onOK="@command('search', keyword=self.value)"
+                              style="font-size:2em;font-weight:100;color:#005C7A;font-family: 'Open Sans Light',sans-serif;">
+                        </textbox>
+                    </hlayout>
+                    <grid mold="paging" pageSize="5" width="500px" height="200px" model="@load(vm.resultList) @template('result_items')"  
+                          style="border:0px;">
+                        <columns>
+                            <column></column>
+                            <column></column>
+                        </columns>
+            
+                        <rows>
+                            <template name="result_items" var="item">
+                        
+                                <row draggable="true">
+                                    <label value="@load(item.name)"></label>
+                                    <label value="@load(item.artist)"></label>
+                                </row>
+                        
+                            </template>
+                        </rows>
+                    </grid>
+                </vlayout>
+            </hlayout>
+        
+            
+            <hlayout spacing="20px" style="padding:30px" >            
+                <!--playlist-->
+                <listbox height="450px" width="300px" model="@load(vm.playlists) @template('playlist')" 
+                         selectedItem="@bind(vm.selectedPlaylist)"
+                         style="text-align:left;box-shadow: 10px 10px 7px #B2C2D1;" 
+                         mold="paging" pageSize="12">
+                    <listhead>
+                        
+                        <listheader label="Playlist" > 
+                            
+                        </listheader>
+                            
+                    </listhead>          
+                
+                    <template name="playlist" var="item">
+                        <listitem onClick="@command('listMembers', playlist=self.value)" >
+                            <listcell >
+                                <label style="font-weight:220;font-size:1.4em;color:#00536E;font-family: 'Open Sans Light',sans-serif;" value="@load(item.name)"></label>
+                            </listcell>
+                        </listitem>
+                    </template>                
+            
+                </listbox>
+                    
+        
+            
+                <!--Member item of playlist-->
+                <grid id="memberlist" height="450px" width="500px" model="@load(vm.memberList) @template('member_items')" 
+                      style="text-align:left;box-shadow: 10px 10px 3px #888888;" 
+                      onDrop="@command('dropItem', item=event.dragged.value) @global-command('update')" droppable="true">
+                    <columns>
+                        <column>Title</column>
+                        <column width="40%">Artist</column>
+                        <column></column>
+                    </columns>
+            
+                    <rows >
+                        <template name="member_items" var="item">
+                        
+                            <row onFocus="MessageBox.show('ello')" >
+                                <label value="@load(item.name)"></label>
+                                <label value="@load(item.artist)"></label>
+                                <button label="delete" onClick="@command('deleteMemberItem', item=item) @global-command('update')"></button>
+                            </row>
+                        
+                        </template>
+                    </rows>
+                </grid>
+            
+            </hlayout>
+            <!--add new playlist-->
+            <hlayout spacing="20px" >
+                <textbox id="NewPlaylistName" />
+                <button label="Add" onClick="@command('addNewPlayList', name=NewPlaylistName.value) @global-command('update')"></button> 
+                <button label="Delete" onClick="@command('deletePlayList') @global-command('update')"></button> 
+            </hlayout>
+            <hlayout>
+                <button label="export" onClick="@command('export', prefixEnabled=prefixed.checked, prefixValue=prefix.value)" ></button>
+                <checkbox id="prefixed" checked="true" label="Add prefix"></checkbox>
+                <textbox id="prefix" value="../music/"></textbox>
+            </hlayout>
+        </vlayout>
+    </div>
+</zk>

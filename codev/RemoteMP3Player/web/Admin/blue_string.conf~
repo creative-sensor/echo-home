@@ -1,0 +1,5 @@
+{
+        "root_path": "/var/lib/music",
+        "item_service_url": "http://sensor.dnsdynamic.net/BlueString/",
+        "section_capacity": 1000
+}

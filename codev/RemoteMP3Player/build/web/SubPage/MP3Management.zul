@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul">
+    <div apply="org.zkoss.bind.BindComposer"
+         viewModel="@id('vm') @init('vmodel.MP3Manager')"
+         style="text-align:center; padding-top:20px">
+        <vlayout >
+            <!--filter box-->
+            <hlayout>
+                <div width="600px" style="background-color:#E6F9FF; border-radius:7px; padding:10px;text-align:left">
+                    <hlayout spacing="10px" valign="center" >
+                        <label  value="Filter"/>
+                        <textbox onOK="@command('search', keyword=self.value)"></textbox>
+                    </hlayout>
+                </div>
+            </hlayout>
+            
+            <!--MP3 list-->
+            <hlayout>
+                
+                <div width="600px" style="border-radius:12px;padding:15px;text-align:left">
+                    <listbox id="mp3list" height="400px" multiple="true" mold="paging" pageSize="20"
+                             model="@load(vm.mp3List) @template('mp3set')" >
+                        <listhead>
+                            <listheader width="10%"  >
+                                <label value="ID"/>
+                            </listheader>
+                            <listheader>
+                                <label value="Title"/>
+                            </listheader>
+                            <listheader>
+                                <label value="Artist"/>
+                            </listheader>
+                        </listhead>
+                        <template name="mp3set">
+                            <listitem onClick="@command('selectMp3', item=each)" >
+                                <listcell label="@load(each.id)" >
+                                </listcell>
+                                <listcell label="@load(each.name)" >
+                                </listcell>
+                                <listcell label="@load(each.artist)" >
+                                </listcell>
+                            </listitem>
+                        </template>
+                    </listbox>
+                </div>
+            </hlayout>
+            
+            <hlayout>
+                <!--Import-->
+                <div width="340px" style="background-color:#FFCACA; border-radius:10px; padding:10px;text-align:center;">
+                    <hlayout spacing="10px">
+                        <button label="File Import"  upload="true,maxsize=-1,multiple=true,native"  
+                                onUpload="@command('importMP3', upload=event.getMedias())"> 
+                        </button>
+                    
+                        <textbox id="urlink"/>
+                        <button label="URL Import" onClick="@command('importMP3fromURL', urlstr=urlink.value)" >  
+                        </button>
+                    </hlayout>
+                
+                </div>
+                <!--Delete and Edit-->
+                <div width="130px" style="background-color:#E6F9FF; border-radius:7px; padding:10px;text-align:center;">
+                    <hlayout spacing="10px">
+                        <button label="Delete"  onClick="@command('deleteMp3') @global-command('update')" > 
+                        </button>
+                    
+                        <button label="Edit" onClick="editor.doModal();editor.setVisible(true);"  > 
+                        </button>
+                    </hlayout>
+                </div>
+            </hlayout>
+            
+            <window title="Metadata edit" visible="false"  id="editor" closable="true" 
+                    onClose="self.setVisible(false);event.stopPropagation();">
+                <!--Editor-->
+
+                <vlayout spacing="10px" >
+                    <hlayout>
+                        <label value="Title:"/> 
+                        <textbox value="@bind(vm.selectedMp3.name)"></textbox>
+                    </hlayout>
+                   
+                    <hlayout>
+                        <label value="Artist:"/> 
+                        <textbox value="@bind(vm.selectedMp3.artist)"></textbox>
+                    </hlayout>
+                    <vlayout>
+                        <label value="Lyrics:"/> 
+                        <ckeditor value="@bind(vm.selectedMp3.lyrics)"></ckeditor>
+                        <button label="Save" onClick="@command('saveMetaData')"  > 
+                        </button>
+                    </vlayout>
+                    <hlayout>
+                        <label value="Relative path:"/> 
+                        <label style="color:#366899" value="@load(vm.selectedMp3.path)"/>
+                    </hlayout>
+                </vlayout>
+                
+            </window>
+            
+           
+           
+            
+            
+            
+            <!--flash player-->
+            <div>
+                <vlayout>
+                    <html content="@load(vm.playerHTML)">
+                    </html>
+                </vlayout>
+            </div>
+            
+           
+        </vlayout>
+            <button label="go to admin" onClick="@command('gotoAdmin')">
+            </button>
+    </div>
+</zk>

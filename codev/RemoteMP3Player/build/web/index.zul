@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+index.zul
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		Mon Jun 12 21:23:35     2006, Created by tomyeh
+		Fri May 01 04:36:35     2009, Modified by stera
+}}IS_NOTE
+
+Copyright (C) 2006 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+-->
+<?page title="Blue String"?>
+<zk xmlns="http://www.zkoss.org/2005/zul">
+    
+    <!--header-->
+    <div style="background-color:#00536E;position:fixed;top:0px;left:0px;width:100%;height:100px;z-index:4;text-align:center;padding-top:20px;" >
+        <label style="font-size:3em;font-weight:100;color:#99BAC5;font-family: 'Open Sans Light',sans-serif;" value="Blue String"/>
+    </div>
+    
+    <!--left sidebar-->
+    <div style="position:fixed;left:0px;top:160px;width:250px;height:400px;z-index:4;" >
+        <!--        <label style="font-size:3em;font-weight:100;color:#99BAC5;font-family: 'Open Sans Light',sans-serif;" value="Blue String"/>-->
+        <vlayout spacing="50px">
+            <vlayout spacing="0px" >
+                <image onClick="callup(0)"  src="Widgets/phonograph.png"
+                       style="position:relative;left:20px">
+                </image>
+                <image src="Widgets/shelf.png"></image>
+            </vlayout>
+            <vlayout spacing="0px">
+                <image onClick="callup(1)" src="Widgets/records.png"></image>
+                <image src="Widgets/shelf.png"></image>
+            </vlayout>
+        </vlayout>
+    </div>
+    <!--right sidebar-->
+    <div style="position:fixed;right:0px;top:200px;width:250px;height:400px;z-index:4;text-align:right" >
+        <!--        <label style="font-size:3em;font-weight:100;color:#99BAC5;font-family: 'Open Sans Light',sans-serif;" value="Blue String"/>-->
+        <vlayout spacing="1px">
+            <image onClick="callup(2)" src="Widgets/records.png"></image>
+            <image  src="Widgets/shelf_right.png"></image>
+        </vlayout>
+    </div>
+    <!--central page-->
+    <div  style="width:100%;height:100%;text-align:center;position:absolute;top:150px;" >     
+        <vlayout>
+            <include visible="true" id="mediaPlayer" src="SubPage/Player.zul"/>
+            <include visible="false" id="plComposer" src="SubPage/PlaylistComposer.zul"/>
+            <include visible="false" id="mp3all" src="SubPage/MP3Management.zul"/>
+        </vlayout>
+    </div>
+    
+    <zscript><![CDATA[
+         void hideAll(){
+            plComposer.visible=false;
+            mediaPlayer.visible=false;
+        mp3all.visible=false;
+        
+        }
+         void callup(int i){
+        
+            hideAll();
+            if(i==0){
+                mediaPlayer.visible=true;
+            }
+            if(i==1){
+                plComposer.visible=true;
+            }
+        if(i==2){
+                mp3all.visible=true;
+            }
+        
+        }
+    ]]>
+    </zscript>
+</zk>
