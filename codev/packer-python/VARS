@@ -1,0 +1,7 @@
+export PACKAGE_NAME=pkx
+export PACKAGE_VERSION=0.0.1
+export PACKAGE_DESCRIPTION="Venomous"
+export AUTHOR_NAME=""
+export AUTHOR_EMAIL=""
+WORKSPACE=workspace
+

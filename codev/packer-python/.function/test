@@ -1,0 +1,16 @@
+#!/bin/bash 
+
+source VARS
+
+echo "---- SubPackageA ----"
+python -m SubPackageA
+python -c "import SubPackageA.car; SubPackageA.car.throttle()"
+
+echo "---- SubPackageB ----"
+python -m SubPackageB
+python -c "import SubPackageB.aircraft; SubPackageB.aircraft.throttle()"
+
+echo "---- SubPackageX ----"
+python -m SubPackageB.SubPackageX
+python -c "import SubPackageB.SubPackageX.beercraft;  SubPackageB.SubPackageX.beercraft.brew()"
+

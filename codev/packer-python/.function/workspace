@@ -1,0 +1,24 @@
+#!/bin/bash
+
+source VARS
+SOURCE_DIR=src
+
+if test -d $WORKSPACE ; then
+    HEX_DATE=$(printf '%x' $(date +%s))
+    mv $WORKSPACE $WORKSPACE-${HEX_DATE}
+fi
+
+mkdir -p $WORKSPACE
+mkdir -p $WORKSPACE/test
+mkdir -p $WORKSPACE/src/
+
+cp  .template/LICENSE         $WORKSPACE/
+cp  .template/README.md       $WORKSPACE/
+cp  .template/pyproject.toml  $WORKSPACE/
+cp  .template/setup.py        $WORKSPACE/
+
+if test -d $SOURCE_DIR ; then
+    cp -r $SOURCE_DIR/* $WORKSPACE/src/
+fi
+
+tree $WORKSPACE
