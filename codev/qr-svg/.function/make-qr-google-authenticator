@@ -1,0 +1,6 @@
+#!/bin/bash -x
+
+source INPUT_SET_OTP
+
+test -z $KEY && exit 1
+.function/make-qr-google-authenticator.py

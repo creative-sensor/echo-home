@@ -59,7 +59,9 @@ sudo dnf install -y \
     transmission 
 dnf clean all
 
-pip3 install --no-cache-dir  --user yq
+pip3 install --no-cache-dir  --user \
+    yq \
+    qrcode
 echo '# ---- PACKAGE ----'
 
 

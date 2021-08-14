@@ -1,0 +1,4 @@
+# FORMAT: [ISSUER] / [QR_NAME]
+export QR_NAME=
+export KEY=
+export ISSUER=
