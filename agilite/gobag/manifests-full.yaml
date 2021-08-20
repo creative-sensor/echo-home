@@ -1,0 +1,73 @@
+
+Communication:
+    Wifi-hotspot:
+    Radio:
+        long-range:
+        near-range: 
+    Hearing:
+        bluetooth:
+    Phone:
+
+Nutrient:
+    Food:
+      - grain
+      - salt
+      - meat
+    Water:
+      - filter:
+      - bottle:
+    Fire:
+    
+Shelter:
+
+Medicine:
+    - oil:
+
+First-Aid:
+    
+
+Clothing:
+    Cold:
+    Wet:
+    Sun:
+
+Finance:
+    Gold:
+    Cash:
+    Bank:
+      Credit:
+      Debit:
+    Crypto:
+
+Weapon:
+    Knife:
+    Gun:
+
+Datum:
+    flash-drive:
+    ssd:
+    gedrive:
+
+Computer:
+    tablet:
+    mobile-workstation:
+    
+Power:
+    solar-panel:
+    battery:
+    charger:
+    
+Vision:
+    - flashlight:
+    - telescope:
+    - goggle:
+
+Navigation:
+    Compass:
+    Map:
+    GPS:
+
+Identity:
+
+Tool:
+#Vehicle:
