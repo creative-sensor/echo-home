@@ -1,0 +1,77 @@
+#!/bin/bash -e
+
+BASE="Fedora release 34"
+VERSION=$(echo $BASE | grep -o "[0-9]\+$")
+grep -q "$BASE" /etc/redhat-release || exit 1
+
+# ---- HOSTNAME ----
+echo -n "HOSTNAME ?= "
+read hostname
+test -n "$hostname" && sudo hostnamectl set-hostname ${hostname}
+echo '# ---- HOSTNAME ----'
+
+
+# ---- DISK ----
+# TODO: determine root disk
+echo -n "Extend to new part end [GB] ?= "
+read part_end
+if [[ "$part_end" =~ ^[0-9]+$ ]] ; then
+    part_end=${part_end}GB
+else
+    part_end="100%"
+fi
+sudo parted /dev/sda --fix "resizepart 3 ${part_end}"
+sudo btrfs filesystem resize max /
+df -h
+echo '# ---- DISK ----'
+
+
+# ---- REPO ----
+sudo dnf install -y \
+  https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+sudo dnf install -y \
+  https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+echo '# ---- REPO ----'
+
+
+# ---- PACKAGE ----
+sudo dnf update -y --releasever $VERSION
+sudo dnf install -y \
+    rclone \
+    freecad \
+    ffmpeg \
+    ffmpeg-devel \
+    gnome-tweaks \
+    libvirt-client \
+    retext \
+    remmina \
+    virt-manager \
+    inkscape \
+    jq \
+    vim \
+    blender \
+    vlc \
+    vim-X11 \
+    transmission
+dnf clean all
+
+
+pip install --no-cache-dir  --user \
+    yq \
+    qrcode
+echo '# ---- PACKAGE ----'
+
+
+# ---- CONFIG ----
+cp -b \
+    .bashrc \
+    .gitconfig \
+    .vimrc \
+     ~/ 
+
+# disable zram
+sudo touch /etc/systemd/zram-generator.conf
+echo '# ---- CONFIG ----'
+
+
+# ---- FACILITY ----
