@@ -152,6 +152,7 @@ map C : s/^/#/<CR>
 map uc : s/^#//<CR>
 map Bp : bp<CR>
 map Bn : bn<CR>
+map aC : :%!column -t<CR>
 "map <C-I> : tabnew . <CR>
 
 vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>

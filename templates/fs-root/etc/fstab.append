@@ -1,0 +1,7 @@
+tmpfs  /var/cache           tmpfs  rw,nodev,nosuid,size=1G  0  0
+tmpfs  /var/crash           tmpfs  rw,nodev,nosuid,size=1G  0  0
+tmpfs  /var/lib/gdm/.cache  tmpfs  rw,nodev,nosuid,size=1G  0  0
+tmpfs  /var/lib/systemd     tmpfs  rw,nodev,nosuid,size=1G  0  0
+tmpfs  /var/log             tmpfs  rw,nodev,nosuid,size=1G  0  0
+tmpfs  /var/log/sssd        tmpfs  rw,nodev,nosuid,size=1G  0  0
+tmpfs  /var/spool           tmpfs  rw,nodev,nosuid,size=1G  0  0
