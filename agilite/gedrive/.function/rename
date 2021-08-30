@@ -3,7 +3,7 @@
 source .function/rcloner
 
 SUB_PATH=$1
-SUB_PATH_NEW=$2
+NEW_NAME=$2
 EXTENT=$(basename $(grep -l  $SUB_PATH $META_DIR/*  | head -1)  2>/dev/null)
 
 function abort(){
@@ -13,10 +13,11 @@ function abort(){
 }
 
 rclone ls ${EXTENT}${SUB_PATH} &>/dev/null || abort "SOURCE IS NOT EXISTING"
-rclone ls ${EXTENT}${SUB_PATH_NEW}/$(basename $SUB_PATH) &>/dev/null  &&  abort "DEST IS EXISTING ALREADY"
+rclone ls ${EXTENT}$(dirname $SUB_PATH)/${NEW_NAME} &>/dev/null  &&  abort "DEST IS EXISTING ALREADY"
 
-rclone moveto ${EXTENT}${SUB_PATH} ${EXTENT}${SUB_PATH_NEW}/$(basename $SUB_PATH)
+rclone moveto ${EXTENT}${SUB_PATH}    ${EXTENT}$(dirname $SUB_PATH)/${NEW_NAME}
 rclone ls $EXTENT > $META_DIR/$EXTENT
 
-echo "SUBPATH MOVED |m|" 
-echo $SUB_PATH_NEW
+echo "SUBPATH RENAMED |RN|" 
+echo "${EXTENT}$(dirname $SUB_PATH)/${NEW_NAME}"
+

@@ -1,0 +1,6 @@
+#!/bin/bash 
+
+PATTERN=$1
+
+.function/find | grep $PATTERN | xargs -I {} .function/delete {} 
+
