@@ -37,6 +37,7 @@ echo '# ---- REPO ----'
 # ---- PACKAGE ----
 sudo dnf update -y --releasever $VERSION
 sudo dnf install -y \
+    openssl \
     rclone \
     freecad \
     ffmpeg \

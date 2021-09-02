@@ -6,6 +6,11 @@ VOLUME_CACHE=$(readlink -f $VOLUME_CACHE_SHORT)
 export LIST_REMOTES=$(rclone listremotes)
 
 
+function abort(){
+    local msg=$1
+    echo $msg
+    exit 1
+}
 
 function fill_in_the_blank(){
     # "{{CAT}} is chasing {{MOUSE}}"  ---->  "Tom is chasing Jerry"

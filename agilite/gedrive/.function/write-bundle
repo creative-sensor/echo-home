@@ -1,0 +1,24 @@
+#!/bin/bash
+
+source .function/rcloner
+
+SUB_PATH=$1
+SUB_PATH_BUNDLE=$(  echo ${SUB_PATH}| sed s,/$,,  ).tar.xz
+gedrive_bundle=$(cat $VOLUME_CACHE/$SUB_PATH/.properd/gedrive.yaml | yq '.bundle')
+[[ $gedrive_bundle != "true" ]] && abort "FAILED AS BUNDLE MODE DISABLED [ $SUB_PATH/.properd/gedrive.yaml ]"
+
+echo "Writing in bundle mode"
+cd $VOLUME_CACHE/$(dirname $SUB_PATH)
+tar cJf   $(basename $SUB_PATH_BUNDLE)   $(basename $SUB_PATH)
+cd -
+
+EXTENT=$(basename $(grep -l  $SUB_PATH_BUNDLE $META_DIR/*  | head -1)  2>/dev/null)
+test -z "$EXTENT" && EXTENT=$(.function/pick-random-extent.py)
+
+mkdir -p $(dirname $VOLUME_CACHE/$SUB_PATH_BUNDLE)
+rclone copy  $VOLUME_CACHE/$SUB_PATH_BUNDLE  ${EXTENT}"$(dirname $SUB_PATH_BUNDLE)"
+rclone ls $EXTENT > $META_DIR/$EXTENT
+
+echo "SUBPATH UPATED <<" 
+echo $SUB_PATH_BUNDLE
+rm $VOLUME_CACHE/$SUB_PATH_BUNDLE
