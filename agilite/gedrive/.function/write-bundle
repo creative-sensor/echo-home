@@ -5,11 +5,17 @@ source .function/rcloner
 SUB_PATH=$1
 SUB_PATH_BUNDLE=$(  echo ${SUB_PATH}| sed s,/$,,  ).tar.xz
 gedrive_bundle=$(cat $VOLUME_CACHE/$SUB_PATH/.properd/gedrive.yaml | yq '.bundle')
+gedrive_encrypt_id=$(cat $VOLUME_CACHE/$SUB_PATH/.properd/gedrive.yaml | yq --raw-output '.encrypt')
 [[ $gedrive_bundle != "true" ]] && abort "FAILED AS BUNDLE MODE DISABLED [ $SUB_PATH/.properd/gedrive.yaml ]"
 
 echo "Writing in bundle mode"
 cd $VOLUME_CACHE/$(dirname $SUB_PATH)
 tar cJf   $(basename $SUB_PATH_BUNDLE)   $(basename $SUB_PATH)
+if [[ "$gedrive_encrypt_id"  =~  [A-Z0-9]+ ]] ; then
+    echo "Encrypting with key $gedrive_encrypt_id"
+    gpg2  --encrypt --recipient ${gedrive_encrypt_id}  --trust-model always --yes  $(basename $SUB_PATH_BUNDLE) || exit 1
+    SUB_PATH_BUNDLE=${SUB_PATH_BUNDLE}.gpg
+fi
 cd -
 
 EXTENT=$(basename $(grep -l  $SUB_PATH_BUNDLE $META_DIR/*  | head -1)  2>/dev/null)
