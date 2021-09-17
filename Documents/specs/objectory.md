@@ -1,9 +1,9 @@
-# OBJECT DIRECTORY
+# OBJECTORY
 
-Object directory is like an object held in directory within file system.
+Objectory is like an object held in directory within file system.
 
 ```yaml
-OBJ_DIR:
+OBJECTORY:
     dataA: "I9hgd77/HGw="
     dataB: "mEH0fifLg+c="
     dataC: "51I/pErIeN0="
