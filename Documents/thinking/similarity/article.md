@@ -4,7 +4,7 @@
 ### CONCEPT
 
 - Merge:
-![figure-1](./.media/triangle-stack.svg)
+![figure-1](./.media/triangle-monolithic.svg)
 
 
 - Breakdown/Collapse:
