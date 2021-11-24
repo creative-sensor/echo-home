@@ -37,6 +37,8 @@ echo '# ---- REPO ----'
 # ---- PACKAGE ----
 sudo dnf update -y --releasever $VERSION
 sudo dnf install -y \
+    warzone2100 \
+    solaar \
     openssl \
     rclone \
     freecad \
