@@ -1,0 +1,8 @@
+#!/bin/bash -xe
+CONFIG=etc/redis.conf
+if ! test -f ${CONFIG} ; then
+    sed 's,dir redisk,dir /matrix/redisk,'   /matrix/$CONFIG > /$CONFIG
+    CONFIG=/$CONFIG
+    echo "Running inside container:"
+fi
+redis-server  ${CONFIG}
