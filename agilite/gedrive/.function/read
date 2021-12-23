@@ -16,11 +16,10 @@ if [[ $SUB_FILE_PATH =~ gpg$ ]] ; then
     SUB_FILE_PATH=${SUB_FILE_PATH/%.gpg/}
     echo "Decrypting |-|=|-|"
     gpg2 --decrypt $VOLUME_CACHE/${SUB_FILE_PATH}.gpg > $VOLUME_CACHE/${SUB_FILE_PATH}
-    rm $VOLUME_CACHE/${SUB_FILE_PATH}.gpg
 fi
 
 if tar tvf $VOLUME_CACHE/$SUB_FILE_PATH 2>/dev/null | grep -q .properd/gedrive.yaml ; then
     cd $(dirname $VOLUME_CACHE/$SUB_FILE_PATH)
-    tar xf $VOLUME_CACHE/$SUB_FILE_PATH
+    tar xf $VOLUME_CACHE/$SUB_FILE_PATH  &&  rm $VOLUME_CACHE/${SUB_FILE_PATH}
     echo "Extracted"
 fi
