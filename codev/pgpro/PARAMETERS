@@ -1,0 +1,13 @@
+%echo Generating a default key
+Key-Type: 1
+Key-Length: 2048
+Key-Usage: encrypt , sign , auth
+Subkey-Type: 1
+Subkey-Length: 2048
+Name-Real: PGPro
+Name-Comment: PGPro
+Name-Email: pgpro@void.pg
+Expire-Date: 2y
+Passphrase: Tb87-3fA4
+%commit
+%echo done

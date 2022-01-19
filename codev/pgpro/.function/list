@@ -1,0 +1,5 @@
+#!/bin/bash
+source .function/pgbase
+
+gpg2  --list-keys
+

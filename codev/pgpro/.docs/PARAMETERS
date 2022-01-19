@@ -1,0 +1,21 @@
+%echo Generating a default key
+Key-Type: 1
+    # (1) RSA and RSA (default)
+    # (2) DSA and Elgamal
+    # (3) DSA (sign only)
+    # (4) RSA (sign only)
+Key-Length: 2048
+Key-Usage: encrypt , sign , auth
+Subkey-Type: 1
+Subkey-Length: 2048
+Name-Real: PGPro
+Name-Comment: PGPro
+Name-Email: pgpro@void.pg
+Expire-Date: 0
+    # 0  : forever
+    # 1y : 1 year
+    # 2m : 2 months
+    # 3d : 3 days
+Passphrase: Tb87-3fA4
+%commit
+%echo done

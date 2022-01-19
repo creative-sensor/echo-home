@@ -1,0 +1,14 @@
+#!/bin/bash
+source .function/pgbase
+
+gpg2  --list-secret-keys
+read -p "Key ID ?=  " KEY_ID
+
+if test -n "$KEY_ID" ; then
+    recipient=$(gpg2  --list-secret-keys $KEY_ID | grep -o "[^ <>]\+@[^ >?]\+" | sed 's/\@/_at_/')
+    file_name=pgp-sec-${recipient}-${KEY_ID:0:8}.asc
+    gpg2 --armor --export-secret-keys ${KEY_ID} > ./${file_name}
+    echo "Exported: ${file_name}"
+else
+    echo "Please select Key ID"
+fi
