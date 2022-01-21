@@ -1,0 +1,7 @@
+PROFILE=${MOZILLA_THUNDERBIRD_PROFILE}
+    # Path to encrypted profile
+
+test -z "$PROFILE" && echo "NO PROFILE FOUND"
+test -n "$PROFILE" && thunderbird --profile $PROFILE
+
+

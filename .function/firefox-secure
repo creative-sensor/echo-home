@@ -1,5 +1,6 @@
-PROFILE=
+PROFILE=${MOZILLA_FIREFOX_PROFILE}
     # Path to encrypted profile
 
-firefox --profile $PROFILE 
+test -z "$PROFILE" && echo "NO PROFILE FOUND"
+test -n "$PROFILE" && firefox --profile $PROFILE
 

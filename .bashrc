@@ -23,3 +23,9 @@ STOP='\[\033[0m\]'
 
 PS1="[${BOLD}${COLOR1}\u${STOP}@${BOLD}${COLOR2}\h \W${STOP}]\$ "
 
+
+# ---- EXPORT ----
+#export MOZILLA_FIREFOX_PROFILE=
+#export MOZILLA_THUNDERBIRD_PROFILE=
+#export GNUPGHOME=
+
