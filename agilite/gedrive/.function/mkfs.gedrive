@@ -2,7 +2,6 @@
 
 source .function/rcloner
 
-mkdir -p $META_DIR
 for i in $LIST_REMOTES ; do
     echo "Reading EXTENT[$i]"
     rclone ls $i > $META_DIR/$i
