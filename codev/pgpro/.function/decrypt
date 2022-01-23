@@ -1,0 +1,11 @@
+#!/bin/bash
+source .function/pgbase
+
+FILE_PATH=$1
+
+if [[ "$FILE_PATH"  =~ gpg$ ]]  ; then
+    gpg2 --decrypt ${FILE_PATH} > ${FILE_PATH/%.gpg/}
+    echo "DECRYPTED: ${FILE_PATH/%.gpg/}"
+else
+    echo "Please specify path to encrypted file .gpg"
+fi

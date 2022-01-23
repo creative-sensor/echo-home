@@ -1,0 +1,11 @@
+#!/bin/bash
+source .function/pgbase
+
+SIGNATURE_PATH=$1
+FILE_PATH=$2
+
+if [[ "$SIGNATURE_PATH" =~ (.asc|.sig)$ ]] ; then
+    gpg2  --verify  ${SIGNATURE_PATH}  ${FILE_PATH} 2>&1 |  sed "s/[A-F0-9]\{8\}$/ | &/"
+else
+    echo "Signature path must end with .asc or .sig"
+fi

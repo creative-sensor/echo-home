@@ -1,0 +1,14 @@
+#!/bin/bash
+source .function/pgbase
+
+FILE_PATH=$1
+
+gpg2  --list-secret-keys --keyid-format short
+read -p "Key Fingerprint ?=  " KEY_FINGERPRINT
+
+if test -n "$KEY_FINGERPRINT" ; then
+    gpg2  --detach-sig --local-user ${KEY_FINGERPRINT}  --sign ${FILE_PATH}
+    echo "DETACHED SIGNATURE: ${FILE_PATH}.sig"
+else
+    echo "Please select Key Fingerprint"
+fi
