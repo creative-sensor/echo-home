@@ -1,0 +1,25 @@
+#!/bin/bash -e
+
+HOMEPATH=graf
+DATA_TREE="
+    conf/provisioning/datasources
+    conf/provisioning/notifiers
+    conf/provisioning/dashboards
+    conf/provisioning/plugins
+    conf/provisioning/access-control
+    plugins-bundled
+    data
+"
+
+
+if ! test -d ${HOMEPATH} ; then
+    mkdir -p $HOMEPATH
+    cd $HOMEPATH
+        mkdir -p $DATA_TREE
+        touch conf/defaults.ini
+        ln -s /usr/share/grafana/public public
+    cd -
+fi
+
+
+grafana-server --homepath="$(readlink -f $HOMEPATH)" --config='./grafana.ini'
