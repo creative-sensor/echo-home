@@ -28,7 +28,7 @@ if [[ "$1" =~ ^.function/ ]]; then
             ${DKR_ENV_FILE} \
             ${DKR_RUNAS} \
             ${DKR_IMAGE} \
-            bash -c "cd matrix;  ./$NEO $NEO_PARAMS " \
+            bash -c "cd /matrix;  ./$NEO $NEO_PARAMS " \
         2>&1 | tee  $LOG
     echo "Runbox completed: $(readlink -f $LOG)"
 else
