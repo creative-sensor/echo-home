@@ -10,10 +10,14 @@ fi
 
 # User specific aliases and functions
 
+# ---- ALIAS ----
 alias vim='vimx'
 alias git-glog='git log --all --decorate --oneline --graph'
 alias gitroot='cd $(git rev-parse --show-toplevel)'
+alias grin='grep -rin '
 
+
+# ---- LOCAL ----
 PATH=$PATH:~/.local/bin
 
 COLOR1='\[\033[38;5;34m\]'
