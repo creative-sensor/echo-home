@@ -1,4 +1,6 @@
 #!/bin/bash -xe
 CONFIG=redis.conf
-mkdir -p redisk
-redis-server  ${CONFIG}
+mkdir -p redisk && chown redis redisk
+runuser --user redis \
+    redis-server  ${CONFIG}
+

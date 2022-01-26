@@ -24,6 +24,7 @@ if [[ "$1" =~ ^.function/ ]]; then
             --rm \
             --mount  type=bind,source=${CONTEXT_DIR},target=/matrix  \
             --env  RUN_ID=${RUN_ID} \
+            --entrypoint "" \
             ${DKR_EXPOSE} \
             ${DKR_ENV_FILE} \
             ${DKR_RUNAS} \
@@ -37,6 +38,7 @@ else
     echo "INTERACTIVE MODE: no data persistence!"
     sudo docker run \
             --rm \
+            --entrypoint "" \
             ${STDIO} \
             ${DKR_EXPOSE} \
             ${DKR_ENV_FILE} \

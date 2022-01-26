@@ -9,6 +9,8 @@ DATA_TREE="
     conf/provisioning/access-control
     plugins-bundled
     data
+    data/logs
+    data/plugins
 "
 
 
@@ -21,5 +23,9 @@ if ! test -d ${HOMEPATH} ; then
     cd -
 fi
 
-
-grafana-server --homepath="$(readlink -f $HOMEPATH)" --config='./grafana.ini'
+HOMEPATH=$(readlink -f $HOMEPATH)
+export GF_PATHS_DATA=$HOMEPATH/data
+export GF_PATHS_LOGS=$HOMEPATH/logs
+export GF_PATHS_PLUGINS=$HOMEPATH/plugins
+export GF_PATHS_PROVISIONING=$HOMEPATH/conf/provisioning
+grafana-server --homepath="${HOMEPATH}" --config="./grafana.ini"
