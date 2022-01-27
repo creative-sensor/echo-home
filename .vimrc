@@ -1,5 +1,5 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"------ [MISC]
+"-------- [MISC] --------
 syntax on
 highlight CursorLine cterm=NONE ctermbg=251
     "highlight CursorLine cterm=NONE ctermbg=24
@@ -8,7 +8,7 @@ filetype on
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"------ [SET]
+"-------- [SET] --------
 set laststatus=2
 set ruler
 set cursorline
@@ -21,7 +21,7 @@ set splitright
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"----- [PLUGIN]
+"-------- [PLUGIN] --------
 "filetype plugin on
 
 ""NETRW
@@ -35,24 +35,35 @@ set splitright
 "augroup END
 
 
-"----- [PLUGIN / VUNDLE]
-"set nocompatible              " be iMproved, required
-"filetype off                  " required
-"set rtp+=~/.vim/bundle/Vundle.vim
-"call vundle#begin()
-"Plugin 'VundleVim/Vundle.vim'
-"Plugin 'tpope/vim-fugitive'
-"Plugin 'git://git.wincent.com/command-t.git'
-"Plugin 'file:///home/gmarik/path/to/plugin'
-"Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
-"Plugin 'jreybert/vimagit'
-"call vundle#end()            " required
-"filetype plugin indent on    " required
+"-------- [PLUGIN / VUNDLE] --------
+set nocompatible              " be iMproved, required
+filetype off                  " required
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+        "Plugin Manager
+Plugin 'thaerkh/vim-workspace'
+        "Workspace
+Plugin 'jreybert/vimagit'
+        "Git workflow
+Plugin 'tpope/vim-fugitive'
+        "Git commands
+Plugin 'junegunn/gv.vim'
+        "Git browser
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+" Brief help
+" :PluginList       - lists configured plugins
+" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
 
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"------ [FUNCTIONS]
+"-------- [FUNCTIONS] --------
 "
 
 fun! FindJsonPath()
@@ -137,7 +148,7 @@ command -nargs=* SearchIndex call SearchIndex (<f-args>)
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"------ [AUTOCMD]
+"-------- [AUTOCMD] --------
 "autocmd BufNewFile * :set filetype=txt
 autocmd FileType yaml  : set tabstop=2
 "autocmd VimEnter *      : let g:netrw_winsize=25
@@ -146,13 +157,21 @@ autocmd FileType yaml  : set tabstop=2
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"------ [KEYMAP]
+"-------- [KEYMAP] --------
 map T : tabnew . <CR>
+    "New tab
 map C : s/^/#/<CR>
+    "Comment
 map uc : s/^#//<CR>
+    "Uncomment
 map Bp : bp<CR>
+    "Buffer back
 map Bn : bn<CR>
+    "Buffer next
 map aC : :%!column -t<CR>
+    "Format as columns
+map WW : wa<CR>
+    "Save all
 "map <C-I> : tabnew . <CR>
 
 vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>

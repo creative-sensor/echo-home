@@ -33,3 +33,5 @@ PS1="[${BOLD}${COLOR1}\u${STOP}@${BOLD}${COLOR2}\h \W${STOP}]\$ "
 #export MOZILLA_THUNDERBIRD_PROFILE=
 #export GNUPGHOME=
 
+# ---- EDIT ----
+source ~/.bashrc.edit

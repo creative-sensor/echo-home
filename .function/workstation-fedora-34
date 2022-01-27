@@ -57,6 +57,7 @@ sudo dnf install -y \
     blender \
     vlc \
     vim-X11 \
+    vim-powerline \
     transmission
 dnf clean all
 

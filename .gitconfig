@@ -24,3 +24,4 @@
     rb = rebase
     rbia = rebase -i --autosquash
     mg = merge
+    root = rev-parse --show-toplevel
