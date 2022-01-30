@@ -1,0 +1,7 @@
+
+NODEX=nodex
+USER=nodex
+useradd --shell /usr/sbin/nologin $USER
+
+runuser -u $USER  -- \
+    /opt/bitnami/node-exporter/bin/node_exporter

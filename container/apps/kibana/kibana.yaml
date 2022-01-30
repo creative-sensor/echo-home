@@ -1,0 +1,6 @@
+path.data: ${BANANA}/data
+server.host: "0.0.0.0"
+server.shutdownTimeout: "5s"
+elasticsearch.hosts: [ "http://172.17.0.1:9200" ]
+monitoring.ui.container.elasticsearch.enabled: true
+

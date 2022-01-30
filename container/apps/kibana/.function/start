@@ -1,0 +1,10 @@
+BANANA=banana
+USER=kibana
+mkdir -p $BANANA/{data,logs}
+chown -R $USER  $BANANA
+
+export BANANA=$(readlink -f $BANANA)
+export KBN_PATH_CONF=/usr/share/kibana/config
+cp kibana.yaml $KBN_PATH_CONF/kibana.yml
+runuser -u $USER  --  /usr/local/bin/kibana-docker
+

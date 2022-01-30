@@ -1,0 +1,15 @@
+
+BEAST=beast
+USER=filebeat
+mkdir -p $BEAST/{conf,data,logs,module}
+cp filebeat.yaml $BEAST/
+chown -R $USER  $BEAST
+
+BEAST=$(readlink -f $BEAST)
+runuser -u $USER  -- \
+    filebeat -c filebeat.yaml -e \
+        --path.config ${BEAST} \
+        --path.data ${BEAST}/data  \
+        --path.logs ${BEAST}/logs \
+        --path.home ${BEAST}
+ 
