@@ -1,0 +1,10 @@
+USER=$1
+test -z "$USER" && USER=$(whoami)
+KEY=sshd/guests/$USER/.ssh/id_rsa
+
+if ! test -r $KEY ; then
+    echo "sudo is required as current user have no permission to access $KEY"
+    SUDO=sudo
+fi
+
+${SUDO} ssh   -p 2022 -i $KEY    $USER@localhost

@@ -1,0 +1,39 @@
+#!/bin/bash -e
+
+
+# ---- GUESTS ----
+for guest_dir in  sshd/guests/* ; do
+    username=$(basename $guest_dir)
+    home_dir=$(readlink -f $guest_dir)
+    useradd --home-dir ${home_dir}  $username
+    chmod 0700 $home_dir
+    chown -R $username $home_dir
+done
+
+
+# ---- HOST ----
+HOSTDIR=sshd/host
+USER=$1
+RPM=openssh-server-8.6p1-5.fc34.x86_64.rpm
+URL=https://download-ib01.fedoraproject.org/pub/fedora/linux/updates/34/Everything/x86_64/Packages/o/$RPM
+HOSTKEY=$HOSTDIR/ssh_host_rsa_key
+
+mkdir -p $HOSTDIR
+test -f $HOSTDIR/$RPM || curl $URL  -o $HOSTDIR/$RPM
+test -f $HOSTDIR/$RPM && rpm --install --nodeps $HOSTDIR/$RPM
+test -z "$USER" && USER=sshd
+chown -R $USER  $HOSTDIR
+HOSTKEY=$(readlink -f $HOSTKEY)
+
+
+# ---- EDIT ----
+EDIT=start.edit
+test -f $EDIT && source $EDIT
+
+
+runuser -u $USER -- \
+    /usr/sbin/sshd -e -D \
+        -f ./sshd_config \
+        -h $HOSTKEY  \
+        -p 2022
+

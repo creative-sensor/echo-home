@@ -1,0 +1,5 @@
+
+HOSTDIR=sshd/host
+
+mkdir -p $HOSTDIR
+ssh-keygen -t rsa  -f $HOSTDIR/ssh_host_rsa_key
