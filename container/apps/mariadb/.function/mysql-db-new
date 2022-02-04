@@ -1,0 +1,28 @@
+#!/bin/bash -e
+
+read -p "DATABASE_NAME ?= [ dbs ] " DATABASE_NAME
+read -p "USER_NAME ?= [ dba ] " USER_NAME
+read -p "PASSWORD ?= [ dbx ] " PASSWORD
+test -z "$DATABASE_NAME" && DATABASE_NAME=dbs
+test -z "$USER_NAME" && USER_NAME=dba
+test -z "$PASSWORD" && PASSWORD=dbx
+
+
+
+MARIA=maria
+CONTAINER_ID=$(<$MARIA/hostname)
+if test -z "$CONTAINER_ID" ; then
+    sudo docker container ls
+    read -p "CONTAINER_ID ?= " CONTAINER_ID
+fi
+
+
+SQL="
+CREATE DATABASE ${DATABASE_NAME};
+GRANT ALL PRIVILEGES ON ${DATABASE_NAME}.* TO ${USER_NAME}@'%' IDENTIFIED BY '${PASSWORD}';
+FLUSH PRIVILEGES;
+"
+
+sudo docker exec -it $CONTAINER_ID  mysql -e "$SQL"
+
+echo "---- COMPLETED ----   $SQL"

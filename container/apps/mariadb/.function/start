@@ -1,0 +1,24 @@
+#!/bin/bash -xe
+MARIA=maria
+USER=mysql
+
+mkdir -p $MARIA/data && chown -R $USER $MARIA
+MARIA=$(readlink -f $MARIA)
+
+
+# ---- install-db ----
+# check directory empty
+test -z "$(ls -A $MARIA/data)" && \
+runuser -u $USER -- \
+    mysql_install_db \
+        --skip-test-db \
+        --datadir $MARIA/data
+
+
+# ---- start-db ----
+echo $HOSTNAME > $MARIA/hostname
+runuser -u $USER -- \
+    mysqld  \
+        --defaults-extra-file=./maria-extra.conf \
+        --datadir $MARIA/data
+

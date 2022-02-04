@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+
+
+MARIA=maria
+CONTAINER_ID=$(<$MARIA/hostname)
+if test -z "$CONTAINER_ID" ; then
+    sudo docker container ls
+    read -p "CONTAINER_ID ?= " CONTAINER_ID
+fi
+
+
+
+sudo docker exec -it $CONTAINER_ID  mysql
+
