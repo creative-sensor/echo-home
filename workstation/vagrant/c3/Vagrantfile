@@ -1,0 +1,25 @@
+# The "2" in Vagrant.configure configures the configuration version
+Vagrant.configure("2") do |config|
+    config.vm.define :vmc3 do |vmdef|
+        vmdef.vm.box = "generic/fedora34"
+        vmdef.vm.hostname = "vagrant-c3"
+        vmdef.vm.network :private_network, :ip => "10.13.0.13"
+        vmdef.vm.network :public_network, :dev => "virbr0", :mode => "bridge", :type => "bridge"
+        vmdef.vm.synced_folder "../vagra", "/matrix" , nfs_udp: false
+        vmdef.vm.provider :libvirt do |domain|
+            domain.memory = 8192
+            domain.cpus = 3
+            domain.nested = true
+            domain.disk_driver :cache => 'none'
+            #domain.machine_virtual_size = 4
+            domain.qemu_use_session = false
+            domain.management_network_name = "vagrant-mgmt"
+            domain.management_network_address = "10.5.11.0/24"
+            domain.management_network_autostart
+        end
+
+        vmdef.vm.provision "shell", inline: <<-SHELL
+            echo "$(date +%Y-%m-%d.%H-%M.UTC) : $HOSTNAME booted up" >> /matrix/logs
+        SHELL
+    end
+ end

@@ -1,0 +1,4 @@
+n=$1
+
+cd c${n}
+vagrant ssh
