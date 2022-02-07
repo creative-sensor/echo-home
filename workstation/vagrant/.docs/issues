@@ -1,0 +1,14 @@
+- Issue-hn21:
+    unable to call virsh-pool-define as already defined
+  Fix:
+    rm ~/.config/libvirt/storage/default.xml
+
+
+- Issue-p9zm: 
+    Error while activating network: Call to virNetworkCreate failed: internal error: Child process (VIR_BRIDGE_NAME=virbr1 /usr/sbin/dnsmasq --conf-file=/var/lib/libvirt/dnsmasq/vagrant-mgmt.conf --leasefile-ro --dhcp-script=/usr/libexec/libvirt_leaseshelper) unexpected exit status 11: Unable to create: /var/lib/libvirt/dnsmasq/virbr1.status
+    errno=13libvirt:  error : cannot create file '/var/lib/libvirt/dnsmasq/virbr1.status': Permission denied
+
+    dnsmasq: lease-init script returned exit code 1
+  Fix:
+    sudo chown  root.root /var/lib/libvirt/dnsmasq/virbr1.status
+

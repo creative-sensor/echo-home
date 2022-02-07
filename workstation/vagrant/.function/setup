@@ -1,0 +1,11 @@
+mkdir -p vagra
+
+sudo dnf install -y vagrant-libvirt
+sudo systemctl enable nfs-utils
+sudo systemctl start nfs-utils
+
+ZONE=libvirt
+sudo firewall-cmd --add-service={nfs3,mountd,rpc-bind} --zone=$ZONE --permanent
+sudo firewall-cmd --zone=libvirt --change-interface=virbr0 --permanent
+sudo firewall-cmd --reload
+sudo firewall-cmd --list-services --zone=$ZONE

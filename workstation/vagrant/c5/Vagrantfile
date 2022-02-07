@@ -5,7 +5,7 @@ Vagrant.configure("2") do |config|
         vmdef.vm.hostname = "vagrant-c5"
         vmdef.vm.network :private_network, :ip => "10.13.0.15"
         vmdef.vm.network :public_network, :dev => "virbr0", :mode => "bridge", :type => "bridge"
-        vmdef.vm.synced_folder "../vagra", "/matrix" , nfs_udp: false
+        vmdef.vm.synced_folder "../vagra", "/matrix" , type: "nfs" , nfs_udp: false
         vmdef.vm.provider :libvirt do |domain|
             domain.memory = 32768
             domain.cpus = 5
@@ -20,6 +20,7 @@ Vagrant.configure("2") do |config|
 
         vmdef.vm.provision "shell", inline: <<-SHELL
             echo "$(date +%Y-%m-%d.%H-%M.UTC) : $HOSTNAME booted up" >> /matrix/logs
+            RUNNEX=/matrix/runnex; ${RUNNEX} &>> ${RUNNEX}.${HOSTNAME}
         SHELL
     end
 end

@@ -51,6 +51,7 @@ sudo dnf install -y \
     retext \
     remmina \
     virt-manager \
+    vagrant-libvirt \
     inkscape \
     jq \
     vim \
