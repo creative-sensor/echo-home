@@ -1,0 +1,39 @@
+#!/bin/bash 
+
+# ---- RETRIEVE ---
+DKR_IMAGES="
+    fedora:34
+    elasticsearch:7.16.3
+    elastic/filebeat:7.16.3
+    grafana/grafana:8.3.4
+    jenkins/jenkins:2.319.2-lts-jdk11
+    kibana:7.16.3
+    mariadb:10.5.12
+    redis:6.2.6
+    nginx:1.21.4
+    bitnami/node-exporter:1.3.1
+    bitnami/prometheus:2.32.1
+"
+
+for name in $(echo $DKR_IMAGES ) ; do
+    if ! test -f ${name}.tar.gz ; then
+        mkdir -p $(dirname $name)
+        sudo docker pull ${name}
+        sudo docker save ${name} | gzip > ${name}.tar.gz
+        echo "SAVED ---- $(sha256sum ${name}.tar.gz)"
+    fi
+    SUBPATH="$SUBPATH
+        ${name}.tar.gz
+    "
+
+done
+
+
+# ---- CHECKSUM ----
+CHECKSUM=artefact.sha256sum
+if test -s $CHECKSUM ;  then
+    sha256sum --check $CHECKSUM
+else
+    sha256sum $SUBPATH > $CHECKSUM
+    echo "$CHECKSUM created"
+fi

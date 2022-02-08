@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# ---- RETRIEVE ---
+HOSTDIR=sshd/host
+RPM=openssh-server-8.6p1-5.fc34.x86_64.rpm
+URL=https://download-ib01.fedoraproject.org/pub/fedora/linux/updates/34/Everything/x86_64/Packages/o/$RPM
+mkdir -p $HOSTDIR
+test -f $HOSTDIR/$RPM || curl $URL  -o $HOSTDIR/$RPM
+
+SUBPATH="
+    $HOSTDIR/$RPM
+"
+
+
+# ---- CHECKSUM ----
+CHECKSUM=artefact.sha256sum
+if test -s $CHECKSUM ;  then
+    sha256sum --check $CHECKSUM
+else
+    sha256sum $SUBPATH > $CHECKSUM
+    echo "$CHECKSUM created"
+fi

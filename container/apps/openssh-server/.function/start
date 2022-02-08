@@ -15,11 +15,9 @@ done
 HOSTDIR=sshd/host
 USER=$1
 RPM=openssh-server-8.6p1-5.fc34.x86_64.rpm
-URL=https://download-ib01.fedoraproject.org/pub/fedora/linux/updates/34/Everything/x86_64/Packages/o/$RPM
 HOSTKEY=$HOSTDIR/ssh_host_rsa_key
 
 mkdir -p $HOSTDIR
-test -f $HOSTDIR/$RPM || curl $URL  -o $HOSTDIR/$RPM
 test -f $HOSTDIR/$RPM && rpm --install --nodeps $HOSTDIR/$RPM
 test -z "$USER" && USER=sshd
 chown -R $USER  $HOSTDIR

@@ -1,0 +1,25 @@
+
+# ---- RETRIEVE ----
+VERSION=$1
+test -z "$VERSION" && VERSION=34
+URL=https://download.fedoraproject.org/pub/fedora/linux/releases/${VERSION}/Workstation/x86_64/iso/Fedora-Workstation-Live-x86_64-${VERSION}-1.2.iso
+ISO=Fedora-Workstation-Live-x86_64-${VERSION}-1.2.iso
+
+test -s $ISO || curl -L -O $URL
+SUBPATH=$ISO
+
+
+# ---- VERIFY ----
+curl https://getfedora.org/static/fedora.gpg | gpg2 --import
+gpg2 --verify-files *-CHECKSUM
+sha256sum -c *-CHECKSUM
+
+
+# ---- CHECKSUM ----
+CHECKSUM=artefact.sha256sum
+if test -s $CHECKSUM ;  then
+    sha256sum --check $CHECKSUM
+else
+    sha256sum $SUBPATH > $CHECKSUM
+    echo "$CHECKSUM created"
+fi
