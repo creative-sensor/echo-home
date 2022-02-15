@@ -12,11 +12,18 @@
 
 ### NOBOX
 ```
-sudo .function/start
+# run samba server as $USER:
+    sudo .function/start $USER
 ```
 
 
 ### RUNBOX
 ```
-DKR_IMAGE=fedora:34 DKR_EXPOSE=139:139 runbox .function/start
+DKR_IMAGE=fedora:34 DKR_EXPOSE=1390:1390 runbox .function/start
+```
+
+### PORT FORWARDING
+Since Windows Explorer requires exact port 445/139 so port must be forwarded:
+```
+
 ```

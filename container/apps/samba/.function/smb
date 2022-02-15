@@ -1,2 +1,4 @@
 SMBASE=.smb
 CONFIGFILE=smb.conf
+export WINDOWS=/windows-x2p5
+export SHADE=/shade-nr3z

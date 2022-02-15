@@ -1,2 +1,10 @@
-set -x
-smbclient //localhost/windows
+#!/bin/bash -x
+SMB_PORT=1390
+SMB_HOST=localhost
+WORKGROUP="-W WORKGROUP"
+SECTION=windows
+test -n "$1" && SMB_HOST=$1
+test -n "$2" && SECTION=$2
+test -n "$3" && USER="-U $3"
+test -n "$4" && WORKGROUP="-W $4"
+smbclient -p $SMB_PORT  $WORKGROUP //$SMB_HOST/$SECTION
