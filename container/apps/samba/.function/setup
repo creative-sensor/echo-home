@@ -1,0 +1,6 @@
+sudo dnf install -y samba samba-client procps-ng
+
+#sudo systemctl enable smb --now
+#firewall-cmd --get-active-zones
+#sudo firewall-cmd --permanent --zone=FedoraWorkstation --add-service=samba
+#sudo firewall-cmd --reload

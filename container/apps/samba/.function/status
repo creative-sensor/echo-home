@@ -1,0 +1,5 @@
+#!/bin/bash
+source .function/smb
+ps $(< $SMBASE/smbd.pid)
+
+sudo smbstatus --configfile=$CONFIGFILE

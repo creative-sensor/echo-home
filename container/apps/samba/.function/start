@@ -1,0 +1,23 @@
+#!/bin/bash -x
+source .function/smb
+WINDOWS=/windows
+USER=$1
+test -z "$USER" && USER=root
+
+if test -d /matrix ; then
+    .function/setup
+    SMB_OPTION="--foreground  --log-stdout"
+fi
+
+mkdir -p $WINDOWS $SMBASE
+export WINDOWS=$(readlink -f $WINDOWS)
+chmod -R o+rwx /var/log/samba
+chown -R $USER:$USER $WINDOWS
+chown -R $USER:$USER $SMBASE
+chown -R $USER:$USER /var/log/samba
+chown -R $USER:$USER /run/samba
+
+
+runuser -u $USER -- \
+    /usr/sbin/smbd  --configfile=${CONFIGFILE}  $SMB_OPTION
+

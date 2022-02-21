@@ -1,0 +1,3 @@
+source .function/smb
+NAME=$1
+sudo smbpasswd -c $CONFIGFILE -a $NAME

@@ -1,0 +1,2 @@
+source .function/smb
+sudo kill -15 $(< ${SMBASE}/smbd.pid)

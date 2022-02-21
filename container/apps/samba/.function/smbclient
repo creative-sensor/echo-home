@@ -1,0 +1,2 @@
+set -x
+smbclient //localhost/windows
