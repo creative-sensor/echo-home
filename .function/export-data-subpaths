@@ -1,0 +1,17 @@
+#!/bin/bash -xe
+FS_ROOT=$1
+    test -z "$FS_ROOT" && exit 1
+
+DATA_SUBPATH=$(< .data_subpaths-pc8r)
+TODAY=$(date +%F)
+PARENT_UUID=$(basename $(dirname $(git root)))
+REPLICAS_DIR=$FS_ROOT/.replicas/fs-${PARENT_UUID}/$TODAY/$(basename ${PWD})
+    mkdir -p $REPLICAS_DIR
+
+
+
+for i in $DATA_SUBPATH ; do
+    rsync  --relative -avr $i  ${REPLICAS_DIR}
+done
+
+cp .data_subpaths-pc8r ${REPLICAS_DIR}
