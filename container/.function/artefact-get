@@ -1,0 +1,14 @@
+#!/bin/bash -x
+
+OBJECTORY=$1
+
+cd $OBJECTORY
+
+if test -x .function/artefact-get ; then
+    .function/artefact-get
+else
+    source .properd/VARSET
+    mkdir -p $(dirname $ARTEFACT_DIR/$DKR_IMG)
+    docker pull $DKR_IMG
+    docker save $DKR_IMG | gzip > $ARTEFACT_DIR/$DKR_IMG
+fi

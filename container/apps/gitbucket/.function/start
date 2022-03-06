@@ -1,0 +1,13 @@
+
+DKR_EXPOSE=8080:8080
+DKR_IMAGE=gitbucket/gitbucket:4.38.2
+DATUM=$PWD/datum
+
+
+mkdir -p $DATUM
+docker run -d \
+    -p $DKR_EXPOSE \
+    --mount  type=bind,source=${DATUM},target=/root/.gitbucket \
+    $DKR_IMAGE
+
+

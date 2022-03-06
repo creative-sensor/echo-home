@@ -1,0 +1,2 @@
+DKR_IMG=gitbucket/gitbucket:4.38.2
+ARTEFACT_DIR=artefacts
