@@ -1,0 +1,9 @@
+
+RABBIT=rabbit
+USER=rabbit
+useradd --shell /usr/sbin/nologin $USER
+mkdir -p $RABBIT/data
+chown -R $USER  $RABBIT
+
+runuser -u $USER  -- \
+
