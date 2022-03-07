@@ -1,5 +1,5 @@
-n=$1
-
-cd c${n}
-vagrant up
-
+VG_NAME=$1
+VG_DIR=$VG_NAME
+[[ $VG_DIR =~ ^s ]] && VG_DIR=cs
+cd $VG_DIR
+vagrant up vm${VG_NAME}
