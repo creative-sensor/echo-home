@@ -1,0 +1,6 @@
+if test -z "$NAMESPACE" ; then
+    echo -e "\n--------"
+    kubectl get namespaces
+    read -p "NAMESPACE ? = " NAMESPACE
+fi
+

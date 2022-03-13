@@ -1,0 +1,4 @@
+NAMESPACE=$1
+source .function/varcheck-NAMESPACE
+
+kubectl get pods --output=wide -n $NAMESPACE

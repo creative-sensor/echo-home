@@ -24,3 +24,5 @@ vagrant-libvirt
 libheif
 ansible
 kubernetes-client
+nginx
+nginx-mod-stream

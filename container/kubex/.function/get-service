@@ -1,0 +1,4 @@
+NAMESPACE=$1
+source .function/varcheck-NAMESPACE
+
+kubectl get service -n $NAMESPACE

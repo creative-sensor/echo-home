@@ -1,0 +1,6 @@
+if test -z "$SERVICE" ; then
+    echo -e "\n--------"
+    kubectl get service -n $NAMESPACE
+    read -p "SERVICE ? = " $SERVICE
+fi
+

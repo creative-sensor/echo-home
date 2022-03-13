@@ -1,0 +1,6 @@
+if test -z "$DEPLOYMENT" ; then
+    echo -e "\n--------"
+    kubectl get deployment -n $NAMESPACE
+    read -p "DEPLOYMENT ? = " DEPLOYMENT
+fi
+

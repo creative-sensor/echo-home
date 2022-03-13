@@ -1,0 +1,8 @@
+#!/bin/bash -xe
+
+CONFIG=${PWD}/nginx.conf
+PREFIX=${PWD}/.ngx
+ERRLOG=${PREFIX}/error.log
+mkdir -p $PREFIX
+
+nginx -c $CONFIG -p $PREFIX -e $ERRLOG -g "daemon off;"

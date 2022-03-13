@@ -1,0 +1,23 @@
+source .function/setup
+
+
+hex_date=$(printf %X  $(date +%s))
+RPMS_DIR=rpms-${hex_date}
+CHECKSUM=artefact.sha256sum.${RPMS_DIR}
+mkdir -p $RPMS_DIR
+
+
+# ---- RETRIEVE ----
+RPMS=$PACKAGES
+sudo dnf reinstall -y --downloadonly --destdir ./$RPMS_DIR  $RPMS
+SUBPATH=$(ls ${RPMS_DIR}/*.rpm)
+
+
+# ---- CHECKSUM ----
+if test -s $CHECKSUM ;  then
+    sha256sum --check $CHECKSUM
+else
+    sha256sum $SUBPATH > $CHECKSUM
+    echo "$CHECKSUM created"
+fi
+
