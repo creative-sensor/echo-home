@@ -1,0 +1,12 @@
+#!/bin/bash  
+LENGTH=$1
+
+test -z "$LENGTH" && LENGTH=4
+
+RID=$(cat /dev/urandom | tr -dc '[:alnum:]' | fold -w ${1:-${LENGTH}} | head -n 1)
+RID_NOCASE=$(echo $RID | awk '{print tolower($0)}')
+
+echo "uuid  $(uuidgen)"
+echo "rid-$RID    $RID"
+echo "rid-$RID_NOCASE    $RID_NOCASE"
+

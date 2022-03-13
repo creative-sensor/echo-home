@@ -22,3 +22,5 @@ vim-powerline
 transmission
 vagrant-libvirt
 libheif
+ansible
+kubernetes-client

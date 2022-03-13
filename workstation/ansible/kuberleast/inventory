@@ -1,0 +1,13 @@
+[kluster]
+master ansible_host=vms5
+worker_1 ansible_host=vms1    id=1
+worker_2 ansible_host=vms2    id=2
+worker_3 ansible_host=vms3    id=3
+
+
+[kluster:vars]
+ansible_ssh_user=vagrant
+
+
+
+

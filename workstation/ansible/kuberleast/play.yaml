@@ -1,0 +1,10 @@
+- name: rid-NVwj
+  import_playbook: books/play_artefact.yaml
+
+- name: rid-mmkz
+  import_playbook: books/play_configuration.yaml
+
+- name: rid-qYF7
+  import_playbook: books/play_kube_nodes.yaml
+
+

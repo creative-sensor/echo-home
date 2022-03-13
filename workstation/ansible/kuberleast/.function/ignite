@@ -1,0 +1,6 @@
+#ansible-playbook -v -i ./inventory books/play_artefact.yaml
+#ansible-playbook -v -i ./inventory books/play_configuration.yaml
+#ansible-playbook -v -i ./inventory books/play_kube_nodes.yaml
+
+ansible-playbook -v -i ./inventory play.yaml
+
