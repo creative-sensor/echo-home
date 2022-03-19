@@ -1,0 +1,2 @@
+CLUSTERROLE=$1
+kubectl describe clusterroles

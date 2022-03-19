@@ -1,0 +1,9 @@
+CLUSTERROLE=$1
+
+if test -z "$CLUSTERROLE" ; then
+    kubectl get clusterroles
+    read -p "CLUSTERROLE ? = " CLUSTERROLE
+fi
+
+echo -e "\n---"
+kubectl get clusterroles $CLUSTERROLE -o yaml

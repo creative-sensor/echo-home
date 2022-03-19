@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: timer-shell
+  namespace: default
+  labels:
+    timer: hourly
+spec:
+  serviceAccountName: ksa 
+  containers:
+  - name: timer-shell
+    image: quay.io/bitnami/kubectl
+    command: [ 'sleep' , '3600']

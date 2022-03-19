@@ -1,0 +1,3 @@
+CONFIGMAP=$1
+
+kubectl -n kube-system get cm kubeadm-config -o yaml

@@ -1,0 +1,17 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+
+
+metadata:
+    name: crbinding-epm3
+    namespace: default
+
+subjects:
+    - kind: ServiceAccount
+      name: ksa
+      namespace: default
+
+roleRef:
+    kind: ClusterRole
+    name: secret-reader
+    apiGroup: rbac.authorization.k8s.io

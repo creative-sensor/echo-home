@@ -1,0 +1,4 @@
+.metadata.namespace = "default" |
+.spec.containers[0].image = "quay.io/bitnami/kubectl" |
+.spec.serviceAccountName = "default"
+

@@ -1,0 +1,9 @@
+PORT_UPSTREAM=$1
+PORT_SERVER=$2
+ENTRY_DIR=tcp-entry
+mkdir -p $ENTRY_DIR
+sed -e "s/{{ PORT_UPSTREAM }}/$PORT_UPSTREAM/g"  \
+    -e "s/{{ PORT_SERVER }}/$PORT_SERVER/g"  \
+    .template/tcp-entry.sub-nginx.conf  >  $ENTRY_DIR/u${PORT_UPSTREAM}.s${PORT_SERVER}
+
+kill -SIGHUP $(< .ngx/nginx.pid)

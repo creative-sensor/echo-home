@@ -1,0 +1,4 @@
+APP_PATH=$1
+ACTION=delete
+
+source .function/action

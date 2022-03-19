@@ -1,0 +1,14 @@
+
+if test -f $APP_PATH ; then
+    kubectl $ACTION -f $APP_PATH
+    exit 0
+fi
+
+
+if test -x $APP_PATH/.function/$ACTION ; then
+    cd $APP_PATH
+    .function/$ACTION
+    exit
+fi
+
+kubectl $ACTION -f $APP_PATH/main.yaml 

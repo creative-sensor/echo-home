@@ -1,0 +1,4 @@
+POD=timer-shell
+SHELL=/bin/bash
+kubectl exec --stdin --tty $POD -- $SHELL
+

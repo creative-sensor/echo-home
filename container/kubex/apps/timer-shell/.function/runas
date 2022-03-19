@@ -1,0 +1,17 @@
+#!/bin/bash
+
+NAMESPACE=$1
+SERVICEACCOUNT=$2
+
+# VALUES FROM JQPATH FILE
+if test -z "$SERVICEACCOUNT" ; then
+    cat main.yaml  |  yq  |  jq -f VARSET.jqpath |  kubectl apply -f -
+fi
+
+
+
+# VALUES FROM CLI
+if test -n "$SERVICEACCOUNT" ; then
+    cat main.yaml  |  yq  |  jq  ".spec.serviceAccountName = \"$SERVICEACCOUNT\" | .metadata.namespace = \"$NAMESPACE\""   \
+    | kubectl apply -f -
+fi
