@@ -1,0 +1,22 @@
+#!/bin/bash
+
+BINDIR=$HOME/.local/bin
+mkdir -p $BINDIR
+if ! echo $PATH | grep -q "[=:]$BINDIR[:]*" ; then
+    echo "Adding $BINDIR  to  envar:PATH"
+    sed -i "s,^PATH.*,&:$BINDIR,"  $HOME/.bashrc
+        # sed: reuse matched pattern
+fi
+
+PATH_LIST=$(< .properd/symlink)
+
+for path in $PATH_LIST ; do
+    abs_path=$(readlink -f $path)
+    if test -n "$abs_path" ; then
+        symlink_name=$(basename $abs_path)
+        echo "Add symlink --> $symlink_name"
+        ln -sf  $abs_path  $BINDIR/${symlink_name}
+    fi
+done
+
+ls -la --color $BINDIR

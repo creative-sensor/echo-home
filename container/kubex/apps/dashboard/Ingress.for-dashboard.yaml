@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: for-dashboard
+  namespace: kubernetes-dashboard
+  annotations:
+    kubernetes.io/ingress.allow-http: "false" # disable HTTP
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+spec:
+  tls:
+  - hosts:
+      - dashboard.kubex
+  ingressClassName: nginx
+  rules:
+  - host: "dashboard.kubex"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: kubernetes-dashboard
+            port:
+              number: 443
