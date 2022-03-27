@@ -1,4 +1,10 @@
 POD=timer-shell
 SHELL=/bin/bash
-kubectl exec --stdin --tty $POD -- $SHELL
+
+test -s .consoles && cat .consoles
+read -p "NAMESPACE ? = " NAMESPACE
+test -z $NAMESPACE && NAMESPACE=default
+
+echo "My service account is $NAMESPACE/$(kubectl get pod $POD -n $NAMESPACE -o json | jq .spec.serviceAccountName)"
+kubectl exec --stdin --tty $POD -n $NAMESPACE -- $SHELL
 

@@ -1,4 +1,0 @@
-NAMESPACE=$1
-source .function/varcheck-NAMESPACE
-
-kubectl get clusterrolebinding -n $NAMESPACE

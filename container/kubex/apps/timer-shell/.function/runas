@@ -15,3 +15,8 @@ if test -n "$SERVICEACCOUNT" ; then
     cat main.yaml  |  yq  |  jq  ".spec.serviceAccountName = \"$SERVICEACCOUNT\" | .metadata.namespace = \"$NAMESPACE\""   \
     | kubectl apply -f -
 fi
+
+
+if kubectl get pod timer-shell -n $NAMESPACE ; then
+    grep $NAMESPACE .consoles || echo $NAMESPACE >> .consoles
+fi

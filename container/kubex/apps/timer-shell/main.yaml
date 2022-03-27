@@ -6,7 +6,7 @@ metadata:
   labels:
     timer: hourly
 spec:
-  serviceAccountName: ksa 
+  serviceAccountName: default 
   containers:
   - name: timer-shell
     image: quay.io/bitnami/kubectl
