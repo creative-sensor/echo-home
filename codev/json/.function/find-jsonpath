@@ -1,15 +1,27 @@
 #!/bin/bash
 
 
-#warning: alien code
 FILE_PATH=$(test -n "$1" && readlink -f $1)
 
 
 jq  -r '
-            paths(scalars) as $p
-            | [ ( [ $p[] | tostring ] | join(".") )
-            , ( getpath($p) | tojson )
-            ]
-            | join(" : ")
+            def jsonvalid:
+                if type == "number" then . 
+                else "\(tojson)" end
+            ;
+            
+
+            def flatten($value):
+                reduce .[] as $item (
+                  # for each item, manipulate each element
+                    ""; . 
+                    + ($item | if type == "string" then  "."+.   else "[\(.)]" end)
+                )
+                + " : \($value | jsonvalid)" 
+            ;
+
+            paths(scalars) as $FLAT_KEYS
+            | getpath($FLAT_KEYS) as $VALUES
+            | $FLAT_KEYS | flatten($VALUES)
        ' \
     $FILE_PATH
