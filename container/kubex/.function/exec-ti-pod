@@ -1,0 +1,13 @@
+#!/bin/bash 
+NAMESPACE=$1
+POD=$2
+shift 2
+CMD=$@
+source .function/varcheck-NAMESPACE
+source .function/varcheck-POD
+test -z "$CMD" && CMD=bash
+
+COLOR1='\033[38;5;34m'
+STOP='\033[0m'
+echo -e "${COLOR1}---- BEGIN EXEC IN POD:$POD ----${STOP}"
+kubectl exec -n $NAMESPACE -it $POD -- $CMD

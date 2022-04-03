@@ -1,0 +1,7 @@
+kubectl create namespace argocd
+kubectl apply -n argocd \
+    -f main.yaml \
+    -f Ingress.for-argocd-server.yaml \
+    -f Service.nodeport-argocd.yaml
+
+

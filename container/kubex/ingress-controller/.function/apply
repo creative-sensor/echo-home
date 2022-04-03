@@ -1,0 +1,8 @@
+
+
+kubectl apply \
+  -f main.yaml \
+  -f Service.nodeport-alb.yaml \
+  -f IngressClass.nginx.yaml \
+  -f Service.nodeport-ingress-nginx-controller.yaml
+

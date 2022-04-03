@@ -1,0 +1,4 @@
+OBJECTORY=$1
+
+cd $OBJECTORY
+.function/whereis

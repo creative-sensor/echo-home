@@ -1,0 +1,6 @@
+if test -z "$POD" ; then
+    echo -e "\n--------"
+    kubectl get pod -n $NAMESPACE
+    read -p "POD ? = " POD
+fi
+

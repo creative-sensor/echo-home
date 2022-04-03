@@ -108,8 +108,8 @@ command! -nargs=1 FindGrep call FindGrep(<q-args>)
 function FgXp(pattern)
   " FIELD GIT EXPLORER
   let error_file = tempname()
-  exe '!find "./" -type f | grep -v "^./.git" | grep -i "'  .  a:pattern  .  '" | xargs file | sed "s/:/:1:/" > '.error_file
-  set errorformat=%f:%l:%m
+  exe '!find "./" -type f | grep -v "^./.git" | grep -i "'  .  a:pattern  .  '" | sed "s/\$/:1/" > '.error_file
+  set errorformat=%f:%l
   exe "cfile ". error_file
   copen
   call delete(error_file)
