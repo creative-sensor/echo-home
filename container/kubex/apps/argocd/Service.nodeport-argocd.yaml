@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    k8s-app: argocd-server
+  name: nodeport-argocd
+  namespace: argocd
+spec:
+  type: NodePort
+  ports:
+    - port: 443
+      targetPort: 443
+  selector:
+    k8s-app: argocd-server
+
