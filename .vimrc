@@ -103,6 +103,18 @@ endfun
 command! -nargs=1 FindGrep call FindGrep(<q-args>)
 
 
+function FgXp(pattern)
+  " FIELD GIT EXPLORER
+  let error_file = tempname()
+  exe '!find "./" | grep -v "^./.git" | grep -i "'  .  a:pattern  .  '" | xargs file | sed "s/:/:1:/" > '.error_file
+  set errorformat=%f:%l:%m
+  exe "cfile ". error_file
+  copen
+  call delete(error_file)
+endfun
+command! -nargs=* FgXp call FgXp(<q-args>)
+
+
 fun! GrepSource(text)
   " GREP SOURCE CODE WHICH CONTAINS TEXT
   " :Grin text  " open window of search results
