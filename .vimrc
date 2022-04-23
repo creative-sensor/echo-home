@@ -21,7 +21,6 @@ set splitright
 set title titlestring=VIM\ \|\ %{fnamemodify(getcwd(),\ ':t')} titlelen=32
     "output:  VIM | current_dirname
 
-
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "-------- [PLUGIN] --------
 "filetype plugin on
@@ -186,6 +185,10 @@ map aC : :%!column -t<CR>
     "Format as columns
 map WW : wa<CR>
     "Save all
+map QQ : wqa<CR>
+    "Save and quit all
+map q0 : qa!<CR>
+    "Quit all
 "map <C-I> : tabnew . <CR>
 
 vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
