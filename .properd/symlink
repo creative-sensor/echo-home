@@ -1,2 +1,4 @@
 codev/json/.function/find-jsonpath
 codev/json/.function/find-yamlpath
+codev/git/.function/gforce
+codev/git/.function/gpush

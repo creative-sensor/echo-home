@@ -20,7 +20,7 @@ set mouse=a
 set splitright
 set title titlestring=VIM\ \|\ %{fnamemodify(getcwd(),\ ':t')} titlelen=32
     "output:  VIM | current_dirname
-
+set background=light
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "-------- [PLUGIN] --------
 "filetype plugin on
@@ -52,6 +52,8 @@ Plugin 'tpope/vim-fugitive'
         "Git commands
 Plugin 'junegunn/gv.vim'
         "Git browser
+Plugin 'lifepillar/vim-solarized8'
+        "Colorscheme
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -105,7 +107,7 @@ command! -nargs=1 FindGrep call FindGrep(<q-args>)
 function FgXp(pattern)
   " FIELD GIT EXPLORER
   let error_file = tempname()
-  exe '!find "./" | grep -v "^./.git" | grep -i "'  .  a:pattern  .  '" | xargs file | sed "s/:/:1:/" > '.error_file
+  exe '!find "./" -type f | grep -v "^./.git" | grep -i "'  .  a:pattern  .  '" | xargs file | sed "s/:/:1:/" > '.error_file
   set errorformat=%f:%l:%m
   exe "cfile ". error_file
   copen
@@ -158,14 +160,23 @@ function SearchIndex(...)
 endfunction
 command -nargs=* SearchIndex call SearchIndex (<f-args>)
 
+fun! Terminator()
+  " Mini Terminal
+  execute  "highlight Terminal ctermbg=23 ctermfg=15 guibg=#073642   guifg=#93a1a1 "
+  execute  "below terminal ++rows=7"
+endfun
+command! -nargs=0 Terminator call Terminator()
+
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "-------- [AUTOCMD] --------
-"autocmd BufNewFile * :set filetype=txt
 autocmd FileType yaml  : set tabstop=2
-"autocmd VimEnter *      : let g:netrw_winsize=25
-"autocmd VimEnter *      : Vexplore
+"autocmd VimEnter * above terminal ++rows=7
+"autocmd VimEnter * if isdirectory(".git") | call FgXp("") | endif
+autocmd TerminalOpen * set termwinsize=0*0
+    "termwinsize: auto-adjustable
+
 
 
 
@@ -189,6 +200,8 @@ map QQ : wqa<CR>
     "Save and quit all
 map q0 : qa!<CR>
     "Quit all
+map tty : highlight Terminal ctermbg=23 ctermfg=15 guibg=darkblue guifg=lightgrey \| below terminal ++rows=7<CR>
+
 "map <C-I> : tabnew . <CR>
 
 vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
@@ -200,3 +213,6 @@ vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
 
 vnoremap --    "+y : vsplit <C-R>+ <CR>
     "JUMP TO PATH
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"-------- [POST-INIT] --------
+colorscheme solarized8_high
