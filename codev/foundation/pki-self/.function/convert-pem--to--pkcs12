@@ -1,0 +1,11 @@
+#!/bin/bash -e
+PEM_KEY=$1
+PEM_CERT=$2
+PKCS12_BUNDLE=$(dirname $PEM_CERT)/$(basename $PEM_KEY)-$(basename $PEM_CERT).converted.pk12
+
+openssl pkcs12 -export \
+    -inkey $PEM_KEY \
+    -in $PEM_CERT \
+    -out $PKCS12_BUNDLE
+
+echo "Converted: $(readlink -f $PKCS12_BUNDLE)"

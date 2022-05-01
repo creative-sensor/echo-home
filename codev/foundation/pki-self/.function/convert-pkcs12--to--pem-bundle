@@ -1,0 +1,10 @@
+#!/bin/bash -e
+KEYSTORE_PKCS12=$1
+PEM_BUNDLE=
+
+sum=.$(sha256sum $KEYSTORE_PKCS12 | awk '{print $1}')
+PEM_BUNDLE=${KEYSTORE_PKCS12}${sum:0:5}.bundle.pem
+
+openssl pkcs12 -in $KEYSTORE_PKCS12 -out $PEM_BUNDLE -nodes
+
+echo "Converted: $(readlink -f $PEM_BUNDLE)"

@@ -1,0 +1,11 @@
+#!/bin/bash
+KEY=$1
+CERT=$2
+mod_cert=$(openssl x509 -noout -modulus -in $CERT )
+mod_key=$(openssl rsa -noout -modulus -in $KEY )
+
+if [[ "$mod_cert" == "$mod_key" ]] && test -n "$mod_cert" && test -n "$mod_key" ; then
+    echo "Keycert valid!"
+else
+    echo -e  " modulus_cert: $mod_cert \n modulus_key: $mod_key"
+fi

@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+KEYSTORE_PKCS12=$1
+KEYSTORE_JKS=$KEYSTORE_PKCS12.converted.jks
+read -p "Enter passphrase to unlock $KEYSTORE_PKCS12 : " PASSPHRASE_PKCS12
+
+if test -s $KEYSTORE_JKS ; then
+    echo "KEYSTORE EXISTS ALREADY! ADD NEW ENTRY INSTEAD"
+    exit 1
+fi
+
+echo "NEW KEYSTORE WILL BE CREATED AS DESTINATION"
+keytool  -importkeystore   \
+    -srckeystore $KEYSTORE_PKCS12  -srcstoretype PKCS12  -srcstorepass $PASSPHRASE_PKCS12 \
+    -destkeystore $KEYSTORE_JKS  -deststoretype JKS    
+
+echo "Converted: $(readlink -f $KEYSTORE_JKS)"
+
+

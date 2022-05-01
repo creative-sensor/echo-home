@@ -1,0 +1,22 @@
+#!/bin/bash -e
+
+KEYSTORE_JKS=$1
+KEYSTORE_PKCS12=
+
+sum=.$(sha256sum $KEYSTORE_JKS | awk '{print $1}')
+KEYSTORE_PKCS12=${KEYSTORE_JKS}${sum:0:5}.converted.pk12
+read -p "Enter passphrase to unlock $KEYSTORE_JKS : " PASSPHRASE_JKS
+
+if test -s $KEYSTORE_PKCS12 ; then
+    echo "KEYSTORE EXISTS ALREADY! ADD NEW ENTRY INSTEAD"
+    exit 1
+fi
+
+echo "NEW KEYSTORE WILL BE CREATED AS DESTINATION"
+keytool  -importkeystore   \
+    -srckeystore $KEYSTORE_JKS  -srcstoretype JKS  -srcstorepass $PASSPHRASE_JKS \
+    -destkeystore $KEYSTORE_PKCS12  -deststoretype PKCS12    
+
+echo "Converted: $(readlink -f $KEYSTORE_PKCS12)"
+
+

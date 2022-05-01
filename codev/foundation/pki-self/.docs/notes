@@ -1,0 +1,11 @@
+
+X509:
+    PEM: base64-encoded container for certificate or private key
+    DER:  binary-encoded container for certificate or protection key
+    PKCS11: api spec
+    PKCS12: binary-encoded container (standard keystore) ,  add password protection , mutiple entries
+    PKCS7: email certificate, signature 
+    PKCS8: standard syntax for storing private key encrypted with passphrase
+
+JKS: keystore (Java proprietary format: deprecated)
+

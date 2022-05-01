@@ -1,0 +1,18 @@
+#!/bin/bash -e
+KEYSTORE_PKCS12=$1
+PEM_KEY=
+PEM_CERT=
+
+sum=.$(sha256sum $KEYSTORE_PKCS12 | awk '{print $1}')
+sum=${sum:0:5}
+PEM_KEY=${KEYSTORE_PKCS12}${sum}.key.pem
+PEM_CERT=$KEYSTORE_PKCS12${sum}.cert.pem
+
+echo "---- Extracting certificate ----"
+openssl pkcs12 -in $KEYSTORE_PKCS12 -out $PEM_CERT -clcerts -nokeys
+echo "---- Extracting key ----"
+openssl pkcs12 -in $KEYSTORE_PKCS12 -out $PEM_KEY -nocerts -nodes
+echo "Extracted:
+    $(readlink -f ${PEM_KEY})
+    $(readlink -f ${PEM_CERT})
+"

@@ -1,0 +1,3 @@
+
+CERT_PEM=$1
+openssl x509 -in $CERT_PEM -text -noout

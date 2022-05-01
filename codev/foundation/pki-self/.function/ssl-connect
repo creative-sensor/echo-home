@@ -1,0 +1,11 @@
+#!/bin/bash
+SITE_HOST=$1
+SITE_NAME=$2
+PORT=$3
+
+test -z "$SITE_NAME" && SITE_NAME=$SITE_HOST
+test -z "$PORT" && PORT=443
+
+openssl s_client -connect $SITE_HOST:$PORT -servername $SITE_NAME 
+
+
