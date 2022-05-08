@@ -1,6 +1,7 @@
-# OBJECT DIRECTORY
+# OBJECTORY
 
-Object directory is like an object held in directory within file system.
+An objectory is the file system directory which is organized in object-oriented style.
+The directory acts like a callable object (function invoking and property reading).
 
 ```yaml
 OBJ_DIR:
