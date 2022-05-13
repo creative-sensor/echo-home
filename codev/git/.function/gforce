@@ -1,4 +1,4 @@
 set -x
 export OPTION="--force"
-.function/gpush
+gpush
 

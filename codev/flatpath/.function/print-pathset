@@ -1,0 +1,16 @@
+#!/bin/bash
+DIR=$1
+FILTER=$2
+DELIMITER=" | "
+
+test -z "$FILTER" && FILTER=".\(yaml\|yml\|json\)$"
+
+cd $DIR
+for path in $(find  -type f | grep "$FILTER") ; do
+    #find-groovypath
+    #find-hclpath
+    #find-tomlpath6
+    find-yamlpath $path  \
+        | sed "s,^,${path}${DELIMITER},"  \
+        | sed "s,^\.\/,,"
+done

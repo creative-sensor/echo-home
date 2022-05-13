@@ -1,0 +1,12 @@
+OBJECTORY=$1
+
+cd $OBJECTORY
+mkdir .properd
+mkdir .function
+mkdir .template
+mkdir .docs
+mkdir datum
+
+touch .function/start  && chmod 0700 .function/start
+touch .properd/meta.yaml
+
