@@ -1,2 +1,12 @@
-pip install ruamel.yaml
-pip install dpath
+ARTIFACTS="
+    ruamel.yaml
+    dpath
+"
+
+ARTIFACT_DIR=.artifact
+mkdir -p $ARTIFACT_DIR
+
+for item in $ARTIFACTS ; do
+    pip download --dest $ARTIFACT_DIR $item
+    pip install $item
+done
