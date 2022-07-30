@@ -15,6 +15,7 @@ fi
 alias git-glog='git log --all --decorate --oneline --graph'
 alias gitroot='cd $(git rev-parse --show-toplevel)'
 alias grin='grep -rin '
+alias ll='ls -la '
 
 
 # ---- LOCAL ----
