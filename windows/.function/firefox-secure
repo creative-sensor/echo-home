@@ -1,0 +1,7 @@
+PROFILE=${MOZILLA_FIREFOX_PROFILE}
+    # Path to encrypted profile
+
+cd '/c/Program Files/Mozilla Firefox'
+test -z "$PROFILE" && echo "NO PROFILE FOUND"
+test -n "$PROFILE" && ./firefox.exe --profile $PROFILE
+

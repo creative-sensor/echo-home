@@ -1,0 +1,47 @@
+#!/bin/bash -e
+
+#DKR_IMAGE=[optional exported] 
+#DKR_ENV_FILE=[optional exported]
+#DKR_EXPOSE=[optional exported]
+#DKR_RUNAS=[optional exported]
+
+test -z "$DKR_IMAGE" && DKR_IMAGE=fedora:32
+test -n "$DKR_EXPOSE" && DKR_EXPOSE="--publish 0.0.0.0:$DKR_EXPOSE"
+test -n "$DKR_ENV_FILE" && DKR_ENV_FILE="--env-file $DKR_ENV_FILE"
+test -n "$DKR_RUNAS" && DKR_RUNAS="--user $DKR_RUNAS"
+
+
+if [[ "$1" =~ ^.function/ ]]; then
+    # RUN A FUNCTION SCRIPT INSIDE CONTAINER
+    FUNCTION_PATH=$(readlink -f $1)
+    CONTEXT_DIR=$(dirname   $(echo $FUNCTION_PATH | grep -o "^.*.function"))
+    RUN_ID=$(date -u '+%Y-%m-%dT%H-%M-%SZ')
+    LOG=$CONTEXT_DIR/.log/${RUN_ID}/std.eo
+    NEO=$1
+    NEO_PARAMS=${*:2}
+    mkdir -p $(dirname $LOG)
+     docker run \
+            --rm \
+            --mount  type=bind,source=${CONTEXT_DIR},target=/matrix  \
+            --env  RUN_ID=${RUN_ID} \
+            --entrypoint "" \
+            ${DKR_EXPOSE} \
+            ${DKR_ENV_FILE} \
+            ${DKR_RUNAS} \
+            ${DKR_IMAGE} \
+            bash -c "cd /matrix;  ./$NEO $NEO_PARAMS " \
+        2>&1 | tee  $LOG
+    echo "Runbox completed: $(readlink -f $LOG)"
+else
+    CMD=$@
+    [ "$1" == "bash" ] && STDIO="-i -t"
+    echo "INTERACTIVE MODE: no data persistence!"
+    winpty docker run \
+            --rm \
+            --entrypoint "" \
+            ${STDIO} \
+            ${DKR_EXPOSE} \
+            ${DKR_ENV_FILE} \
+            ${DKR_RUNAS} \
+            ${DKR_IMAGE}  ${CMD}
+fi
