@@ -1,0 +1,26 @@
+#!/bin/bash -e
+
+#DKR_IMAGE=[optional exported] 
+#DKR_ENV_FILE=[optional exported]
+#DKR_EXPOSE=[optional exported]
+#DKR_RUNAS=[optional exported]
+
+test -z "$DKR_IMAGE" && DKR_IMAGE=fedora:32
+test -n "$DKR_EXPOSE" && DKR_EXPOSE="--publish 0.0.0.0:$DKR_EXPOSE"
+test -n "$DKR_ENV_FILE" && DKR_ENV_FILE="--env-file $DKR_ENV_FILE"
+
+GIT_ROOT=$(git rev-parse --show-toplevel)
+DATA_ROOT=$GIT_ROOT/..
+CMD='bash'
+STDIO="-i -t"
+echo "HOMEBOX: data persistent"
+winpty docker run \
+        --rm \
+        --mount  type=bind,source=${GIT_ROOT},target=/home/$USERNAME \
+        --mount  type=bind,source=${DATA_ROOT},target=/datum \
+        --entrypoint "" \
+        --user $USERNAME \
+        ${STDIO} \
+        ${DKR_EXPOSE} \
+        ${DKR_ENV_FILE} \
+        ${DKR_IMAGE}  ${CMD}
