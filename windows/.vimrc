@@ -22,7 +22,9 @@ set title titlestring=VIM\ \|\ %{fnamemodify(getcwd(),\ ':t')} titlelen=32
     "output:  VIM | current_dirname
 set background=light
 set guifont=Consolas:h11
-set shell=\"C:\Program\ Files\Git\bin\sh.exe\"
+"set shell=\"/c/Program\ Files/Git/usr/bin/bash.exe\"
+set shell=\"/c/Program\ Files/Git/bin/sh.exe\"
+set backspace=indent,eol,start
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "-------- [PLUGIN] --------
 "filetype plugin on
@@ -109,8 +111,8 @@ command! -nargs=1 FindGrep call FindGrep(<q-args>)
 function FgXp(pattern)
   " FIELD GIT EXPLORER
   let error_file = tempname()
-  exe '!find "./" -type f | grep -v "^./.git" | grep -i "'  .  a:pattern  .  '" | xargs file | sed "s/:/:1:/" > '.error_file
-  set errorformat=%f:%l:%m
+  exe '!find "./" -type f | grep -v "^./.git" | grep -i "'  .  a:pattern  .  '" | sed "s/\$/:1/" > '.error_file
+  set errorformat=%f:%l
   exe "cfile ". error_file
   copen
   call delete(error_file)
