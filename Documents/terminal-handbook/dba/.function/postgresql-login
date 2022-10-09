@@ -1,0 +1,23 @@
+#!/bin/bash 
+
+VARSET=$1
+if test -z "$VARSET" ; then
+    find ./VARSET
+    read -p "VARSET ? = " VARSET
+fi
+# ---- default
+DB_HOST=
+DB_PORT=5432
+DB_NAME=
+DB_USER=
+DB_PASSWORD_FILE=
+# ---- override
+set -x
+source $VARSET
+set +x
+# ---- execute
+DB_PASSWORD=$(<$DB_PASSWORD_FILE) psql \
+    -h $DB_HOST \
+    -p $DB_PORT \
+    -d $DB_NAME \
+    -U $DB_USER

@@ -1,0 +1,24 @@
+#!/bin/bash 
+
+VARSET=$1
+if test -z "$VARSET" ; then
+    find ./VARSET
+    read -p "VARSET ? = " VARSET
+fi
+# ---- default
+DB_HOST=
+DB_PORT=3306
+DB_NAME=
+DB_USER=
+DB_PASSWORD_FILE=
+# ---- override
+set -x
+source $VARSET
+set +x
+# ---- execute
+mysql \
+    -h $DB_HOST \
+    --port $DB_PORT \
+    -D $DB_NAME \
+    -u $DB_USER \
+    --password="$(< $DB_PASSWORD_FILE)"

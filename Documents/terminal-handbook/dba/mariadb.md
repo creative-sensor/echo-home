@@ -12,3 +12,12 @@ mysql_install_db --user=mysql --datadir=/data/mysql/mysql7
 ```
 
 #initialize-data-dir , 
+
+# wh* am i?
+```
+select user();
+
+show databases;
+```
+
+
