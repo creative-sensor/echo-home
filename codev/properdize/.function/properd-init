@@ -8,5 +8,5 @@ mkdir .docs
 mkdir datum
 
 touch .function/start  && chmod 0700 .function/start
-touch .properd/meta.yaml
+echo "wid: $(uuidgen)" >  .properd/meta.yaml
 
