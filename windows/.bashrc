@@ -23,7 +23,7 @@ alias git-glog='git log --all --decorate --oneline --graph'
 alias gitroot='cd $(git rev-parse --show-toplevel)'
 alias grin='grep -rin '
 alias ll='ls -la '
-alias gvim='terminame $(basename $PWD) ; /c/Program\ Files\ \(x86\)/Vim/vim90/gvim.exe'
+alias gvim='terminame "VIM | $(basename $PWD)" ; /c/Program\ Files\ \(x86\)/Vim/vim90/gvim.exe'
 
 # ---- LOCAL ----
 PATH=$PATH:~/.local/bin
