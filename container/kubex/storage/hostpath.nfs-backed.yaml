@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-hostpath-nfs-backed
+  labels:
+    type: local
+spec:
+  storageClassName: nfs-backed
+  capacity:
+    storage: 8Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/matrix/kubex/storage/hostpath-nfs-backed"

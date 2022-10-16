@@ -14,7 +14,17 @@ spec:
     helm:
       valueFiles:
         - values.yaml
-      values: '{adminPassword: "strongpassword"}'
+      parameters:
+      - name: persistence.size
+        value: 4Gi
+      - name: 'persistence.accessModes[0]'
+        value: ReadWriteMany
+      - name: persistence.enabled
+        value: 'true'
+      - name: persistence.storageClassName
+        value: node-local
+      - name: adminPassword
+        value: 'strongpassword'
     chart: grafana
   project: default
   syncPolicy:

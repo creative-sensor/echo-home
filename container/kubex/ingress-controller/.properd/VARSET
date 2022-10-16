@@ -1,0 +1,5 @@
+
+ARTEFACT_DIR=artefacts
+SOURCE_URL=https://github.com/nginxinc/kubernetes-ingress
+SOURCE_REVISION=v2.4.1
+SOURCE_ZIP=${SOURCE_URL}/archive/refs/tags/${SOURCE_REVISION}.zip

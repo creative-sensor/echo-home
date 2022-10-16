@@ -1,0 +1,4 @@
+
+SOURCE_REVISION=v2.7.0
+SOURCE_URL=https://raw.githubusercontent.com/kubernetes/dashboard/${SOURCE_REVISION}/aio/deploy/recommended.yaml
+ARTEFACT_DIR=artefacts

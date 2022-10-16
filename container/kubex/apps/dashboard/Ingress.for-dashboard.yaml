@@ -9,10 +9,10 @@ metadata:
 spec:
   tls:
   - hosts:
-      - dashboard.kubex
+      - dashboard.ingress-nginx.kubex
   ingressClassName: nginx
   rules:
-  - host: "dashboard.kubex"
+  - host: "dashboard.ingress-nginx.kubex"
     http:
       paths:
       - pathType: Prefix

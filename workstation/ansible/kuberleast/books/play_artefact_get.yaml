@@ -1,0 +1,74 @@
+---
+- hosts: master
+  vars:
+    APT_LIST:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+      - jq
+      - kubelet
+      - kubeadm
+      - kubectl
+    APT_LIST_DEPENDS: []
+  become: false
+
+
+
+  tasks:
+  - name: apt - query level-1 depends
+    shell: |
+      apt-cache depends {{item}} |  grep "Depends[^\<\>]\+$" |  awk  -F ':'   '{ print $2 }'
+    register: QUERY_DEPENDS
+    loop: "{{APT_LIST}}"
+
+  
+  - name: apt - build list of level-1 depends
+    set_fact:
+      APT_LIST_DEPENDS: "{{ APT_LIST_DEPENDS + item.stdout_lines }}"
+    with_items: "{{ QUERY_DEPENDS.results }}"
+
+
+  - name: debug - APT_LIST_DEPENDS - rid-nBCH  
+    debug:
+      msg: "{{APT_LIST_DEPENDS}}"
+      verbosity: 3
+
+
+  - name: apt - download
+    shell: |
+      if ! dpkg -l {{item}} > /dev/null ; then
+        apt-get download {{item}}
+      fi
+
+      if ! ls -la ~/ | grep -o {{item}}.*.deb  ;  then
+        apt-get download {{item}}
+      fi
+    args:
+      executable: /bin/bash
+    with_items: "{{ APT_LIST + APT_LIST_DEPENDS }}"
+
+
+#  - name: crio - install container runtime | crio
+#    shell: |
+#      curl https://raw.githubusercontent.com/cri-o/cri-o/main/scripts/get | bash
+
+  - name: localhost - create directory
+    become: false
+    ansible.builtin.file:
+      path: ../artefacts/deb
+      state: directory
+    delegate_to: localhost
+
+
+  - name: rsync - pull packages from remote to localhost
+    become: false
+    synchronize:
+      mode: pull
+      src: ~/*.deb
+      dest: ../artefacts/deb
+
+
+
+

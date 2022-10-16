@@ -1,0 +1,3 @@
+
+
+kubectl patch pv pv-hostpath -p '{"spec":{"claimRef": null}}'

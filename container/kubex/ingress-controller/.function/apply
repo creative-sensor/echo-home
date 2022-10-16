@@ -1,7 +1,37 @@
+#!/bin/bash 
+source .properd/VARSET
+
+# ---- GIT FETCH ----
+SOURCE_DIR=$(basename $SOURCE_URL)
+test -d $SOURCE_DIR || git clone $SOURCE_URL --branch $SOURCE_REVISION
+cd $SOURCE_DIR && git reset --hard
+if ! git describe --tags | grep -q $SOURCE_REVISION ; then
+    git fetch origin $SOURCE_REVISION && git checkout FETCH_HEAD
+    git log --oneline -n 8
+fi
 
 
-kubectl apply \
-  -f main.yaml \
-  -f Service.nodeport-alb.yaml \
-  -f IngressClass.nginx.yaml
+# ---- helm ----
+HELM_PREFIX=ingx
+helm install --create-namespace  -n  ingress-nginx -f ../.properd/VARSET.yaml \
+    $HELM_PREFIX  deployments/helm-chart/
+
+# ---- APPLY ---- 
+
+#kubectl apply -f deployments/common/ns-and-sa.yaml
+#kubectl apply -f deployments/rbac/rbac.yaml 
+#kubectl apply -f deployments/common/default-server-secret.yaml 
+#kubectl apply -f deployments/common/nginx-config.yaml
+#kubectl apply -f deployments/common/ingress-class.yaml
+#kubectl apply -f deployments/deployment/nginx-ingress.yaml
+#kubectl apply -f deployments/daemon-set/nginx-ingress.yaml
+#kubectl create -f deployments/service/nodeport.yaml 
+
+#kubectl apply -f deployments/service/loadbalancer.yaml
+#kubectl apply -f deployments/service/loadbalancer-aws-elb.yaml
+
+#kubectl apply \
+#  -f main.yaml \
+#  -f Service.nodeport-alb.yaml \
+#  -f IngressClass.nginx.yaml
 

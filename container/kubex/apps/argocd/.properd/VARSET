@@ -1,0 +1,4 @@
+
+SOURCE_REVISION=v2.5.2
+SOURCE_URL=https://raw.githubusercontent.com/argoproj/argo-cd/${SOURCE_REVISION}/manifests/install.yaml
+ARTEFACT_DIR=artefacts

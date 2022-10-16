@@ -1,0 +1,35 @@
+---
+- hosts: master
+  become: true
+  tasks:
+  - name: apt - download
+    shell: |
+      apt-get download {{packages}}
+   vars:
+      packages:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gnupg-agent
+        - software-properties-common
+        - jq
+        - kubelet
+        - kubeadm
+        - kubectl
+
+
+
+
+#  - name: crio - install container runtime | crio
+#    shell: |
+#      curl https://raw.githubusercontent.com/cri-o/cri-o/main/scripts/get | bash
+
+  - name: rsync - remote to localhost
+    synchronize:
+      mode: pull
+      src: rsync://
+      dest: ~/*.deb
+
+
+
+

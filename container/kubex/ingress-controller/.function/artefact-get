@@ -1,0 +1,6 @@
+#!/bin/bash
+
+source .properd/VARSET
+
+mkdir -p $ARTEFACT_DIR
+curl -L -o $ARTEFACT_DIR/$SOURCE_REVISION.zip   ${SOURCE_URL}/archive/refs/tags/${SOURCE_REVISION}.zip

@@ -26,6 +26,7 @@ BOLD='\[\033[1m\]' # Work only if "allow bold text" setting is enabled
 STOP='\[\033[0m\]'
 
 PS1="[${BOLD}${COLOR1}\u${STOP}@${BOLD}${COLOR2}\h \W${STOP}]\$ "
+PROMPT_COMMAND='echo -ne "\033]0;$(basename $PWD)\007"'
 
 
 # ---- EXPORT ----
@@ -34,4 +35,4 @@ PS1="[${BOLD}${COLOR1}\u${STOP}@${BOLD}${COLOR2}\h \W${STOP}]\$ "
 #export GNUPGHOME=
 
 # ---- EDIT ----
-source ~/.bashrc.edit
+test -r ~/.bashrc.edit && source ~/.bashrc.edit

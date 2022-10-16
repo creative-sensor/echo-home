@@ -1,0 +1,6 @@
+source .properd/VARSET
+
+mkdir -p $ARTEFACT_DIR/$SOURCE_REVISION
+
+curl -o $ARTEFACT_DIR/$SOURCE_REVISION/main.yaml  $SOURCE_URL
+cp $ARTEFACT_DIR/$SOURCE_REVISION/main.yaml  ./
