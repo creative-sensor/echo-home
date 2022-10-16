@@ -1,0 +1,6 @@
+if test -z "$INGRESS" ; then
+    echo -e "\n--------"
+    kubectl get ingress -n $NAMESPACE
+    read -p "INGRESS ? = " $INGRESS
+fi
+

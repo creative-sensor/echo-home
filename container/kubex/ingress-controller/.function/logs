@@ -1,0 +1,3 @@
+POD=$( kubectl get pod -n ingress-nginx | grep -o  'ingress-nginx-controller[^ ]*' )
+
+kubectl logs $POD -n ingress-nginx

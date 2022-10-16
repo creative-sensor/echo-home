@@ -1,3 +1,6 @@
-CONFIGMAP=$1
+NAMESPACE=$1
+CONFIGMAP=$2
+source .function/varcheck-NAMESPACE
+source .function/varcheck-CONFIGMAP
 
-kubectl -n kube-system get cm kubeadm-config -o yaml
+kubectl -n $NAMESPACE get cm $CONFIGMAP -o yaml | vim  -c 'set ft=yaml' -

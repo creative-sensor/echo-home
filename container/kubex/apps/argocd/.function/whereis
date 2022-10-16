@@ -1,0 +1,9 @@
+#!/bin/bash -x 
+NODE=$1
+test -z "$NODE" && NODE=10.13.0.101
+NAMESPACE=ingress-nginx
+SERVICE=nodeport-alb
+NODEPORT=$( kubectl get service $SERVICE -n $NAMESPACE -o json | jq .spec.ports[1].nodePort )
+
+
+curl -I -L  -k --resolve argocd.kubex:$NODEPORT:$NODE https://argocd.kubex:$NODEPORT/

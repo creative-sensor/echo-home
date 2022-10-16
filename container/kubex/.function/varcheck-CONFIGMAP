@@ -1,0 +1,6 @@
+if test -z "$CONFIGMAP" ; then
+    echo -e "\n--------"
+    kubectl -n $NAMESPACE get cm
+    read -p "CONFIGMAP ? = " CONFIGMAP
+fi
+
