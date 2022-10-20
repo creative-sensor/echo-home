@@ -1,0 +1,3 @@
+set -x
+
+ln -sf /c/Users/creativ/AppData/Local/Programs/Python/Python310/Scripts/yq  ~/.local/bin/yq

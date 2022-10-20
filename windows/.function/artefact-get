@@ -1,0 +1,5 @@
+ARTIFACT_DIR=./artefacts
+set -x
+curl -L -o $ARTIFACT_DIR/kubectl-1.25.0.exe  https://storage.googleapis.com/kubernetes-release/release/v1.25.0/bin/windows/amd64/kubectl.exe
+curl -L -o $ARTIFACT_DIR/jq-1.6-win64.exe  https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe
+#curl -L -o $ARTIFACT_DIR/ConEmuSetup.220807.exe
