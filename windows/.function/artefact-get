@@ -2,4 +2,11 @@ ARTIFACT_DIR=./artefacts
 set -x
 curl -L -o $ARTIFACT_DIR/kubectl-1.25.0.exe  https://storage.googleapis.com/kubernetes-release/release/v1.25.0/bin/windows/amd64/kubectl.exe
 curl -L -o $ARTIFACT_DIR/jq-1.6-win64.exe  https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe
-#curl -L -o $ARTIFACT_DIR/ConEmuSetup.220807.exe
+curl -L -o $ARTIFACT_DIR/7z2201-x64.exe  https://www.7-zip.org/a/7z2201-x64.exe
+curl -L -o $ARTIFACT_DIR/gimp-2.10.32-setup-1.exe  https://download.gimp.org/gimp/v2.10/windows/gimp-2.10.32-setup-1.exe
+curl -L -o $ARTIFACT_DIR/python-3.10.5-amd64.exe  https://www.python.org/ftp/python/3.10.5/python-3.10.5-amd64.exe
+curl -L -o $ARTIFACT_DIR/kubectl-1.25.0.exe  https://dl.k8s.io/release/v1.25.0/bin/windows/amd64/kubectl.exe
+curl -L -o $ARTIFACT_DIR/gvim_9.0.0000_x86_signed.exe  https://github.com/vim/vim-win32-installer/releases/download/v9.0.0000/gvim_9.0.0000_x86_signed.exe
+curl -L -o $ARTIFACT_DIR/rclone-v1.60.0-windows-amd64.zip  https://downloads.rclone.org/v1.60.0/rclone-v1.60.0-windows-amd64.zip
+
+#.function/artefact-get.conemu
