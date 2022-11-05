@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -x
+source .properd/VARSET
+source .properd/authelia.env
+#set +x
+
+mkdir -p $DATUM
+mkdir -p $DATUM_SECRETS
+mkdir -p $DATUM_CONFIG
+gen_random_password="openssl rand -hex 64"
+test -s $DATUM/$AUTHELIA_JWT_SECRET_FILE || $gen_random_password> $DATUM/$AUTHELIA_JWT_SECRET_FILE
+test -s $DATUM/$AUTHELIA_SESSION_SECRET_FILE || $gen_random_password > $DATUM/$AUTHELIA_SESSION_SECRET_FILE
+test -s $DATUM/$AUTHELIA_STORAGE_POSTGRES_PASSWORD_FILE || $gen_random_password > $DATUM/$AUTHELIA_STORAGE_POSTGRES_PASSWORD_FILE
+test -s $DATUM/$AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE ||  $gen_random_password  > $DATUM/$AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE
+
+sudo cp $TLS_CERTIFICATE  $DATUM/$AUTHELIA_SERVER_TLS_CERTIFICATE
+sudo cp $TLS_KEY  $DATUM/$AUTHELIA_SERVER_TLS_KEY
+sudo cp .properd/configuration.yml $DATUM_CONFIG/
+
+
+docker run -it --rm   \
+    -p $DKR_EXPOSE \
+    --mount  type=bind,source=${DATUM_CONFIG},target=/config \
+    --mount  type=bind,source=${DATUM_SECRETS},target=/secrets \
+    --env-file .properd/authelia.env \
+    $DKR_IMAGE
+
+

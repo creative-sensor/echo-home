@@ -1,0 +1,9 @@
+DKR_IMAGE=authelia/authelia:4.37
+DKR_EXPOSE=9091:9091
+ARTEFACT_DIR=artefacts
+DATUM=$PWD/datum
+DATUM_SECRETS=$DATUM/secrets
+DATUM_CONFIG=$DATUM/config
+TLS_CERTIFICATE=.properd/server.tls.certificate.pem
+TLS_KEY=.properd/server.tls.key.pem
+TLS_CA=.properd/ca.pem

@@ -1,0 +1,22 @@
+#!/bin/bash 
+
+# Sequence Diagram
+# https://www.authelia.com/overview/prologue/architecture/
+# https://www.authelia.com/overview/prologue/architecture/sequence-diagram.png
+
+
+AUTHELIA_ENPOINT=https://authelia.docking:9091
+PROXY_ENDPOINT=https://proxy-gateway.docking
+COOKIE_TXT=cookie.txt
+touch $COOKIE_TXT
+json=$(curl -k -v  \
+    -H 'Content-Type: application/json' \
+    -H "X-Original-URL: $PROXY_ENDPOINT" \
+    -b $COOKIE_TXT \
+    -c $COOKIE_TXT \
+    --data  '{"username":"authelia","password":"authelia","keepMeLoggedIn":false}' \
+    ${AUTHELIA_ENPOINT}/api/firstfactor \
+)
+
+echo '---- RESPONSE ----'
+echo $json | jq -r 
