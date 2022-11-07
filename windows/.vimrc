@@ -1,4 +1,3 @@
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "-------- [MISC] --------
 syntax on
 highlight CursorLine cterm=NONE ctermbg=251
@@ -7,8 +6,7 @@ filetype on
 
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"-------- [SET] --------
+"-------- [VARSET] --------
 set laststatus=2
 set ruler
 set cursorline
@@ -25,7 +23,6 @@ set guifont=Consolas:h11
 "set shell=\"/c/Program\ Files/Git/usr/bin/bash.exe\"
 set shell=\"/c/Program\ Files/Git/bin/sh.exe\"
 set backspace=indent,eol,start
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "-------- [PLUGIN] --------
 "filetype plugin on
 
@@ -73,9 +70,7 @@ filetype plugin indent on    " required
 
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "-------- [FUNCTIONS] --------
-"
 
 fun! FindJsonPath()
   " FIND JSON PATH
@@ -177,18 +172,16 @@ command! -nargs=0 Terminator call Terminator()
 
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "-------- [AUTOCMD] --------
 autocmd FileType yaml  : set tabstop=2
 "autocmd VimEnter * above terminal ++rows=7
-"autocmd VimEnter * if isdirectory(".git") | call FgXp("") | endif
+autocmd VimEnter * if isdirectory(".git") | silent call FgXp(".") | endif
 autocmd TerminalOpen * set termwinsize=0*0
     "termwinsize: auto-adjustable
 
 
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "-------- [KEYMAP] --------
 map T : tabnew . <CR>
     "New tab
@@ -221,6 +214,7 @@ vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
 
 vnoremap --    "+y : vsplit <C-R>+ <CR>
     "JUMP TO PATH
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+
 "-------- [POST-INIT] --------
 colorscheme solarized8_high
