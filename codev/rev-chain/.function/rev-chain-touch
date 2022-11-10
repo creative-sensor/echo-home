@@ -1,0 +1,27 @@
+#!/bin/bash
+
+FILE=$1
+DATE=$(date +%Y-%m-%d)
+LENGTH=4
+REV_RID=$(cat /dev/urandom | tr -dc '[:alnum:]' | fold -w $LENGTH | head -n 1)
+BASE_RID=$(cat /dev/urandom | tr -dc '[:alnum:]' | fold -w ${LENGTH} | head -n 1)
+FILENAME=
+REV_STRING=${DATE}-${REV_RID}-REF-${BASE_RID}
+REV_REGEX="[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-zA-Z0-9]{${LENGTH}}-REF-[a-zA-Z0-9]{${LENGTH}}$"
+COPY4WRITE=${FILENAME}${REV_STRING}
+
+
+if [[ "$FILE"  =~  .*${REV_REGEX} ]] ; then
+    REV_REGEX_ESC=$(echo $REV_REGEX | sed "s,[{}],\\\&,g" )
+    BASE_RID=$(echo $FILE | grep -o "$REV_REGEX_ESC" | awk -F "-" '{print $4}' )
+    FILENAME=$(echo $FILE | sed s,$REV_REGEX_ESC,, )
+    REV_STRING=${DATE}-${REV_RID}-REF-${BASE_RID}
+    COPY4WRITE=${FILENAME}${REV_STRING}
+    cp $FILE  $COPY4WRITE
+    echo "New revision created: $(readlink -f $COPY4WRITE)"
+else
+    COPY4WRITE=${FILE}.${REV_STRING}
+    mv $FILE  $COPY4WRITE
+    echo "Rev-chain tag added:  $(readlink -f $COPY4WRITE)"
+fi
+
