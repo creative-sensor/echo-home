@@ -1,7 +1,7 @@
 
-DKR_EXPOSE=8080:8080
-DKR_IMAGE=gitbucket/gitbucket:4.38.2
-DATUM=$PWD/datum
+set -x
+source .properd/VARSET
+set +x
 
 
 mkdir -p $DATUM

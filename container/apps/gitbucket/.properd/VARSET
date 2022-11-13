@@ -1,2 +1,5 @@
-DKR_IMG=gitbucket/gitbucket:4.38.2
+DKR_IMAGE=gitbucket/gitbucket:4.38.2
 ARTEFACT_DIR=artefacts
+DKR_EXPOSE=8080:8080
+DATUM=$PWD/datum
+

@@ -1,14 +1,28 @@
-#!/bin/bash -x
+#!/bin/bash 
 
 OBJECTORY=$1
 
-cd $OBJECTORY
-
-if test -x .function/artefact-get ; then
-    .function/artefact-get
+function docker_arti_get () {
+    local app_varset=$1
+    local objectory=$(dirname $(dirname $app_varset))
+    cd $objectory
+    if test -x .function/artefact-get ; then
+          .function/artefact-get
+    else
+        source .properd/VARSET
+        echo "-------- ARTIFACT: $DKR_IMAGE --------"
+        local img_path=$(echo $ARTEFACT_DIR/$DKR_IMAGE | sed s,:,__,)
+        mkdir -p $(dirname $img_path)
+        docker pull $DKR_IMAGE
+        docker save $DKR_IMAGE | gzip > $img_path
+    fi
+    cd -
+}
+if test -z "$OBJECTORY" ; then
+    for app_varset in $(find apps | grep .properd/VARSET) ; do
+        echo "log=== $app_varset"
+        docker_arti_get $app_varset
+    done
 else
-    source .properd/VARSET
-    mkdir -p $(dirname $ARTEFACT_DIR/$DKR_IMG)
-    docker pull $DKR_IMG
-    docker save $DKR_IMG | gzip > $ARTEFACT_DIR/$DKR_IMG
+    docker_arti_get $OBJECTORY/.properd/VARSET
 fi
