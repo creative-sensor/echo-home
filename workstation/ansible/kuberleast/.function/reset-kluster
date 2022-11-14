@@ -1,0 +1,3 @@
+ansible-playbook -vvv -i ./inventory books/play_reset_kluster.yaml
+
+

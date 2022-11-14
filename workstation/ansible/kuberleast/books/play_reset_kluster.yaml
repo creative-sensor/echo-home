@@ -1,0 +1,9 @@
+---
+- hosts: kluster
+  become: true
+  tasks:
+    - name: Reset kluster | rid-F7rJ 
+      command: kubeadm reset --force
+
+
+

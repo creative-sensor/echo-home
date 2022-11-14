@@ -1,0 +1,9 @@
+NAMESPACE=$1
+POD=$2
+CONTAINER=$3
+source .function/varcheck-NAMESPACE
+source .function/varcheck-POD
+source .function/varcheck-CONTAINER
+
+echo "-------- LOGS: $NAMESPACE / $POD / $CONTAINER --------"
+kubectl logs  $POD -c $CONTAINER -n $NAMESPACE

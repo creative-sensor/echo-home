@@ -1,0 +1,7 @@
+if test -z "$CONTAINER" ; then
+    echo -e "\n--------"
+    kubectl get pod $POD -n $NAMESPACE -o jsonpath='{.spec.containers[*].name}'
+    echo ""
+    read -p "CONTAINER ? = " CONTAINER
+fi
+

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+curl https://raw.githubusercontent.com/cri-o/cri-o/main/scripts/get | sudo bash
+

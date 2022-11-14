@@ -2,5 +2,5 @@
 #ansible-playbook -v -i ./inventory books/play_configuration.yaml
 #ansible-playbook -v -i ./inventory books/play_kube_nodes.yaml
 
-ansible-playbook -v -i ./inventory play.yaml
+ansible-playbook -vvv -i ./inventory play.yaml
 
