@@ -1,12 +1,15 @@
 OBJECTORY=$1
 
 cd $OBJECTORY
-mkdir .properd
-mkdir .function
-mkdir .template
-mkdir .docs
-mkdir datum
+mkdir -p .properd
+mkdir -p .function
+mkdir -p .template
+mkdir -p .docs
+mkdir -p datum
 
+touch README.md
 touch .function/start  && chmod 0700 .function/start
-echo "wid: $(uuidgen)" >  .properd/meta.yaml
+touch .function/artefacts && chmod 0700 .function/artefacts
+touch .function/artefact-get && chmod 0700 .function/artefact-get
+test -f .properd/meta.yaml || echo "wid: $(uuidgen)" >  .properd/meta.yaml
 

@@ -2,18 +2,25 @@ cluster = {
     "1" => { :cpus => 1, :mem => 2048 },
     "2" => { :cpus => 1, :mem => 2048 },
     "3" => { :cpus => 1, :mem => 2048 },
+    "4" => { :cpus => 1, :mem => 2048 },
     "5" => { :cpus => 2, :mem => 3048 },
+}
+
+varset = {
+  "box" => "generic/ubuntu1804",
+  "box_version" => "4.1.18"
 }
 
 
 Vagrant.configure("2") do |config|
     cluster.each do |key,value|
         config.vm.define "vms#{key}" do |vmdef|
-            vmdef.vm.box = "generic/ubuntu1804"
+            vmdef.vm.box = "#{varset['box']}"
+            vmdef.vm.box_version = "#{varset['box_version']}"
             vmdef.vm.hostname = "vagrant-s#{key}"
             vmdef.vm.network :private_network, :ip => "10.13.0.10#{key}"
             vmdef.vm.network :public_network, :dev => "virbr0", :mode => "bridge", :type => "bridge"
-            vmdef.vm.synced_folder "../vagra", "/matrix" , type: "nfs" , nfs_udp: false
+            vmdef.vm.synced_folder "vagrark", "/rsync/vagrark" , type: "rsync" 
             vmdef.vm.provider :libvirt do |domain|
                 domain.memory = value[:mem]
                 domain.cpus = value[:cpus]
@@ -26,8 +33,9 @@ Vagrant.configure("2") do |config|
             end
     
             vmdef.vm.provision "shell", inline: <<-SHELL
+                mkdir -p /matrix
                 echo "$(date +%Y-%m-%d.%H-%M.UTC) : $HOSTNAME booted up" >> /matrix/logs
-                RUNNEX=/matrix/runnex; ${RUNNEX} &>> ${RUNNEX}.${HOSTNAME}
+                RUNNEX=/rsync/vagrark/runnex; test -x ${RUNNEX} && ${RUNNEX} &>> ${RUNNEX}.${HOSTNAME}
             SHELL
         end
     end

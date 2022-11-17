@@ -1,0 +1,16 @@
+#!/bin/bash -x 
+
+source .properd/VARSET
+
+VM_BOX_VERSION=$(cat Vagrantfile  | grep vm.box_version | awk -F '"'  '{print $2}')
+VM_BOX=$(cat Vagrantfile  | grep 'vm.box[ =]\+' | awk -F '"'  '{print $2}')
+VM_BOX_SLASH=$(echo $VM_BOX | sed s,/,-VAGRANTSLASH-,)
+VM_BOX_DIR=boxes/$VM_BOX_SLASH/$VM_BOX_VERSION
+
+#export VAGRANT_HOME=$(readlink -f $VAGRANT_HOME)
+#did not work
+
+sudo rsync -avr  $ARTEFACT_DIR/$VM_BOX_DIR/    /root/$VAGRANT_HOME/$VM_BOX_DIR
+
+
+

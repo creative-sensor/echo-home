@@ -1,0 +1,22 @@
+#!/bin/bash 
+
+source .properd/VARSET
+
+VAGRANT_HOME=.vagrant.d
+VM_BOX_VERSION=$(cat Vagrantfile  | grep '\"box_version\".*=>' | awk -F '"'  '{print $4}')
+VM_BOX=$(cat Vagrantfile  | grep '\"box\".*=>' | awk -F '"'  '{print $4}')
+VM_BOX_SLASH=$(echo $VM_BOX | sed s,/,-VAGRANTSLASH-,)
+VM_BOX_DIR=boxes/$VM_BOX_SLASH/$VM_BOX_VERSION
+
+#export VAGRANT_HOME=$(readlink -f $VAGRANT_HOME)
+#did not work
+
+sudo mkdir -p $ARTEFACT_DIR/apt
+
+sudo vagrant up
+
+sudo rsync -avr  /root/$VAGRANT_HOME/$VM_BOX_DIR/ $ARTEFACT_DIR/$VM_BOX_DIR
+
+
+#apt-get -yqq update
+#apt-get -yqq install nfs-common portmap

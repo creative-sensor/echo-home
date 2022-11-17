@@ -1,0 +1,5 @@
+d0645e08e751f96cfc65b3b09a2af9a5e16a3e6612985b7ff16ff454ec9bae50  ./boxes/generic-VAGRANTSLASH-ubuntu1804/4.1.18/libvirt/box.img
+9dc44a02c05cdefa833e3214726fb67937cf2aa544b6486c9aa4e209ee74cf1e  ./boxes/generic-VAGRANTSLASH-ubuntu1804/4.1.18/libvirt/info.json
+ee434695cb65b785377332e0d53e332900811918154bfe4f92664db99461570d  ./boxes/generic-VAGRANTSLASH-ubuntu1804/4.1.18/libvirt/metadata.json
+bd9afa957bcc5e0c1d64f08b853534c5f45094611ff77aff6521901bd7b1daf2  ./boxes/generic-VAGRANTSLASH-ubuntu1804/4.1.18/libvirt/Vagrantfile
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  ./boxes/generic-VAGRANTSLASH-ubuntu1804/4.1.18/libvirt/box_update_check
