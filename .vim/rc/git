@@ -19,10 +19,9 @@ set splitright
 set title titlestring=VIMgit\ \|\ %{fnamemodify(getcwd(),\ ':t')} titlelen=32
     "output:  VIM | current_dirname
 set background=light
-set guifont=Consolas:h11
-"set shell=\"/c/Program\ Files/Git/usr/bin/bash.exe\"
-set shell=\"/c/Program\ Files/Git/bin/sh.exe\"
 set backspace=indent,eol,start
+
+
 "-------- [PLUGIN] --------
 
 
@@ -88,6 +87,6 @@ vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
 vnoremap --    "+y : vsplit <C-R>+ <CR>
     "JUMP TO PATH
 
-
+    
 "-------- [POST-INIT] --------
 colorscheme solarized8_high
