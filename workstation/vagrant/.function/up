@@ -1,5 +1,9 @@
-VG_NAME=$1
-VG_DIR=$VG_NAME
-[[ $VG_DIR =~ ^s ]] && VG_DIR=cs
-cd $VG_DIR
-vagrant up vm${VG_NAME}
+#!/bin/bash 
+
+VAGRANT_PROFILE=$1
+VAGRANT_MACHINE=$2
+
+source .function/varcheck-VAGRANT_PROFILE
+
+cd $(dirname $VAGRANT_PROFILE)
+sudo vagrant up $VAGRANT_MACHINE

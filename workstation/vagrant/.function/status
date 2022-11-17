@@ -1,1 +1,10 @@
-vagrant  global-status --prune
+#!/bin/bash 
+
+VAGRANT_PROFILE=$1
+VAGRANT_MACHINE=$2
+
+source .function/varcheck-VAGRANT_PROFILE
+
+cd $(dirname $VAGRANT_PROFILE)
+
+sudo vagrant status $VAGRANT_MACHINE

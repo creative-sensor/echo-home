@@ -4,6 +4,6 @@ VAGRANT_PROFILE=$1
 VAGRANT_MACHINE=$2
 
 source .function/varcheck-VAGRANT_PROFILE
-source .function/varcheck-VAGRANT_MACHINE
 
-sudo vagrant ssh $VAGRANT_MACHINE
+cd $(dirname $VAGRANT_PROFILE)
+sudo vagrant reload $VAGRANT_MACHINE

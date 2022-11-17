@@ -20,6 +20,7 @@ Vagrant.configure("2") do |config|
             vmdef.vm.hostname = "vagrant-s#{key}"
             vmdef.vm.network :private_network, :ip => "10.13.0.10#{key}"
             vmdef.vm.network :public_network, :dev => "virbr0", :mode => "bridge", :type => "bridge"
+            #| >>> nfs-activate >>> |vmdef.vm.synced_folder "../vagra", "/matrix" , type: "nfs" , nfs_udp: false
             vmdef.vm.synced_folder "vagrark", "/rsync/vagrark" , type: "rsync" 
             vmdef.vm.provider :libvirt do |domain|
                 domain.memory = value[:mem]

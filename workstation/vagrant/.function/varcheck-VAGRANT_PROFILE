@@ -1,0 +1,4 @@
+if test -z "$VAGRANT_PROFILE" ; then
+    find c* | grep -o '^c[^/]\+'/Vagrantfile
+    read -p "VAGRANT_PROFILE ?= " VAGRANT_PROFILE
+fi
