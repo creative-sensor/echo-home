@@ -1,0 +1,26 @@
+SOURCE_URL:
+    CRIO: https://github.com/cri-o/cri-o
+    KUBE: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+
+
+SOURCE_REVISION:
+    CRIO: v1.25.0
+    KUBE: 1.25.4-00
+
+
+CRIO:
+    SOURCE_ARTIFACT_URL: https://storage.googleapis.com/cri-o/artifacts 
+
+
+APT_LIST:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg-agent
+    - software-properties-common
+    - jq
+    - kubelet
+    - kubeadm
+    - kubectl
+    - podman
+

@@ -1,31 +1,11 @@
+#!/bin/bash
+
 source .properd/VARSET
 
-ansible-playbook  -vvv -i ./inventory books/play_artefact_get.yaml
+ansible-playbook  -vvv \
+    -i ./inventory  \
+    --extra-vars "ARTEFACT_DIR=$ARTEFACT_DIR" \
+    --extra-vars "@.properd/VARSET.yaml" \
+    books/play_artefact_get.yaml
 
-
-
-
-
-
-
-
-
-
-
-#wget -qO - https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-#sudo apt-add-repository  "deb https://apt.kubernetes.io/ kubernetes-xenial main"
-#
-#apt-get download kubectl=${SOURCE_REVISION_KUBE}
-#apt-get download kubeadm=${SOURCE_REVISION_KUBE}
-#apt-get download kubelet=${SOURCE_REVISION_KUBE}
-
-
-
-#registry.k8s.io/coredns/coredns:v1.9.3
-#registry.k8s.io/kube-apiserver:v1.25.4
-#registry.k8s.io/kube-controller-manager:v1.25.4
-#registry.k8s.io/kube-scheduler:v1.25.4
-#registry.k8s.io/kube-proxy:v1.25.4
-#registry.k8s.io/pause:3.8
-#registry.k8s.io/etcd:3.5.5-0
 

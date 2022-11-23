@@ -27,6 +27,40 @@
       state: present
       filename: kubernetes.list
 
+  - name: os - get version
+    shell: |
+      source /etc/os-release
+      echo $VERSION_ID
+    args:
+      executable: /bin/bash
+    register: os_release
+
+  - name: os - get version
+    set_fact:
+      os_version: "{{ os_release.stdout }}"
+
+
+  - name: apt key - suse repo key | rid-LVlC
+    apt_key:
+      url: "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ ansible_distribution_version }}/Release.key"
+      state: present
+
+
+  - name: apt repo - suse repo | rid-SR0E
+    apt_repository:
+      repo: "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_{{ ansible_distribution_version }}/ /"
+      state: present
+      filename: opensuse.devel.kubic.libcontainers.stable.list
+      #update_cache: false
+
+  - name: apt - podman | rid-XeUn
+    apt:
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+    vars:
+      packages:
+      - podman
 
 
   - name: apt - Install Kubernetes binaries | rid-oHFV
@@ -42,7 +76,7 @@
 
   - name: crio - install container runtime | CRIO
     shell: |
-      curl https://raw.githubusercontent.com/cri-o/cri-o/main/scripts/get | bash
+      curl --retry 5 --retry-delay 3 https://raw.githubusercontent.com/cri-o/cri-o/main/scripts/get | bash
 
 
 

@@ -3,8 +3,8 @@
 
 NODE=$1
 test -z "$NODE" && NODE=10.13.0.101
-NAMESPACE=kubernetes-dashboard
-SERVICE=nodeport-kubernetes-dashboard
+NAMESPACE=argocd
+SERVICE=nodeport-argocd
 NODEPORT=$( kubectl get service $SERVICE -n $NAMESPACE -o json | jq .spec.ports[0].nodePort )
 
 
