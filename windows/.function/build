@@ -1,0 +1,16 @@
+#!/bin/bash
+source .properd/VARSET
+
+# ---- install ----
+install .vimrc ~/
+install -d .vim ~/
+install .gitconfig ~/
+install .bashrc ~/
+install .bash_profile ~/
+install .ConEmu.xml $APPDATA/ConEmu.xml
+
+
+# ---- function ----
+.function/symlink
+cd .. && .function/symlink && cd -
+.function/artefact-ready

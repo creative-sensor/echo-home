@@ -1,6 +1,5 @@
 ARTIFACT_DIR=./artefacts
 set -x
-curl -L -o $ARTIFACT_DIR/kubectl-1.25.0.exe  https://storage.googleapis.com/kubernetes-release/release/v1.25.0/bin/windows/amd64/kubectl.exe
 curl -L -o $ARTIFACT_DIR/jq-1.6-win64.exe  https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe
 curl -L -o $ARTIFACT_DIR/7z2201-x64.exe  https://www.7-zip.org/a/7z2201-x64.exe
 curl -L -o $ARTIFACT_DIR/gimp-2.10.32-setup-1.exe  https://download.gimp.org/gimp/v2.10/windows/gimp-2.10.32-setup-1.exe
