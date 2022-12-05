@@ -1,1 +1,4 @@
-export GNUPGHOME=.gnupg
+if test -z "$GNUPGHOME" ; then
+    source .properd/VARSET
+    export GNUPGHOME=$GNUPGHOME
+fi

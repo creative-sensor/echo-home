@@ -1,0 +1,9 @@
+source .function/pgbase
+
+.function/list-sec
+
+read -p "KEY_ID ? = " KEY_ID
+
+gpg2 --edit-key $KEY_ID
+
+
