@@ -1,0 +1,12 @@
+#!/bin/bash
+
+source .properd/VARSET
+
+PACKAGE="
+  nomad-${SOURCE_REVISION}
+  levant-0.3.2-1
+"
+sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
+
+mkdir -p $ARTEFACT_DIR
+sudo dnf install -y --downloadonly --destdir ./$ARTEFACT_DIR  $PACKAGE

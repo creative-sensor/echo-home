@@ -1,0 +1,16 @@
+#!/bin/bash
+
+MODE=client
+DATA_DIR=./datum/$MODE
+CLUSTER_ADDR=127.0.0.1
+# ----
+source .properd/VARSET
+# ----
+mkdir -p $DATA_DIR
+mkdir -p $DATA_DIR/plugins
+
+sudo nomad agent \
+    -config=config/${MODE}.hcl \
+    -bind=${CLUSTER_ADDR} \
+    -log-level INFO \
+    -data-dir=$(readlink -f $DATA_DIR)

@@ -8,6 +8,7 @@ mkdir -p .docs
 mkdir -p datum
 
 touch README.md
+touch .properd/VARSET
 touch .function/start  && chmod 0700 .function/start
 touch .function/artefacts && chmod 0700 .function/artefacts
 touch .function/artefact-get && chmod 0700 .function/artefact-get

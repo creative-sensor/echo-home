@@ -1,0 +1,5 @@
+source .properd/VARSET
+NAME=server.${DATACENTER}.consul
+TYPE=SRV
+TYPE=A
+dig @127.0.0.1 -p 8611 $NAME $TYPE

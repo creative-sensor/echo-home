@@ -1,0 +1,25 @@
+#!/bin/bash -x
+
+# ----
+MODE=client
+export DATACENTER=dc1
+export DOMAIN=consul
+CONSUL_DATA_DIR=./datum/$MODE
+export CONSUL_CONFIG_DIR=./config/$MODE
+CLUSTER_ADDR=127.0.0.1
+CLUSTER_PORT=8311
+# ----
+source .properd/VARSET
+source .properd/VARSET.$MODE
+# ----
+cat $CONSUL_CONFIG_DIR/varset.hcl.template | envsubst > $CONSUL_CONFIG_DIR/varset.hcl
+consul validate ${CONSUL_CONFIG_DIR}
+consul agent \
+    -ui \
+    -node=${HOSTNAME}-$MODE \
+    -datacenter=${DATACENTER} \
+    -config-dir=${CONSUL_CONFIG_DIR} \
+    -bind=${CLUSTER_ADDR} \
+    -join=${CLUSTER_ADDR}:${CLUSTER_PORT} \
+    -rejoin \
+    -data-dir=${CONSUL_DATA_DIR}

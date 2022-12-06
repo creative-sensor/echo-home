@@ -1,0 +1,1 @@
+curl -v -I -k --resolve "server.vector.consul:8501:192.168.1.210" https://server.vector.consul:8501/ui/vector/services

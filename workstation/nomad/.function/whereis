@@ -1,0 +1,4 @@
+SERVICE_URL=http://127.0.0.1:4646/ui/
+curl -I $SERVICE_URL
+
+echo "SERVICE_URL : $SERVICE_URL"

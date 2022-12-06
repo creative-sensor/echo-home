@@ -1,0 +1,10 @@
+source .properd/VARSET
+source .properd/VARSET.server
+
+cd $CONSUL_CONFIG_DIR
+echo "Create CA for Consul datacenter"
+consul tls ca create -domain=${DOMAIN}
+echo "Create server Certificate and key pair"
+consul tls cert create -server -domain ${DOMAIN} -dc=${DATACENTER}
+cd -
+

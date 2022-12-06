@@ -1,0 +1,37 @@
+
+client {
+  enabled = true
+}
+
+consul {
+  # The address to the Consul agent.
+  address = "127.0.0.1:8500"
+
+  # The service name to register the server and client with Consul.
+  server_service_name = "nomad-server"
+  client_service_name = "nomad-client"
+
+  # Enables automatically registering the services.
+  auto_advertise = true
+
+  client_auto_join = true
+}
+
+ports {
+  http = 5656
+  rpc  = 5657
+  serf = 5658
+}
+
+advertise {
+  # Defaults to the first private IP address.
+  http = "127.0.0.1:5656"
+  rpc  = "127.0.0.1:5657"
+  serf = "127.0.0.1:5658" # non-default ports may be specified
+}
+
+plugin "raw_exec" {
+    config {
+        enabled = true
+    }
+}

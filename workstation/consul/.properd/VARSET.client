@@ -1,0 +1,3 @@
+MODE=client
+CONSUL_DATA_DIR=./datum/$MODE
+CONSUL_CONFIG_DIR=./config/$MODE

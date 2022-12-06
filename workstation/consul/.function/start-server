@@ -1,0 +1,29 @@
+#!/bin/bash -x
+
+# ----
+MODE=server
+export DATACENTER=vector
+export DOMAIN=consul
+CONSUL_DATA_DIR=./datum/$MODE
+export CONSUL_CONFIG_DIR=./config/$MODE
+export DNS_RECURSOR=1.1.1.1
+export HTTPS_PORT=8443
+export DNS_PORT=8600
+#export CONSUL_CACERT=$CONSUL_CONFIG_DIR/ca.cert
+export CONSUL_TLS_SERVER_NAME=server.$DATACENTER
+CLUSTER_ADDR=127.0.0.1
+# ----
+source .properd/VARSET
+source .properd/VARSET.$MODE
+# ----
+cat $CONSUL_CONFIG_DIR/varset.hcl.template | envsubst > $CONSUL_CONFIG_DIR/varset.hcl
+consul validate ${CONSUL_CONFIG_DIR}
+consul agent \
+    -server \
+    -bootstrap-expect=1 \
+    -ui \
+    -datacenter=${DATACENTER} \
+    -node=${HOSTNAME} \
+    -config-dir=${CONSUL_CONFIG_DIR} \
+    -bind=${CLUSTER_ADDR} \
+    -data-dir=${CONSUL_DATA_DIR}
