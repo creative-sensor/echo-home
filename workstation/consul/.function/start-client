@@ -8,11 +8,13 @@ CONSUL_DATA_DIR=./datum/$MODE
 export CONSUL_CONFIG_DIR=./config/$MODE
 CLUSTER_ADDR=127.0.0.1
 CLUSTER_PORT=8311
+
 # ----
 source .properd/VARSET
 source .properd/VARSET.$MODE
 # ----
-cat $CONSUL_CONFIG_DIR/varset.hcl.template | envsubst > $CONSUL_CONFIG_DIR/varset.hcl
+export BOOTSTRAP_TOKEN=$(cat $BOOTSTRAP_TOKEN_FILE | jq -r .SecretID)
+cat $CONSUL_CONFIG_DIR/agent.hcl.template | envsubst > $CONSUL_CONFIG_DIR/agent.hcl
 consul validate ${CONSUL_CONFIG_DIR}
 consul agent \
     -ui \

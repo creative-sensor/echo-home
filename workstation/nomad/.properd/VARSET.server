@@ -1,0 +1,3 @@
+NOMAD_CONFIG_DIR=./config/server
+NOMAD_DATA_DIR=./datum/server
+

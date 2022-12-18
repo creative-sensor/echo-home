@@ -9,14 +9,13 @@ export CONSUL_CONFIG_DIR=./config/$MODE
 export DNS_RECURSOR=1.1.1.1
 export HTTPS_PORT=8443
 export DNS_PORT=8600
-#export CONSUL_CACERT=$CONSUL_CONFIG_DIR/ca.cert
 export CONSUL_TLS_SERVER_NAME=server.$DATACENTER
 CLUSTER_ADDR=127.0.0.1
 # ----
 source .properd/VARSET
 source .properd/VARSET.$MODE
 # ----
-cat $CONSUL_CONFIG_DIR/varset.hcl.template | envsubst > $CONSUL_CONFIG_DIR/varset.hcl
+cat $CONSUL_CONFIG_DIR/agent.hcl.template | envsubst > $CONSUL_CONFIG_DIR/agent.hcl
 consul validate ${CONSUL_CONFIG_DIR}
 consul agent \
     -server \

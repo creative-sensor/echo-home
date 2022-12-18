@@ -1,0 +1,6 @@
+#!/bin/bash 
+
+source .properd/VARSET
+
+export CONSUL_HTTP_TOKEN=`cat .properd/token.bootstrap | jq -r ".SecretID"`
+consul reload

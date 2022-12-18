@@ -1,0 +1,33 @@
+server = false
+## UI configuration (1.9+)
+
+
+
+addresses {
+  grpc = "127.0.0.1"
+  http = "127.0.0.1"
+  dns = "127.0.0.1"
+}
+
+# ---- COMM ENCRYPTION ----
+verify_incoming = false
+verify_outgoing = true
+verify_server_hostname = true
+ca_file = "${CONSUL_CONFIG_DIR}/consul-agent-ca.pem"
+auto_encrypt = {
+  tls = true
+}
+
+# ---- ACL ----
+acl {
+  enabled = true
+  default_policy = "deny"
+  enable_token_persistence = true
+  tokens {
+    agent  = "${BOOTSTRAP_TOKEN}"
+  }
+
+}
+
+
+

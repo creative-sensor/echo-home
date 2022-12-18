@@ -1,0 +1,4 @@
+MODE=client
+NOMAD_CONFIG_DIR=./config/$MODE
+NOMAD_DATA_DIR=./datum/$MODE
+

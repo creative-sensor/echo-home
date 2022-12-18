@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+source .properd/VARSET
+
+export DATACENTER=${DATACENTER:-"dc1"}
+export DOMAIN=${DOMAIN:-"consul"}
+export CONSUL_DATA_DIR=${CONSUL_DATA_DIR:-"/etc/consul/data"}
+export CONSUL_CONFIG_DIR=${CONSUL_CONFIG_DIR:-"/etc/consul/config"}
+
+export DNS_RECURSOR=${DNS_RECURSOR:-"1.1.1.1"}
+export HTTPS_PORT=${HTTPS_PORT:-"8443"}
+export DNS_PORT=${DNS_PORT:-"8600"}
+
+echo "Clean existing configuration"
+rm -rf ${CONSUL_DATA_DIR}/
+rm -rf ${CONSUL_CONFIG_DIR}/
+
+echo "Generate Consul folders"
+mkdir -p ${CONSUL_CONFIG_DIR} && mkdir -p ${CONSUL_DATA_DIR}
+
+STAT=$?
+
+if [ ${STAT} -ne 0 ];  then
+  echo "Folder creation failed, exiting."
+  exit 1;
+fi
+
+
+echo "Generate agent configuration - agent-server-secure.hcl"
+cat .template/agent-server-secure.hcl | envsubst > ${CONSUL_CONFIG_DIR}/agent-server-secure.hcl
+
+echo "Generate server configuration - agent-server-specific.hcl"
+cat .template/agent-server-specific.hcl | envsubst > ${CONSUL_CONFIG_DIR}/agent-server-specific.hcl
+
+echo "Generate gossip encryption key configuration - agent-gossip-encryption.hcl"
+echo encrypt = \"$(consul keygen)\" > ${CONSUL_CONFIG_DIR}/agent-gossip-encryption.hcl
+
+
+
+echo "Generate TLS configuration - agent-server-tls.hcl"
+cat .template/agent-server-tls.hcl | envsubst > ${CONSUL_CONFIG_DIR}/agent-server-tls.hcl
+
+echo "Generate ACL configuration - agent-server-acl.hcl"
+cat .template/agent-server-acl.hcl | envsubst >  ${CONSUL_CONFIG_DIR}/agent-server-acl.hcl
+
+
+cd $CONSUL_CONFIG_DIR
+echo "Create CA for Consul datacenter"
+consul tls ca create -domain=${DOMAIN}
+echo "Create server Certificate and key pair"
+consul tls cert create -server -domain ${DOMAIN} -dc=${DATACENTER}
+cd -
+
+
+echo "Validate configuration"
+consul validate ${CONSUL_CONFIG_DIR}
+
+STAT=$?
+
+if [ ${STAT} -ne 0 ];  then
+  echo "Configuration invalid. Exiting."
+  exit 1;
+fi

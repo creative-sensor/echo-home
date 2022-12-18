@@ -1,0 +1,4 @@
+source .properd/VARSET
+source .properd/VARSET.client
+export CONSUL_HTTP_TOKEN=a9339528-db5b-7ff3-74ef-55db42cb1a14
+consul acl set-agent-token agent $CONSUL_HTTP_TOKEN

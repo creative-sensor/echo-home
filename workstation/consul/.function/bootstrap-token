@@ -1,0 +1,8 @@
+#!/bin/bash
+
+source .properd/VARSET
+source .properd/VARSET.server
+
+test -s $BOOTSTRAP_TOKEN_FILE && cp $BOOTSTRAP_TOKEN_FILE "$BOOTSTRAP_TOKEN_FILE.$(date -u '+%Y-%m-%dT%H-%M-%SZ')"
+consul acl bootstrap -format=json > $BOOTSTRAP_TOKEN_FILE
+cat $BOOTSTRAP_TOKEN_FILE | jq -r .SecretID
