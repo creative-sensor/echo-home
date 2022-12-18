@@ -1,6 +1,11 @@
 
 client {
   enabled = true
+  host_volume "datum_host" {
+    path      = "${NOMAD_DATA_DIR}/volume_host"
+    read_only = false
+  }
+
 }
 
 consul {

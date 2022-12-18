@@ -13,6 +13,13 @@ job "grafana-dashboard" {
 
   group "grafana" {
     count = 1
+
+    volume "datum_host" {
+      type      = "host"
+      read_only = false
+      source    = "datum_host"
+    }
+
     network {
       # This requests a dynamic port named "http". This will
       # be something like "46283", but we refer to it via the
@@ -47,9 +54,22 @@ job "grafana-dashboard" {
         image = "grafana/grafana-oss:8.2.0"
         ports = ["http", "https"]
       }
-      
+
+      volume_mount {
+        volume      = "datum_host"
+        destination = "/var/lib/grafana"
+        read_only   = false
+      }
+
       env {
         ENVAR = "envalue"
+        #GF_PATHS_CONFIG = "/etc/grafana/grafana.ini"
+        #GF_PATHS_DATA = "/var/lib/grafana"
+        #GF_PATHS_HOME = "/usr/share/grafana"
+        #GF_PATHS_LOGS = "/var/log/grafana"
+        #GF_PATHS_PLUGINS = "/var/lib/grafana/plugins"
+        #GF_PATHS_PROVISIONING = "/etc/grafana/provisioning"
+
       }
 
       resources {

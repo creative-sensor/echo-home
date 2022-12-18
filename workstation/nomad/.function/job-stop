@@ -1,0 +1,6 @@
+JOB_SPEC=$1
+source .properd/VARSET
+
+test -z "$NOMAD_TOKEN_FILE" && read -p "NOMAD_TOKEN_FILE ?= " NOMAD_TOKEN_FILE
+export NOMAD_TOKEN=$(<$NOMAD_TOKEN_FILE)
+nomad job stop $JOB_SPEC

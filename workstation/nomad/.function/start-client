@@ -3,7 +3,7 @@ VARSET_FILE=$1
 # ----
 MODE=client
 NOMAD_CONFIG_DIR=./config/$MODE
-NOMAD_DATA_DIR=./datum/$MODE
+export NOMAD_DATA_DIR=$(readlink -f ./datum/$MODE)
 CLUSTER_ADDR=127.0.0.1
 export ADDRESS_HTTP=127.0.0.1
 export ADDRESS_RPC=127.0.0.1
@@ -20,6 +20,8 @@ test -n "$VARSET_FILE" && source $VARSET_FILE
 # ----
 mkdir -p $NOMAD_DATA_DIR
 mkdir -p $NOMAD_DATA_DIR/plugins
+mkdir -p $NOMAD_DATA_DIR/volume_host
+chmod 0777 $NOMAD_DATA_DIR/volume_host
 export CONSUL_BOOTSTRAP_TOKEN=$(cat $CONSUL_BOOTSTRAP_TOKEN_FILE | jq -r .SecretID)
 cat $NOMAD_CONFIG_DIR/agent.hcl.template | envsubst > $NOMAD_CONFIG_DIR/agent.hcl
 

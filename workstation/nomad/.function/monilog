@@ -1,0 +1,15 @@
+
+NODE_ID=$1
+JSON_FORMAT=true
+# ----
+source .properd/VARSET
+source .properd/VARSET.server
+
+# ----
+test -z "$NOMAD_TOKEN_FILE" && read -p "NOMAD_TOKEN_FILE ?= " NOMAD_TOKEN_FILE
+export NOMAD_TOKEN=$(<$NOMAD_TOKEN_FILE)
+nomad monitor \
+    -force-color \
+    -log-level=DEBUG \
+    -node-id=$NODE_ID \
+    -json=${JSON_FORMAT}
