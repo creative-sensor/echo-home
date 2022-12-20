@@ -5,9 +5,14 @@ server {
   bootstrap_expect = 1
 }
 
+addresses {
+  rpc = "${ADDRESS_RPC}"
+  http = "${ADDRESS_HTTP}"
+}
+
 consul {
   # The address to the Consul agent.
-  address = "127.0.0.1:8500"
+  address = "${CONSUL_ADDRESS}"
 
   # The service name to register the server and client with Consul.
   server_service_name = "nomad-server"
@@ -24,9 +29,9 @@ consul {
 
 advertise {
   # Defaults to the first private IP address.
-  http = "127.0.0.1:4646"
-  rpc  = "127.0.0.1:4647"
-  serf = "127.0.0.1:4648" # non-default ports may be specified
+  http = "${ADVERTISE_HTTP}"
+  rpc  = "${ADVERTISE_RPC}"
+  serf = "${ADVERTISE_SERF}" # non-default ports may be specified
 }
 
 # ---- ACL ----

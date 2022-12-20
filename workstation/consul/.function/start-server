@@ -1,5 +1,5 @@
 #!/bin/bash -x
-
+VARSET_FILE=$1
 # ----
 MODE=server
 export DATACENTER=vector
@@ -10,10 +10,15 @@ export DNS_RECURSOR=1.1.1.1
 export HTTPS_PORT=8443
 export DNS_PORT=8600
 export CONSUL_TLS_SERVER_NAME=server.$DATACENTER
+export ADDRESS_GRPC=127.0.0.1
+export ADDRESS_HTTP=127.0.0.1
+export ADDRESS_HTTPS=127.0.0.1
+export ADDRESS_DNS=127.0.0.1
 CLUSTER_ADDR=127.0.0.1
 # ----
 source .properd/VARSET
 source .properd/VARSET.$MODE
+test -n "$VARSET_FILE" && source $VARSET_FILE
 # ----
 cat $CONSUL_CONFIG_DIR/agent.hcl.template | envsubst > $CONSUL_CONFIG_DIR/agent.hcl
 consul validate ${CONSUL_CONFIG_DIR}

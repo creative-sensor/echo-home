@@ -7,5 +7,7 @@ curl -L -o $ARTIFACT_DIR/python-3.10.5-amd64.exe  https://www.python.org/ftp/pyt
 curl -L -o $ARTIFACT_DIR/kubectl-1.25.0.exe  https://dl.k8s.io/release/v1.25.0/bin/windows/amd64/kubectl.exe
 curl -L -o $ARTIFACT_DIR/gvim_9.0.0000_x86_signed.exe  https://github.com/vim/vim-win32-installer/releases/download/v9.0.0000/gvim_9.0.0000_x86_signed.exe
 curl -L -o $ARTIFACT_DIR/rclone-v1.60.0-windows-amd64.zip  https://downloads.rclone.org/v1.60.0/rclone-v1.60.0-windows-amd64.zip
+curl -L -o $ARTIFACT_DIR/nomad_1.4.3_windows_amd64.zip  https://releases.hashicorp.com/nomad/1.4.3/nomad_1.4.3_windows_amd64.zip
+curl -L -o $ARTIFACT_DIR/consul_1.14.3_windows_amd64.zip  https://releases.hashicorp.com/consul/1.14.3/consul_1.14.3_windows_amd64.zip
 
 #.function/artefact-get.conemu

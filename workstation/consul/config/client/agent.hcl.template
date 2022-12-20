@@ -4,9 +4,9 @@ server = false
 
 
 addresses {
-  grpc = "127.0.0.1"
-  http = "127.0.0.1"
-  dns = "127.0.0.1"
+  grpc = "${ADDRESS_GRPC}"
+  http = "${ADDRESS_HTTP}"
+  dns = "${ADDRESS_DNS}"
 }
 
 # ---- COMM ENCRYPTION ----

@@ -1,0 +1,4 @@
+[wsl2]
+#kernel=
+memory=2GB
+processors=2

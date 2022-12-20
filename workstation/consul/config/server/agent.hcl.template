@@ -5,10 +5,10 @@ connect {
 }
 # Addresses and ports
 addresses {
-  grpc = "0.0.0.0"
-  http = "127.0.0.1"
-  https = "0.0.0.0"
-  dns = "0.0.0.0"
+  grpc = "${ADDRESS_GRPC}"
+  http = "${ADDRESS_HTTP}"
+  https = "${ADDRESS_HTTPS}"
+  dns = "${ADDRESS_DNS}"
 }
 
 

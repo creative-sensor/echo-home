@@ -1,8 +1,13 @@
 #!/bin/bash
 
+VARSET_FILE=$1
+export NOMAD_ADDR=http://127.0.0.1:4646
+# ----
 source .properd/VARSET
 source .properd/VARSET.server
-
+test -n "$VARSET_FILE" && source $VARSET_FILE
+# ----
+# ----
 test -s $BOOTSTRAP_TOKEN_FILE && cp $BOOTSTRAP_TOKEN_FILE "$BOOTSTRAP_TOKEN_FILE.$(date -u '+%Y-%m-%dT%H-%M-%SZ')"
 nomad acl bootstrap -json > $BOOTSTRAP_TOKEN_FILE
 cat $BOOTSTRAP_TOKEN_FILE | jq -r .SecretID

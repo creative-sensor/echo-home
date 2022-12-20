@@ -1,12 +1,20 @@
 #!/bin/bash -x
-
+VARSET_FILE=$1
+# ----
 MODE=server
 NOMAD_DATA_DIR=./datum/$MODE
 NOMAD_CONFIG_DIR=./config/$MODE
 CLUSTER_ADDR=127.0.0.1
+export ADDRESS_HTTP=127.0.0.1
+export ADDRESS_RPC=127.0.0.1
+export CONSUL_ADDRESS=127.0.0.1:8500
+export ADVERTISE_HTTP=127.0.0.1
+export ADVERTISE_RPC=127.0.0.1
+export ADVERTISE_SERF=127.0.0.1
 # ----
 source .properd/VARSET
 source .properd/VARSET.$MODE
+test -n "$VARSET_FILE" && source $VARSET_FILE
 # ----
 mkdir -p $NOMAD_DATA_DIR
 mkdir -p $NOMAD_DATA_DIR/plugins

@@ -1,16 +1,25 @@
-#!/bin/bash
-
+#!/bin/bash -x
+VARSET_FILE=$1
+# ----
 MODE=client
 NOMAD_CONFIG_DIR=./config/$MODE
 NOMAD_DATA_DIR=./datum/$MODE
 CLUSTER_ADDR=127.0.0.1
+export ADDRESS_HTTP=127.0.0.1
+export ADDRESS_RPC=127.0.0.1
+export CONSUL_ADDRESS=127.0.0.1:8500
+export ADVERTISE_HTTP=$ADDRESS_HTTP:5656
+export ADVERTISE_RPC=$ADDRESS_RPC:5657
+export ADVERTISE_SERF=127.0.0.1:5658
+
 # ----
 source .properd/VARSET
 source .properd/VARSET.$MODE
+test -n "$VARSET_FILE" && source $VARSET_FILE
 
 # ----
-mkdir -p $DATA_DIR
-mkdir -p $DATA_DIR/plugins
+mkdir -p $NOMAD_DATA_DIR
+mkdir -p $NOMAD_DATA_DIR/plugins
 export CONSUL_BOOTSTRAP_TOKEN=$(cat $CONSUL_BOOTSTRAP_TOKEN_FILE | jq -r .SecretID)
 cat $NOMAD_CONFIG_DIR/agent.hcl.template | envsubst > $NOMAD_CONFIG_DIR/agent.hcl
 
