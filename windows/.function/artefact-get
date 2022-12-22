@@ -9,5 +9,6 @@ curl -L -o $ARTIFACT_DIR/gvim_9.0.0000_x86_signed.exe  https://github.com/vim/vi
 curl -L -o $ARTIFACT_DIR/rclone-v1.60.0-windows-amd64.zip  https://downloads.rclone.org/v1.60.0/rclone-v1.60.0-windows-amd64.zip
 curl -L -o $ARTIFACT_DIR/nomad_1.4.3_windows_amd64.zip  https://releases.hashicorp.com/nomad/1.4.3/nomad_1.4.3_windows_amd64.zip
 curl -L -o $ARTIFACT_DIR/consul_1.14.3_windows_amd64.zip  https://releases.hashicorp.com/consul/1.14.3/consul_1.14.3_windows_amd64.zip
+curl -L -o $ARTIFACT_DIR/VSCodeUserSetup-x64-1.74.2.exe  https://az764295.vo.msecnd.net/stable/e8a3071ea4344d9d48ef8a4df2c097372b0c5161/VSCodeUserSetup-x64-1.74.2.exe
 
 #.function/artefact-get.conemu

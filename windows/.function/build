@@ -7,6 +7,7 @@ install -d .vim ~/
 install .gitconfig ~/
 install .bashrc ~/
 install .bash_profile ~/
+install .wslconfig ~/
 install .ConEmu.xml $APPDATA/ConEmu.xml
 
 
