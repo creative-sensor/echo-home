@@ -1,0 +1,5 @@
+#!/bin/bash 
+source .function/rcloner
+
+PATTERN=$1
+cat $META_DIR/* | awk '{print $2}' | sort -u | grep -i "$PATTERN"

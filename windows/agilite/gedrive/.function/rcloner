@@ -1,0 +1,18 @@
+#!/bin/bash -e
+META_DIR_SHORT=.cache/meta
+VOLUME_CACHE_SHORT=.cache/volume
+mkdir -p $META_DIR_SHORT
+mkdir -p $VOLUME_CACHE_SHORT
+export RCLONE_CONFIG=$(readlink -f ./rclone.conf)
+export META_DIR=$(readlink -f $META_DIR_SHORT)
+VOLUME_CACHE=$(readlink -f $VOLUME_CACHE_SHORT)
+export LIST_REMOTES=$(rclone listremotes)
+
+
+function abort(){
+    local msg=$1
+    echo $msg
+    exit 1
+}
+
+

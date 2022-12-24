@@ -1,4 +1,5 @@
 set -x
 
-ln -sf /c/Users/creativ/AppData/Local/Programs/Python/Python310/Scripts/yq  ~/.local/bin/yq
-ln -sf /usr/bin/gpg  ~/.local/bin/gpg2
+ln -sf ~/AppData/Local/Programs/Python/Python310/Scripts/yq  $LOCAL_BIN/yq
+ln -sf /usr/bin/gpg  $LOCAL_BIN/gpg2
+ln -sf '/c/Program Files/7-Zip/7z.exe' $LOCAL_BIN/7z

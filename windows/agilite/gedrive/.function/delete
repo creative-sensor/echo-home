@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+source .function/rcloner
+
+SUB_FILE_PATH=$1
+
+EXTENT=$(basename $(grep -l  "${SUB_FILE_PATH}$" $META_DIR/*  | head -1))
+
+rclone  delete ${EXTENT}${SUB_FILE_PATH}
+# Do we want to delete its cache
+#rm $VOLUME_CACHE/$SUB_FILE_PATH
+rclone ls ${EXTENT} > $META_DIR/${EXTENT}
+echo "SUBPATH DELETED |X|" 
+echo $SUB_FILE_PATH

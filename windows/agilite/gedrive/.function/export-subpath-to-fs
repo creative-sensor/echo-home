@@ -1,0 +1,16 @@
+#!/bin/bash
+
+source .function/rcloner
+
+
+PATTERN=$1
+FS_EXTERNAL=$2
+
+if ! [[ "$PATTERN"  =~  gpg$ ]] ; then
+    echo "WARNING: This search pattern [  $PATTERN  ] might include non-gpg subpath !!!"
+    read -p "Ignore? = [YES/NO] : " ignore
+    [[ $ignore != "YES" ]] && exit 1
+fi
+
+cd $VOLUME_CACHE/
+find . | grep  $PATTERN | rsync --verbose --relative --files-from=-  ./  $FS_EXTERNAL

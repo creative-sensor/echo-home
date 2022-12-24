@@ -1,0 +1,6 @@
+#!/bin/bash
+source .function/rcloner
+
+SUB_PATH=$1
+grep -l  "^[ 0-9]\+$SUB_PATH" $META_DIR/* | xargs -I {} basename {}
+

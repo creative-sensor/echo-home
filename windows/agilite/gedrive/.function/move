@@ -1,0 +1,22 @@
+#!/bin/bash -e
+
+source .function/rcloner
+
+SUB_PATH=$1
+SUB_PATH_NEW=$2
+EXTENT=$(basename $(grep -l  $SUB_PATH $META_DIR/*  | head -1)  2>/dev/null)
+
+function abort(){
+    local msg=$1
+    echo $msg
+    exit 1
+}
+
+rclone ls ${EXTENT}${SUB_PATH} &>/dev/null || abort "SOURCE IS NOT EXISTING"
+rclone ls ${EXTENT}${SUB_PATH_NEW}/$(basename $SUB_PATH) &>/dev/null  &&  abort "DEST IS EXISTING ALREADY"
+
+rclone moveto ${EXTENT}${SUB_PATH} ${EXTENT}${SUB_PATH_NEW}/$(basename $SUB_PATH)
+rclone ls $EXTENT > $META_DIR/$EXTENT
+
+echo "SUBPATH MOVED |m|" 
+echo $SUB_PATH_NEW

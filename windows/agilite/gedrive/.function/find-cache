@@ -1,0 +1,7 @@
+#!/bin/bash 
+source .function/rcloner
+
+PATTERN=$1
+
+cd $VOLUME_CACHE
+find  -type f | grep -i "$PATTERN" | sed 's,^./,,'

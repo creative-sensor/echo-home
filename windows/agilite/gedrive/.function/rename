@@ -1,0 +1,36 @@
+#!/bin/bash
+
+source .function/rcloner
+
+SUB_PATH=$1
+NEW_NAME=$2
+
+function abort(){
+    local msg=$1
+    echo $msg
+    exit 1
+}
+
+test -z "$SUB_PATH" && abort "SUB_PATH missing"
+test -z "$NEW_NAME" && abort "NEW_NAME missing"
+PARENT_SUB_PATH=$(dirname $SUB_PATH)
+NEW_SUB_PATH="${PARENT_SUB_PATH}/${NEW_NAME}"
+[[ "$PARENT_SUB_PATH" == "." ]] && NEW_SUB_PATH="${NEW_NAME}"
+
+
+TARGET_EXTENT=$(grep -l  "^[ 0-9]\+$SUB_PATH" $META_DIR/* | xargs -I {} basename {})
+
+for EXTENT in $TARGET_EXTENT ; do
+    if ! rclone ls ${EXTENT}${SUB_PATH} &>/dev/null ; then
+        echo  "${EXTENT}${SUB_PATH} IS NOT EXISTING" && continue
+    fi
+
+    if rclone ls ${EXTENT}${NEW_SUB_PATH} &>/dev/null ; then
+        echo "${EXTENT}${NEW_SUB_PATH} IS EXISTING ALREADY" && continue
+    fi
+    rclone moveto ${EXTENT}${SUB_PATH}    ${EXTENT}${NEW_SUB_PATH}
+    rclone ls $EXTENT > $META_DIR/$EXTENT
+    echo "SUBPATH RENAMED |RN|"
+    echo "${EXTENT}${NEW_SUB_PATH}"
+done
+

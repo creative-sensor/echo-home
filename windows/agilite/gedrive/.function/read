@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+source .function/rcloner
+
+SUB_FILE_PATH=$1
+
+EXTENT=$(basename $(grep -l  "${SUB_FILE_PATH}$" $META_DIR/*  | head -1))
+
+mkdir -p $(dirname $VOLUME_CACHE/$SUB_FILE_PATH)
+rclone cat ${EXTENT}${SUB_FILE_PATH} > $VOLUME_CACHE/$SUB_FILE_PATH
+
+echo "FILE READY >>"
+echo $(readlink -f $VOLUME_CACHE/$SUB_FILE_PATH)
+
+if [[ $SUB_FILE_PATH =~ gpg$ ]] ; then
+    SUB_FILE_PATH=${SUB_FILE_PATH/%.gpg/}
+    echo "Decrypting |-|=|-|"
+    gpg2 --decrypt $VOLUME_CACHE/${SUB_FILE_PATH}.gpg > $VOLUME_CACHE/${SUB_FILE_PATH}
+fi
+
+if which 7z ; then
+   7z x -o$(dirname $VOLUME_CACHE/$SUB_FILE_PATH)  $VOLUME_CACHE/$SUB_FILE_PATH
+   SUB_FILE_PATH=${SUB_FILE_PATH%.xz}
+       # delete substring at the back
+fi
+
+if tar tvf $VOLUME_CACHE/$SUB_FILE_PATH 2>/dev/null | grep -q .properd/gedrive.yaml ; then
+    cd $(dirname $VOLUME_CACHE/$SUB_FILE_PATH)
+    tar xf $VOLUME_CACHE/$SUB_FILE_PATH  &&  rm $VOLUME_CACHE/${SUB_FILE_PATH}
+    echo "Extracted"
+fi

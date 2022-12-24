@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+source .function/rcloner
+
+EXTERNAL_FILE_PATH=$1
+SUB_DIR_PATH=$2
+
+mkdir -p $VOLUME_CACHE/$SUB_DIR_PATH
+cp $EXTERNAL_FILE_PATH $VOLUME_CACHE/$SUB_DIR_PATH
+.function/write $SUB_DIR_PATH/$(basename $EXTERNAL_FILE_PATH)

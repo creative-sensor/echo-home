@@ -26,7 +26,9 @@ alias ll='ls -la '
 alias gvim='terminame "VIM | $(basename $PWD)" ; /c/Program\ Files\ \(x86\)/Vim/vim90/gvim.exe'
 
 # ---- LOCAL ----
-PATH=$PATH:~/.local/bin
+export LOCAL_BIN=~/.local/bin
+export PYTHONPATH=/c/Users/creativ/AppData/Local/Programs/Python/Python310
+PATH=$PATH:$LOCAL_BIN:$PYTHONPATH
 
 COLOR1='\[\033[38;5;34m\]'
 COLOR2='\[\033[38;5;161m\]'
@@ -35,11 +37,6 @@ STOP='\[\033[0m\]'
 
 PS1="[${BOLD}${COLOR1}\u${STOP}@${BOLD}${COLOR2}\h \W${STOP}]\$ "
 
-
-# ---- EXPORT ----
-#export MOZILLA_FIREFOX_PROFILE=
-#export MOZILLA_THUNDERBIRD_PROFILE=
-#export GNUPGHOME=
 
 # ---- EDIT ----
 source ~/.bashrc.edit
