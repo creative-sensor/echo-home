@@ -1,3 +1,4 @@
 #!/bin/bash -xe
 
-dconf dump / > .config/dconf.ini
+path=/org/gnome/terminal/
+dconf dump $path  > .config/dconf.ini
