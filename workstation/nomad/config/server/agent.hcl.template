@@ -27,6 +27,12 @@ consul {
   token = "${CONSUL_BOOTSTRAP_TOKEN}"
 }
 
+ports {
+  http = ${PORT_HTTP}
+  rpc  = ${PORT_RPC}
+  serf = ${PORT_SERF}
+}
+
 advertise {
   # Defaults to the first private IP address.
   http = "${ADVERTISE_HTTP}"

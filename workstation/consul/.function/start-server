@@ -14,7 +14,8 @@ export ADDRESS_GRPC=127.0.0.1
 export ADDRESS_HTTP=127.0.0.1
 export ADDRESS_HTTPS=127.0.0.1
 export ADDRESS_DNS=127.0.0.1
-CLUSTER_ADDR=127.0.0.1
+BIND_ADDR=127.0.0.1
+CLUSTER_ADDR=$BIND_ADDR
 # ----
 source .properd/VARSET
 source .properd/VARSET.$MODE
@@ -29,5 +30,5 @@ consul agent \
     -datacenter=${DATACENTER} \
     -node=${HOSTNAME} \
     -config-dir=${CONSUL_CONFIG_DIR} \
-    -bind=${CLUSTER_ADDR} \
+    -bind=${BIND_ADDR} \
     -data-dir=${CONSUL_DATA_DIR}

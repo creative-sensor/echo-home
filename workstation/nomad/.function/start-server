@@ -4,13 +4,17 @@ VARSET_FILE=$1
 MODE=server
 NOMAD_DATA_DIR=./datum/$MODE
 NOMAD_CONFIG_DIR=./config/$MODE
-CLUSTER_ADDR=127.0.0.1
+BIND_ADDR=127.0.0.1
 export ADDRESS_HTTP=127.0.0.1
 export ADDRESS_RPC=127.0.0.1
-export CONSUL_ADDRESS=127.0.0.1:8500
-export ADVERTISE_HTTP=127.0.0.1
-export ADVERTISE_RPC=127.0.0.1
-export ADVERTISE_SERF=127.0.0.1
+export ADDRESS_SERF=127.0.0.1
+export CONSUL_ADDRESS=127.0.0.1:8511
+export PORT_HTTP=5656
+export PORT_RPC=5657
+export PORT_SERF=5658
+export ADVERTISE_HTTP=$ADDRESS_HTTP:$PORT_HTTP
+export ADVERTISE_RPC=$ADDRESS_RPC:$PORT_RPC
+export ADVERTISE_SERF=$ADDRESS_SERF:$PORT_SERF
 # ----
 source .properd/VARSET
 source .properd/VARSET.$MODE
@@ -23,6 +27,6 @@ export CONSUL_BOOTSTRAP_TOKEN=$(cat $CONSUL_BOOTSTRAP_TOKEN_FILE | jq -r .Secret
 cat $NOMAD_CONFIG_DIR/agent.hcl.template | envsubst > $NOMAD_CONFIG_DIR/agent.hcl
 nomad agent \
     -config=${NOMAD_CONFIG_DIR}/agent.hcl \
-    -bind=${CLUSTER_ADDR} \
+    -bind=${BIND_ADDR} \
     -log-level INFO \
     -data-dir=$(readlink -f $NOMAD_DATA_DIR)

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+source .properd/VARSET
+source .properd/VARSET.server
+
+export CONSUL_HTTP_TOKEN=$(cat $BOOTSTRAP_TOKEN_FILE | jq -r .SecretID)
+consul catalog services

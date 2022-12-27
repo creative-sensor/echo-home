@@ -9,6 +9,7 @@ CONSUL_DATA_DIR=./datum/$MODE
 export CONSUL_CONFIG_DIR=./config/$MODE
 CLUSTER_ADDR=127.0.0.1
 CLUSTER_PORT=8311
+BIND_ADDR=127.0.0.1
 export ADDRESS_GRPC=127.0.0.1
 export ADDRESS_HTTP=127.0.0.1
 export ADDRESS_DNS=127.0.0.1
@@ -26,7 +27,7 @@ consul agent \
     -node=${HOSTNAME}-$MODE \
     -datacenter=${DATACENTER} \
     -config-dir=${CONSUL_CONFIG_DIR} \
-    -bind=${CLUSTER_ADDR} \
+    -bind=${BIND_ADDR} \
     -join=${CLUSTER_ADDR}:${CLUSTER_PORT} \
     -rejoin \
     -data-dir=${CONSUL_DATA_DIR}

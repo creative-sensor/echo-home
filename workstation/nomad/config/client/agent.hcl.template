@@ -24,10 +24,16 @@ consul {
   token = "${CONSUL_BOOTSTRAP_TOKEN}"
 }
 
+addresses {
+  rpc = "${ADDRESS_RPC}"
+  http = "${ADDRESS_HTTP}"
+  serf = "${ADVERTISE_SERF}"
+}
+
 ports {
-  http = 5656
-  rpc  = 5657
-  serf = 5658
+  http = ${PORT_HTTP}
+  rpc  = ${PORT_RPC}
+  serf = ${PORT_SERF}
 }
 
 advertise {
