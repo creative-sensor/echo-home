@@ -1,5 +1,13 @@
+#!/bin/bash -x
+
+NAME=$1
+TYPE=ANY
+CONSUL_DNS_LOOKUP_TYPE=$(awk -F "." '{ print $NF }')
+# ----
 source .properd/VARSET
-NAME=server.${DATACENTER}.consul
-TYPE=SRV
-TYPE=A
-dig @127.0.0.1 -p 8611 $NAME $TYPE
+source .properd/VARSET.client
+
+# ----
+NAME_FULL=${NAME}.${CONSUL_DNS_LOOKUP_TYPE}.${DATACENTER}.consul
+test -z "$CONSUL_DNS_LOOKUP_TYPE" && CONSUL_DNS_LOOKUP_TYPE=service
+dig ANY $NAME_FULL @$ADDRESS_DNS -p 8600

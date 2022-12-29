@@ -1,0 +1,12 @@
+#!/bin/bash
+POLICY_FILE=$1
+ID=$2
+POLICY_NAME=$(basename ${POLICY_FILE%.hcl})
+# ----
+source .properd/VARSET
+source .properd/VARSET.server
+
+export CONSUL_HTTP_TOKEN=$(cat $BOOTSTRAP_TOKEN_FILE | jq -r .SecretID)
+test -z "$ID" && ID=anonymous
+consul acl policy create -name $POLICY_NAME -rules @$POLICY_FILE
+consul acl token update -id $ID -policy-name=$POLICY_NAME

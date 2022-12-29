@@ -24,7 +24,7 @@ consul {
   # Enabling the server and client to bootstrap using Consul.
   server_auto_join = true
 
-  token = "${CONSUL_BOOTSTRAP_TOKEN}"
+  token = "${CONSUL_AGENT_TOKEN}"
 }
 
 ports {

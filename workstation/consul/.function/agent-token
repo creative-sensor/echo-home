@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# ----
+
+# ----
+source .properd/VARSET
+source .properd/VARSET.server
+# ----
+POLICY_FILE=acl/policy/double-agent.hcl
+POLICY_NAME=$(basename ${POLICY_FILE%.hcl})
+TOKEN_ACCESSOR_ID=
+TOKEN_SECRET_ID=
+export CONSUL_HTTP_TOKEN=$(cat $BOOTSTRAP_TOKEN_FILE | jq -r .SecretID)
+
+
+if ! consul acl policy list | grep -q ^$POLICY_NAME ; then
+    consul acl policy create -name "$POLICY_NAME" -description "$POLICY_NAME" -rules @$POLICY_FILE
+fi
+
+if test -s $AGENT_TOKEN_FILE ; then
+    TOKEN_ACCESSOR_ID=$(cat $AGENT_TOKEN_FILE | jq -r .AccessorID)
+    TOKEN_SECRET_ID=$(cat $AGENT_TOKEN_FILE | jq -r .SecretID)
+    consul acl token create \
+        -accessor $TOKEN_ACCESSOR_ID \
+        -secret $TOKEN_SECRET_ID \
+        -policy-name=$POLICY_NAME
+else
+    consul acl token create \
+        -description "double-agent" \
+        -policy-name "$POLICY_NAME" \
+        -format json > $AGENT_TOKEN_FILE
+fi

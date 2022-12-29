@@ -23,7 +23,7 @@ test -n "$VARSET_FILE" && source $VARSET_FILE
 mkdir -p $NOMAD_DATA_DIR
 mkdir -p $NOMAD_DATA_DIR/plugins
 
-export CONSUL_BOOTSTRAP_TOKEN=$(cat $CONSUL_BOOTSTRAP_TOKEN_FILE | jq -r .SecretID)
+export CONSUL_AGENT_TOKEN=$(cat $CONSUL_AGENT_TOKEN_FILE | jq -r .SecretID)
 cat $NOMAD_CONFIG_DIR/agent.hcl.template | envsubst > $NOMAD_CONFIG_DIR/agent.hcl
 nomad agent \
     -config=${NOMAD_CONFIG_DIR}/agent.hcl \

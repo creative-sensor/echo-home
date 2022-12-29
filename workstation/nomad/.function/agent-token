@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# ----
+
+# ----
+source .properd/VARSET
+source .properd/VARSET.server
+# ----
+POLICY_FILE=acl/policy/double-agent.hcl
+POLICY_NAME=$(basename ${POLICY_FILE%.hcl})
+export NOMAD_TOKEN=$(cat $BOOTSTRAP_TOKEN_FILE | jq -r .SecretID)
+
+
+if ! nomad acl policy list | grep -q ^$POLICY_NAME ; then
+    nomad acl policy apply  $POLICY_NAME  $POLICY_FILE
+fi
+
+test -s $AGENT_TOKEN_FILE &&
+    mv $AGENT_TOKEN_FILE $AGENT_TOKEN_FILE.$(date -u '+%Y-%m-%dT%H-%M-%SZ')
+
+nomad acl token create -name $POLICY_NAME -policy "$POLICY_NAME" \
+    | head -2 | sed "s, ,,g" > $AGENT_TOKEN_FILE
+
+cat $AGENT_TOKEN_FILE
+
+#nomad acl token list -json
+

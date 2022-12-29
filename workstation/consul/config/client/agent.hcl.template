@@ -24,7 +24,7 @@ acl {
   default_policy = "deny"
   enable_token_persistence = true
   tokens {
-    agent  = "${BOOTSTRAP_TOKEN}"
+    agent  = "${AGENT_TOKEN}"
   }
 
 }

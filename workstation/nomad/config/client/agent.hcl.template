@@ -21,7 +21,7 @@ consul {
 
   client_auto_join = true
     
-  token = "${CONSUL_BOOTSTRAP_TOKEN}"
+  token = "${CONSUL_AGENT_TOKEN}"
 }
 
 addresses {
