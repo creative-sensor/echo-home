@@ -1,0 +1,3 @@
+
+SOURCE_REVISION=c616448ad33633aecb8b966edc4ff82aa573c311
+curl -L https://github.com/coderofsalvation/kanban.bash

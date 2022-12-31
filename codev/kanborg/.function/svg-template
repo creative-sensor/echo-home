@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+VARSET_EXT=$1
+# ---- |DEFAULT ----
+
+# ---- |OVERRIDE ----
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+DASHBOARD_TEMPLATE=.media/dashboard.template.svg
+DASHBOARD_SET=.media/dashboard.set.svg
+
+function count() {
+    local col=$1
+    echo $(find datum/ -type f | grep "${col}.*md$" | wc -l)
+}
+
+export TODO=$(count "TODO")
+export HOLD=$(count "HOLD")
+export WIP=$(count "WIP")
+export DONE=$(count "DONE")
+cat $DASHBOARD_TEMPLATE | envsubst > $DASHBOARD_SET
+git add $DASHBOARD_TEMPLATE  $DASHBOARD_SET
+
