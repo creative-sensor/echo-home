@@ -1,3 +1,5 @@
+#!/bin/bash
+
 OBJECTORY=$1
 
 cd $OBJECTORY
@@ -14,3 +16,17 @@ touch .function/artefacts && chmod 0700 .function/artefacts
 touch .function/artefact-get && chmod 0700 .function/artefact-get
 test -f .properd/meta.yaml || echo "wid: $(uuidgen)" >  .properd/meta.yaml
 
+# ---- TEMPlATE: .function/start
+test -s .function/start || cat <<EOF  > .function/start
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+VARSET_EXT=\$1
+# ---- |DEFAULT ----
+
+# ---- |OVERRIDE ----
+source .properd/VARSET
+test -n "\$VARSET_EXT" && source \$VARSET_EXT
+
+# ---- |MAIN ----
+EOF

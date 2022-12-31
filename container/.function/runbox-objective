@@ -1,0 +1,42 @@
+#!/bin/bash -x
+OBJECTORY=$1
+VARSET_EXT=$2
+# ---- DEFAULT
+DKR_IMAGE=fedora:35
+DKR_EXPOSE=
+DKR_ENV_FILE=$VARSET_EXT
+DKR_RUNAS=
+DKR_CMD=.function/start
+# ---- OVERRIDE
+source $OBJECTORY/.properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+# ---- MAIN
+RUN_ID=$(date -u '+%Y-%m-%dT%H-%M-%SZ')
+LOG=$OBJECTORY/.log/${RUN_ID}/std.eo
+MOUNT_SRC_DIR=$(readlink -f $OBJECTORY)
+MOUNT_TARGET_DIR=/objective
+test -n "$DKR_EXPOSE" && DKR_EXPOSE="--publish 0.0.0.0:$DKR_EXPOSE"
+test -n "$DKR_ENV_FILE" && DKR_ENV_FILE="--env-file $DKR_ENV_FILE"
+test -n "$DKR_RUNAS" && DKR_RUNAS="--user $DKR_RUNAS"
+if test -n "$VARSET_EXT" ; then
+    MOUNT_SRC_VARSET=$(readlink -f $VARSET_EXT)
+    MOUNT_TARGET_VARSET=/$(basename $VARSET_EXT)
+    MOUNT_VARSET="--mount  type=bind,source=$MOUNT_SRC_VARSET,target=$MOUNT_TARGET_VARSET"
+fi
+
+
+mkdir -p $(dirname $LOG)
+sudo docker run \
+        --rm \
+        --mount  type=bind,source=$MOUNT_SRC_DIR,target=$MOUNT_TARGET_DIR  \
+        --env  RUN_ID=${RUN_ID} \
+        --entrypoint "" \
+        ${MOUNT_VARSET} \
+        ${DKR_EXPOSE} \
+        ${DKR_ENV_FILE} \
+        ${DKR_RUNAS} \
+        ${DKR_IMAGE} \
+        bash -c "cd $MOUNT_TARGET_DIR;  $DKR_CMD $MOUNT_TARGET_VARSET" \
+    2>&1 | tee  $LOG
+
+echo "Runbox finished ! $(readlink -f $LOG)"

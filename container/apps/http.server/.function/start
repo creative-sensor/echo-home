@@ -1,2 +1,12 @@
-#!/bin/bash -xe
-python3 -m http.server 8182
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+VARSET_EXT=$1
+# ---- |DEFAULT ----
+PORT=8182
+# ---- |OVERRIDE ----
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+python3 -m http.server $PORT
