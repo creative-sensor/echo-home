@@ -23,12 +23,12 @@ alias git-glog='git log --all --decorate --oneline --graph'
 alias gitroot='cd $(git rev-parse --show-toplevel)'
 alias grin='grep -rin '
 alias ll='ls -la '
-alias gvim='terminame "VIM | $(basename $PWD)" ; /c/Program\ Files\ \(x86\)/Vim/vim90/gvim.exe'
 
 # ---- LOCAL ----
 export LOCAL_BIN=~/.local/bin
-export PYTHONPATH=/c/Users/creativ/AppData/Local/Programs/Python/Python310
-PATH=$PATH:$LOCAL_BIN:$PYTHONPATH
+export PYTHONPATH=~/AppData/Local/Programs/Python/Python310
+export GVIMPATH='/c/Program Files (x86)/Vim/vim90'
+PATH=$PATH:$LOCAL_BIN:$PYTHONPATH:$GVIMPATH
 
 COLOR1='\[\033[38;5;34m\]'
 COLOR2='\[\033[38;5;161m\]'
@@ -36,6 +36,7 @@ BOLD='\[\033[1m\]' # Work only if "allow bold text" setting is enabled
 STOP='\[\033[0m\]'
 
 PS1="[${BOLD}${COLOR1}\u${STOP}@${BOLD}${COLOR2}\h \W${STOP}]\$ "
+PROMPT_COMMAND='echo -ne "\033]0;$(basename $PWD)\007"'
 
 
 # ---- EDIT ----

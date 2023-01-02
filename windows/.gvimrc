@@ -1,5 +1,6 @@
 "set shell=\"C:\Program\ Files\Git\usr\bin\bash.exe\"
 set shell=\"C:\Program\ Files\Git\bin\sh.exe\"
+set guifont=Consolas:h11
 set shellslash
 
 function WSL_set_shell()

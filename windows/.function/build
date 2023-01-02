@@ -3,6 +3,7 @@ source .properd/VARSET
 
 # ---- install ----
 install .vimrc ~/
+install .gvimrc ~/
 install -d .vim ~/
 install .gitconfig ~/
 install .bashrc ~/

@@ -28,7 +28,7 @@ git add $DASHBOARD_TEMPLATE  $DASHBOARD_SET
 
 # LIST_WIP
 TEMPLATE_WIP_ENTRY='\n- [${CARD}](${CARD})   ```${HEADER}```'
-for card in $(find $DATA_DIR/WIP -type f) ; do
+for card in $(find $DATA_DIR/WIP -type f | grep md$) ; do
     export HEADER=$(grep -m 1  "^# .*" $card)
     export CARD=$card
     wip_entry=$(echo -e "$TEMPLATE_WIP_ENTRY" | envsubst)

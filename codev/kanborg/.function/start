@@ -12,4 +12,7 @@ test -n "$VARSET_EXT" && source $VARSET_EXT
 # ---- |MAIN ----
 COLUMNS="TODO  HOLD  WIP  DONE"
 mkdir -p $DATA_DIR/${YEAR}/{TODO,HOLD,WIP,DONE}
-vim -u .vimrc
+
+test -n "$GVIMPATH" && G_VIM=g
+
+${G_VIM}vim -u .vimrc

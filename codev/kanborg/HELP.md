@@ -3,6 +3,7 @@
 - ```---``` edit card
 - ```mmm``` move card to the right
 - ```bbb``` move card to the left
+- ```Ctrl w   =``` resize all windows to equal size
 
 ### MARK GUIDE
 
