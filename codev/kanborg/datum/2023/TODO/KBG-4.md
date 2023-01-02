@@ -18,5 +18,5 @@
 
 --------------------------------
 ```json
-{ "project": "${PROJECT}" , "links": "${LINKS}" , "location": "${LOCATION}" , "fpoint": "${FPOINT}" }
+{ "project": "Kanborg" , "links": "${LINKS}" , "location": "codev/kanborg" , "fpoint": "1" }
 ```
