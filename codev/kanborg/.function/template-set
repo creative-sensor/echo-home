@@ -14,13 +14,28 @@ DASHBOARD_SET=.media/dashboard.set.svg
 
 function count() {
     local col=$1
-    echo $(find datum/ -type f | grep "${col}.*md$" | wc -l)
+    echo $(find $DATA_DIR -type f | grep "${col}.*md$" | wc -l)
 }
 
 export TODO=$(count "TODO")
 export HOLD=$(count "HOLD")
 export WIP=$(count "WIP")
 export DONE=$(count "DONE")
+
+# SVG
 cat $DASHBOARD_TEMPLATE | envsubst > $DASHBOARD_SET
 git add $DASHBOARD_TEMPLATE  $DASHBOARD_SET
 
+# LIST_WIP
+TEMPLATE_WIP_ENTRY='\n- [${CARD}](${CARD})   ```${HEADER}```'
+for card in $(find $DATA_DIR/WIP -type f) ; do
+    export HEADER=$(grep -m 1  "^# .*" $card)
+    export CARD=$card
+    wip_entry=$(echo -e "$TEMPLATE_WIP_ENTRY" | envsubst)
+    LIST_WIP=${LIST_WIP}${wip_entry}
+done
+export LIST_WIP=$LIST_WIP
+
+# Issueing README.md
+cat README.template.md | envsubst > README.md
+git add README.md

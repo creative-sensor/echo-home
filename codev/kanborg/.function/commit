@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+VARSET_EXT=$1
+# ---- |DEFAULT ----
+export ENV_DATE=$(date +%Y)
+export DATA_DIR=./datum/$ENV_DATE
+# ---- |OVERRIDE ----
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+.function/template-set
+git add $DATA_DIR
+git commit -m "Kanborg: carding"
+
