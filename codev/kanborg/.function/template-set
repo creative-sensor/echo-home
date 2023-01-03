@@ -3,7 +3,7 @@
 # ---- |EXT ----
 VARSET_EXT=$1
 # ---- |DEFAULT ----
-
+DATA_DIR=.datum/$(date +%Y)
 # ---- |OVERRIDE ----
 source .properd/VARSET
 test -n "$VARSET_EXT" && source $VARSET_EXT
@@ -36,6 +36,39 @@ for card in $(find $DATA_DIR/WIP -type f | grep md$) ; do
 done
 export LIST_WIP=$LIST_WIP
 
+
+# LIST_HOLD
+TEMPLATE_HOLD_ENTRY='\n- [${CARD}](${CARD})   ```${HEADER}```'
+for card in $(find $DATA_DIR/HOLD -type f | grep md$) ; do
+    export HEADER=$(grep -m 1  "^# .*" $card)
+    export CARD=$card
+    wip_entry=$(echo -e "$TEMPLATE_HOLD_ENTRY" | envsubst)
+    LIST_HOLD=${LIST_HOLD}${wip_entry}
+done
+export LIST_HOLD=$LIST_HOLD
+
+
+# LIST_TODO
+TEMPLATE_TODO_ENTRY='\n- [${CARD}](${CARD})   ```${HEADER}```'
+for card in $(find $DATA_DIR/TODO -type f | grep md$) ; do
+    export HEADER=$(grep -m 1  "^# .*" $card)
+    export CARD=$card
+    wip_entry=$(echo -e "$TEMPLATE_TODO_ENTRY" | envsubst)
+    LIST_TODO=${LIST_TODO}${wip_entry}
+done
+export LIST_TODO=$LIST_TODO
+
+
+# LIST_DONE
+TEMPLATE_DONE_ENTRY='\n- [${CARD}](${CARD})   ```${HEADER}```'
+for card in $(find $DATA_DIR/DONE -type f | grep md$) ; do
+    export HEADER=$(grep -m 1  "^# .*" $card)
+    export CARD=$card
+    wip_entry=$(echo -e "$TEMPLATE_DONE_ENTRY" | envsubst)
+    LIST_DONE=${LIST_DONE}${wip_entry}
+done
+export LIST_DONE=$LIST_DONE
+
 # Issueing README.md
-cat README.template.md | envsubst > README.md
+cat .template/README.md | envsubst > README.md
 git add README.md

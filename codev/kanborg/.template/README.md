@@ -5,3 +5,12 @@
 
 ### 1 WORK IN PROGRESS
 ${LIST_WIP}
+
+### 2 ON HOLD
+${LIST_HOLD}
+
+### 3 TO DO
+${LIST_TODO}
+
+### 4 DONE
+${LIST_DONE}
