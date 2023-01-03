@@ -5,7 +5,8 @@
 - update README template to display HOLD, TODO and DONE
 
 ### 1 SOLUTION
-
+source: 34df6cc5df88be014db300336b4a7c8a47f5f8e7
+cherry-picked: 31cbd2ad36a4614cd45862187dcc591b3ceeaaa3
 
 ### 2 NOTES
 
@@ -19,5 +20,5 @@
 
 --------------------------------
 ```json
-{ "project_code": "KBG" , "links": "" , "location": "" , "fpoint": "" }
+{ "project_code": "KBG" , "links": "" , "location": "" , "fpoint": "1" }
 ```
