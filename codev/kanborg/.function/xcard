@@ -13,27 +13,29 @@ test -n "$VARSET_EXT" && source $VARSET_EXT
 # ---- |MAIN ----
 
 # ---- project check
+PROJECT_MD=$DATA_DIR/PROJECT.md
+test -s $PROJECT_MD || cp .template/PROJECT.md $PROJECT_MD
 source .template/project_row
-cat PROJECT.md
-read -p "PROJECT ?= " PROJECT_CODE
+cat $PROJECT_MD
+test -z "$PROJECT_CODE" && read -p "PROJECT ?= " PROJECT_CODE
 export PROJECT_CODE=$PROJECT_CODE
-if ! grep -q "^$PROJECT_CODE" PROJECT.md ; then
+if ! grep -q "^$PROJECT_CODE :" $PROJECT_MD ; then
     echo "$PROJECT_CODE is new PROJECT_CODE"
     read -p "DESCRIPTION ?= " DESCRIPTION
     export DESCRIPTION=$DESCRIPTION
     export LAST_ID=-1
-    sed -i '$d' PROJECT.md
+    sed -i '$d' $PROJECT_MD
         # sed delete last line
-    echo $TEMPLATE_PROJECT_ROW | envsubst >> PROJECT.md
-    echo '```' >> PROJECT.md
+    echo $TEMPLATE_PROJECT_ROW | envsubst >> $PROJECT_MD
+    echo '```' >> $PROJECT_MD
 fi
-LAST_ID=$(grep  $PROJECT_CODE PROJECT.md  | grep -o '{.*}' | jq -r .last_id)
+LAST_ID=$(grep  "^$PROJECT_CODE :"  $PROJECT_MD  | grep -o '{.*}' | jq -r .last_id)
     # yson: get field
 LAST_ID=$((LAST_ID + 1))
-json=$(grep  $PROJECT_CODE PROJECT.md  | grep -o '{.*}' | jq -c ".last_id = $LAST_ID")
-sed -i "s/^${PROJECT_CODE}.*/$PROJECT_CODE : ${json}/" PROJECT.md
+json=$(grep  "^$PROJECT_CODE :" $PROJECT_MD  | grep -o '{.*}' | jq -c ".last_id = $LAST_ID")
+sed -i "s/^${PROJECT_CODE} :.*/$PROJECT_CODE : ${json}/" $PROJECT_MD
     # yson: update field
-git add PROJECT.md
+git add $PROJECT_MD
 
 
 # ---- card generation
