@@ -1,4 +1,4 @@
-# ISSUE :
+# SPEC : Define new spec
 --------------------------------
 ### 0 DESCRIPTION
 
@@ -18,5 +18,5 @@
 
 --------------------------------
 ```json
-{ "project": "Kanborg" , "links": "${LINKS}" , "location": "codev/kanborg" , "fpoint": "1" }
+{ "project_code": "${PROJECT_CODE}" , "links": "${LINKS}" , "location": "${LOCATION}" , "fpoint": "${FPOINT}" }
 ```

@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+PROJECT_CODE=$1
+VARSET_EXT=$2
+# ---- |DEFAULT ----
+export ENV_DATE=$(date +%Y)
+export DATA_DIR=./datum/$ENV_DATE
+# ---- |OVERRIDE ----
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+
+# ---- project check
+source .template/project_row
+cat PROJECT.md
+read -p "PROJECT ?= " PROJECT_CODE
+export PROJECT_CODE=$PROJECT_CODE
+if ! grep -q "^$PROJECT_CODE" PROJECT.md ; then
+    echo "$PROJECT_CODE is new PROJECT_CODE"
+    read -p "DESCRIPTION ?= " DESCRIPTION
+    export DESCRIPTION=$DESCRIPTION
+    export LAST_ID=-1
+    sed -i '$d' PROJECT.md
+        # sed delete last line
+    echo $TEMPLATE_PROJECT_ROW | envsubst >> PROJECT.md
+    echo '```' >> PROJECT.md
+fi
+LAST_ID=$(grep  $PROJECT_CODE PROJECT.md  | grep -o '{.*}' | jq -r .last_id)
+    # yson: get field
+LAST_ID=$((LAST_ID + 1))
+json=$(grep  $PROJECT_CODE PROJECT.md  | grep -o '{.*}' | jq -c ".last_id = $LAST_ID")
+sed -i "s/^${PROJECT_CODE}.*/$PROJECT_CODE : ${json}/" PROJECT.md
+    # yson: update field
+git add PROJECT.md
+
+
+# ---- card generation
+CARD=$DATA_DIR/TODO/${PROJECT_CODE}-${LAST_ID}.md
+TEMPLATE_CARD=.template/${PROJECT_CODE}.CARD.md
+test -s $TEMPLATE_CARD || TEMPLATE_CARD=CARD.md
+cat $TEMPLATE_CARD | envsubst > $CARD
+git add $CARD
+echo -e "\nCARD=$CARD"

@@ -1,0 +1,1 @@
+TEMPLATE_PROJECT_ROW='${PROJECT_CODE} : {  "description" : "${DESCRIPTION}" , "last_id": "${LAST_ID}" ,"related": "${RELATED}" }'

@@ -18,5 +18,5 @@
 
 --------------------------------
 ```json
-{ "project": "${PROJECT}" , "links": "${LINKS}" , "location": "${LOCATION}" , "fpoint": "${FPOINT}" }
+{ "project_code": "${PROJECT_CODE}" , "links": "${LINKS}" , "location": "${LOCATION}" , "fpoint": "${FPOINT}" }
 ```
