@@ -12,6 +12,8 @@
 
 ### 3 TO DO
 
+- [datum/2023/TODO/LEAF-0.md](datum/2023/TODO/LEAF-0.md)   ```# ISSUE :```
+- [datum/2023/TODO/NCEPT-0.md](datum/2023/TODO/NCEPT-0.md)   ```# CONCEPT : Fractual system```
 - [datum/2023/TODO/SPEC-0.md](datum/2023/TODO/SPEC-0.md)   ```# SPEC : yson format```
 
 ### 4 DONE
