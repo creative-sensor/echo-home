@@ -23,6 +23,7 @@ set guifont=Consolas:h11
 "set shell=\"/c/Program\ Files/Git/usr/bin/bash.exe\"
 set shell=\"/c/Program\ Files/Git/bin/sh.exe\"
 set backspace=indent,eol,start
+set ffs=unix
 "-------- [PLUGIN] --------
 "filetype plugin on
 

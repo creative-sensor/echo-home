@@ -73,10 +73,10 @@ function Kolumns()
     let DONE= tempname().'.DONE'
     exec 'file '.VIEW.' | read HELP.md | setlocal filetype=markdown'
         "vim: read file into buffer
-    exec '! find '.yyyy_dir.'/TODO -type f > '.TODO | exec 'new '.TODO
-    exec '! find '.yyyy_dir.'/HOLD -type f > '.HOLD | exec 'vnew '.HOLD
-    exec '! find '.yyyy_dir.'/WIP -type f > '.WIP | exec 'vnew '.WIP
-    exec '! find '.yyyy_dir.'/DONE -type f > '.DONE | exec 'vnew '.DONE
+    exec 'silent ! echo "----TODO----" > '.TODO.' ; find '.yyyy_dir.'/TODO -type f >> '.TODO  | exec 'new '.TODO
+    exec 'silent ! echo "----HOLD----" > '.HOLD.' ; find '.yyyy_dir.'/HOLD -type f >> '.HOLD  | exec 'vnew '.HOLD
+    exec 'silent ! echo "----WIP----"  > '.WIP.'  ; find '.yyyy_dir.'/WIP -type f  >> '.WIP   | exec 'vnew '.WIP
+    exec 'silent ! echo "----DONE----" > '.DONE.' ; find '.yyyy_dir.'/DONE -type f >> '.DONE  | exec 'vnew '.DONE
 endfunction
 
 
