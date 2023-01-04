@@ -1,9 +1,9 @@
 [user]
-	name = Creativ
-	email = vietbao.telescope@gmail.com
+    name = Creativ
+    email = vietbao.telescope@gmail.com
 [core]
-	editor = vim -u ~/.vim/rc/git
-
+    editor = vim -u ~/.vim/rc/git
+    autocrlf = false
 [color]
     ui = true
     status = auto
