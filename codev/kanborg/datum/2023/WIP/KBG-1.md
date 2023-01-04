@@ -13,8 +13,11 @@
 
 
 ### 4 DISCUSSION
-
-
+- UPDATE
+```
+file:///C:/Program%20Files/Git/mingw64/share/doc/git-doc/git-cherry-pick.html
+file:///C:/Program%20Files/Git/mingw64/share/doc/git-doc/git-merge.html
+```
 
 --------------------------------
 ```json
