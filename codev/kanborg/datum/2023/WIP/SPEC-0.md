@@ -17,6 +17,7 @@ NAMESPACE_B : { "varX": "real" , "scope": "infinity"}
 
 ### 4 DISCUSSION
 ###### 4.1
+to support reading from stdin and write to stdout when using with pipe
 
 ###### 4.0
 key read/write
