@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+KEYPATH=$1
+SOURCE_FILE=$2
+VARSET_EXT=$3
+# ---- |DEFAULT ----
+
+# ---- |OVERRIDE ----
+#source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+
+NAMESPACE=$(echo $KEYPATH | awk -F "." '{ print $1 }')
+KEY=$(echo $KEYPATH | awk -F "=" '{ print $1 }')
+VALUE=$(echo $KEYPATH | awk -F "=" '{ print $2 }')
+test -n "$SOURCE_FILE" && inplace=-i
+yson=$(cat $SOURCE_FILE)
+
+if ! echo "$yson" | grep -q "^$NAMESPACE :" ; then
+    SUBKEY=$(echo $KEY | awk -F "." '{ print $2 }')
+    if test -z "$SOURCE_FILE" ; then
+        echo "$yson"
+        echo "$NAMESPACE : {\"$SUBKEY\":\"$VALUE\"}"
+    else
+        echo "$NAMESPACE : {\"$SUBKEY\":\"$VALUE\"}" >> $SOURCE_FILE
+    fi
+    exit 0
+fi
+
+if test -z "$VALUE"; then
+  echo "$yson" | yq  -c -r ".$KEYPATH"
+else
+  KEYPATH_TRANSFORM=$(echo $KEYPATH | awk -F '='  '{ $2="\""$2"\""; print $1"="$2 }')
+      # awk transform column by enquoting
+  json_block=$(echo "$yson" | yq   -r ".$KEYPATH_TRANSFORM" | yq -c -r ".$NAMESPACE")
+  json_block_escape=$(echo $json_block | sed -e "s,|,\\\|,")
+  echo "$yson" | sed $inplace "s|^$NAMESPACE :.*|$NAMESPACE : $json_block_escape|" $SOURCE_FILE
+fi
+
+
+
+
