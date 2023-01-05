@@ -104,9 +104,9 @@
         <path fill="rgb(51,163,163)" stroke="none" d="M 5442,5925 L 10519,5925 10519,10901 5442,10901 5442,5925 Z"/>
         <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="987px" font-weight="400"><tspan class="TextPosition" x="6006" y="8756"><tspan fill="rgb(179,202,199)" stroke="none">0</tspan></tspan></tspan></text>
         <path fill="rgb(51,163,163)" stroke="none" d="M 10519,5925 L 15596,5925 15596,10901 10519,10901 10519,5925 Z"/>
-        <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="987px" font-weight="400"><tspan class="TextPosition" x="11521" y="8756"><tspan fill="rgb(179,202,199)" stroke="none">2</tspan></tspan></tspan></text>
+        <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="987px" font-weight="400"><tspan class="TextPosition" x="11521" y="8756"><tspan fill="rgb(179,202,199)" stroke="none">1</tspan></tspan></tspan></text>
         <path fill="rgb(51,163,163)" stroke="none" d="M 15596,5925 L 20685,5925 20685,10901 15596,10901 15596,5925 Z"/>
-        <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="987px" font-weight="400"><tspan class="TextPosition" x="16113" y="8756"><tspan fill="rgb(179,202,199)" stroke="none">8</tspan></tspan></tspan></text>
+        <text class="TextShape"><tspan class="TextParagraph" font-family="Liberation Sans, sans-serif" font-size="987px" font-weight="400"><tspan class="TextPosition" x="16113" y="8756"><tspan fill="rgb(179,202,199)" stroke="none">9</tspan></tspan></tspan></text>
         <path fill="none" stroke="rgb(255,255,255)" stroke-width="26" stroke-linejoin="round" d="M 352,3392 L 20698,3392"/>
         <path fill="none" stroke="rgb(255,255,255)" stroke-width="26" stroke-linejoin="round" d="M 365,3379 L 365,10914"/>
         <path fill="none" stroke="rgb(255,255,255)" stroke-width="26" stroke-linejoin="round" d="M 5442,3379 L 5442,10914"/>
