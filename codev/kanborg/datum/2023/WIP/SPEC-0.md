@@ -16,7 +16,12 @@ NAMESPACE_B : { "varX": "real" , "scope": "infinity"}
 
 
 ### 4 DISCUSSION
+###### 4.1
 
+###### 4.0
+key read/write
+
+https://github.com/creative-sensor/echo-home/commit/24cec87860345c21f8afb4976f2ced08bfb4ed5a
 
 
 --------------------------------

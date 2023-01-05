@@ -5,6 +5,7 @@
 
 ### 1 WORK IN PROGRESS
 
+- [datum/2023/WIP/SPEC-0.md](datum/2023/WIP/SPEC-0.md)   ```# SPEC : yson format```
 - [datum/2023/WIP/KBG-1.md](datum/2023/WIP/KBG-1.md)   ```# ISSUE : data protection from git merge```
 
 ### 2 ON HOLD
@@ -12,7 +13,6 @@
 
 ### 3 TO DO
 
-- [datum/2023/TODO/SPEC-0.md](datum/2023/TODO/SPEC-0.md)   ```# SPEC : yson format```
 - [datum/2023/TODO/LEAF-0.md](datum/2023/TODO/LEAF-0.md)   ```# ISSUE :```
 - [datum/2023/TODO/NCEPT-0.md](datum/2023/TODO/NCEPT-0.md)   ```# CONCEPT : Fractual system```
 - [datum/2023/TODO/ARTE-0.md](datum/2023/TODO/ARTE-0.md)   ```# DEVICE: HP CHROMEBOX G2```
