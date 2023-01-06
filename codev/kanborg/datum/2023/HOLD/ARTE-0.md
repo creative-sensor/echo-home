@@ -6,6 +6,9 @@
 
 Flash BIOS to install UEFI firmware
 
+
+<img alt="" src="https://support.hp.com/doc-images/990/c05963647.jpg"/>
+
 ### 1 SOLUTION
 
 ### 2 NOTES
@@ -15,6 +18,7 @@ Flash BIOS to install UEFI firmware
 ### 4 DISCUSSION
 
 ###### 4.1
+Suzy-Q is out of stock. Looking around for providers.
 
 ###### 4.0
 

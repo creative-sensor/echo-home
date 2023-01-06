@@ -2,7 +2,7 @@
 --------------------------------
 ### 0 DESCRIPTION
 
-```json
+```yaml
 NAMESPACE_A : {"Name":"yson","varNum":"666","varStr":"ooooooooooo"}
 NAMESPACE_BB : {"Name":"yaml","scope":"space","varX":10}
 NAMESPACE_CCC : {"Name":"json","scope":"block"}
