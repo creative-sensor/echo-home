@@ -8,7 +8,6 @@
 - [datum/2023/WIP/LEAF-0.md](datum/2023/WIP/LEAF-0.md)   ```# ISSUE : vim fgxp did not show .gitconfig```
 - [datum/2023/WIP/HCL-0.md](datum/2023/WIP/HCL-0.md)   ```# FEATURE : Vault integration```
 - [datum/2023/WIP/KBG-1.md](datum/2023/WIP/KBG-1.md)   ```# ISSUE : data protection from git merge```
-- [datum/2023/WIP/SPEC-1.md](datum/2023/WIP/SPEC-1.md)   ```# SPEC : yson format - python implement```
 
 ### 2 ON HOLD
 
@@ -33,3 +32,4 @@
 - [datum/2023/DONE/archived.KBS-1.md](datum/2023/DONE/archived.KBS-1.md)   ```# CREDIT```
 - [datum/2023/DONE/KBG-2.md](datum/2023/DONE/KBG-2.md)   ```# FEATURE: project metadata as datum```
 - [datum/2023/DONE/archived.SPEC-0.md](datum/2023/DONE/archived.SPEC-0.md)   ```# FEATURE: yson format```
+- [datum/2023/DONE/SPEC-1.md](datum/2023/DONE/SPEC-1.md)   ```# SPEC : yson format - python implement```
