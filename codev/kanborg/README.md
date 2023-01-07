@@ -15,7 +15,6 @@
 
 ### 3 TO DO
 
-- [datum/2023/TODO/ARTE-1.md](datum/2023/TODO/ARTE-1.md)   ```# ISSUE : yson - artefact-get```
 - [datum/2023/TODO/CORTA-0.md](datum/2023/TODO/CORTA-0.md)   ```# ISSUE :```
 - [datum/2023/TODO/E419-0.md](datum/2023/TODO/E419-0.md)   ```# ISSUE :```
 - [datum/2023/TODO/KBG-3.md](datum/2023/TODO/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
@@ -31,6 +30,7 @@
 - [datum/2023/DONE/archived.KBG-3.md](datum/2023/DONE/archived.KBG-3.md)   ```# FIX: kanborg support for windows```
 - [datum/2023/DONE/archived.KBS-1.md](datum/2023/DONE/archived.KBS-1.md)   ```# CREDIT```
 - [datum/2023/DONE/archived.SPEC-0.md](datum/2023/DONE/archived.SPEC-0.md)   ```# FEATURE: yson format```
+- [datum/2023/DONE/ARTE-1.md](datum/2023/DONE/ARTE-1.md)   ```# ISSUE : yson - artefact-get```
 - [datum/2023/DONE/KBG-0.md](datum/2023/DONE/KBG-0.md)   ```# ISSUE : card not move when destination is empty```
 - [datum/2023/DONE/KBG-2.md](datum/2023/DONE/KBG-2.md)   ```# FEATURE: project metadata as datum```
 - [datum/2023/DONE/SPEC-0.md](datum/2023/DONE/SPEC-0.md)   ```# SPEC : yson format```
