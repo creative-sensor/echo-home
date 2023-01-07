@@ -1,0 +1,4 @@
+import mkgn
+
+print(mkgn.OUTPUT)
+print(f"Processed: {mkgn.INPUT}",file=mkgn.OUTPUT)

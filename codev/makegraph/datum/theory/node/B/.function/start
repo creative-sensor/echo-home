@@ -1,0 +1,8 @@
+source $(readlink -f mkgn)
+
+echo "MKGN_INPUT=$MKGN_INPUT"
+echo "MKGN_OUTPUT=$MKGN_OUTPUT"
+
+echo $MKGN_NAME: {"status":"ok","percentage":95} > $MKGN_OUTPUT
+echo "ACCOUNT : {\"status\":\"pending\",\"expire\":\"2100-1-24\",\"last_update\":\"$(date +%s)\"}" >> $MKGN_OUTPUT
+

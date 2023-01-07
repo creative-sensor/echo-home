@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+GRAPH_NAME=$1
+VARSET_EXT=$2
+# ---- |DEFAULT ----
+
+# ---- |OVERRIDE ----
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+test -z "$GRAPH_NAME" && .function/list && read -p "GRAPH_NAME ?= " GRAPH_NAME
+GRAPH_DIR=$DATA_DIR/$GRAPH_NAME
+PIX=graph.$GRAPH_NAME.svg
+MAKEFILE2GRAPH=$(readlink -f ./makefile2graph/make2graph)
+cd $GRAPH_DIR
+make -Bnd | $MAKEFILE2GRAPH | dot -Tsvg -o $PIX 
+which eog && eog $PIX &

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+GRAPH_NAME=$1
+NODE_NAME=$2
+VARSET_EXT=$3
+# ---- |DEFAULT ----
+DATA_DIR=datum
+
+# ---- |OVERRIDE ----
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+test -z "$GRAPH_NAME" && .function/list && read -p "GRAPH_NAME ?= " GRAPH_NAME
+test -z "$NODE_NAME" && NODE_NAME='*'
+export GRAPH_DIR=$(readlink -f $DATA_DIR/$GRAPH_NAME)
+export MK_ENGINE=$(readlink -f ./Makefile)
+cd $GRAPH_DIR
+rm node_$NODE_NAME
+make -s root

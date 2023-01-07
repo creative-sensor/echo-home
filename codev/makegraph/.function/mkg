@@ -1,0 +1,15 @@
+#!/bin/bash -e
+GRAPH_NAME=$1
+# ----
+DATA_DIR=datum
+# ----
+source .properd/VARSET
+# ----
+test -z "$GRAPH_NAME" && read -p "GRAPH_NAME ?= " GRAPH_NAME
+GRAPH_DIR=$DATA_DIR/$GRAPH_NAME
+mkdir -p $GRAPH_DIR
+
+echo "
+include \${MK_ENGINE}
+root:
+" > $GRAPH_DIR/Makefile

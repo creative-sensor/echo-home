@@ -1,0 +1,11 @@
+#!/bin/bash
+
+NODE_DIR=$1
+NODE_DRIVER=python
+START=$NODE_DIR/.function/start
+
+test -d "$NODE_DIR" ||  exit 1
+[[ "python" != "$(< $NODE_DIR/.properd/driver)" ]] && exit 1
+set -x
+ln -sf $(readlink -f .template/nodeX_python/.function/mkgn.py) $NODE_DIR/.function/mkgn.py
+test -s $START || echo "import mkgn" >> $START

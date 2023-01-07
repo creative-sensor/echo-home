@@ -1,0 +1,22 @@
+#!/bin/bash
+GRAPH_NAME=$1
+NODE_NAME=$2
+# ----
+DATA_DIR=datum
+# ----
+source .properd/VARSET
+# ----
+
+test -z "$GRAPH_NAME" && .function/list && read -p "GRAPH_NAME ?= " GRAPH_NAME
+test -z "$NODE_NAME" && read -p "NODE_NAME ?= " NODE_NAME
+test -z "$NODE_DRIVER" && NODE_DRIVER=bash
+GRAPH_DIR=$DATA_DIR/$GRAPH_NAME
+NODE_DIR=$GRAPH_DIR/node/$NODE_NAME
+
+test -d $NODE_DIR && rm -rf $NODE_DIR
+sed -i \
+    -e "/^node_$NODE_NAME:*/,/^node_*/{//!d;}" \
+    -e "s/node_$NODE_NAME[: ]*//g" \
+    $GRAPH_DIR/Makefile
+    # sed : remove lines between and except patterns
+

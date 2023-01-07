@@ -1,0 +1,30 @@
+#!/bin/bash
+GRAPH_NAME=$1
+NODE_NAME=$2
+NODE_DRIVER=$3
+# ----
+DATA_DIR=datum
+# ----
+source .properd/VARSET
+# ----
+
+test -z "$GRAPH_NAME" && .function/list && read -p "GRAPH_NAME ?= " GRAPH_NAME
+test -z "$NODE_NAME" && read -p "NODE_NAME ?= " NODE_NAME
+test -z "$NODE_DRIVER" && NODE_DRIVER=bash
+GRAPH_DIR=$DATA_DIR/$GRAPH_NAME
+NODE_DIR=$GRAPH_DIR/node/$NODE_NAME
+
+if ! test -d $NODE_DIR ; then
+    mkdir -p $NODE_DIR
+    properd-init $NODE_DIR/
+    echo $NODE_DRIVER > $NODE_DIR/.properd/driver
+    rm $NODE_DIR/.function/start
+    touch $NODE_DIR/.function/start
+    chmod 0755  $NODE_DIR/.function/start
+    grep "^root:.*$NODE_NAME" $GRAPH_DIR/Makefile || sed -i "s/^root:.*/& node_$NODE_NAME/" $GRAPH_DIR/Makefile
+    export NODE_NAME=$NODE_NAME
+    export NODE_DRIVER=$NODE_DRIVER
+    grep -q "^node_$NODE_NAME:" $GRAPH_DIR/Makefile || cat .template/mktarget | envsubst >> $GRAPH_DIR/Makefile
+fi
+
+sh .function/mknode-${NODE_DRIVER} $NODE_DIR

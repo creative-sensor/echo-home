@@ -1,0 +1,11 @@
+#!/bin/bash
+
+NODE_DIR=$1
+NODE_DRIVER=bash
+START=$NODE_DIR/.function/start
+
+test -d "$NODE_DIR" ||  exit 1
+[[ "bash" != "$(< $NODE_DIR/.properd/driver)" ]] && exit 1
+set -x
+ln -sf $(readlink -f .template/nodeX_${NODE_DRIVER}/mkgn) $NODE_DIR/mkgn
+test -s $START || echo "source \$(readlink -f mkgn)" >> $START

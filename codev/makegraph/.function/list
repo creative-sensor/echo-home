@@ -1,0 +1,16 @@
+#!/bin/bash
+
+GRAPH_NAME=$1
+# ----
+DATA_DIR=datum
+# ----
+source .properd/VARSET
+
+# ----
+if test -z "$GRAPH_NAME" ; then
+    echo "Graph listing:"
+    ls -1 $DATA_DIR |  grep -v '^node$'
+else
+    echo "Node listing for graph {$GRAPH_NAME}:"
+    ls -1 $DATA_DIR/$GRAPH_NAME/node
+fi

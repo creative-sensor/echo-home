@@ -1,0 +1,17 @@
+#!/bin/bash
+GRAPH_NAME=$1
+NODE=$2
+SUBNODE=$3
+# ----
+DATA_DIR=datum
+# ----
+source .properd/VARSET
+
+# ----
+test -z "$GRAPH_NAME" && .function/list && read -p "GRAPH_NAME ?= " GRAPH_NAME
+test -z "$NODE" && .function/list $GRAPH_NAME && read -p "NODE ?= " NODE
+test -z "$SUBNODE" && .function/list $GRAPH_NAME && read -p "SUBNODE ?= " SUBNODE
+
+GRAPH_DIR=$DATA_DIR/$GRAPH_NAME
+cd $GRAPH_DIR
+grep -q "^node_$NODE:.*node_$SUBNODE" Makefile  ||  sed -i "s/^node_$NODE:.*/& node_$SUBNODE/" Makefile

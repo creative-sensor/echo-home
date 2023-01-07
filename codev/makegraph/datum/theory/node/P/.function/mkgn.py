@@ -1,0 +1,1 @@
+/home/creativ/echo-home/codev/makegraph/.template/nodeX_python/.function/mkgn.py

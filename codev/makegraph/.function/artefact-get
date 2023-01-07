@@ -1,0 +1,5 @@
+
+dnf install graphviz
+
+git clone https://github.com/lindenb/makefile2graph.git
+https://github.com/lindenb/makefile2graph/archive/refs/tags/2021.11.06.zip
