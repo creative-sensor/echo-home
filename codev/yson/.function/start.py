@@ -2,7 +2,6 @@
 
 # ---- VARSET:python 
 import sys
-import pprint
 try:
     KEYPATH = sys.argv[1]
     SOURCE_FILE = open(sys.argv[2],'r')
@@ -15,6 +14,9 @@ except IndexError as msg:
 
 # ---- MAIN ----
 import yaml
+import json
+import pprint
+
 yson = yaml.safe_load(SOURCE_FILE)
 write = False
 if '=' in KEYPATH:
@@ -40,19 +42,19 @@ if write :
         SOURCE_FILE.close()
         with open(SOURCE_FILE_name,'w') as SOURCE_FILE:
             for name in yson.keys():
-                json = yson[name]
-                print(f'{name} : {json}', file = SOURCE_FILE)
+                json_str = json.dumps(yson[name])
+                print(f'{name} : {json_str}', file = SOURCE_FILE)
 
     else:
         for name in yson.keys():
-            json = yson[name]
-            print(f'{name} : {json}')
+            json_str = json.dumps(yson[name])
+            print(f'{name} : {json_str}')
 else:
     try:
         if '.' in KEYPATH:
             print(yson[NAMESPACE][KEY])
         else:
-            print(yson[KEYPATH])
+            print(json.dumps(yson[KEYPATH]))
     except:
         print("")
 

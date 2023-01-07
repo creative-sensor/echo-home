@@ -1,0 +1,3 @@
+ARTEFACT_DIR=artefacts
+mkdir -p $ARTEFACT_DIR
+pip download -d $ARTEFACT_DIR  PyYAML
