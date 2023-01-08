@@ -14,6 +14,53 @@ Attempt to use Makefile to build graph , workflow , relation map , dependency
 
 ### 4 DISCUSSION
 
+###### 4.0
+Make is likely to  create a workflow of nodes, each of which can represent a specific type of execution such as docker container, windows box, remote service-url endpoint
+
+
+<img alt="" src="https://raw.githubusercontent.com/creative-sensor/echo-home/8787c01c209495b9dbb03d2ec5e5c645a4f4a3b6/codev/makegraph/graph.svg"/>
+
+```Makefile
+# ---- ROOT ----
+define nodeX
+	echo "---- $@ ----" ;
+	cd $(subst _,/,$@) ; ./run
+	touch $@
+endef
+
+root: node_1 node_2 node_3 node_A node_B node_C node_H
+
+
+
+# ---- NODE ----
+node_1:
+	$(nodeX)
+
+
+node_2:
+	$(nodeX)
+
+
+node_3:
+	$(nodeX)
+
+
+node_A: node_3
+	$(nodeX)
+
+
+node_B: node_1 node_2 node_C
+	$(nodeX)
+
+
+node_C: node_2 node_3
+	$(nodeX)
+
+
+node_H:
+	$(nodeX)
+
+```
 
 
 --------------------------------
