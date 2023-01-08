@@ -6,6 +6,7 @@
 ### 1 WORK IN PROGRESS
 
 - [datum/2023/WIP/LEAF-1.md](datum/2023/WIP/LEAF-1.md)   ```# CODEV : Makefile as graph workflow```
+- [datum/2023/WIP/HCL-1.md](datum/2023/WIP/HCL-1.md)   ```# FEATURE : Consul as dns resolver```
 - [datum/2023/WIP/LEAF-0.md](datum/2023/WIP/LEAF-0.md)   ```# ISSUE : vim fgxp did not show .gitconfig```
 - [datum/2023/WIP/KBG-1.md](datum/2023/WIP/KBG-1.md)   ```# ISSUE : data protection from git merge```
 - [datum/2023/WIP/HCL-0.md](datum/2023/WIP/HCL-0.md)   ```# FEATURE : Vault integration```
