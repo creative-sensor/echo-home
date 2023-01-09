@@ -21,6 +21,7 @@
 - [datum/2023/TODO/CORTA-0.md](datum/2023/TODO/CORTA-0.md)   ```# ISSUE :```
 - [datum/2023/TODO/NCEPT-0.md](datum/2023/TODO/NCEPT-0.md)   ```# CONCEPT : Fractual system```
 - [datum/2023/TODO/MDOS-0.md](datum/2023/TODO/MDOS-0.md)   ```# FEATURE : powershell for gvim```
+- [datum/2023/TODO/DROID-0.md](datum/2023/TODO/DROID-0.md)   ```# FEATURE : Fork GitJournal```
 - [datum/2023/TODO/KBG-3.md](datum/2023/TODO/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
 - [datum/2023/TODO/LEAF-2.md](datum/2023/TODO/LEAF-2.md)   ```# ISSUE :```
 

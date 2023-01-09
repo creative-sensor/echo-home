@@ -8,4 +8,5 @@ MDOS : {"description":"Microsoft Windows","last_id":0,"related":""}
 CORTA : {"description":"Cortana and Chief","last_id":0,"related":""}
 E419 : {"description":"Echo 419","last_id":0,"related":""}
 HCL : {"description":"Nomad","last_id":1,"related":""}
+DROID : {"description":"Android","last_id":0,"related":""}
 ```
