@@ -19,6 +19,8 @@ pwd
 
 ### 1 SOLUTION
 
+https://github.com/creative-sensor/echo-home/commit/47ec9888bc31cff1d4fce643c9a96ace16b820f1
+
 
 ### 2 NOTES
 
@@ -32,5 +34,5 @@ pwd
 
 --------------------------------
 ```json
-{ "project_code": "LEAF" , "links": "" , "location": "" , "fpoint": "" }
+{ "project_code": "LEAF" , "links": "" , "location": "" , "fpoint": "1" }
 ```

@@ -24,7 +24,6 @@
 - [datum/2023/TODO/KBG-3.md](datum/2023/TODO/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
 - [datum/2023/TODO/MDOS-0.md](datum/2023/TODO/MDOS-0.md)   ```# FEATURE : powershell for gvim```
 - [datum/2023/TODO/NCEPT-0.md](datum/2023/TODO/NCEPT-0.md)   ```# CONCEPT : Fractual system```
-- [datum/2023/TODO/LEAF-2.md](datum/2023/TODO/LEAF-2.md)   ```# FEATURE : cdx - teleport for cd command```
 
 ### 4 DONE
 
@@ -39,3 +38,4 @@
 - [datum/2023/DONE/KBG-2.md](datum/2023/DONE/KBG-2.md)   ```# FEATURE: project metadata as datum```
 - [datum/2023/DONE/SPEC-0.md](datum/2023/DONE/SPEC-0.md)   ```# SPEC : yson format```
 - [datum/2023/DONE/SPEC-1.md](datum/2023/DONE/SPEC-1.md)   ```# SPEC : yson format - python implement```
+- [datum/2023/DONE/LEAF-2.md](datum/2023/DONE/LEAF-2.md)   ```# FEATURE : cdx - teleport for cd command```
