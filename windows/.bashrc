@@ -16,6 +16,16 @@ function terminame {
     echo -ne "\033]0;${1}\007"
 }
 
+function cdx {
+    # teleport to directory
+    local DEST=$1
+    local CACHE=$HOME/.local/cdx_cache
+    test -z "$DEST"  &&  cat $CACHE | sort  &&  read -p 'DEST ?= ' DEST
+    count=$(grep -c -i "$DEST.*$" $CACHE)
+    [[ $count -gt 1 ]]  &&  grep -i "$DEST.*$" $CACHE  &&  read -p 'DEST ?= ' DEST  &&  cd $DEST
+    [[ $count -eq 1 ]]  &&  DEST=$(grep -i "$DEST.*$" $CACHE)  &&  cd $DEST
+    [[ $count -eq 0 ]]  &&  cd $DEST && echo $(pwd) >> $CACHE
+}
 
 # ---- ALIAS ----
 #alias vim='vimx'
@@ -24,7 +34,7 @@ alias gitroot='cd $(git rev-parse --show-toplevel)'
 alias grin='grep -rin '
 alias ll='ls -la '
 
-# ---- LOCAL ----
+# ---- VARSET ----
 export LOCAL_BIN=~/.local/bin
 export PYTHONPATH=~/AppData/Local/Programs/Python/Python310
 export GVIMPATH='/c/Program Files (x86)/Vim/vim90'
