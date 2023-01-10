@@ -13,6 +13,19 @@ Attempt to use Makefile to build graph , workflow , relation map , dependency
 
 
 ### 4 DISCUSSION
+###### 4.1
+Passing Input and set outut for each node
+
+```Makefile
+define nodeX
+	echo -e "\e[38;5;34m ---- $@ ---- \e[0m" ;
+	cd $(subst _,/,$@)  ;\
+		export MKGN_INPUT=$$(grep  $@:  ${GRAPH_DIR}/Makefile) ;\
+	   	export MKGN_OUTPUT=${GRAPH_DIR}/$@ ;\
+	   	./run
+	touch $@
+endef
+```
 
 ###### 4.0
 Make is likely to  create a workflow of nodes, each of which can represent a specific type of execution such as docker container, windows box, remote service-url endpoint

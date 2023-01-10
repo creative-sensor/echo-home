@@ -9,8 +9,8 @@
 - [datum/2023/WIP/HCL-1.md](datum/2023/WIP/HCL-1.md)   ```# FEATURE : Consul as dns resolver```
 - [datum/2023/WIP/KBG-1.md](datum/2023/WIP/KBG-1.md)   ```# ISSUE : data protection from git merge```
 - [datum/2023/WIP/LEAF-0.md](datum/2023/WIP/LEAF-0.md)   ```# ISSUE : vim fgxp did not show .gitconfig```
-- [datum/2023/WIP/LEAF-1.md](datum/2023/WIP/LEAF-1.md)   ```# CODEV : Makefile as graph workflow```
 - [datum/2023/WIP/LEAF-3.md](datum/2023/WIP/LEAF-3.md)   ```# ISSUE :```
+- [datum/2023/WIP/LEAF-1.md](datum/2023/WIP/LEAF-1.md)   ```# CODEV : Makefile as graph workflow```
 
 ### 2 ON HOLD
 
