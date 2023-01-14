@@ -15,8 +15,8 @@ NODE_DIR=$GRAPH_DIR/node/$NODE_NAME
 
 test -d $NODE_DIR && rm -rf $NODE_DIR
 sed -i \
-    -e "/^node_$NODE_NAME:*/,/^node_*/{//!d;}" \
-    -e "s/node_$NODE_NAME[: ]*//g" \
+    -e "s/ node_$NODE_NAME //" \
+    -e "s/ node_$NODE_NAME$//" \
+    -e "/^node_$NODE_NAME:/,/^#---node_$NODE_NAME$/d" \
     $GRAPH_DIR/Makefile
     # sed : remove lines between and except patterns
-

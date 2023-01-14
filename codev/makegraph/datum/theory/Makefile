@@ -1,23 +1,15 @@
 
 include ${MK_ENGINE}
-root:     node_P  node_B node_D node_DP
-
-
-
-
-
-
-
-node_P: node_B node_D
+root: node_P  node_B  node_DP  node_DP2
+node_P: node_DP
 	$(nodeX_python)
-
-
-node_B:
+#---node_P
+node_B: node_DP2
 	$(nodeX_bash)
-
-node_D: node_DP
-	$(nodeX_docker)
-
-node_DP: node_B
+#---node_B
+node_DP: node_B node_DP2
 	$(nodeX_docker_python)
-
+#---node_DP
+node_DP2:
+	$(nodeX_docker_python)
+#---node_DP2

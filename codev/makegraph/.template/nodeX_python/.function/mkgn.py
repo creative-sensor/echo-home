@@ -1,7 +1,22 @@
-import os
-import yaml
-INPUT = yaml.safe_load(os.environ['MKGN_INPUT'])
-OUTPUT = open(os.environ['MKGN_OUTPUT'],'w')
-NAME = os.environ['MKGN_NAME']
 
+import sys
+import os
+sys.path.append('./modules/')
+
+import yaml
+import json
+# ----
+def yson(namespace,dict_block,file):
+    print(namespace + ": " + json.dumps(dict_block), file=file)
+
+# ----
+NAME = os.environ['MKGN_NAME']
+OUTPUT = open(os.environ['MKGN_OUTPUT'],'w')
+INPUT = {}
+list_subnode = os.environ['MKGN_INPUT'].split(':')[1].split()
+
+for node in list_subnode:
+    file = f'{os.environ["GRAPH_DIR"]}/{node}'
+    with open(file,'r') as f:
+        INPUT[node] = f.read()
 

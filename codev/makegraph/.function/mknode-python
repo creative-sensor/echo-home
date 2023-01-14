@@ -7,5 +7,6 @@ START=$NODE_DIR/.function/start
 test -d "$NODE_DIR" ||  exit 1
 [[ "python" != "$(< $NODE_DIR/.properd/driver)" ]] && exit 1
 set -x
-ln -sf $(readlink -f .template/nodeX_python/.function/mkgn.py) $NODE_DIR/.function/mkgn.py
+cp .template/nodeX_${NODE_DRIVER}/.function/mkgn.py  $NODE_DIR/.function/mkgn.py
+cp .template/nodeX_${NODE_DRIVER}/.function/artefact-get  $NODE_DIR/.function/artefact-get
 test -s $START || echo "import mkgn" >> $START

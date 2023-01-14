@@ -1,6 +1,5 @@
 import mkgn
 
-print(f"mkgn.INPUT = {mkgn.INPUT}")
-print(f"mkgn.OUTPUT = {mkgn.OUTPUT}")
-print(mkgn.NAME + ' : {"status":"ok","percentage":100}', file=mkgn.OUTPUT)
-print('BUS_Q : {"length":1184,"sequence":7,"type":"high"}', file=mkgn.OUTPUT)
+out = {"completed":"true"}
+mkgn.yson(mkgn.NAME,out,mkgn.OUTPUT)
+

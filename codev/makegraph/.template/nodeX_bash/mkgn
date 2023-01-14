@@ -1,0 +1,11 @@
+
+LIST_SUBNODE=$(echo $MKGN_INPUT |
+    awk -F ":" '{ print $2 }' |
+    sed -e 's,^ *,,' -e 's, *$,,'
+)
+
+unset MKGN_INPUT
+declare -A MKGN_INPUT
+for node in $LIST_SUBNODE ; do
+    MKGN_INPUT[$node]=${GRAPH_DIR}/$node
+done

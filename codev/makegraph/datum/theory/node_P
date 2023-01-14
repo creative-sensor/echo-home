@@ -1,2 +1,1 @@
-node_P : {"status":"ok","percentage":100}
-BUS_Q : {"length":1184,"sequence":7,"type":"high"}
+node_P: {"completed": "true"}
