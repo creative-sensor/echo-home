@@ -5,6 +5,10 @@ Attempt to use Makefile to build graph , workflow , relation map , dependency
 
 ### 1 SOLUTION
 
+https://github.com/creative-sensor/echo-home/commit/bb863ba1649719197fd2733df93655304230f560
+
+
+<img alt="" src="https://github.com/creative-sensor/echo-home/blob/bb863ba1649719197fd2733df93655304230f560/codev/makegraph/datum/theory/graph.theory.svg"/>
 
 ### 2 NOTES
 
