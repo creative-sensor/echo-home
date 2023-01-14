@@ -19,4 +19,6 @@ for path in $PATH_LIST ; do
     fi
 done
 
+ln -sf $(pwd)/codev/yson/.function/start.py  $LOCAL_BIN/yson
+
 ls -la --color $BINDIR

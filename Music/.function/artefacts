@@ -1,0 +1,11 @@
+ARTEFACT_DIR=$1
+test -z "$ARTEFACT_DIR" && read -p "ARTEFACT_DIR ?= " ARTEFACT_DIR
+checksum=${ARTEFACT_DIR}.sha256sum
+
+cd $ARTEFACT_DIR
+if test -s $checksum ; then
+  sha256sum -c $checksum ./*
+else
+  sha256sum * > $checksum
+  echo "checksum: $(readlink -f $checksum)"
+fi
