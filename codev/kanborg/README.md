@@ -18,11 +18,14 @@
 ### 3 TO DO
 
 - [datum/2023/TODO/E419-0.md](datum/2023/TODO/E419-0.md)   ```# ISSUE :```
+- [datum/2023/TODO/KBG-4.md](datum/2023/TODO/KBG-4.md)   ```# FEATURE : add backlog column```
 - [datum/2023/TODO/NCEPT-0.md](datum/2023/TODO/NCEPT-0.md)   ```# CONCEPT : Fractual system```
+- [datum/2023/TODO/MKG-1.md](datum/2023/TODO/MKG-1.md)   ```# FEATURE : node - simple editor```
 - [datum/2023/TODO/MDOS-0.md](datum/2023/TODO/MDOS-0.md)   ```# FEATURE : powershell for gvim```
 - [datum/2023/TODO/CORTA-0.md](datum/2023/TODO/CORTA-0.md)   ```# ISSUE :```
 - [datum/2023/TODO/DROID-0.md](datum/2023/TODO/DROID-0.md)   ```# FEATURE : Fork GitJournal```
 - [datum/2023/TODO/KBG-3.md](datum/2023/TODO/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
+- [datum/2023/TODO/MKG-0.md](datum/2023/TODO/MKG-0.md)   ```# FEATURE : internode i/o communication```
 
 ### 4 DONE
 
