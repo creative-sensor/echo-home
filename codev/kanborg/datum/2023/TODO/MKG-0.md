@@ -2,6 +2,8 @@
 --------------------------------
 ### 0 DESCRIPTION
 
+- common standard to pass subnode output as argument to parent node (node_driver aware)
+
 
 ### 1 SOLUTION
 

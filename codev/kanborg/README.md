@@ -24,8 +24,8 @@
 - [datum/2023/TODO/MDOS-0.md](datum/2023/TODO/MDOS-0.md)   ```# FEATURE : powershell for gvim```
 - [datum/2023/TODO/NCEPT-0.md](datum/2023/TODO/NCEPT-0.md)   ```# CONCEPT : Fractual system```
 - [datum/2023/TODO/KBG-4.md](datum/2023/TODO/KBG-4.md)   ```# FEATURE : add backlog column```
-- [datum/2023/TODO/MKG-0.md](datum/2023/TODO/MKG-0.md)   ```# FEATURE : internode i/o communication```
 - [datum/2023/TODO/MKG-1.md](datum/2023/TODO/MKG-1.md)   ```# FEATURE : node - simple editor```
+- [datum/2023/TODO/MKG-0.md](datum/2023/TODO/MKG-0.md)   ```# FEATURE : internode i/o communication```
 
 ### 4 DONE
 
