@@ -10,7 +10,7 @@ define nodeX_bash
 	  export MKGN_NAME=$@ ;\
 	  export MKGN_INPUT=$$(grep  $@:  ${GRAPH_DIR}/Makefile) ;\
 	  export MKGN_OUTPUT=${GRAPH_DIR}/$@ ;\
-	  .function/start
+	  .function/start 2>&1 | tee -a .log
 	touch $@
 endef
 
@@ -31,7 +31,7 @@ define nodeX_docker_python
 	    export MKGN_INPUT=$$(grep  $@:  ${GRAPH_DIR}/Makefile) ;\
 	    export MKGN_OUTPUT=${GRAPH_DIR}/$@ ;\
 	    source .properd/VARSET ;\
-		.function/artefact-get ;\
+	    .function/artefact-get ;\
 	    docker run -it  --rm \
 	        --volume $$(pwd):/$${MKGN_NAME} \
 	        --volume ${GRAPH_DIR}:/$${MKGN_NAME}/graph \
@@ -42,7 +42,7 @@ define nodeX_docker_python
 	        --env GRAPH_DIR=/$${MKGN_NAME}/graph \
 	        --mount type=bind,source="$$MKGN_OUTPUT",target="/$${MKGN_NAME}/mkgn.out" \
 	        $${DKR_IMAGE} \
-	            python .function/start
+	            python .function/start 2>&1 | tee -a .log
 endef
 
 define nodeX_python
@@ -51,7 +51,8 @@ define nodeX_python
 	    export MKGN_NAME=$@ ;\
 	    export MKGN_INPUT=$$(grep  $@:  ${GRAPH_DIR}/Makefile) ;\
 	    export MKGN_OUTPUT=${GRAPH_DIR}/$@ ;\
-	    python .function/start
+	    python .function/start 2>&1 | tee -a .log
+
 	touch $@
 endef
 

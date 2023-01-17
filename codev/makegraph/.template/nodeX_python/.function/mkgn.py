@@ -5,10 +5,15 @@ sys.path.append('./modules/')
 
 import yaml
 import json
+import time
 # ----
 def yson(namespace,dict_block,file):
     print(namespace + ": " + json.dumps(dict_block), file=file)
 
+def stdlog(event):
+    epoch_time = str(int(time.time()))
+    if not event is dict: event = '{"event":"' + str(event) + '"}'
+    print(epoch_time + ": " + str(event))
 # ----
 NAME = os.environ['MKGN_NAME']
 OUTPUT = open(os.environ['MKGN_OUTPUT'],'w')

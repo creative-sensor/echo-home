@@ -18,4 +18,4 @@ export GRAPH_DIR=$(readlink -f $DATA_DIR/$GRAPH_NAME)
 export MK_ENGINE=$(readlink -f ./Makefile)
 cd $GRAPH_DIR
 rm node_$NODE_NAME
-make -s root
+make -s root 2>&1 | tee -a .log

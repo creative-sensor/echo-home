@@ -21,7 +21,7 @@ if ! test -d $NODE_DIR ; then
     rm $NODE_DIR/.function/start
     touch $NODE_DIR/.function/start
     chmod 0755  $NODE_DIR/.function/start
-    grep "^root:.* node_$NODE_NAME" $GRAPH_DIR/Makefile || sed -i "s/^root:.*/& node_$NODE_NAME /" $GRAPH_DIR/Makefile
+    grep "^root:.*node_$NODE_NAME" $GRAPH_DIR/Makefile || sed -i "s/^root:.*/& node_$NODE_NAME /" $GRAPH_DIR/Makefile
     export NODE_NAME=$NODE_NAME
     export NODE_DRIVER=$NODE_DRIVER
     grep -q "^node_$NODE_NAME:" $GRAPH_DIR/Makefile || cat .template/mktarget | envsubst >> $GRAPH_DIR/Makefile

@@ -1,6 +1,8 @@
 import mkgn
 import yaml
+import time
+import sys
 
 out = {"completed":"true"}
 mkgn.yson(mkgn.NAME,out,mkgn.OUTPUT)
-
+mkgn.stdlog(mkgn.NAME + " is running")

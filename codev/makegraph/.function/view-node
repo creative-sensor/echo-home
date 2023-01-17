@@ -1,3 +1,0 @@
-GRAPH_NAME=$1
-test -z "$GRAPH_NAME" && .function/list && read -p "GRAPH_NAME ?= " GRAPH_NAME
-vim -p $(find datum/$GRAPH_NAME/ | grep node_.*)

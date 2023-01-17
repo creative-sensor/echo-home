@@ -1,0 +1,9 @@
+GRAPH_NAME=$1
+test -z "$GRAPH_NAME" && GRAPH_NAME=theory
+#----
+source .properd/VARSET
+#----
+export GRAPH_DIR=$DATA_DIR/$GRAPH_NAME
+vim -R -u .vimrc \
+    -c 'silent call Node_Log()' \
+    -c "set title titlestring=%{fnamemodify(getcwd(),\ ':t')}\ \|\ node-log titlelen=32"

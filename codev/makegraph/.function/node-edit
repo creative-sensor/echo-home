@@ -1,0 +1,12 @@
+GRAPH_NAME=$1
+REGEX=$2
+test -z "$GRAPH_NAME" && GRAPH_NAME=theory
+test -z "$REGEX" && REGEX='.*function/start'
+#----
+source .properd/VARSET
+#----
+export GRAPH_DIR=$DATA_DIR/$GRAPH_NAME
+export REGEX=$REGEX
+vim  -u .vimrc \
+    -c 'silent call Node_Function()' \
+    -c "set title titlestring=%{fnamemodify(getcwd(),\ ':t')}\ \|\ node-edit titlelen=32"
