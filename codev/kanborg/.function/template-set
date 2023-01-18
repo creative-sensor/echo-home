@@ -3,7 +3,8 @@
 # ---- |EXT ----
 VARSET_EXT=$1
 # ---- |DEFAULT ----
-DATA_DIR=.datum/$(date +%Y)
+CYCLE=$(date +%Y)
+DATA_DIR=datum
 # ---- |OVERRIDE ----
 source .properd/VARSET
 test -n "$VARSET_EXT" && source $VARSET_EXT
@@ -11,10 +12,11 @@ test -n "$VARSET_EXT" && source $VARSET_EXT
 # ---- |MAIN ----
 DASHBOARD_TEMPLATE=.media/dashboard.template.svg
 DASHBOARD_SET=.media/dashboard.set.svg
+CYCLE_DIR=$DATA_DIR/$CYCLE
 
 function count() {
     local col=$1
-    echo $(find $DATA_DIR -type f | grep "${col}.*md$" | wc -l)
+    echo $(find $CYCLE_DIR -type f | grep "${col}.*md$" | wc -l)
 }
 
 export TODO=$(count "TODO")
@@ -26,9 +28,19 @@ export DONE=$(count "DONE")
 cat $DASHBOARD_TEMPLATE | envsubst > $DASHBOARD_SET
 git add $DASHBOARD_TEMPLATE  $DASHBOARD_SET
 
+# LIST_BACKLOG
+TEMPLATE_BACKLOG_ENTRY='\n- [${CARD}](${CARD})   ```${HEADER}```'
+for card in $(find $CYCLE_DIR/BACKLOG -type f | grep md$) ; do
+    export HEADER=$(grep -m 1  "^# .*" $card)
+    export CARD=$card
+    wip_entry=$(echo -e "$TEMPLATE_BACKLOG_ENTRY" | envsubst)
+    LIST_BACKLOG=${LIST_BACKLOG}${wip_entry}
+done
+export LIST_BACKLOG=$LIST_BACKLOG
+
 # LIST_WIP
 TEMPLATE_WIP_ENTRY='\n- [${CARD}](${CARD})   ```${HEADER}```'
-for card in $(find $DATA_DIR/WIP -type f | grep md$) ; do
+for card in $(find $CYCLE_DIR/WIP -type f | grep md$) ; do
     export HEADER=$(grep -m 1  "^# .*" $card)
     export CARD=$card
     wip_entry=$(echo -e "$TEMPLATE_WIP_ENTRY" | envsubst)
@@ -39,7 +51,7 @@ export LIST_WIP=$LIST_WIP
 
 # LIST_HOLD
 TEMPLATE_HOLD_ENTRY='\n- [${CARD}](${CARD})   ```${HEADER}```'
-for card in $(find $DATA_DIR/HOLD -type f | grep md$) ; do
+for card in $(find $CYCLE_DIR/HOLD -type f | grep md$) ; do
     export HEADER=$(grep -m 1  "^# .*" $card)
     export CARD=$card
     wip_entry=$(echo -e "$TEMPLATE_HOLD_ENTRY" | envsubst)
@@ -50,7 +62,7 @@ export LIST_HOLD=$LIST_HOLD
 
 # LIST_TODO
 TEMPLATE_TODO_ENTRY='\n- [${CARD}](${CARD})   ```${HEADER}```'
-for card in $(find $DATA_DIR/TODO -type f | grep md$) ; do
+for card in $(find $CYCLE_DIR/TODO -type f | grep md$) ; do
     export HEADER=$(grep -m 1  "^# .*" $card)
     export CARD=$card
     wip_entry=$(echo -e "$TEMPLATE_TODO_ENTRY" | envsubst)
@@ -61,7 +73,7 @@ export LIST_TODO=$LIST_TODO
 
 # LIST_DONE
 TEMPLATE_DONE_ENTRY='\n- [${CARD}](${CARD})   ```${HEADER}```'
-for card in $(find $DATA_DIR/DONE -type f | grep md$) ; do
+for card in $(find $CYCLE_DIR/DONE -type f | grep md$) ; do
     export HEADER=$(grep -m 1  "^# .*" $card)
     export CARD=$card
     wip_entry=$(echo -e "$TEMPLATE_DONE_ENTRY" | envsubst)

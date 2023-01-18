@@ -4,16 +4,16 @@
 PROJECT_CODE=$1
 VARSET_EXT=$2
 # ---- |DEFAULT ----
-export ENV_DATE=$(date +%Y)
-export DATA_DIR=./datum/$ENV_DATE
+CYCLE=$(date +%Y)
+DATA_DIR=./datum
 # ---- |OVERRIDE ----
 source .properd/VARSET
 test -n "$VARSET_EXT" && source $VARSET_EXT
 
 # ---- |MAIN ----
-
+CYCLE_DIR=$DATA_DIR/$CYCLE
 # ---- project check
-PROJECT_MD=$DATA_DIR/PROJECT.md
+PROJECT_MD=$CYCLE_DIR/PROJECT.md
 test -s $PROJECT_MD || cp .template/PROJECT.md $PROJECT_MD
 source .template/project_row
 cat $PROJECT_MD
@@ -39,7 +39,7 @@ git add $PROJECT_MD
 
 
 # ---- card generation
-CARD=$DATA_DIR/TODO/${PROJECT_CODE}-${LAST_ID}.md
+CARD=$CYCLE_DIR/BACKLOG/${PROJECT_CODE}-${LAST_ID}.md
 TEMPLATE_CARD=.template/${PROJECT_CODE}.CARD.md
 test -s $TEMPLATE_CARD || TEMPLATE_CARD=CARD.md
 cat $TEMPLATE_CARD | envsubst > $CARD

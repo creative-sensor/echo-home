@@ -1,3 +1,4 @@
 SOURCE_REVISION=
 CREDIT=https://github.com/coderofsalvation/kanban.bash
-DATA_DIR=datum/$(date +%Y)
+DATA_DIR=datum
+CYCLE=$(date +%Y)

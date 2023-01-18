@@ -3,15 +3,16 @@
 # ---- |EXT ----
 VARSET_EXT=$1
 # ---- |DEFAULT ----
-export ENV_DATE=$(date +%Y)
-export DATA_DIR=./datum/$ENV_DATE
+CYCLE=$(date +%Y)
+DATA_DIR=./datum
 # ---- |OVERRIDE ----
 source .properd/VARSET
 test -n "$VARSET_EXT" && source $VARSET_EXT
 
 # ---- |MAIN ----
-COLUMNS="TODO  HOLD  WIP  DONE"
-mkdir -p $DATA_DIR/${YEAR}/{TODO,HOLD,WIP,DONE}
+export CYCLE=$CYCLE
+export DATA_DIR=$DATA_DIR
+mkdir -p $DATA_DIR/${CYCLE}/{BACKLOG,TODO,HOLD,WIP,DONE}
 
 test -n "$GVIMPATH" && G_VIM=g
 

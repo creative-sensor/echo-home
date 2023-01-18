@@ -66,25 +66,28 @@ endfunction
 command! -nargs=* FgXp call FgXp(<q-args>)
 
 function Kolumns()
-    let yyyy_dir = "datum/".$ENV_DATE
+    let cycle_dir = $DATA_DIR.'/'.$CYCLE
     let VIEW = tempname().'.VIEW'
+    let BACKLOG = tempname().'.BACKLOG'
     let TODO = tempname().'.TODO'
     let HOLD = tempname().'.HOLD'
     let WIP = tempname().'.WIP'
     let DONE= tempname().'.DONE'
     exec 'file '.VIEW.' | read HELP.md | setlocal filetype=markdown'
         "vim: read file into buffer
-    exec 'silent ! echo "----TODO----" > '.TODO.' ; find '.yyyy_dir.'/TODO -type f >> '.TODO  | exec 'new '.TODO
-    exec 'silent ! echo "----HOLD----" > '.HOLD.' ; find '.yyyy_dir.'/HOLD -type f >> '.HOLD  | exec 'vnew '.HOLD
-    exec 'silent ! echo "----WIP----"  > '.WIP.'  ; find '.yyyy_dir.'/WIP -type f  >> '.WIP   | exec 'vnew '.WIP
-    exec 'silent ! echo "----DONE----" > '.DONE.' ; find '.yyyy_dir.'/DONE -type f >> '.DONE  | exec 'vnew '.DONE
+    exec 'silent ! echo "----BACKLOG----" > '.BACKLOG.' ; find '.cycle_dir.'/BACKLOG -type f >> '.BACKLOG  | exec 'new '.BACKLOG
+    exec 'silent ! echo "----TODO----" > '.TODO.' ; find '.cycle_dir.'/TODO -type f >> '.TODO  | exec 'vnew '.TODO
+    exec 'silent ! echo "----HOLD----" > '.HOLD.' ; find '.cycle_dir.'/HOLD -type f >> '.HOLD  | exec 'vnew '.HOLD
+    exec 'silent ! echo "----WIP----"  > '.WIP.'  ; find '.cycle_dir.'/WIP -type f  >> '.WIP   | exec 'vnew '.WIP
+    exec 'silent ! echo "----DONE----" > '.DONE.' ; find '.cycle_dir.'/DONE -type f >> '.DONE  | exec 'vnew '.DONE
 endfunction
 
 
 function XCard(xname)
+    let cycle_dir = $DATA_DIR.'/'.$CYCLE
     let column_name = fnamemodify(bufname(),':e')
         " vim: extract file extension
-    let yname = $DATA_DIR.'/'.column_name.'/'.a:xname.'.md'
+    let yname = cycle_dir.'/'.column_name.'/'.a:xname.'.md'
     exec 'silent !cp CARD.md '.yname
     exec 'silent !git add '.yname
     exec 'silent read ! echo '.yname
@@ -96,6 +99,7 @@ function ViewCard(name)
     "cursor is presumed being at VIEW window already
     let xname = trim(a:name)
     exec "%delete"
+    exec "silent read ! echo '>>>> Viewing for '".xname
     exec "silent read ".xname
     exec "setlocal filetype=markdown"
 endfunction
@@ -109,13 +113,14 @@ endfunction
 
 
 function MoveCard(name)
+    let cycle_dir = $DATA_DIR.'/'.$CYCLE
     let xname = trim(a:name)
     let column_name = fnamemodify(bufname(),':e')
         " vim: extract file extension
     let card_short_name = fnamemodify(xname,':t')
         " vim: extract base name
-    let yname = $DATA_DIR.'/'.column_name.'/'.card_short_name
-    exec 'silent !git mv '.xname.' '.yname
+    let yname = cycle_dir.'/'.column_name.'/'.card_short_name
+    exec 'silent !set -x ; git mv '.xname.' '.yname
     exec 'silent read ! echo '.yname
 endfunction
 
