@@ -1,0 +1,7 @@
+sudo dnf install -y ImageMagick g++ || sudo apt install imagemagick
+git clone https://github.com/stefanhaustein/TerminalImageViewer.git
+cd TerminalImageViewer/src/main/cpp
+make
+
+cd -
+ln -sf  TerminalImageViewer/src/main/cpp/tiv tiv
