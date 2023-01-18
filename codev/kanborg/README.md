@@ -6,6 +6,7 @@
 ### 1 WORK IN PROGRESS
 
 - [datum/2023/WIP/HCL-0.md](datum/2023/WIP/HCL-0.md)   ```# FEATURE : Vault integration```
+- [datum/2023/WIP/KBG-4.md](datum/2023/WIP/KBG-4.md)   ```# FEATURE : add backlog column```
 - [datum/2023/WIP/LEAF-3.md](datum/2023/WIP/LEAF-3.md)   ```# FEATURE : commonwealth base```
 - [datum/2023/WIP/HCL-1.md](datum/2023/WIP/HCL-1.md)   ```# FEATURE : Consul as dns resolver```
 - [datum/2023/WIP/KBG-1.md](datum/2023/WIP/KBG-1.md)   ```# ISSUE : data protection from git merge```
@@ -18,10 +19,8 @@
 ### 3 TO DO
 
 - [datum/2023/TODO/E419-0.md](datum/2023/TODO/E419-0.md)   ```# ISSUE :```
-- [datum/2023/TODO/KBG-4.md](datum/2023/TODO/KBG-4.md)   ```# FEATURE : add backlog column```
 - [datum/2023/TODO/NCEPT-0.md](datum/2023/TODO/NCEPT-0.md)   ```# CONCEPT : Fractual system```
 - [datum/2023/TODO/LEAF-4.md](datum/2023/TODO/LEAF-4.md)   ```# CODEV : consolidation of multi-version datum```
-- [datum/2023/TODO/MKG-1.md](datum/2023/TODO/MKG-1.md)   ```# FEATURE : node - simple editor```
 - [datum/2023/TODO/MDOS-0.md](datum/2023/TODO/MDOS-0.md)   ```# FEATURE : powershell for gvim```
 - [datum/2023/TODO/CORTA-0.md](datum/2023/TODO/CORTA-0.md)   ```# ISSUE :```
 - [datum/2023/TODO/DROID-0.md](datum/2023/TODO/DROID-0.md)   ```# FEATURE : Fork GitJournal```
@@ -38,6 +37,7 @@
 - [datum/2023/DONE/archived.KBG-1.md](datum/2023/DONE/archived.KBG-1.md)   ```# RELEASE : KANBORG```
 - [datum/2023/DONE/archived.KBG-3.md](datum/2023/DONE/archived.KBG-3.md)   ```# FIX: kanborg support for windows```
 - [datum/2023/DONE/archived.JBL-1.md](datum/2023/DONE/archived.JBL-1.md)   ```# ISSUE : JBL Charge 5```
+- [datum/2023/DONE/MKG-1.md](datum/2023/DONE/MKG-1.md)   ```# FEATURE : node - simple editor```
 - [datum/2023/DONE/SPEC-1.md](datum/2023/DONE/SPEC-1.md)   ```# SPEC : yson format - python implement```
 - [datum/2023/DONE/ARTE-1.md](datum/2023/DONE/ARTE-1.md)   ```# ISSUE : yson - artefact-get```
 - [datum/2023/DONE/MKG-0.md](datum/2023/DONE/MKG-0.md)   ```# FEATURE : internode i/o communication```
