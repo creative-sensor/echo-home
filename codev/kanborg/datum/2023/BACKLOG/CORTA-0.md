@@ -1,4 +1,4 @@
-# ISSUE :
+# GRAPH THEORY : Neuron network
 --------------------------------
 ### 0 DESCRIPTION
 
@@ -14,7 +14,10 @@
 
 ### 4 DISCUSSION
 
-
+###### 4.0
+https://distill.pub/2021/gnn-intro/
+https://neptune.ai/blog/best-ml-experiment-tracking-tools
+https://distill.pub/2021/understanding-gnns/
 
 --------------------------------
 ```json

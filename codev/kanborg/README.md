@@ -45,4 +45,6 @@
 ### 5 BACKLOG
 
 - [datum/2023/BACKLOG/E419-0.md](datum/2023/BACKLOG/E419-0.md)   ```# ISSUE :```
-- [datum/2023/BACKLOG/CORTA-0.md](datum/2023/BACKLOG/CORTA-0.md)   ```# ISSUE :```
+- [datum/2023/BACKLOG/LEAF-6.md](datum/2023/BACKLOG/LEAF-6.md)   ```# GUI : advanced```
+- [datum/2023/BACKLOG/CORTA-0.md](datum/2023/BACKLOG/CORTA-0.md)   ```# GRAPH THEORY : Neuron network```
+- [datum/2023/BACKLOG/LEAF-5.md](datum/2023/BACKLOG/LEAF-5.md)   ```# FEATURE : color system```
