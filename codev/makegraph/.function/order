@@ -14,4 +14,4 @@ test -z "$SUBNODE" && .function/list $GRAPH_NAME && read -p "SUBNODE ?= " SUBNOD
 
 GRAPH_DIR=$DATA_DIR/$GRAPH_NAME
 cd $GRAPH_DIR
-grep -q "^node_$NODE:.*node_$SUBNODE" Makefile  ||  sed -i "s/^node_$NODE:.*/& node_$SUBNODE/" Makefile
+grep -q "^node_$NODE:.*node_$SUBNODE" Makefile  ||  sed -i "s/^node_$NODE:.*/& node_$SUBNODE /" Makefile

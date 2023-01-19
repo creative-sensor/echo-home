@@ -1,0 +1,5 @@
+source $(readlink -f mkgn)
+set -x
+n1=$(< ${MKGN_INPUT['node_n1']})
+n2=$(< ${MKGN_INPUT['node_n2']})
+echo sum: $(( n1 + n2 )) > $MKGN_OUTPUT

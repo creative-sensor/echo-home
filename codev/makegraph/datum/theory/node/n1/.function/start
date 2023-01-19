@@ -1,0 +1,2 @@
+source $(readlink -f mkgn)
+echo 100 > $MKGN_OUTPUT
