@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+echo -e "\n$(date +%s): {\"mkgn\":\"---- check-in ----\"}"
 
 LIST_SUBNODE=$(echo $MKGN_INPUT |
     awk -F ":" '{ print $2 }' |
@@ -6,6 +8,26 @@ LIST_SUBNODE=$(echo $MKGN_INPUT |
 
 unset MKGN_INPUT
 declare -A MKGN_INPUT
+declare -A MKGN_CHECKSUM
+mkdir -p .tmp
 for node in $LIST_SUBNODE ; do
     MKGN_INPUT[$node]=${GRAPH_DIR}/$node
 done
+LIST_SUBNODE_FILE=$(echo ${MKGN_INPUT[@]} | sed 's,\n, ,g')
+MD5SUM=.tmp/input.md5sum
+test -f $MKGN_OUTPUT || rm $MD5SUM
+if test -n "$LIST_SUBNODE" ; then
+    if ! test -s $MD5SUM ; then
+        # 1st compute
+        md5sum  ${MKGN_INPUT[@]} > $MD5SUM
+    elif md5sum -c $MD5SUM ; then
+        echo "Input not changed. Skipped"
+        exit 0
+    else
+        # recompute
+        md5sum  ${MKGN_INPUT[@]} > $MD5SUM
+    fi
+fi
+
+echo "-------- .function/start --------"
+

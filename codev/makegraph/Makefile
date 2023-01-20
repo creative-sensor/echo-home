@@ -11,6 +11,7 @@ define nodeX_bash
 	  export MKGN_INPUT=$$(grep  $@:  ${GRAPH_DIR}/Makefile) ;\
 	  export MKGN_OUTPUT=${GRAPH_DIR}/$@ ;\
 	  .function/start &>> .log ;
+	touch $@
 endef
 
 define nodeX_docker
@@ -19,11 +20,13 @@ define nodeX_docker
 	    export MKGN_INPUT=$$(grep  $@:  ${GRAPH_DIR}/Makefile) ;\
 	    export MKGN_OUTPUT=${GRAPH_DIR}/$@ ;\
 	    docker ps > $$MKGN_OUTPUT
+	touch $@
 endef
 
 define nodeX_docker_python
 	$(print_marker)
 	touch $@
+	    # create file to mount as MKGN_OUTPUT
 	cd $(subst _,/,$@)  ; set -x ;\
 	    export MKGN_NAME=$@ ;\
 	    export MKGN_INPUT=$$(grep  $@:  ${GRAPH_DIR}/Makefile) ;\

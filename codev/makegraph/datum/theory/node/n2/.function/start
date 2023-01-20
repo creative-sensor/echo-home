@@ -1,2 +1,2 @@
 source $(readlink -f mkgn)
-echo 23 > $MKGN_OUTPUT
+echo 30 > $MKGN_OUTPUT
