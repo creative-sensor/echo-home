@@ -6,12 +6,11 @@ endef
 
 define nodeX_bash
 	$(print_marker)
-	cd $(subst _,/,$@)  ;\
+	cd $(subst _,/,$@)  ; set -x ;\
 	  export MKGN_NAME=$@ ;\
 	  export MKGN_INPUT=$$(grep  $@:  ${GRAPH_DIR}/Makefile) ;\
 	  export MKGN_OUTPUT=${GRAPH_DIR}/$@ ;\
-	  .function/start 2>&1 | tee -a .log
-	touch $@
+	  .function/start &>> .log ;
 endef
 
 define nodeX_docker
@@ -20,7 +19,6 @@ define nodeX_docker
 	    export MKGN_INPUT=$$(grep  $@:  ${GRAPH_DIR}/Makefile) ;\
 	    export MKGN_OUTPUT=${GRAPH_DIR}/$@ ;\
 	    docker ps > $$MKGN_OUTPUT
-	touch $@
 endef
 
 define nodeX_docker_python
@@ -42,18 +40,16 @@ define nodeX_docker_python
 	        --env GRAPH_DIR=/$${MKGN_NAME}/graph \
 	        --mount type=bind,source="$$MKGN_OUTPUT",target="/$${MKGN_NAME}/mkgn.out" \
 	        $${DKR_IMAGE} \
-	            python .function/start 2>&1 | tee -a .log
+	            python .function/start &>> .log || exit 2
 endef
 
 define nodeX_python
 	$(print_marker)
-	cd $(subst _,/,$@)  ;\
+	cd $(subst _,/,$@)  ; set -x ;\
 	    export MKGN_NAME=$@ ;\
 	    export MKGN_INPUT=$$(grep  $@:  ${GRAPH_DIR}/Makefile) ;\
 	    export MKGN_OUTPUT=${GRAPH_DIR}/$@ ;\
-	    python .function/start 2>&1 | tee -a .log
-
-	touch $@
+	    python .function/start &>> .log
 endef
 
 

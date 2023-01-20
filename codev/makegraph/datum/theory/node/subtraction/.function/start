@@ -1,0 +1,7 @@
+source $(readlink -f mkgn)
+
+set -xe
+n3=$(< ${MKGN_INPUT['node_n3']})
+n2=$(< ${MKGN_INPUT['node_n2']})
+echo $(( n3 - n2 )) > $MKGN_OUTPUT
+ 
