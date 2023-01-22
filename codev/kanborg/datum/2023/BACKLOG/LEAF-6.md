@@ -14,6 +14,9 @@
 
 ### 4 DISCUSSION
 
+- Electron framwork has listings of nodejs dekstop application: https://www.electronjs.org/apps
+- framework7 for desktop: https://framework7.io/
+
 
 
 --------------------------------
