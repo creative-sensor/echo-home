@@ -41,6 +41,7 @@ echo '# ---- REPO ----'
 # ---- PACKAGE ---- 
 sudo dnf update -y
 sudo dnf install -y \
+    nodejs \
     openssl \
     rclone \
     freecad \

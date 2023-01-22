@@ -1,0 +1,12 @@
+#!/bin/bash
+
+NODE_DIR=$1
+NODE_DRIVER=nodejs
+START=$NODE_DIR/.function/start
+
+test -d "$NODE_DIR" ||  exit 1
+[[ "$NODE_DRIVER" != "$(< $NODE_DIR/.properd/driver)" ]] && exit 1
+set -x
+cp .template/nodeX_${NODE_DRIVER}/.function/mkgn.js  $NODE_DIR/.function/mkgn.js
+cp .template/nodeX_${NODE_DRIVER}/.function/artefact-get  $NODE_DIR/.function/artefact-get
+test -s $START || cp .template/nodeX_${NODE_DRIVER}/.function/start $START
