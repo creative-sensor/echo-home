@@ -30,7 +30,7 @@ git add $DASHBOARD_TEMPLATE  $DASHBOARD_SET
 
 # LIST_BACKLOG
 TEMPLATE_BACKLOG_ENTRY='\n- [${CARD}](${CARD})   ```${HEADER}```'
-for card in $(find $CYCLE_DIR/BACKLOG -type f | grep md$) ; do
+for card in $(find $CYCLE_DIR/BACKLOG -type f | grep md$ | sort) ; do
     export HEADER=$(grep -m 1  "^# .*" $card)
     export CARD=$card
     wip_entry=$(echo -e "$TEMPLATE_BACKLOG_ENTRY" | envsubst)
@@ -40,7 +40,7 @@ export LIST_BACKLOG=$LIST_BACKLOG
 
 # LIST_WIP
 TEMPLATE_WIP_ENTRY='\n- [${CARD}](${CARD})   ```${HEADER}```'
-for card in $(find $CYCLE_DIR/WIP -type f | grep md$) ; do
+for card in $(find $CYCLE_DIR/WIP -type f | grep md$ | sort) ; do
     export HEADER=$(grep -m 1  "^# .*" $card)
     export CARD=$card
     wip_entry=$(echo -e "$TEMPLATE_WIP_ENTRY" | envsubst)
@@ -51,7 +51,7 @@ export LIST_WIP=$LIST_WIP
 
 # LIST_HOLD
 TEMPLATE_HOLD_ENTRY='\n- [${CARD}](${CARD})   ```${HEADER}```'
-for card in $(find $CYCLE_DIR/HOLD -type f | grep md$) ; do
+for card in $(find $CYCLE_DIR/HOLD -type f | grep md$ | sort) ; do
     export HEADER=$(grep -m 1  "^# .*" $card)
     export CARD=$card
     wip_entry=$(echo -e "$TEMPLATE_HOLD_ENTRY" | envsubst)
@@ -62,7 +62,7 @@ export LIST_HOLD=$LIST_HOLD
 
 # LIST_TODO
 TEMPLATE_TODO_ENTRY='\n- [${CARD}](${CARD})   ```${HEADER}```'
-for card in $(find $CYCLE_DIR/TODO -type f | grep md$) ; do
+for card in $(find $CYCLE_DIR/TODO -type f | grep md$ | sort) ; do
     export HEADER=$(grep -m 1  "^# .*" $card)
     export CARD=$card
     wip_entry=$(echo -e "$TEMPLATE_TODO_ENTRY" | envsubst)
@@ -73,7 +73,7 @@ export LIST_TODO=$LIST_TODO
 
 # LIST_DONE
 TEMPLATE_DONE_ENTRY='\n- [${CARD}](${CARD})   ```${HEADER}```'
-for card in $(find $CYCLE_DIR/DONE -type f | grep md$) ; do
+for card in $(find $CYCLE_DIR/DONE -type f | grep md$ | sort) ; do
     export HEADER=$(grep -m 1  "^# .*" $card)
     export CARD=$card
     wip_entry=$(echo -e "$TEMPLATE_DONE_ENTRY" | envsubst)

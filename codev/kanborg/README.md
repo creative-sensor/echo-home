@@ -19,9 +19,9 @@
 
 - [datum/2023/TODO/DROID-0.md](datum/2023/TODO/DROID-0.md)   ```# FEATURE : Fork GitJournal```
 - [datum/2023/TODO/KBG-3.md](datum/2023/TODO/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
+- [datum/2023/TODO/LEAF-4.md](datum/2023/TODO/LEAF-4.md)   ```# CODEV : consolidation of multi-version datum```
 - [datum/2023/TODO/MDOS-0.md](datum/2023/TODO/MDOS-0.md)   ```# FEATURE : powershell for gvim```
 - [datum/2023/TODO/NCEPT-0.md](datum/2023/TODO/NCEPT-0.md)   ```# CONCEPT : Fractual system```
-- [datum/2023/TODO/LEAF-4.md](datum/2023/TODO/LEAF-4.md)   ```# CODEV : consolidation of multi-version datum```
 
 ### 4 DONE
 
@@ -34,13 +34,13 @@
 - [datum/2023/DONE/ARTE-1.md](datum/2023/DONE/ARTE-1.md)   ```# ISSUE : yson - artefact-get```
 - [datum/2023/DONE/KBG-0.md](datum/2023/DONE/KBG-0.md)   ```# ISSUE : card not move when destination is empty```
 - [datum/2023/DONE/KBG-2.md](datum/2023/DONE/KBG-2.md)   ```# FEATURE: project metadata as datum```
-- [datum/2023/DONE/LEAF-2.md](datum/2023/DONE/LEAF-2.md)   ```# FEATURE : cdx - teleport for cd command```
-- [datum/2023/DONE/SPEC-0.md](datum/2023/DONE/SPEC-0.md)   ```# SPEC : yson format```
-- [datum/2023/DONE/SPEC-1.md](datum/2023/DONE/SPEC-1.md)   ```# SPEC : yson format - python implement```
-- [datum/2023/DONE/LEAF-1.md](datum/2023/DONE/LEAF-1.md)   ```# CODEV : Makefile as graph workflow```
 - [datum/2023/DONE/KBG-4.md](datum/2023/DONE/KBG-4.md)   ```# FEATURE : add backlog column```
+- [datum/2023/DONE/LEAF-1.md](datum/2023/DONE/LEAF-1.md)   ```# CODEV : Makefile as graph workflow```
+- [datum/2023/DONE/LEAF-2.md](datum/2023/DONE/LEAF-2.md)   ```# FEATURE : cdx - teleport for cd command```
 - [datum/2023/DONE/MKG-0.md](datum/2023/DONE/MKG-0.md)   ```# FEATURE : internode i/o communication```
 - [datum/2023/DONE/MKG-1.md](datum/2023/DONE/MKG-1.md)   ```# FEATURE : node - simple editor```
+- [datum/2023/DONE/SPEC-0.md](datum/2023/DONE/SPEC-0.md)   ```# SPEC : yson format```
+- [datum/2023/DONE/SPEC-1.md](datum/2023/DONE/SPEC-1.md)   ```# SPEC : yson format - python implement```
 
 ### 5 BACKLOG
 
