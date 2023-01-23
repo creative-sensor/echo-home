@@ -22,7 +22,6 @@ set background=light
 set backspace=indent,eol,start
 set ffs=unix
 
-
 "-------- [PLUGIN] --------
 
 "-------- [PLUGIN / VUNDLE] --------
@@ -75,11 +74,11 @@ function Kolumns()
     let DONE= tempname().'.DONE'
     exec 'file '.VIEW.' | read HELP.md | setlocal filetype=markdown'
         "vim: read file into buffer
-    exec 'silent ! echo "----BACKLOG----" > '.BACKLOG.' ; find '.cycle_dir.'/BACKLOG -type f >> '.BACKLOG  | exec 'new '.BACKLOG
-    exec 'silent ! echo "----TODO----" > '.TODO.' ; find '.cycle_dir.'/TODO -type f >> '.TODO  | exec 'vnew '.TODO
-    exec 'silent ! echo "----HOLD----" > '.HOLD.' ; find '.cycle_dir.'/HOLD -type f >> '.HOLD  | exec 'vnew '.HOLD
-    exec 'silent ! echo "----WIP----"  > '.WIP.'  ; find '.cycle_dir.'/WIP -type f  >> '.WIP   | exec 'vnew '.WIP
-    exec 'silent ! echo "----DONE----" > '.DONE.' ; find '.cycle_dir.'/DONE -type f >> '.DONE  | exec 'vnew '.DONE
+    exec 'silent ! echo "----BACKLOG----" > '.BACKLOG.' ; find '.cycle_dir.'/BACKLOG -type f | sort >> '.BACKLOG | exec 'new '.BACKLOG
+    exec 'silent ! echo "----TODO----" > '.TODO.' ; find '.cycle_dir.'/TODO -type f | sort >> '.TODO  | exec 'vnew '.TODO
+    exec 'silent ! echo "----HOLD----" > '.HOLD.' ; find '.cycle_dir.'/HOLD -type f | sort >> '.HOLD  | exec 'vnew '.HOLD
+    exec 'silent ! echo "----WIP----"  > '.WIP.'  ; find '.cycle_dir.'/WIP -type f | sort  >> '.WIP   | exec 'vnew '.WIP
+    exec 'silent ! echo "----DONE----" > '.DONE.' ; find '.cycle_dir.'/DONE -type f | sort >> '.DONE  | exec 'vnew '.DONE
 endfunction
 
 
