@@ -13,9 +13,11 @@
 
 
 ### 4 DISCUSSION
+###### 4.2
+- Web UI theme can be loaded within electron app window: https://themewagon.github.io/dashtreme/
 
 ###### 4.1
-- fedora 34:
+- fedora 34: this can be ignored
 ```
 libva error: vaGetDriverNameByIndex() failed with unknown libva error, driver_name = (null)
 
