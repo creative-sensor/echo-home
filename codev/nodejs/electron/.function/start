@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# ---- |EXT ----
+ETRON_APP=$1
+VARSET_EXT=$2
+# ---- |DEFAULT ----
+test -z "$ETRON_APP" && find datum/ -type f | grep  index.html && read -p "ETRON_APP ?= " ETRON_APP
+# ---- |OVERRIDE ----
+set -x
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+export ETRON_APP=$(dirname $ETRON_APP)
+npm start
+
