@@ -13,6 +13,9 @@
 
 
 ### 4 DISCUSSION
+###### 4.3
+- Electron model inception: https://github.com/creative-sensor/echo-home/commit/ba841cdaee920a463b99b979f9f8fb296ec31c11
+
 ###### 4.2
 - Web UI theme can be loaded within electron app window: https://themewagon.github.io/dashtreme/
 
