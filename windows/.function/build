@@ -12,7 +12,7 @@ install .wslconfig ~/
 install .ConEmu.xml $APPDATA/ConEmu.xml
 
 
-# ---- function ----
+# ---- function T
 .function/symlink
 cd .. && .function/symlink && cd -
-.function/artefact-ready
+#.function/artefact-ready

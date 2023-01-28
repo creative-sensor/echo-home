@@ -1,0 +1,33 @@
+#!/bin/bash
+FUNCTION=$1
+ARTIFACT_DIR=./artefacts
+
+function ready_nodejs() {
+    local VERSION=v18.13.0-win-x64
+    7z x  -o${LOCAL_BIN}  $ARTIFACT_DIR/node-${VERSION}.zip
+    sed  -i "s,^CLI_BASEDIR=.*,CLI_BASEDIR=$LOCAL_BIN/node-${VERSION}\n#&," $LOCAL_BIN/node-${VERSION}/npm
+}
+
+
+function ready_python() {
+    local VERSION=3.11.1-embed-amd64
+    local PYDIR=$LOCAL_BIN/python-${VERSION}
+    mkdir -p $PYDIR
+    7z x  -o${PYDIR}  $ARTIFACT_DIR/python-${VERSION}.zip
+}
+
+LIST=$(grep -o ' ready_[a-z0-9A-Z_]\+'  $0)
+test -z "$FUNCTION" && 
+    read -p "FUNCTION ?= " FUNCTION
+
+if [[ "$FUNCTION" == "all" ]] ;then
+    for f in $LIST ; do echo ${f}; ${f} ; done
+    exit 0
+fi
+
+test -n "$FUNCTION" &&
+    for f in $FUNCTION ; do echo ${f}; ${f} ; done
+
+
+
+
