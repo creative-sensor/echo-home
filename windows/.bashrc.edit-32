@@ -1,0 +1,9 @@
+export MOZILLA_FIREFOX_PROFILE=
+export MOZILLA_THUNDERBIRD_PROFILE=
+export GNUPGHOME=/d/.gnupg
+
+export PYTHONPATH=~/AppData/Local/Programs/Python/Python311-32
+export GVIMPATH='/c/Program Files/Vim/vim90'
+GITBASH_PATH=/mingw32/bin:/usr/local/bin:/usr/bin:/bin:/mingw32/bin:/usr/bin/vendor_perl:/usr/bin/core_perl:/c/Windows/system32:/c/Windows:/c/Windows/System32/Wbem:/c/Windows/System32/WindowsPowerShell/v1.0:/c/Windows/System32/OpenSSH
+PATH=$LOCAL_BIN:$NODEPATH:$PYTHONPATH:$PYTHONPATH_SCRIPT:$GITBASH_PATH:$GVIMPATH:$DOCKER_DESKTOP
+cd ~/echo-home
