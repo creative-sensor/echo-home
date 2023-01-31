@@ -3,5 +3,6 @@ codev/json/.function/find-yamlpath
 codev/properdize/.function/properd-init
 codev/git/.function/gforce
 codev/git/.function/gpush
+codev/git/.function/gpull
 codev/rev-chain/.function/rev-chain-touch
 container/.function/runbox

@@ -1,0 +1,8 @@
+#!/bin/bash -x
+
+BRANCH=$(git branch | grep "^\*.*" | awk '{print $2}')
+REMOTE=origin
+#echo -e  "Pull \033[1m$BRANCH\033[0m --->  $REMOTE ? (y/n)"
+#read CONFIRM
+#if [[ "$CONFIRM" != "y" ]] ; then exit 1 ; fi
+git fetch && git pull $OPTION  $REMOTE $BRANCH
