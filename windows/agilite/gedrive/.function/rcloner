@@ -1,6 +1,7 @@
 #!/bin/bash -e
 META_DIR_SHORT=.cache/meta
 VOLUME_CACHE_SHORT=.cache/volume
+test -n "$GEDRIVE_VOLUME" && VOLUME_CACHE_SHORT=$GEDRIVE_VOLUME
 mkdir -p $META_DIR_SHORT
 mkdir -p $VOLUME_CACHE_SHORT
 export RCLONE_CONFIG=$(readlink -f ./rclone.conf)
