@@ -10,6 +10,7 @@
 - [datum/2023/WIP/KBG-1.md](datum/2023/WIP/KBG-1.md)   ```# ISSUE : data protection from git merge```
 - [datum/2023/WIP/LEAF-0.md](datum/2023/WIP/LEAF-0.md)   ```# ISSUE : vim fgxp did not show .gitconfig```
 - [datum/2023/WIP/LEAF-3.md](datum/2023/WIP/LEAF-3.md)   ```# FEATURE : commonwealth base```
+- [datum/2023/WIP/LEAF-6.md](datum/2023/WIP/LEAF-6.md)   ```# GUI : advanced```
 
 ### 2 ON HOLD
 
@@ -19,7 +20,7 @@
 
 - [datum/2023/TODO/DROID-0.md](datum/2023/TODO/DROID-0.md)   ```# FEATURE : Fork GitJournal```
 - [datum/2023/TODO/KBG-3.md](datum/2023/TODO/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
-- [datum/2023/TODO/LEAF-4.md](datum/2023/TODO/LEAF-4.md)   ```# CODEV : consolidation of multi-version datum```
+- [datum/2023/TODO/LEAF-4.md](datum/2023/TODO/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
 - [datum/2023/TODO/MDOS-0.md](datum/2023/TODO/MDOS-0.md)   ```# FEATURE : powershell for gvim```
 - [datum/2023/TODO/NCEPT-0.md](datum/2023/TODO/NCEPT-0.md)   ```# CONCEPT : Fractual system```
 
@@ -47,7 +48,6 @@
 - [datum/2023/BACKLOG/CORTA-0.md](datum/2023/BACKLOG/CORTA-0.md)   ```# GRAPH THEORY : Neuron network```
 - [datum/2023/BACKLOG/E419-0.md](datum/2023/BACKLOG/E419-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/LEAF-5.md](datum/2023/BACKLOG/LEAF-5.md)   ```# FEATURE : color system```
-- [datum/2023/BACKLOG/LEAF-6.md](datum/2023/BACKLOG/LEAF-6.md)   ```# GUI : advanced```
 - [datum/2023/BACKLOG/LEAF-7.md](datum/2023/BACKLOG/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
 - [datum/2023/BACKLOG/LEAF-8.md](datum/2023/BACKLOG/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
 - [datum/2023/BACKLOG/NJS-0.md](datum/2023/BACKLOG/NJS-0.md)   ```# NodeJS : exploit```

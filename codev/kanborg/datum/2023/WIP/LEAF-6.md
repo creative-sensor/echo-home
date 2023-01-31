@@ -1,7 +1,7 @@
 # GUI : advanced
 --------------------------------
 ### 0 DESCRIPTION
-
+GUI which call external command as backend service
 
 ### 1 SOLUTION
 
@@ -13,6 +13,12 @@
 
 
 ### 4 DISCUSSION
+
+###### 4.4
+To build a reusable layout template
+- dashtreme
+- glass pane: https://css.glass/
+
 ###### 4.3
 - Electron model inception: https://github.com/creative-sensor/echo-home/commit/ba841cdaee920a463b99b979f9f8fb296ec31c11
 

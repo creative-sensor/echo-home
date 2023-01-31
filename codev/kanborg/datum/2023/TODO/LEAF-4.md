@@ -1,4 +1,4 @@
-# CODEV : consolidation of multi-version datum
+# VERSIONING:  multi-location datum
 --------------------------------
 ### 0 DESCRIPTION
 given  the same objectory in different location, how to merge these separate  versions of datum
@@ -13,6 +13,8 @@ given  the same objectory in different location, how to merge these separate  ve
 
 
 ### 4 DISCUSSION
+##### 4.0
+Redis is key/value DB which probably support merging of multi-version data seamlessly
 
 
 
