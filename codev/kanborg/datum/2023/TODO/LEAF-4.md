@@ -12,9 +12,13 @@ given  the same objectory in different location, how to merge these separate  ve
 ### 3 TEST/VERIFICATION
 
 
-### 4 DISCUSSION
+### 4 JOURNAL
+
+##### 4.1
+- Data versioning with rsync: https://russt.me/2018/07/creating-and-applying-diffs-with-rsync/
+
 ##### 4.0
-Redis is key/value DB which probably support merging of multi-version data seamlessly
+- Redis is key/value DB which probably support merging of multi-version data seamlessly
 
 
 
