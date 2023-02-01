@@ -26,7 +26,7 @@ fi
 
 
 mkdir -p $(dirname $LOG)
-sudo docker run \
+docker run \
         --rm \
         --mount  type=bind,source=$MOUNT_SRC_DIR,target=$MOUNT_TARGET_DIR  \
         --env  RUN_ID=${RUN_ID} \

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+GITLAB_HOME=$(readlink -f datum)
+# ----
+source .properd/VARSET
+
+mkdir -p  $GITLAB_HOME/{config,log,data}
+docker run --detach \
+    --rm \
+    --hostname gitlab.docker \
+    --publish 8443:443 --publish 8080:80 --publish 2222:22 \
+    --name gitlab \
+    --volume $GITLAB_HOME/config:/etc/gitlab \
+    --volume $GITLAB_HOME/logs:/var/log/gitlab \
+    --volume $GITLAB_HOME/data:/var/opt/gitlab \
+    --shm-size 256m \
+    $DKR_IMAGE

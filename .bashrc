@@ -28,6 +28,7 @@ alias vim='vimx'
 alias git-glog='git log --all --decorate --oneline --graph'
 alias gitroot='cd $(git rev-parse --show-toplevel)'
 alias grin='grep -rin '
+alias date-epoch='date +%Y-%m-%d_%s'
 
 
 # ---- VARSET ----
