@@ -15,13 +15,15 @@ echo $(readlink -f $VOLUME_CACHE/$SUB_FILE_PATH)
 if [[ $SUB_FILE_PATH =~ gpg$ ]] ; then
     SUB_FILE_PATH=${SUB_FILE_PATH/%.gpg/}
     echo "Decrypting |-|=|-|"
-    gpg2 --decrypt $VOLUME_CACHE/${SUB_FILE_PATH}.gpg > $VOLUME_CACHE/${SUB_FILE_PATH}
+    gpg2 --decrypt $VOLUME_CACHE/${SUB_FILE_PATH}.gpg > $VOLUME_CACHE/${SUB_FILE_PATH} &&
+        rm $VOLUME_CACHE/${SUB_FILE_PATH}.gpg
 fi
 
 if which 7z ; then
-   7z x -o$(dirname $VOLUME_CACHE/$SUB_FILE_PATH)  $VOLUME_CACHE/$SUB_FILE_PATH
-   SUB_FILE_PATH=${SUB_FILE_PATH%.xz}
-       # delete substring at the back
+    7z x -o$(dirname $VOLUME_CACHE/$SUB_FILE_PATH)  $VOLUME_CACHE/$SUB_FILE_PATH &&
+        rm $VOLUME_CACHE/$SUB_FILE_PATH
+    SUB_FILE_PATH=${SUB_FILE_PATH%.xz}
+        # delete substring at the back
 fi
 
 if tar tvf $VOLUME_CACHE/$SUB_FILE_PATH 2>/dev/null | grep -q .properd/gedrive.yaml ; then

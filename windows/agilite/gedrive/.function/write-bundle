@@ -12,10 +12,12 @@ echo "Writing in bundle mode"
 cd $VOLUME_CACHE/$(dirname $SUB_PATH)
 tar cf   $(basename $SUB_PATH_BUNDLE)   $(basename $SUB_PATH)
 7z a -txz  $(basename $SUB_PATH_BUNDLE).xz  $(basename $SUB_PATH_BUNDLE)
+rm $(basename $SUB_PATH_BUNDLE)
 SUB_PATH_BUNDLE=${SUB_PATH_BUNDLE}.xz
 if [[ "$gedrive_encrypt_id"  =~  [A-Z0-9]+ ]] ; then
     echo "Encrypting with key $gedrive_encrypt_id"
     gpg2  --encrypt --recipient ${gedrive_encrypt_id}  --trust-model always --yes  $(basename $SUB_PATH_BUNDLE) || exit 1
+    rm $(basename $SUB_PATH_BUNDLE)
     SUB_PATH_BUNDLE=${SUB_PATH_BUNDLE}.gpg
 fi
 cd -
