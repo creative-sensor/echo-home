@@ -10,7 +10,6 @@
 - [datum/2023/WIP/KBG-1.md](datum/2023/WIP/KBG-1.md)   ```# ISSUE : data protection from git merge```
 - [datum/2023/WIP/LEAF-0.md](datum/2023/WIP/LEAF-0.md)   ```# ISSUE : vim fgxp did not show .gitconfig```
 - [datum/2023/WIP/LEAF-3.md](datum/2023/WIP/LEAF-3.md)   ```# FEATURE : commonwealth base```
-- [datum/2023/WIP/LEAF-6.md](datum/2023/WIP/LEAF-6.md)   ```# GUI : advanced```
 
 ### 2 ON HOLD
 
@@ -38,6 +37,7 @@
 - [datum/2023/DONE/KBG-4.md](datum/2023/DONE/KBG-4.md)   ```# FEATURE : add backlog column```
 - [datum/2023/DONE/LEAF-1.md](datum/2023/DONE/LEAF-1.md)   ```# CODEV : Makefile as graph workflow```
 - [datum/2023/DONE/LEAF-2.md](datum/2023/DONE/LEAF-2.md)   ```# FEATURE : cdx - teleport for cd command```
+- [datum/2023/DONE/LEAF-6.md](datum/2023/DONE/LEAF-6.md)   ```# GUI : advanced```
 - [datum/2023/DONE/MKG-0.md](datum/2023/DONE/MKG-0.md)   ```# FEATURE : internode i/o communication```
 - [datum/2023/DONE/MKG-1.md](datum/2023/DONE/MKG-1.md)   ```# FEATURE : node - simple editor```
 - [datum/2023/DONE/SPEC-0.md](datum/2023/DONE/SPEC-0.md)   ```# SPEC : yson format```
@@ -47,7 +47,9 @@
 
 - [datum/2023/BACKLOG/CORTA-0.md](datum/2023/BACKLOG/CORTA-0.md)   ```# GRAPH THEORY : Neuron network```
 - [datum/2023/BACKLOG/E419-0.md](datum/2023/BACKLOG/E419-0.md)   ```# ISSUE :```
+- [datum/2023/BACKLOG/KUBEX-0.md](datum/2023/BACKLOG/KUBEX-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/LEAF-5.md](datum/2023/BACKLOG/LEAF-5.md)   ```# FEATURE : color system```
 - [datum/2023/BACKLOG/LEAF-7.md](datum/2023/BACKLOG/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
 - [datum/2023/BACKLOG/LEAF-8.md](datum/2023/BACKLOG/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
+- [datum/2023/BACKLOG/LEAF-9.md](datum/2023/BACKLOG/LEAF-9.md)   ```# CLOUD : fly a kite```
 - [datum/2023/BACKLOG/NJS-0.md](datum/2023/BACKLOG/NJS-0.md)   ```# NodeJS : exploit```

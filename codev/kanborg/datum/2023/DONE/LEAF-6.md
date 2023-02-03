@@ -4,7 +4,7 @@
 GUI which call external command as backend service
 
 ### 1 SOLUTION
-
+- Project launched for advanced GUI in NodeJS: ```NJS-0.md```
 
 ### 2 NOTES
 
@@ -13,7 +13,8 @@ GUI which call external command as backend service
 
 
 ### 4 DISCUSSION
-
+###### 4.5
+- Gloria layout: https://github.com/creative-sensor/echo-home/commit/754a4603286bd35c3b8ebed1692239db9de92b85
 ###### 4.4
 To build a reusable layout template
 - dashtreme

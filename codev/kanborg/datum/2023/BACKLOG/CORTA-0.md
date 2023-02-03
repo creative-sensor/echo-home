@@ -14,10 +14,13 @@
 
 ### 4 DISCUSSION
 
+###### 4.1
+- AI assitant standing by
+
 ###### 4.0
-https://distill.pub/2021/gnn-intro/
-https://neptune.ai/blog/best-ml-experiment-tracking-tools
-https://distill.pub/2021/understanding-gnns/
+- https://distill.pub/2021/gnn-intro/
+- https://neptune.ai/blog/best-ml-experiment-tracking-tools
+- https://distill.pub/2021/understanding-gnns/
 
 --------------------------------
 ```json
