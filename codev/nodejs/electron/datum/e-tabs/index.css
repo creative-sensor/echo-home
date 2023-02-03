@@ -1,0 +1,67 @@
+.navbar {
+	font-family: "Dosis";
+	font-size: 1.7rem; 
+	letter-spacing: .15em;
+	text-transform: uppercase;
+	line-height: 1.5;
+	//text-shadow: 1px 1px #666, 3px 3px #000;
+	color: #009;
+	border: 0px solid #eee;
+    height: 100%;
+	
+	//background: linear-gradient( #0e0e0e 65%, #030303 66%) top .03em center / 100% .30em repeat-y;
+   padding: 10px;
+    display: flex;
+            flex-direction: row;
+    //margin: 10px;
+}
+#label_1frw {
+    background-color: rgba( 72,9,119, 0.1); /* transparent white */
+    color:white;
+    border-radius: 15px;
+    padding: 20px;
+    width: 70px;
+    text-align: center; 
+}
+
+#text_9v73 {
+   background-color: rgba( 28,72, 161, 0.3); /* transparent white */
+   color:white;
+   border-radius: 15px;
+   padding: 20px;
+    width: 100%  ;
+    text-align: center;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#go_dpez {
+   background-color: rgba(5,112, 112, 0.8); /* transparent white */
+   color:white;
+   border-radius: 15px;
+   padding: 20px;
+   width: 70px;
+   text-align: center;
+}
+
+
+body {
+    vertical-align: top;    
+	background: #066CA6;
+	display: flex;
+	align-items: top;
+	overflow: hidden;
+    flex-direction: column;
+}
+
+//@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@600&display=swap');
+
+
+
+/* From https://css.glass */
+//background: rgba(255, 255, 255, 0.2);
+//border-radius: 16px;
+//box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+//backdrop-filter: blur(5px);
+//-webkit-backdrop-filter: blur(5px);
+//border: 1px solid rgba(255, 255, 255, 0.3);
