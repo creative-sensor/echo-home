@@ -22,6 +22,32 @@ function cdx {
     [[ $count -eq 0 ]]  &&  cd $DEST && echo $(pwd) >> $CACHE
 }
 
+function git_root {
+    GIT_ROOT=$(git rev-parse --show-toplevel 2> /dev/null) &&
+        export GIT_ROOT=$GIT_ROOT &&
+        echo $GIT_ROOT && return
+    echo "NOT_A_GIT_ROOT"
+}
+
+
+function dict {
+    local KEYPATH=$1
+    if echo $KEYPATH | grep -q "=" ; then
+        local KEY=$(echo $KEYPATH | awk -F "=" '{print $1}')
+        local VALUE=$(echo $KEYPATH | awk -F "=" '{print $2}')
+        DICT[$KEY]=$VALUE
+        return
+    fi
+    echo ${DICT[$KEYPATH]}
+}
+
+function dict_keys {
+    echo ${!DICT[@]}
+}
+
+function dict_values {
+    echo ${DICT[@]}
+}
 
 # ---- ALIAS ----
 alias vim='vimx'
@@ -32,6 +58,7 @@ alias date-epoch='date +%Y-%m-%d_%s'
 
 
 # ---- VARSET ----
+declare -A DICT
 export LOCAL_BIN=~/.local/bin
 PATH=$PATH:$LOCAL_BIN
 

@@ -1,0 +1,10 @@
+export CMWBASE=$(git_root)/codev/commonwealth
+
+
+function make_alias {
+    list_function=$(declare -f | grep ${CMW_NAMESPACE_PRIVATE}_ | awk '{print $1}')
+    for f in $list_function ; do
+        bare_name=${f#${CMW_NAMESPACE_PRIVATE}_}
+        alias ${CMW_NAMESPACE}.${bare_name}=$f
+    done
+}

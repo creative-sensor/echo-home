@@ -34,6 +34,25 @@ function git_root {
     echo "NOT_A_GIT_ROOT"
 }
 
+function dict {
+    local KEYPATH=$1
+    if echo $KEYPATH | grep -q "=" ; then
+        local KEY=$(echo $KEYPATH | awk -F "=" '{print $1}')
+        local VALUE=$(echo $KEYPATH | awk -F "=" '{print $2}')
+        DICT[$KEY]=$VALUE
+        return
+    fi
+    echo ${DICT[$KEYPATH]}
+}
+
+function dict_keys {
+    echo ${!DICT[@]}
+}
+
+function dict_values {
+    echo ${DICT[@]}
+}
+
 # ---- ALIAS ----
 #alias vim='vimx'
 alias git-glog='git log --all --decorate --oneline --graph'
@@ -42,6 +61,7 @@ alias grin='grep -rin '
 alias ll='ls -la '
 
 # ---- VARSET ----
+declare -A DICT
 export LOCAL_BIN=~/.local/bin
 export PYTHONPATH=~/AppData/Local/Programs/Python/Python310
 export PYTHONPATH_SCRIPT=$PYTHONPATH/Scripts

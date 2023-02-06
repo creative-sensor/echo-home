@@ -1,0 +1,23 @@
+### FORMAT=COMMMONWEALTH: CMW_NAMESPACE_PRIVATE=${random-id} , prepend function by CMW_NAMESPACE_PRIVATE
+
+# ---- ARGS
+CMW_NAMESPACE=$1
+# ---- DEFAULT
+test -z "$CMW_NAMESPACE" && CMW_NAMESPACE="cmwealth"
+CMW_NAMESPACE_PRIVATE=ra17qpii
+
+# ---- FUNCTION
+eval "function ${CMW_NAMESPACE_PRIVATE}_type1 {
+  echo hello \$1
+}"
+
+eval "function ${CMW_NAMESPACE_PRIVATE}_type2 {
+  echo hello
+}"
+
+function ra17qpii_type3 {
+  echo hello $1
+}
+
+# ---- MAKE_ALIAS
+make_alias
