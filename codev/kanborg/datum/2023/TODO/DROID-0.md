@@ -18,7 +18,8 @@ https://github.com/GitJournal/GitJournal.git
 
 
 ### 4 DISCUSSION
-
+###### 4.0
+- chromebox-amie is now ready
 
 
 --------------------------------

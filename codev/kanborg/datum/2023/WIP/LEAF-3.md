@@ -8,6 +8,14 @@ To implement an  objectory which for the moment provides functions in many langu
 - ```secret_``` : get secret string from third-party provider
 - ```auth_k_``` : get authenticated by third-party provider
 - ```auth_r_``` : get authorized by third-party provider
+- Mini dictionary in bash:
+```bash
+DICT_MINI="{"a":"1","b":"text"}
+function dict {
+    local keypath=$1
+    return namespace.key
+}
+```
 
 
 ### 2 NOTES
