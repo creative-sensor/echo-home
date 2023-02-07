@@ -176,6 +176,8 @@ map QQ : wqa<CR>
     "Save and quit all
 map q0 : qa!<CR>
     "Quit all
+inoremap <F8><F8>  <C-o>: r! date "+\%Y-\%m-\%d.\%s"<CR>
+    "temporarily switch to normal from insert mode and run command
 map tty : highlight Terminal ctermbg=23 ctermfg=15 guibg=darkblue guifg=lightgrey \| below terminal ++rows=7<CR>
 
 

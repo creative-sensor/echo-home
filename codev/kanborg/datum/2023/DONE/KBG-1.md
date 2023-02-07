@@ -5,6 +5,9 @@
 - pick datum in priority and ignore those changes from master which touch datum
 ### 1 SOLUTION
 
+- Not found. Manual merge for now.
+
+
 
 ### 2 NOTES
 
@@ -12,8 +15,8 @@
 ### 3 TEST/VERIFICATION
 
 
-### 4 DISCUSSION
-- UPDATE
+### 4 JOURNAL
+###### 4.0
 ```
 file:///C:/Program%20Files/Git/mingw64/share/doc/git-doc/git-cherry-pick.html
 file:///C:/Program%20Files/Git/mingw64/share/doc/git-doc/git-merge.html
