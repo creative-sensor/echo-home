@@ -8,6 +8,7 @@
 - [datum/2023/WIP/HCL-0.md](datum/2023/WIP/HCL-0.md)   ```# FEATURE : Vault integration```
 - [datum/2023/WIP/HCL-1.md](datum/2023/WIP/HCL-1.md)   ```# FEATURE : Consul as dns resolver```
 - [datum/2023/WIP/LEAF-0.md](datum/2023/WIP/LEAF-0.md)   ```# ISSUE : vim fgxp did not show .gitconfig```
+- [datum/2023/WIP/LEAF-10.md](datum/2023/WIP/LEAF-10.md)   ```# gitlab : mono service```
 - [datum/2023/WIP/LEAF-3.md](datum/2023/WIP/LEAF-3.md)   ```# FEATURE : commonwealth base```
 - [datum/2023/WIP/LEAF-9.md](datum/2023/WIP/LEAF-9.md)   ```# KITE: to fly in cloud```
 - [datum/2023/WIP/NJS-0.md](datum/2023/WIP/NJS-0.md)   ```# GLORIA: run objectory```
@@ -51,7 +52,6 @@
 - [datum/2023/BACKLOG/CORTA-0.md](datum/2023/BACKLOG/CORTA-0.md)   ```# GRAPH THEORY : Neuron network```
 - [datum/2023/BACKLOG/E419-0.md](datum/2023/BACKLOG/E419-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/KUBEX-0.md](datum/2023/BACKLOG/KUBEX-0.md)   ```# ISSUE :```
-- [datum/2023/BACKLOG/LEAF-10.md](datum/2023/BACKLOG/LEAF-10.md)   ```# gitlab : mono service```
 - [datum/2023/BACKLOG/LEAF-5.md](datum/2023/BACKLOG/LEAF-5.md)   ```# FEATURE : color system```
 - [datum/2023/BACKLOG/LEAF-7.md](datum/2023/BACKLOG/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
 - [datum/2023/BACKLOG/LEAF-8.md](datum/2023/BACKLOG/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
