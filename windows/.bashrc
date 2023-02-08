@@ -33,25 +33,7 @@ function git_root {
         echo $GIT_ROOT && return
     echo "NOT_A_GIT_ROOT"
 }
-
-function dict {
-    local KEYPATH=$1
-    if echo $KEYPATH | grep -q "=" ; then
-        local KEY=$(echo $KEYPATH | awk -F "=" '{print $1}')
-        local VALUE=$(echo $KEYPATH | awk -F "=" '{print $2}')
-        DICT[$KEY]=$VALUE
-        return
-    fi
-    echo ${DICT[$KEYPATH]}
-}
-
-function dict_keys {
-    echo ${!DICT[@]}
-}
-
-function dict_values {
-    echo ${DICT[@]}
-}
+export -f git_root
 
 # ---- ALIAS ----
 #alias vim='vimx'
