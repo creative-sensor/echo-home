@@ -1,17 +1,31 @@
 #!/bin/bash
 
 GITLAB_HOME=$(readlink -f datum)
+CONTAINER_NAME=gitlab
+PUBLISH_HTTP=80
+PUBLISH_HTTPS=443
+PUBLISH_SSH=2222
 # ----
 source .properd/VARSET
 
 mkdir -p  $GITLAB_HOME/{config,log,data}
+
+
+docker container start $CONTAINER_NAME &>/dev/null ||
 docker run --detach \
     --rm \
-    --hostname gitlab.docker \
-    --publish 8443:443 --publish 8080:80 --publish 2222:22 \
-    --name gitlab \
+    --hostname gitlab.service.vector.consul \
+    --publish $PUBLISH_HTTPS:443 --publish $PUBLISH_HTTP:80 --publish $PUBLISH_SSH:22 \
+    --name $CONTAINER_NAME \
     --volume $GITLAB_HOME/config:/etc/gitlab \
     --volume $GITLAB_HOME/logs:/var/log/gitlab \
     --volume $GITLAB_HOME/data:/var/opt/gitlab \
     --shm-size 256m \
+    --dns 172.17.0.1 \
     $DKR_IMAGE
+
+
+jsonpath=$(docker container inspect $CONTAINER_NAME | find-jsonpath)
+echo "$jsonpath" | grep '.State.Health.Status'
+echo "$jsonpath" | grep '.NetworkSettings.Gateway'
+echo "$jsonpath" | grep '.NetworkSettings' | grep ".Ports.${PUBLISH_HTTP}/tcp\[0\].HostPort\|.Ports.${PUBLISH_HTTPS}/tcp\[0\].HostPort"

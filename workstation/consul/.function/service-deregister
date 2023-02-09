@@ -1,1 +1,0 @@
-consul  services deregister -id=_nomad-server-ozzjlqhfh5s4zufja72ici5l4o4ew6bw

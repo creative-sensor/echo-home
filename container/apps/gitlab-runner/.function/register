@@ -1,0 +1,16 @@
+# ----
+source .properd/VARSET
+# ----
+test -z "$REGISTRATION_TOKEN" && read -p "REGISTRATION_TOKEN ?= " REGISTRATION_TOKEN
+docker exec -it gitlab-runner    gitlab-runner register \
+  --non-interactive \
+  --executor "docker" \
+  --docker-image alpine:latest \
+  --url "$GITLAB_URL" \
+  --registration-token "$REGISTRATION_TOKEN" \
+  --description "runner-docker" \
+  --maintenance-note "Free-form maintainer notes about this runner" \
+  --tag-list "docker" \
+  --run-untagged="true" \
+  --locked="false" \
+  --access-level="not_protected"

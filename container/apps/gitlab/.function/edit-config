@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#VARSET_FILE=$1
+# ----
+
+# ----
+source .properd/VARSET
+# ----
+
+#sudo vim $DATA_DIR/config/gitlab.rb
+docker exec  -it \
+    $CONTAINER_NAME bash
+#    $CONTAINER_NAME gitlab-ctl reconfigure

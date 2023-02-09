@@ -1,0 +1,3 @@
+DKR_IMAGE=gitlab/gitlab-runner:latest
+GITLAB_URL=http://gitlab.service.vector.consul
+#REGISTRATION_TOKEN=$(vault.read gitlab.registration_token)

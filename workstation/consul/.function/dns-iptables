@@ -2,4 +2,7 @@ sudo iptables -t nat -A PREROUTING -p udp -m udp --dport 53 -j REDIRECT --to-por
 sudo iptables -t nat -A PREROUTING -p tcp -m tcp --dport 53 -j REDIRECT --to-ports 8600
 sudo iptables -t nat -A OUTPUT -d localhost -p udp -m udp --dport 53 -j REDIRECT --to-ports 8600
 sudo iptables -t nat -A OUTPUT -d localhost -p tcp -m tcp --dport 53 -j REDIRECT --to-ports 8600
+sudo iptables -t nat -A OUTPUT -s 172.17.0.0/16 -p udp -m udp --dport 53 -j REDIRECT --to-ports 8600
+sudo iptables -t nat -A OUTPUT -s 172.17.0.0/16 -p tcp -m tcp --dport 53 -j REDIRECT --to-ports 8600
+
 

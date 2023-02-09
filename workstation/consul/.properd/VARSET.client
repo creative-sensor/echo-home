@@ -3,5 +3,8 @@ CONSUL_DATA_DIR=./datum/$MODE
 CONSUL_CONFIG_DIR=./config/$MODE
 PORT_HTTP=8500
 export CONSUL_HTTP_ADDR=http://$ADDRESS_HTTP:$PORT_HTTP
-export ADDRESS_DNS=127.0.0.1
-
+export ADDRESS_DNS=0.0.0.0
+BIND_ADDR=$(
+    interface=$(ip route | grep ^default | awk '{print $5}');
+    ip addr show dev $interface | grep inet | awk '{print $2}' | head -1 | awk -F "/" '{print $1}'
+)

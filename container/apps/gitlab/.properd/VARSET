@@ -1,1 +1,4 @@
 DKR_IMAGE=gitlab/gitlab-ce:15.8.0-ce.0
+CONTAINER_NAME=gitlab
+
+DATA_DIR=$(readlink -f datum)
