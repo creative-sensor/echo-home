@@ -16,7 +16,10 @@
 
 ### 4 JOURNAL
 
-
+###### 4.0
+- gitlab
+- gitlab-runner.register()
+- Need dns service to avoid usage of etc_host
 
 --------------------------------
 ```json

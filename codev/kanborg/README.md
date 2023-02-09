@@ -11,6 +11,7 @@
 - [datum/2023/WIP/LEAF-10.md](datum/2023/WIP/LEAF-10.md)   ```# gitlab : mono service```
 - [datum/2023/WIP/LEAF-3.md](datum/2023/WIP/LEAF-3.md)   ```# FEATURE : commonwealth base```
 - [datum/2023/WIP/LEAF-9.md](datum/2023/WIP/LEAF-9.md)   ```# KITE: to fly in cloud```
+- [datum/2023/WIP/MDOS-1.md](datum/2023/WIP/MDOS-1.md)   ```# ISO: windows artefact.sha256sum```
 - [datum/2023/WIP/NJS-0.md](datum/2023/WIP/NJS-0.md)   ```# GLORIA: run objectory```
 
 ### 2 ON HOLD
@@ -19,6 +20,7 @@
 
 ### 3 TO DO
 
+- [datum/2023/TODO/ARTE-2.md](datum/2023/TODO/ARTE-2.md)   ```# ISSUE : luks failed to active with passphrase```
 - [datum/2023/TODO/DROID-0.md](datum/2023/TODO/DROID-0.md)   ```# FEATURE : Fork GitJournal```
 - [datum/2023/TODO/KBG-3.md](datum/2023/TODO/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
 - [datum/2023/TODO/LEAF-4.md](datum/2023/TODO/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
