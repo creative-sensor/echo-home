@@ -1,0 +1,12 @@
+#!/bin/bash
+MODE=$1
+# ----
+ADDRESS_HTTP=127.0.0.1
+test -z "$MODE" && MODE=server
+# ----
+source .properd/VARSET
+source .properd/VARSET.$MODE
+
+# ----
+set -x
+curl -s -o /dev/null  -I --retry-all-errors --retry-delay 3  --retry 7 -w "URL_STATUS = %{http_code}\n"  --fail $CONSUL_HTTP_ADDR

@@ -1,0 +1,2 @@
+OBJECTORY_PATH=$(git_root)/workstation/nomad
+FUNCTION_START=.function/start-client

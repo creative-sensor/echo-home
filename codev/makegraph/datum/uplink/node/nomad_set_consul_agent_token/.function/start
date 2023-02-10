@@ -1,0 +1,7 @@
+GR=$(git_root)
+
+cd $GR/workstation/nomad
+source .properd/VARSET
+mkdir -p $(dirname $CONSUL_AGENT_TOKEN_FILE)
+
+test -s $CONSUL_AGENT_TOKEN_FILE || cp --verbose  ../consul/datum/token/agent  $CONSUL_AGENT_TOKEN_FILE

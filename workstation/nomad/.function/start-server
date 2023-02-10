@@ -20,6 +20,11 @@ source .properd/VARSET
 source .properd/VARSET.$MODE
 test -n "$VARSET_FILE" && source $VARSET_FILE
 # ----
+PSTREE_ID=$(<.properd/pstree_id)
+test -z "$PSTREE_ID" && PSTREE_ID=000_
+pstree -s -p $PSTREE_ID | grep $PSTREE_ID | grep -q nomad && echo "PSTREE_ID=$PSTREE_ID alive" &&  exit 0
+echo $$ > .properd/pstree_id
+
 mkdir -p $NOMAD_DATA_DIR
 mkdir -p $NOMAD_DATA_DIR/plugins
 

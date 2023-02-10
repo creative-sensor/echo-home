@@ -23,7 +23,7 @@ if test -s $AGENT_TOKEN_FILE ; then
     consul acl token create \
         -accessor $TOKEN_ACCESSOR_ID \
         -secret $TOKEN_SECRET_ID \
-        -policy-name=$POLICY_NAME
+        -policy-name=$POLICY_NAME && exit 0
 else
     consul acl token create \
         -description "double-agent" \

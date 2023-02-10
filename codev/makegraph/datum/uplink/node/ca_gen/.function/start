@@ -1,0 +1,10 @@
+source .properd/VARSET
+source .properd/VARSET.server
+
+test -f $CONSUL_CONFIG_DIR/consul-agent-ca.pem &&
+test -f $CONSUL_CONFIG_DIR/consul-agent-ca-key.pem &&
+test -f $CONSUL_CONFIG_DIR/${DATACENTER}-server-consul-0.pem &&
+test -f $CONSUL_CONFIG_DIR/${DATACENTER}-server-consul-0-key.pem &&
+exit 0
+
+.function/generate-ca

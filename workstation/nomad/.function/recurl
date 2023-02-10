@@ -1,0 +1,14 @@
+#!/bin/bash
+MODE=$1
+# ----
+ADDRESS_HTTP=127.0.0.1
+PORT_HTTP=5656
+test -z "$MODE" && MODE=server
+# ----
+source .properd/VARSET
+source .properd/VARSET.$MODE
+
+# ----
+set -x
+NOMAD_ADDR=http:/$ADDRESS_HTTP:$PORT_HTTP
+curl -s -o /dev/null  -I --retry-all-errors --retry-delay 3 --retry 7 -w "URL_STATUS = %{http_code}\n"  --fail $NOMAD_ADDR

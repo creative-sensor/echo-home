@@ -17,11 +17,17 @@ export ADVERTISE_RPC=127.0.0.1:$PORT_RPC
 export ADVERTISE_SERF=127.0.0.1:$PORT_SERF
 
 # ----
+
 source .properd/VARSET
 source .properd/VARSET.$MODE
 test -n "$VARSET_FILE" && source $VARSET_FILE
 
 # ----
+PSTREE_ID=$(<.properd/pstree_id.client)
+test -z "$PSTREE_ID" && PSTREE_ID=000_
+pstree -s -p $PSTREE_ID | grep $PSTREE_ID | grep -q nomad && echo "PSTREE_ID=$PSTREE_ID alive" &&  exit 0
+echo $$ > .properd/pstree_id.client
+
 mkdir -p $NOMAD_DATA_DIR
 mkdir -p $NOMAD_DATA_DIR/plugins
 mkdir -p $NOMAD_DATA_DIR/volume_host

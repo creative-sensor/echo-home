@@ -8,7 +8,7 @@ addresses {
   http = "${ADDRESS_HTTP}"
   dns = "${ADDRESS_DNS}"
 }
-
+recursors = ["1.1.1.1"]
 # ---- COMM ENCRYPTION ----
 verify_incoming = false
 verify_outgoing = true

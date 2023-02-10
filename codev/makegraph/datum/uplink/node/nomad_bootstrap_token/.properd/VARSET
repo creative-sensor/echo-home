@@ -1,0 +1,3 @@
+OBJECTORY_PATH=$(git_root)/workstation/nomad
+FUNCTION_START=.function/bootstrap-token
+HOLD_FOR_RELEASE="sleep 5"

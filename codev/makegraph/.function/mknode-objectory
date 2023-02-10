@@ -1,0 +1,15 @@
+#!/bin/bash
+
+NODE_DIR=$1
+NODE_DRIVER=docker_python
+START=$NODE_DIR/.function/start
+
+test -d "$NODE_DIR" ||  exit 1
+[[ "$NODE_DRIVER" != "$(< $NODE_DIR/.properd/driver)" ]] && exit 1
+set -x
+cp .template/nodeX_${NODE_DRIVER}/.function/mkgn.py  $NODE_DIR/.function/mkgn.py
+cp .template/nodeX_${NODE_DRIVER}/.function/artefact-get  $NODE_DIR/.function/artefact-get
+cp -n .template/nodeX_${NODE_DRIVER}/.properd/VARSET   $NODE_DIR/.properd/VARSET
+cp -n .template/nodeX_${NODE_DRIVER}/requirements.txt  $NODE_DIR/requirements.txt
+
+test -s $START || echo "import mkgn" >> $START

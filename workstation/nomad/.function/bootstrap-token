@@ -8,6 +8,17 @@ source .properd/VARSET.server
 test -n "$VARSET_FILE" && source $VARSET_FILE
 # ----
 # ----
+
+if test -s $BOOTSTRAP_TOKEN_FILE; then
+    export NOMAD_TOKEN=$(cat $BOOTSTRAP_TOKEN_FILE | jq -r .SecretID)
+    nomad status &>/dev/null && echo "Boostrap token: being valid" && exit 0
+fi
+
 test -s $BOOTSTRAP_TOKEN_FILE && cp $BOOTSTRAP_TOKEN_FILE "$BOOTSTRAP_TOKEN_FILE.$(date -u '+%Y-%m-%dT%H-%M-%SZ')"
 nomad acl bootstrap -json > $BOOTSTRAP_TOKEN_FILE
-cat $BOOTSTRAP_TOKEN_FILE | jq -r .SecretID
+
+if test -s $BOOTSTRAP_TOKEN_FILE; then
+    export NOMAD_TOKEN=$(cat $BOOTSTRAP_TOKEN_FILE | jq -r .SecretID)
+    nomad status &>/dev/null && echo "Boostrap token: been created" && exit 0
+fi
+

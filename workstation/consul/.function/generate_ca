@@ -1,6 +1,15 @@
 source .properd/VARSET
 source .properd/VARSET.server
 
+
+test -f $CONSUL_CONFIG_DIR/consul-agent-ca.pem &&
+    test -f $CONSUL_CONFIG_DIR/consul-agent-ca-key.pem &&
+    test -f $CONSUL_CONFIG_DIR/${DATACENTER}-server-consul-0.pem &&
+    test -f $CONSUL_CONFIG_DIR/${DATACENTER}-server-consul-0-key.pem &&
+    exit 0
+
+
+mkdir -p $CONSUL_CONFIG_DIR
 cd $CONSUL_CONFIG_DIR
 echo "Create CA for Consul datacenter"
 consul tls ca create -domain=${DOMAIN}
@@ -8,3 +17,4 @@ echo "Create server Certificate and key pair"
 consul tls cert create -server -domain ${DOMAIN} -dc=${DATACENTER}
 cd -
 
+cp $CONSUL_CONFIG_DIR/consul-agent-ca.pem $CONSUL_CONFIG_DIR/../client/

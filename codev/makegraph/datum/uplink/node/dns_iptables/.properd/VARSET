@@ -1,0 +1,3 @@
+OBJECTORY_PATH=$(git_root)/workstation/consul
+FUNCTION_START="echo \"doing nothing\""
+HOLD_FOR_RELEASE="sleep 2"

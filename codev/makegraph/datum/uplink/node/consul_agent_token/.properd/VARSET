@@ -1,0 +1,2 @@
+OBJECTORY_PATH=$(git_root)/workstation/consul
+FUNCTION_START=.function/agent-token

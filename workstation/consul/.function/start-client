@@ -19,6 +19,11 @@ source .properd/VARSET
 source .properd/VARSET.$MODE
 test -n "$VARSET_FILE" && source $VARSET_FILE
 # ----
+PSTREE_ID=$(<.properd/pstree_id.client)
+test -z "$PSTREE_ID" && PSTREE_ID=000_
+pstree -s -p $PSTREE_ID | grep $PSTREE_ID | grep -q consul && echo "PSTREE_ID=$PSTREE_ID alive" &&  exit 0
+echo $$ > .properd/pstree_id.client
+
 export AGENT_TOKEN=$(cat $AGENT_TOKEN_FILE | jq -r .SecretID)
 cat $CONSUL_CONFIG_DIR/agent.hcl.template | envsubst > $CONSUL_CONFIG_DIR/agent.hcl
 consul validate ${CONSUL_CONFIG_DIR}

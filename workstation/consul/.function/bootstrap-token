@@ -3,7 +3,18 @@
 source .properd/VARSET
 source .properd/VARSET.server
 
+if test -s $BOOTSTRAP_TOKEN_FILE; then
+    export CONSUL_HTTP_TOKEN=$(cat datum/token/bootstrap | jq -r .SecretID)
+    consul info &>/dev/null && echo "Boostrap token: being valid" && exit 0
+fi
+
+
 mkdir -p $(dirname $BOOTSTRAP_TOKEN_FILE)
 test -s $BOOTSTRAP_TOKEN_FILE && cp $BOOTSTRAP_TOKEN_FILE "$BOOTSTRAP_TOKEN_FILE.$(date -u '+%Y-%m-%dT%H-%M-%SZ')"
-consul acl bootstrap -format=json > $BOOTSTRAP_TOKEN_FILE
-cat $BOOTSTRAP_TOKEN_FILE | jq -r .SecretID
+consul acl bootstrap -format=json > $BOOTSTRAP_TOKEN_FILE || echo 1
+
+if test -s $BOOTSTRAP_TOKEN_FILE; then
+    export CONSUL_HTTP_TOKEN=$(cat datum/token/bootstrap | jq -r .SecretID)
+    consul info &>/dev/null && echo "Boostrap token: been created" && exit 0
+fi
+

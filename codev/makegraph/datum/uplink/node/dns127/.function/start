@@ -1,0 +1,12 @@
+set -x
+cd $(git_root)/workstation/consul
+source .properd/VARSET
+#.function/dns-query  consul.service | grep -q "ANSWER: [^0]" && echo "DNS ok" && exit 0 
+dig consul.service.${DATACENTER}.consul | grep -q "ANSWER: [^0]" && echo "DNS ok" && exit 0 
+
+.function/acl.map.policy--id  acl/policy/dns-read-any.hcl
+test -L /etc/resolv.conf && sudo rm  /etc/resolv.conf
+CONSUL_DNS_RESOLVER="nameserver 127.0.0.1"
+grep $CONSUL_DNS_RESOLVER /etc/resolv.conf || sudo bash -c "sudo echo ${CONSUL_DNS_RESOLVER} >> /etc/resolv.conf"
+.function/dns-iptables
+
