@@ -1,0 +1,6 @@
+#!/bin/bash -x
+REMOTE=$1
+REF=$2
+git clone --depth=1   $REMOTE
+
+

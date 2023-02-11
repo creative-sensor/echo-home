@@ -1,0 +1,3 @@
+#!/bin/bash -x
+REMOTE=$1
+git clone --depth=1   $REMOTE
