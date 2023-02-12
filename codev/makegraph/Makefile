@@ -6,7 +6,7 @@ endef
 
 define nodeX_bash
 	$(print_marker)
-	cd $(subst _,/,$@)  ; set -x ;\
+	cd $(subst node_,node/,$@)  ; set -x ;\
 	  export MKGN_NAME=$@ ;\
 	  export MKGN_INPUT=$$(grep  $@:  ${GRAPH_DIR}/Makefile) ;\
 	  export MKGN_OUTPUT=${GRAPH_DIR}/$@ ;\
@@ -72,6 +72,16 @@ define nodeX_nodejs
 endef
 
 define nodeX_objectory
+	$(print_marker)
+	cd $(subst node_,node/,$@)  ; set -x ;\
+	  export MKGN_NAME=$@ ;\
+	  export MKGN_INPUT=$$(grep  $@:  ${GRAPH_DIR}/Makefile) ;\
+	  export MKGN_OUTPUT=${GRAPH_DIR}/$@ ;\
+	  source .properd/VARSET ;\
+	  cd $$OBJECTORY_PATH ;\
+	  $$FUNCTION_START &>> .log ;
+	touch $@
+
 endef
 
 
@@ -99,5 +109,4 @@ endef
 define nodeX_grpc
 endef
 
-define nodeX_objectory
-endef
+

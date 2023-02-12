@@ -1,0 +1,2 @@
+OBJECTORY_PATH=/home/creativ/echo-home/workstation/consul
+FUNCTION_START=.function/start-server
