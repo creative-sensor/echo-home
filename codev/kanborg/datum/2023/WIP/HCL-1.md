@@ -14,6 +14,8 @@ Configure consul as dns resolver for workstation
 
 ### 4 DISCUSSION
 
+###### 4.0
+- https://developer.hashicorp.com/consul/tutorials/networking/dns-forwarding
 
 
 --------------------------------
