@@ -79,7 +79,7 @@ define nodeX_objectory
 	  export MKGN_OUTPUT=${GRAPH_DIR}/$@ ;\
 	  source .properd/VARSET ;\
 	  cd $$OBJECTORY_PATH ;\
-	  $$FUNCTION_START &>> .log ;
+	  nohup $$FUNCTION_START &>> .log &
 	touch $@
 
 endef

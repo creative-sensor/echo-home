@@ -21,6 +21,10 @@ source .properd/VARSET
 source .properd/VARSET.$MODE
 test -n "$VARSET_FILE" && source $VARSET_FILE
 # ----
+PSTREE_ID=$(<.properd/pstree_id)
+pstree -s -p $PSTREE_ID | grep -q consul && echo "PSTREE_ID=$PSTREE_ID alive" &&  exit 0
+echo $$ > .properd/pstree_id
+
 cat $CONSUL_CONFIG_DIR/agent.hcl.template | envsubst > $CONSUL_CONFIG_DIR/agent.hcl
 consul validate ${CONSUL_CONFIG_DIR}
 consul agent \

@@ -1,0 +1,4 @@
+source $(readlink -f mkgn)
+
+sudo rm  /etc/resolv.conf
+sudo bash -c "sudo echo nameserver 127.0.0.1 > /etc/resolv.conf"
