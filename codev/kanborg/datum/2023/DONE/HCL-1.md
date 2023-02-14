@@ -4,6 +4,8 @@
 Configure consul as dns resolver for workstation
 
 ### 1 SOLUTION
+- start graph ```uplink``` (implemented in MKG-2)
+- network manager to set DNS static: ```127.0.0.1,8.8.8.8```
 
 
 ### 2 NOTES
@@ -20,5 +22,5 @@ Configure consul as dns resolver for workstation
 
 --------------------------------
 ```json
-{ "project_code": "HCL" , "links": "" , "location": "" , "fpoint": "" }
+{ "project_code": "HCL" , "links": "MKG-2" , "location": "" , "fpoint": "" }
 ```

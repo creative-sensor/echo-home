@@ -6,13 +6,11 @@
 ### 1 WORK IN PROGRESS
 
 - [datum/2023/WIP/HCL-0.md](datum/2023/WIP/HCL-0.md)   ```# FEATURE : Vault integration```
-- [datum/2023/WIP/HCL-1.md](datum/2023/WIP/HCL-1.md)   ```# FEATURE : Consul as dns resolver```
 - [datum/2023/WIP/LEAF-0.md](datum/2023/WIP/LEAF-0.md)   ```# ISSUE : vim fgxp did not show .gitconfig```
 - [datum/2023/WIP/LEAF-10.md](datum/2023/WIP/LEAF-10.md)   ```# gitlab : mono service```
 - [datum/2023/WIP/LEAF-3.md](datum/2023/WIP/LEAF-3.md)   ```# FEATURE : commonwealth base```
 - [datum/2023/WIP/LEAF-9.md](datum/2023/WIP/LEAF-9.md)   ```# KITE: to fly in cloud```
 - [datum/2023/WIP/MDOS-1.md](datum/2023/WIP/MDOS-1.md)   ```# ISO: windows artefact.sha256sum```
-- [datum/2023/WIP/MKG-2.md](datum/2023/WIP/MKG-2.md)   ```# makegraph : cowad```
 - [datum/2023/WIP/NJS-0.md](datum/2023/WIP/NJS-0.md)   ```# GLORIA: run objectory```
 
 ### 2 ON HOLD
@@ -37,6 +35,7 @@
 - [datum/2023/DONE/archived.KBS-1.md](datum/2023/DONE/archived.KBS-1.md)   ```# CREDIT```
 - [datum/2023/DONE/archived.SPEC-0.md](datum/2023/DONE/archived.SPEC-0.md)   ```# FEATURE: yson format```
 - [datum/2023/DONE/ARTE-1.md](datum/2023/DONE/ARTE-1.md)   ```# ISSUE : yson - artefact-get```
+- [datum/2023/DONE/HCL-1.md](datum/2023/DONE/HCL-1.md)   ```# FEATURE : Consul as dns resolver```
 - [datum/2023/DONE/KBG-0.md](datum/2023/DONE/KBG-0.md)   ```# ISSUE : card not move when destination is empty```
 - [datum/2023/DONE/KBG-1.md](datum/2023/DONE/KBG-1.md)   ```# ISSUE : data protection from git merge```
 - [datum/2023/DONE/KBG-2.md](datum/2023/DONE/KBG-2.md)   ```# FEATURE: project metadata as datum```
@@ -46,6 +45,7 @@
 - [datum/2023/DONE/LEAF-6.md](datum/2023/DONE/LEAF-6.md)   ```# GUI : advanced```
 - [datum/2023/DONE/MKG-0.md](datum/2023/DONE/MKG-0.md)   ```# FEATURE : internode i/o communication```
 - [datum/2023/DONE/MKG-1.md](datum/2023/DONE/MKG-1.md)   ```# FEATURE : node - simple editor```
+- [datum/2023/DONE/MKG-2.md](datum/2023/DONE/MKG-2.md)   ```# makegraph :  Happy ❤ Valentine```
 - [datum/2023/DONE/SPEC-0.md](datum/2023/DONE/SPEC-0.md)   ```# SPEC : yson format```
 - [datum/2023/DONE/SPEC-1.md](datum/2023/DONE/SPEC-1.md)   ```# SPEC : yson format - python implement```
 - [datum/2023/DONE/SPEC-2.md](datum/2023/DONE/SPEC-2.md)   ```# SPEC : bash.namespace```
