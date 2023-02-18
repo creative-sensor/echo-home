@@ -1,0 +1,5 @@
+#!/bin/bash
+
+sudo docker container ls
+read -p "ID? = " ID
+sudo docker logs --follow --since 1 $ID

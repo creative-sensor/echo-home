@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#VARSET_FILE=$1
+# ----
+VAULT_ADDR='http://127.0.0.1:8200'
+DATA_DIR=datum
+# ----
+source .properd/VARSET
+# ----
+UNSEAL_FILE=${DATA_DIR}.unseal
+KEY_LIST=$(cat $UNSEAL_FILE  | jq -r .unseal_keys_b64[])
+for key in $KEY_LIST ; do
+    docker exec  --env VAULT_ADDR=$VAULT_ADDR  \
+        $CONTAINER_NAME  vault operator unseal $key
+done
+

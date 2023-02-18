@@ -1,0 +1,12 @@
+#!/bin/bash
+
+source .properd/VARSET
+
+PACKAGE="
+  vault-${SOURCE_REVISION}
+"
+
+sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
+
+mkdir -p $ARTEFACT_DIR
+sudo dnf install -y --downloadonly --destdir ./$ARTEFACT_DIR  $PACKAGE

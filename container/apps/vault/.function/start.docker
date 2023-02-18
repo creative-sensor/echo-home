@@ -1,0 +1,25 @@
+#!/bin/bash
+
+VARSET_FILE=$1
+# ----
+VAULT_ADDR='http://127.0.0.1:8200'
+PUBLISH=8200
+CONFIG_DIR=config
+DATA_DIR=datum
+DKR_USER=100
+# ----
+source .properd/VARSET
+# ----
+
+
+mkdir -p {$CONFIG_DIR,$DATA_DIR}
+chmod 777 $DATA_DIR
+docker run \
+    --detach \
+    --rm \
+    --cap-add=IPC_LOCK \
+    --publish $PUBLISH:8200 \
+    --name $CONTAINER_NAME \
+    --volume $PWD:/objectory \
+    --workdir=/objectory \
+    $DKR_IMAGE  vault server -config=$CONFIG_DIR/server.hcl > container_id

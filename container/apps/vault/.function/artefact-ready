@@ -1,0 +1,6 @@
+#!/bin/bash
+
+source .properd/VARSET
+
+PACKAGE=vault-$SOURCE_REVISION
+sudo dnf localinstall -y  ./$ARTEFACT_DIR/$PACKAGE.*rpm

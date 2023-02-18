@@ -1,0 +1,6 @@
+ARTEFACT_DIR=artefacts
+CONFIG_DIR=config
+DATA_DIR=datum
+DKR_IMAGE=hashicorp/vault:1.12.3
+CONTAINER_NAME=vault
+

@@ -1,0 +1,9 @@
+#!/bin/bash
+SERVICE_DEF=$1
+# ----
+source .properd/VARSET
+source .properd/VARSET.client
+# ----
+export CONSUL_HTTP_TOKEN=$(cat $BOOTSTRAP_TOKEN_FILE | jq -r .SecretID)
+export CONSUL_HTTP_TOKEN=$(cat $AGENT_TOKEN_FILE | jq -r .SecretID)
+consul services register $SERVICE_DEF

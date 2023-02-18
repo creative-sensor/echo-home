@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#VARSET_FILE=$1
+# ----
+VAULT_ADDR='http://127.0.0.1:8200'
+KEY_SHARES=5
+KEY_THRESHOLD=3
+DATA_DIR=datum
+# ----
+source .properd/VARSET
+# ----
+UNSEAL_FILE=${DATA_DIR}.unseal
+test -f $UNSEAL_FILE && cp $UNSEAL_FILE    ${UNSEAL_FILE}.$(date +%s)
+docker exec  --env VAULT_ADDR=$VAULT_ADDR  \
+    $CONTAINER_NAME  vault operator init -key-shares=$KEY_SHARES  -key-threshold=$KEY_THRESHOLD --format=json > ${DATA_DIR}.unseal
