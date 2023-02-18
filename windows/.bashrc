@@ -53,7 +53,7 @@ GITBASH_PATH=/mingw64/bin:/usr/local/bin:/usr/bin:/bin:/mingw64/bin:/usr/bin/ven
 DOCKER_DESKTOP='/c/Program Files/Docker/Docker/resources/bin:/c/ProgramData/DockerDesktop/version-bin'
 PATH=$LOCAL_BIN:$NODEPATH:$PYTHONPATH:$PYTHONPATH_SCRIPT:$GITBASH_PATH:$GVIMPATH:$DOCKER_DESKTOP
 
-COLOR1='\[\033[38;5;34m\]'
+COLOR1='\[\033[38;5;135m\]'
 COLOR2='\[\033[38;5;161m\]'
 BOLD='\[\033[1m\]' # Work only if "allow bold text" setting is enabled
 STOP='\[\033[0m\]'
