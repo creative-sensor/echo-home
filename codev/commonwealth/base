@@ -6,9 +6,26 @@ function dict {
     if echo $KEYPATH | grep -q "=" ; then
         local KEY=$(echo $KEYPATH | awk -F "=" '{print $1}')
         local VALUE=$(echo $KEYPATH | awk -F "=" '{print $2}')
+        for dk in $(dict_keys) ; do
+            if [[ $KEY =~ $dk ]] ; then
+                echo "Parent keypath {$dk} has been set! Unable to update sub-keypath!"
+                return
+            fi
+        done
         DICT[$KEY]=$VALUE
         return
     fi
+    if echo $KEYPATH | grep -q "*$" ; then
+        local KEY_PATTERN=${KEYPATH%\*}
+        local JSON_BLOCK={}
+        for key in $(dict_keys | sort ); do
+            [[ $key  =~ ^$KEY_PATTERN ]] &&
+                JSON_BLOCK=$(echo $JSON_BLOCK | jq -c ".$key=\"${DICT[$key]}\"")
+        done
+        echo $JSON_BLOCK | jq .
+        return
+    fi
+
     echo ${DICT[$KEYPATH]}
 }
 
