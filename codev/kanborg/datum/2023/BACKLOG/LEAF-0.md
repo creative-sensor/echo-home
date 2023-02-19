@@ -13,9 +13,11 @@
 
 
 ### 4 DISCUSSION
+###### 4.1
+- Move to BACKLOG as low priority
 
 ###### 4.0
-See https://github.com/creative-sensor/echo-home/blob/219cf42e722b0c0ac66d6e45154dbe80fcc9719b/.vimrc
+- See https://github.com/creative-sensor/echo-home/blob/219cf42e722b0c0ac66d6e45154dbe80fcc9719b/.vimrc
 
 
 --------------------------------
