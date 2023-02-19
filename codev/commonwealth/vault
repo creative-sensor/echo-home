@@ -1,0 +1,22 @@
+### FORMAT=COMMMONWEALTH: set CMW_NAMESPACE_PRIVATE , prepend function by CMW_NAMESPACE_PRIVATE
+
+# ---- ARGS
+CMW_NAMESPACE=$1
+VAULT_VARSET=$2
+# ---- DEFAULT
+test -z "$CMW_NAMESPACE" && CMW_NAMESPACE="vault"
+CMW_NAMESPACE_PRIVATE=cvb1zhno
+
+# ---- FUNCTION
+
+function cvb1zhno_read {
+    dict vault.token
+}
+
+function cvb1zhno_write {
+  echo hello $1
+}
+
+
+# ---- MAKE_ALIAS
+make_alias
