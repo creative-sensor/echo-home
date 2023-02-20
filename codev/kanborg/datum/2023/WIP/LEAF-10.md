@@ -16,6 +16,10 @@
 
 ### 4 JOURNAL
 
+###### 4.1
+- to configure every child gitlab runner, pod, container with  consul dns resolver
+
+
 ###### 4.0
 - gitlab
 - gitlab-runner.register()
