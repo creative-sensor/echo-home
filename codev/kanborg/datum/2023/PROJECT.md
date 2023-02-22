@@ -13,4 +13,5 @@ MKG : {"description":"Makegraph for workflow","last_id":2,"related":""}
 NJS : {"description":"NodeJS","last_id":1,"related":""}
 KUBEX : {"description":"Kubernetes","last_id":0,"related":""}
 GILB : {"description":"Git Lab","last_id":0,"related":""}
+CMW : {"description":"Common Wealth","last_id":0,"related":""}
 ```
