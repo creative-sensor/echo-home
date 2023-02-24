@@ -17,6 +17,9 @@ Flash BIOS to install UEFI firmware
 
 ### 4 DISCUSSION
 
+###### 4.2
+Attempt to order 1 item from ```frontshort```
+
 ###### 4.1
 Suzy-Q is out of stock. Looking around for providers.
 

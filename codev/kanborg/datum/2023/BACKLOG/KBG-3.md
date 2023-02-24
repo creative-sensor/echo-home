@@ -14,7 +14,8 @@
 
 ### 4 DISCUSSION
 
-
+##### 4.0
+Kanborg is quite stable at the moment, move to backlog as low priority
 
 --------------------------------
 ```json
