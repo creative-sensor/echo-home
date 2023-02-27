@@ -1,1 +1,10 @@
+#!/bin/bash -x
+uname -a | grep -q -i microsoft.*wsl || exit 1
 
+GITROOT=$(git rev-parse --show-toplevel)
+which dnf && OS=fedora
+which apt && OS=ubuntu
+cd $GITROOT && .function/dotconfig && .function/symlink
+install $GITROOT/workstation/${OS}/.bashrc    ~/
+cd $GITROOT/.vim && .function/install
+cd $GITROOT/workstation/${OS} && .function/apt-install
