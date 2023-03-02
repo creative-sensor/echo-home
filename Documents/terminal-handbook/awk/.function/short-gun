@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+### FORMAT: awk -F "${SEPARATOR}"  'BEGIN { ACTION_BEFORE_1ST_ROW_READ }  ${CONDITION_CHECK_ON_CURRENT_FIELD} { ACTION_ON_CURRENT_FIELD_RECORD }  END { ACTION_AFTER_ALL_ROWS_READ }'
+
+# modify columns and print selected ones
+echo "Cykg6 C2 C3 C4" | awk -F " "  '{ $2="\""$2"\""; print $1"="$2 }'
+echo "Cykg6 C2 C3 C4" | awk -F " "  '{ $2="custom-"$2; print $1"="$2 }'
+echo "Cykg6 C2 C3 C4" | awk -F " "  '{ $2="custom-"$2; $3=$3"__";  print $1"="$2","$3 }'
+
+
+# select row by pattern
+echo "Crp4e C2 C3 C4
+Crp4e C2a C3h C4x
+Crp4e C2 C3patternTNSW C4u
+Crp4e C2, C3__ C4es" | awk -F " "  '/patternTNS/   { print }'
+
+# select row by column condition
+echo "CZ788 C2 30921 C4
+CZ788 C2a 377 C4x
+CZ788 C2 30 C4u
+CZ788 C2, 3.5 C4es" | awk -F " "  '$3 < 35   { print }'
+
+# get max by column
+echo "Cbj3K C2 321 C4
+Cbj3K C2a 3770 C4x
+Cbj3K C2 30 C4u
+Cbj3K C2, 39592 C4es" | awk -F " "  'NR==1 {max=$3}    $3 > max {max=$3}    END {print "MAX="max}'
+
+# get min by column
+echo "Cbj3K C2 321 C4
+Cbj3K C2a 3770 C4x
+Cbj3K C2 1.2 C4u
+Cbj3K C2, 39.592 C4es" | awk -F " "  'NR==1 {min=$3}    $3 < min {min=$3}    END {print "MIN="min}'
+
+# get avg by column
+echo "Cbj3L C2 321 C4
+Cbj3M C2a 3770 C4x
+Cbj3M C2 30 C4u
+Cbj3M C2, 3.592 C4es" | awk -F " "  '{sum+=$3}    END {if (NR > 0 )  print "AVG="sum / NR}'
+
+# search and replace by pattern everywhere
+echo "CK2WC C2 C3 C4
+CK2WC C2patternTNS_YKX C3h C4x
+CK2WC C2 C3patternTNSW C4u
+CK2WC C2, C3__ C4es" | awk -F " "  '{ gsub(/patternTNS/,"patternREPLACED") ;  print}'
+
+# search and replace by pattern within a specific column
+echo "CK2WC C2 C3 C4
+CK2WD C2patternTNS_YKX C3h C4x
+CK2WD C2 C3patternTNSW C4u
+CK2WD C2, C3__ C4es" | awk -F " "  '{ gsub(/patternTNS/,"patternREPLACED",$2) ;  print}'
+
+# sort by column
+echo "Cucuc C2 C30921 C4
+Cucuc C2a C377 C4x
+Cucuc C2 C30 C4u" | sort -t " " -k3
+
+
+# multi-command run on condition
+echo "Cwuvk C2 C30921 C4
+Cwuvk C2a C377 C4
+Cwuvk C2 C30 C4u" |  awk -F " "  '$2=="C2a" { print "yes" }    $4=="C4" { print "no" }'
+
+
+# use another row/record seperator (RS)
+echo "CFIuS C2 C3-LS- C4 CFIuS C2a C3-LS-77 C4k CFIuS C2 C30 C4u" | \
+     awk -F " "  'BEGIN { RS="-LS-" }    { print }'
+
+
+# change field content when matching pattern
+echo "Clkie C2 C30921 C4
+Clkie C2a C377 C4
+Clkie C2 C30 C4u" |  awk -F " "  '$2~"C2a" { $2="CHANGED" }    { print }'
+
+# multi-file: note NR is not reset in next file
+awk -F " "     'BEGINFILE { print "CzsqW---- "FILENAME" ----" }    NR==2 { print } NR==38 { print }'    awk.md README.md
+
+# Passing field content to  external command
+echo "/home /usr /lib
+data_7j4r binary shared" | awk -F " "     '/^\/hom/  {system("echo $(ls "$2") >> out_7j4r.txt")}'
+
+# Pipe IO-std
+#echo "CntbM C2398 C3 C4
+#CntbM C27115 C3y C4z" | gawk -F " "   '{ print $2 |& "cat" ; "cat" |& getline var ; print var}'
+
