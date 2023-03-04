@@ -50,6 +50,14 @@ filetype plugin indent on    " required
 " :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
 
 
+"-------- [GLOBAL] --------
+let g:cycle_dir = $DATA_DIR.'/'.$CYCLE
+let g:VIEW = tempname().'.VIEW'
+let g:BACKLOG = tempname().'.BACKLOG'
+let g:TODO = tempname().'.TODO'
+let g:HOLD = tempname().'.HOLD'
+let g:WIP = tempname().'.WIP'
+let g:DONE= tempname().'.DONE'
 
 "-------- [FUNCTIONS] --------
 
@@ -65,28 +73,20 @@ endfunction
 command! -nargs=* FgXp call FgXp(<q-args>)
 
 function Kolumns()
-    let cycle_dir = $DATA_DIR.'/'.$CYCLE
-    let VIEW = tempname().'.VIEW'
-    let BACKLOG = tempname().'.BACKLOG'
-    let TODO = tempname().'.TODO'
-    let HOLD = tempname().'.HOLD'
-    let WIP = tempname().'.WIP'
-    let DONE= tempname().'.DONE'
-    exec 'file '.VIEW.' | read HELP.md | setlocal filetype=markdown'
+    exec 'file '.g:VIEW.' | read HELP.md | setlocal filetype=markdown'
         "vim: read file into buffer
-    exec 'silent ! echo "----BACKLOG----" > '.BACKLOG.' ; find '.cycle_dir.'/BACKLOG -type f | sort >> '.BACKLOG | exec 'new '.BACKLOG
-    exec 'silent ! echo "----TODO----" > '.TODO.' ; find '.cycle_dir.'/TODO -type f | sort >> '.TODO  | exec 'vnew '.TODO
-    exec 'silent ! echo "----HOLD----" > '.HOLD.' ; find '.cycle_dir.'/HOLD -type f | sort >> '.HOLD  | exec 'vnew '.HOLD
-    exec 'silent ! echo "----WIP----"  > '.WIP.'  ; find '.cycle_dir.'/WIP -type f | sort  >> '.WIP   | exec 'vnew '.WIP
-    exec 'silent ! echo "----DONE----" > '.DONE.' ; find '.cycle_dir.'/DONE -type f | sort >> '.DONE  | exec 'vnew '.DONE
+    exec 'silent ! echo "----BACKLOG----" > '.g:BACKLOG.' ; find '.g:cycle_dir.'/BACKLOG -type f | sort >> '.g:BACKLOG | exec 'new '.g:BACKLOG
+    exec 'silent ! echo "----TODO----" > '.g:TODO.' ; find '.g:cycle_dir.'/TODO -type f | sort >> '.g:TODO  | exec 'vnew '.g:TODO
+    exec 'silent ! echo "----HOLD----" > '.g:HOLD.' ; find '.g:cycle_dir.'/HOLD -type f | sort >> '.g:HOLD  | exec 'vnew '.g:HOLD
+    exec 'silent ! echo "----WIP----"  > '.g:WIP.'  ; find '.g:cycle_dir.'/WIP -type f | sort  >> '.g:WIP   | exec 'vnew '.g:WIP
+    exec 'silent ! echo "----DONE----" > '.g:DONE.' ; find '.g:cycle_dir.'/DONE -type f | sort >> '.g:DONE  | exec 'vnew '.g:DONE
 endfunction
 
 
 function XCard(xname)
-    let cycle_dir = $DATA_DIR.'/'.$CYCLE
     let column_name = fnamemodify(bufname(),':e')
         " vim: extract file extension
-    let yname = cycle_dir.'/'.column_name.'/'.a:xname.'.md'
+    let yname = g:cycle_dir.'/'.column_name.'/'.a:xname.'.md'
     exec 'silent !cp CARD.md '.yname
     exec 'silent !git add '.yname
     exec 'silent read ! echo '.yname
@@ -112,15 +112,20 @@ endfunction
 
 
 function MoveCard(name)
-    let cycle_dir = $DATA_DIR.'/'.$CYCLE
     let xname = trim(a:name)
     let column_name = fnamemodify(bufname(),':e')
         " vim: extract file extension
     let card_short_name = fnamemodify(xname,':t')
         " vim: extract base name
-    let yname = cycle_dir.'/'.column_name.'/'.card_short_name
+    let yname = g:cycle_dir.'/'.column_name.'/'.card_short_name
     exec 'silent !set -x ; git mv '.xname.' '.yname
     exec 'silent read ! echo '.yname
+endfunction
+
+function RefreshColumn()
+    let column_name = fnamemodify(bufname(),':e')
+    exec "%delete"
+    exec 'silent read ! echo "----'.column_name.'----" ; find '.g:cycle_dir.'/'.column_name.' -type f | sort'
 endfunction
 
 
@@ -181,7 +186,6 @@ inoremap <F8><F8>  <C-o>: r! date "+\%Y-\%m-\%d.\%s"<CR>
 map tty : highlight Terminal ctermbg=23 ctermfg=15 guibg=darkblue guifg=lightgrey \| below terminal ++rows=7<CR>
 
 
-
 vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
     "LOOK UP KEYWORD
     ":copy selected text into register '+'
@@ -208,6 +212,9 @@ nnoremap  bbb   dd  <C-w><Left>  :call MoveCard('<C-R>"') <CR>
     " delete current line
     " move cursor to the right
     " insert card where the cursor is
+
+nnoremap  rr  :call RefreshColumn() <CR>
+    " REFRESH CONTENT OF CURSORED COLUMN
 
 "-------- [POST-INIT] --------
 colorscheme solarized8_high
