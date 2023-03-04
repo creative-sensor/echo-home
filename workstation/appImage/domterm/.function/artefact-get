@@ -1,5 +1,16 @@
 source .properd/VARSET
 set -x
-mkdir -p $ARTIFACT_DIR
-curl -L -o $ARTIFACT_DIR/DomTerm-${SOURCE_REVISION}.AppImage  https://github.com/PerBothner/DomTerm/releases/download/${SOURCE_REVISION}/DomTerm.AppImage
+mkdir -p $ARTEFACT_DIR
+#curl -L -o $ARTEFACT_DIR/DomTerm-${SOURCE_REVISION}.AppImage  https://github.com/PerBothner/DomTerm/releases/download/${SOURCE_REVISION}/DomTerm.AppImage
+#curl -L -o $ARTEFACT_DIR/${SOURCE_REVISION}.tar.gz  https://github.com/PerBothner/DomTerm/archive/refs/tags/${SOURCE_REVISION}.tar.gz
+
+for i in $RPMS ; do
+    if rpm -qi $i &>/dev/null ; then
+        sudo dnf reinstall --downloadonly --destdir=$ARTEFACT_DIR -y $i
+    else
+        sudo dnf install --downloadonly --destdir=$ARTEFACT_DIR -y $i
+    fi
+done
+
+
 

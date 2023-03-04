@@ -1,0 +1,9 @@
+source .properd/VARSET
+
+cd DomTerm-${SOURCE_REVISION}
+autoreconf -i
+./configure
+#./configure --with-qt --enable-compiled-in-resources
+
+make 
+

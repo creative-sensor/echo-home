@@ -1,0 +1,3 @@
+source .properd/VARSET
+sudo dnf localinstall -y $ARTEFACT_DIR/*.rpm
+tar xf $ARTEFACT_DIR/${SOURCE_REVISION}.tar.gz

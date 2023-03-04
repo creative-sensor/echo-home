@@ -1,2 +1,27 @@
-ARTIFACT_DIR=./artefacts
+ARTEFACT_DIR=./artefacts
 SOURCE_REVISION=2.9.4
+
+RPMS="
+    gcc 
+    make 
+    automake 
+    autoconf 
+    texinfo 
+    patch 
+    libwebsockets 
+    libwebsockets-devel 
+    openssl-devel 
+    file-devel 
+    libcap-devel 
+    asciidoctor 
+    zlib-devel
+    gcc-c++-x86_64-linux-gnu.x86_64
+    qt6-qtbase-devel.x86_64
+    qt6-qtwebengine-devel.x86_64
+    qt6-qtwebchannel-devel.x86_64
+    qt5-qtx11extras-devel.x86_64
+  "
+#  qt5-qtwebchannel-devel.x86_64
+#    qt5-qtwebengine-devel.x86_64
+#    qt5-qtdeclarative-devel
+
