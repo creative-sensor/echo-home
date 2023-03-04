@@ -6,6 +6,7 @@
 ### 1 WORK IN PROGRESS
 
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
+- [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
 - [datum/2023/WIP/LEAF-9.md](datum/2023/WIP/LEAF-9.md)   ```# KITE: to fly in cloud```
 - [datum/2023/WIP/MDOS-1.md](datum/2023/WIP/MDOS-1.md)   ```# ISO: windows artefact.sha256sum```
@@ -26,6 +27,7 @@
 - [datum/2023/TODO/GILB-0.md](datum/2023/TODO/GILB-0.md)   ```# Gitlab : use Consul dns only when available```
 - [datum/2023/TODO/HCL-2.md](datum/2023/TODO/HCL-2.md)   ```# COWAD : select principal node```
 - [datum/2023/TODO/LEAF-13.md](datum/2023/TODO/LEAF-13.md)   ```# Clipboard: internode```
+- [datum/2023/TODO/LEAF-15.md](datum/2023/TODO/LEAF-15.md)   ```# ETO : Emerging Technology Observatory ```
 - [datum/2023/TODO/LEAF-4.md](datum/2023/TODO/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
 - [datum/2023/TODO/MDOS-0.md](datum/2023/TODO/MDOS-0.md)   ```# FEATURE : powershell for gvim```
 - [datum/2023/TODO/NCEPT-0.md](datum/2023/TODO/NCEPT-0.md)   ```# CONCEPT : Fractual system```
@@ -61,6 +63,7 @@
 
 ### 5 BACKLOG
 
+- [datum/2023/BACKLOG/ARTE-4.md](datum/2023/BACKLOG/ARTE-4.md)   ```# ISO : fedora sha256sum```
 - [datum/2023/BACKLOG/CORTA-0.md](datum/2023/BACKLOG/CORTA-0.md)   ```# GRAPH THEORY : Neuron network```
 - [datum/2023/BACKLOG/E419-0.md](datum/2023/BACKLOG/E419-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/KBG-3.md](datum/2023/BACKLOG/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
@@ -68,7 +71,6 @@
 - [datum/2023/BACKLOG/LEAF-0.md](datum/2023/BACKLOG/LEAF-0.md)   ```# ISSUE : vim fgxp did not show .gitconfig```
 - [datum/2023/BACKLOG/LEAF-11.md](datum/2023/BACKLOG/LEAF-11.md)   ```# GIT-CLONE: single commit```
 - [datum/2023/BACKLOG/LEAF-12.md](datum/2023/BACKLOG/LEAF-12.md)   ```# FIBO SHELL: svg```
-- [datum/2023/BACKLOG/LEAF-14.md](datum/2023/BACKLOG/LEAF-14.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/LEAF-5.md](datum/2023/BACKLOG/LEAF-5.md)   ```# FEATURE : color system```
 - [datum/2023/BACKLOG/LEAF-7.md](datum/2023/BACKLOG/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
 - [datum/2023/BACKLOG/NJS-1.md](datum/2023/BACKLOG/NJS-1.md)   ```# KANBORG : ELECTRON UI```

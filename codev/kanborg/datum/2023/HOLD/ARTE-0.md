@@ -17,6 +17,9 @@ Flash BIOS to install UEFI firmware
 
 ### 4 DISCUSSION
 
+###### 4.3
+No email response from ```frontshort```
+
 ###### 4.2
 Attempt to order 1 item from ```frontshort```
 
