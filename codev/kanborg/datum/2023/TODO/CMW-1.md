@@ -1,8 +1,6 @@
-# kanborg : xcard to refresh in UI
+# process : background daemon management
 --------------------------------
 ### 0 DESCRIPTION
-- to invoke xcard in vim UI
-- to refresh UI on change event
 
 
 ### 1 SOLUTION
@@ -20,5 +18,5 @@
 
 --------------------------------
 ```json
-{ "project_code": "KBG" , "links": "" , "location": "" , "fpoint": "" }
+{ "project_code": "CMW" , "links": "" , "location": "" , "fpoint": "" }
 ```

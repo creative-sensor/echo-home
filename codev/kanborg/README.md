@@ -5,7 +5,6 @@
 
 ### 1 WORK IN PROGRESS
 
-- [datum/2023/WIP/KBG-5.md](datum/2023/WIP/KBG-5.md)   ```# kanborg : xcard to refresh in UI```
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-9.md](datum/2023/WIP/LEAF-9.md)   ```# KITE: to fly in cloud```
 - [datum/2023/WIP/MDOS-1.md](datum/2023/WIP/MDOS-1.md)   ```# ISO: windows artefact.sha256sum```
@@ -20,23 +19,34 @@
 - [datum/2023/TODO/ARTE-2.md](datum/2023/TODO/ARTE-2.md)   ```# ISSUE : luks failed to active with passphrase```
 - [datum/2023/TODO/ARTE-3.md](datum/2023/TODO/ARTE-3.md)   ```# ISSUE : Fork repo from community to my github```
 - [datum/2023/TODO/CMW-0.md](datum/2023/TODO/CMW-0.md)   ```# commonwealth : vault function```
+- [datum/2023/TODO/CMW-1.md](datum/2023/TODO/CMW-1.md)   ```# process : background daemon management```
+- [datum/2023/TODO/DOCS-1.md](datum/2023/TODO/DOCS-1.md)   ```# short-gun : ```
 - [datum/2023/TODO/DROID-0.md](datum/2023/TODO/DROID-0.md)   ```# FEATURE : Fork GitJournal```
 - [datum/2023/TODO/GILB-0.md](datum/2023/TODO/GILB-0.md)   ```# Gitlab : use Consul dns only when available```
+- [datum/2023/TODO/HCL-2.md](datum/2023/TODO/HCL-2.md)   ```# COWAD : select principal node```
 - [datum/2023/TODO/LEAF-4.md](datum/2023/TODO/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
 - [datum/2023/TODO/MDOS-0.md](datum/2023/TODO/MDOS-0.md)   ```# FEATURE : powershell for gvim```
 - [datum/2023/TODO/NCEPT-0.md](datum/2023/TODO/NCEPT-0.md)   ```# CONCEPT : Fractual system```
 
 ### 4 DONE
 
+- [datum/2023/DONE/archived.JBL-1.md](datum/2023/DONE/archived.JBL-1.md)   ```# ISSUE : JBL Charge 5```
+- [datum/2023/DONE/archived.KBG-1.md](datum/2023/DONE/archived.KBG-1.md)   ```# RELEASE : KANBORG```
+- [datum/2023/DONE/archived.KBG-2.md](datum/2023/DONE/archived.KBG-2.md)   ```# ISSUE : card not move when destination is empty```
+- [datum/2023/DONE/archived.KBG-3.md](datum/2023/DONE/archived.KBG-3.md)   ```# FIX: kanborg support for windows```
+- [datum/2023/DONE/archived.KBS-1.md](datum/2023/DONE/archived.KBS-1.md)   ```# CREDIT```
+- [datum/2023/DONE/archived.SPEC-0.md](datum/2023/DONE/archived.SPEC-0.md)   ```# FEATURE: yson format```
 - [datum/2023/DONE/ARTE-1.md](datum/2023/DONE/ARTE-1.md)   ```# ISSUE : yson - artefact-get```
+- [datum/2023/DONE/DOCS-0.md](datum/2023/DONE/DOCS-0.md)   ```# awk : explore useful case```
 - [datum/2023/DONE/HCL-0.md](datum/2023/DONE/HCL-0.md)   ```# FEATURE : Vault integration```
 - [datum/2023/DONE/HCL-1.md](datum/2023/DONE/HCL-1.md)   ```# FEATURE : Consul as dns resolver```
 - [datum/2023/DONE/KBG-0.md](datum/2023/DONE/KBG-0.md)   ```# ISSUE : card not move when destination is empty```
 - [datum/2023/DONE/KBG-1.md](datum/2023/DONE/KBG-1.md)   ```# ISSUE : data protection from git merge```
 - [datum/2023/DONE/KBG-2.md](datum/2023/DONE/KBG-2.md)   ```# FEATURE: project metadata as datum```
 - [datum/2023/DONE/KBG-4.md](datum/2023/DONE/KBG-4.md)   ```# FEATURE : add backlog column```
-- [datum/2023/DONE/LEAF-1.md](datum/2023/DONE/LEAF-1.md)   ```# CODEV : Makefile as graph workflow```
+- [datum/2023/DONE/KBG-5.md](datum/2023/DONE/KBG-5.md)   ```# kanborg : xcard to refresh in UI```
 - [datum/2023/DONE/LEAF-10.md](datum/2023/DONE/LEAF-10.md)   ```# gitlab : mono service```
+- [datum/2023/DONE/LEAF-1.md](datum/2023/DONE/LEAF-1.md)   ```# CODEV : Makefile as graph workflow```
 - [datum/2023/DONE/LEAF-2.md](datum/2023/DONE/LEAF-2.md)   ```# FEATURE : cdx - teleport for cd command```
 - [datum/2023/DONE/LEAF-3.md](datum/2023/DONE/LEAF-3.md)   ```# FEATURE : commonwealth base```
 - [datum/2023/DONE/LEAF-6.md](datum/2023/DONE/LEAF-6.md)   ```# GUI : advanced```
@@ -46,12 +56,6 @@
 - [datum/2023/DONE/SPEC-0.md](datum/2023/DONE/SPEC-0.md)   ```# SPEC : yson format```
 - [datum/2023/DONE/SPEC-1.md](datum/2023/DONE/SPEC-1.md)   ```# SPEC : yson format - python implement```
 - [datum/2023/DONE/SPEC-2.md](datum/2023/DONE/SPEC-2.md)   ```# SPEC : bash.namespace```
-- [datum/2023/DONE/archived.JBL-1.md](datum/2023/DONE/archived.JBL-1.md)   ```# ISSUE : JBL Charge 5```
-- [datum/2023/DONE/archived.KBG-1.md](datum/2023/DONE/archived.KBG-1.md)   ```# RELEASE : KANBORG```
-- [datum/2023/DONE/archived.KBG-2.md](datum/2023/DONE/archived.KBG-2.md)   ```# ISSUE : card not move when destination is empty```
-- [datum/2023/DONE/archived.KBG-3.md](datum/2023/DONE/archived.KBG-3.md)   ```# FIX: kanborg support for windows```
-- [datum/2023/DONE/archived.KBS-1.md](datum/2023/DONE/archived.KBS-1.md)   ```# CREDIT```
-- [datum/2023/DONE/archived.SPEC-0.md](datum/2023/DONE/archived.SPEC-0.md)   ```# FEATURE: yson format```
 
 ### 5 BACKLOG
 
