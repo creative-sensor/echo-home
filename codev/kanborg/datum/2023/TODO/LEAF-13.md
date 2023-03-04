@@ -13,7 +13,8 @@
 
 
 ### 4 JOURNAL
-
+###### 4.0
+- ```xclip``` displays content of system clipboard
 
 
 --------------------------------

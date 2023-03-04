@@ -17,7 +17,11 @@
 
 
 ### 4 DISCUSSION
-
+###### 4.0
+- DomTerm package: https://github.com/PerBothner/DomTerm
+- AppImage: https://appimage.org/
+- The app image open with browser which introduce keymap conflict
+  Better compile as separate program: https://domterm.org/index.html
 
 
 --------------------------------
