@@ -1,0 +1,5 @@
+source .properd/VARSET
+set -x
+mkdir -p $ARTIFACT_DIR
+curl -L -o $ARTIFACT_DIR/DomTerm-${SOURCE_REVISION}.AppImage  https://github.com/PerBothner/DomTerm/releases/download/${SOURCE_REVISION}/DomTerm.AppImage
+
