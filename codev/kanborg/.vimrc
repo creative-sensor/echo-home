@@ -51,6 +51,7 @@ filetype plugin indent on    " required
 
 
 "-------- [GLOBAL] --------
+set shellslash
 let g:cycle_dir = $DATA_DIR.'/'.$CYCLE
 let g:VIEW = tempname().'.VIEW'
 let g:BACKLOG = tempname().'.BACKLOG'
@@ -125,7 +126,8 @@ endfunction
 function RefreshColumn()
     let column_name = fnamemodify(bufname(),':e')
     exec "%delete"
-    exec 'silent read ! echo "----'.column_name.'----" ; find '.g:cycle_dir.'/'.column_name.' -type f | sort'
+    exec 'silent read ! echo "----'.column_name.'----"'
+    exec 'silent read ! find '.g:cycle_dir.'/'.column_name.' -type f | sort'
 endfunction
 
 
