@@ -1,10 +1,7 @@
-# short-gun : 
+# GRAPH DB : mono service
 --------------------------------
 ### 0 DESCRIPTION
-- bash: color-code
-- jq: 
-- strace:
-- 
+
 
 ### 1 SOLUTION
 
@@ -21,5 +18,5 @@
 
 --------------------------------
 ```json
-{ "project_code": "DOCS" , "links": "" , "location": "" , "fpoint": "" }
+{ "project_code": "LEAF" , "links": "" , "location": "" , "fpoint": "" }
 ```

@@ -8,7 +8,16 @@
 
 
 ### 2 NOTES
-
+Repo to fork:
+- https://github.com/PerBothner/DomTerm
+- https://github.com/VundleVim/Vundle.vim'
+- https://github.com/thaerkh/vim-workspace'
+- https://github.com/jreybert/vimagit'
+- https://github.com/tpope/vim-fugitive'
+- https://github.com/junegunn/gv.vim'
+- https://github.com/lifepillar/vim-solarized8'
+- https://github.com/jlanzarotta/bufexplorer'
+- https://github.com/Einenlum/yaml-revealer'
 
 ### 3 TEST/VERIFICATION
 

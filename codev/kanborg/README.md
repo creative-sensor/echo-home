@@ -30,7 +30,6 @@
 - [datum/2023/TODO/LEAF-15.md](datum/2023/TODO/LEAF-15.md)   ```# ETO : Emerging Technology Observatory ```
 - [datum/2023/TODO/LEAF-4.md](datum/2023/TODO/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
 - [datum/2023/TODO/MDOS-0.md](datum/2023/TODO/MDOS-0.md)   ```# FEATURE : powershell for gvim```
-- [datum/2023/TODO/NCEPT-0.md](datum/2023/TODO/NCEPT-0.md)   ```# CONCEPT : Fractual system```
 
 ### 4 DONE
 
@@ -71,6 +70,9 @@
 - [datum/2023/BACKLOG/LEAF-0.md](datum/2023/BACKLOG/LEAF-0.md)   ```# ISSUE : vim fgxp did not show .gitconfig```
 - [datum/2023/BACKLOG/LEAF-11.md](datum/2023/BACKLOG/LEAF-11.md)   ```# GIT-CLONE: single commit```
 - [datum/2023/BACKLOG/LEAF-12.md](datum/2023/BACKLOG/LEAF-12.md)   ```# FIBO SHELL: svg```
+- [datum/2023/BACKLOG/LEAF-16.md](datum/2023/BACKLOG/LEAF-16.md)   ```# GRAPH DB : mono service```
 - [datum/2023/BACKLOG/LEAF-5.md](datum/2023/BACKLOG/LEAF-5.md)   ```# FEATURE : color system```
 - [datum/2023/BACKLOG/LEAF-7.md](datum/2023/BACKLOG/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
+- [datum/2023/BACKLOG/NCEPT-0.md](datum/2023/BACKLOG/NCEPT-0.md)   ```# CONCEPT : Fractual system```
+- [datum/2023/BACKLOG/NCEPT-1.md](datum/2023/BACKLOG/NCEPT-1.md)   ```# SHORT-GUN : CODE```
 - [datum/2023/BACKLOG/NJS-1.md](datum/2023/BACKLOG/NJS-1.md)   ```# KANBORG : ELECTRON UI```
