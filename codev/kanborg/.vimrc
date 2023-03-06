@@ -21,7 +21,7 @@ set title titlestring=VIM\ \|\ %{fnamemodify(getcwd(),\ ':t')} titlelen=32
 set background=light
 set backspace=indent,eol,start
 set ffs=unix
-
+set noswapfile
 "-------- [PLUGIN] --------
 
 "-------- [PLUGIN / VUNDLE] --------
@@ -53,12 +53,12 @@ filetype plugin indent on    " required
 "-------- [GLOBAL] --------
 set shellslash
 let g:cycle_dir = $DATA_DIR.'/'.$CYCLE
-let g:VIEW = tempname().'.VIEW'
-let g:BACKLOG = tempname().'.BACKLOG'
-let g:TODO = tempname().'.TODO'
-let g:HOLD = tempname().'.HOLD'
-let g:WIP = tempname().'.WIP'
-let g:DONE= tempname().'.DONE'
+let g:VIEW = '0.VIEW'
+let g:BACKLOG = '1.BACKLOG'
+let g:TODO = '2.TODO'
+let g:HOLD = '3.HOLD'
+let g:WIP = '4.WIP'
+let g:DONE= '5.DONE'
 
 "-------- [FUNCTIONS] --------
 
@@ -76,11 +76,17 @@ command! -nargs=* FgXp call FgXp(<q-args>)
 function Kolumns()
     exec 'file '.g:VIEW.' | read HELP.md | setlocal filetype=markdown'
         "vim: read file into buffer
-    exec 'silent ! echo "----BACKLOG----" > '.g:BACKLOG.' ; find '.g:cycle_dir.'/BACKLOG -type f | sort >> '.g:BACKLOG | exec 'new '.g:BACKLOG
-    exec 'silent ! echo "----TODO----" > '.g:TODO.' ; find '.g:cycle_dir.'/TODO -type f | sort >> '.g:TODO  | exec 'vnew '.g:TODO
-    exec 'silent ! echo "----HOLD----" > '.g:HOLD.' ; find '.g:cycle_dir.'/HOLD -type f | sort >> '.g:HOLD  | exec 'vnew '.g:HOLD
-    exec 'silent ! echo "----WIP----"  > '.g:WIP.'  ; find '.g:cycle_dir.'/WIP -type f | sort  >> '.g:WIP   | exec 'vnew '.g:WIP
-    exec 'silent ! echo "----DONE----" > '.g:DONE.' ; find '.g:cycle_dir.'/DONE -type f | sort >> '.g:DONE  | exec 'vnew '.g:DONE
+    exec 'new '.g:BACKLOG
+    exec 'silent read ! echo "----BACKLOG----"; find '.g:cycle_dir.'/BACKLOG -type f | sort '
+    exec 'vnew '.g:TODO
+    exec 'silent read ! echo "----TODO----"; find '.g:cycle_dir.'/TODO -type f | sort '
+    exec 'vnew '.g:HOLD
+    exec 'silent read ! echo "----HOLD----"; find '.g:cycle_dir.'/HOLD -type f | sort '
+    exec 'vnew '.g:WIP
+    exec 'silent read ! echo "----WIP----"; find '.g:cycle_dir.'/WIP -type f | sort '
+    exec 'vnew '.g:DONE
+    exec 'silent read ! echo "----DONE----"; find '.g:cycle_dir.'/DONE -type f | sort ' 
+
 endfunction
 
 
@@ -126,8 +132,7 @@ endfunction
 function RefreshColumn()
     let column_name = fnamemodify(bufname(),':e')
     exec "%delete"
-    exec 'silent read ! echo "----'.column_name.'----"'
-    exec 'silent read ! find '.g:cycle_dir.'/'.column_name.' -type f | sort'
+    exec 'silent read ! echo "----'.column_name.'----"; find '.g:cycle_dir.'/'.column_name.' -type f | sort'
 endfunction
 
 
