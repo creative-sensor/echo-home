@@ -19,7 +19,7 @@ if [[ $SUB_FILE_PATH =~ gpg$ ]] ; then
         rm $VOLUME_CACHE/${SUB_FILE_PATH}.gpg
 fi
 
-if which 7z ; then
+if [[ $SUB_FILE_PATH =~ xz$ ]] ; then
     7z x -o$(dirname $VOLUME_CACHE/$SUB_FILE_PATH)  $VOLUME_CACHE/$SUB_FILE_PATH &&
         rm $VOLUME_CACHE/$SUB_FILE_PATH
     SUB_FILE_PATH=${SUB_FILE_PATH%.xz}
