@@ -1,0 +1,13 @@
+#!/bin/bash
+GRAPH_NAME=$1
+# ----
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+# ----
+source .properd/VARSET
+# ----
+test -z "$GRAPH_NAME" && exit 1
+export GRAPH_NAME
+export ID=$(openssl rand -hex 4)
+cat .template/cmd/g.create | envsubst | docker exec -i $CONTAINER_NAME redis-cli -h $REDIS_HOST -p $REDIS_PORT
+

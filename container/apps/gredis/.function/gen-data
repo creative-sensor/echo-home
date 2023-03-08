@@ -1,0 +1,40 @@
+GRAPH_NAME=$1
+test -z "$GRAPH_NAME" && GRAPH_NAME=theory
+SIGN="
+ Aries
+ Taurus
+ Gemini
+ Cancer
+ Leo
+ Virgo
+ Libra
+ Scorpio
+ Sagittarius
+ Capricornus
+ Aquarius
+ Pisces
+"
+ELEMENT="
+  Fire
+  Earth
+  Air
+  Water
+"
+
+.function/create $GRAPH_NAME
+for n in $SIGN $ELEMENT; do
+    .function/create-node $GRAPH_NAME $n
+done
+
+.function/link $GRAPH_NAME  Aries Fire class
+.function/link $GRAPH_NAME  Leo Fire class
+.function/link $GRAPH_NAME  Sagittarius Fire class
+.function/link $GRAPH_NAME  Taurus Earth  class
+.function/link $GRAPH_NAME  Virgo Earth  class
+.function/link $GRAPH_NAME  Capricornus Earth  class
+.function/link $GRAPH_NAME  Gemini Air  class
+.function/link $GRAPH_NAME  Libra Air  class
+.function/link $GRAPH_NAME  Aquarius Air  class
+.function/link $GRAPH_NAME  Cancer Water  class
+.function/link $GRAPH_NAME  Scorpio Water  class
+.function/link $GRAPH_NAME  Pisces Water  class

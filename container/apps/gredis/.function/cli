@@ -1,0 +1,12 @@
+#!/bin/bash
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+# ----
+source .properd/VARSET
+# ----
+CMD=$1
+test -z "$CMD" &&
+    docker exec -i $CONTAINER_NAME redis-cli -h $REDIS_HOST -p $REDIS_PORT
+
+test -n "$CMD" &&
+    docker exec -it $CONTAINER_NAME redis-cli -h $REDIS_HOST -p $REDIS_PORT  $@

@@ -1,0 +1,3 @@
+DKR_IMAGE=redislabs/redisinsight:1.13.1
+
+docker run -v redisinsight:/db -p 8001:8001 $DKR_IMAGE

@@ -1,0 +1,1 @@
+GRAPH.QUERY "${GRAPH_NAME}" 'MATCH (a:node),(b:node) WHERE a.name = "${NODE_A}" AND b.name = "${NODE_B}" CREATE (a)-[:${LINK}]->(b)'

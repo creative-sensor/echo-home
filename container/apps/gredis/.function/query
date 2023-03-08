@@ -1,0 +1,4 @@
+source .properd/VARSET
+docker exec -it $CONTAINER_NAME \
+   redis-cli GRAPH.QUERY social "CREATE (:person {name: 'roi', age: 33, gender: 'male', status: 'married'})"
+

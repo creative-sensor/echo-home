@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+VARSET_EXT=$1
+# ---- |DEFAULT ----
+CONTAINER_NAME=redig
+
+# ---- |OVERRIDE ----
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+docker run -p 6379:6379 -it --rm --name $CONTAINER_NAME  $DKR_IMAGE

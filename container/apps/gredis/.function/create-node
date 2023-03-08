@@ -1,0 +1,17 @@
+#!/bin/bash
+GRAPH_NAME=$1
+NODE_NAME=$2
+# ----
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+# ----
+source .properd/VARSET
+# ----
+test -z "$GRAPH_NAME" && exit 1
+test -z "$NODE_NAME" && exit 1
+export GRAPH_NAME
+export NODE_NAME
+
+set -x
+cat .template/cmd/g.create_node | envsubst | docker exec -i $CONTAINER_NAME redis-cli -h $REDIS_HOST -p $REDIS_PORT
+

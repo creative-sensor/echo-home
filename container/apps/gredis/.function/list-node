@@ -1,0 +1,10 @@
+#!/bin/bash
+GRAPH_NAME=$1
+# ----
+source .properd/VARSET
+# ----
+test -z "$GRAPH_NAME" && .function/list && read -p "GRAPH_NAME ?= " GRAPH_NAME
+echo "GRAPH.RO_QUERY ${GRAPH_NAME}  \"MATCH (n) RETURN ID(n),n.name\"" | .function/cli |\
+        head -n -2   | tail -n +3 |\
+        awk '{if ($1 ~ "^[0-9]+") print $1" "; else  print $1"," }' |\
+        awk -F "\n" 'BEGIN {RS=",\n"; print "ID NAME"} {print $1  $2}'
