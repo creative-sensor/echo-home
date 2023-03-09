@@ -1,0 +1,22 @@
+source .properd/VARSET
+
+
+mkdir -p $ARTEFACT_DIR
+RPMS="
+    g++
+    cmake
+    python3-devel.x86_64
+    golang
+    java-17-openjdk.x86_64
+"
+for i in $RPMS ; do
+    if rpm -qi $i &>/dev/null ; then
+        sudo dnf reinstall --downloadonly --destdir=$ARTEFACT_DIR -y $i
+    else
+        sudo dnf install --downloadonly --destdir=$ARTEFACT_DIR -y $i
+    fi
+done
+
+
+
+

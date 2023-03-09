@@ -33,6 +33,7 @@ export -f git_root
 
 # ---- ALIAS ----
 alias vim='vimx'
+alias vim-py='vimx -u ~/.vim/rc/python'
 alias git-glog='git log --all --decorate --oneline --graph'
 alias gitroot='cd $(git rev-parse --show-toplevel)'
 alias grin='grep -rin '

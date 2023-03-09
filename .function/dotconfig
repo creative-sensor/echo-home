@@ -2,7 +2,7 @@
 
 # ---- install ----
 install -m 0644 .vimrc $HOME
-install -m 0644 .vim/rc/* $HOME/.vim/rc/
 install -m 0644 .gitconfig $HOME
 install -m 0644 .bashrc $HOME
+rsync -avr .vim/rc $HOME/.vim/
 
