@@ -1,10 +1,15 @@
+#!/bin/bash
 
 # ---- RETRIEVE ----
 VERSION=$1
-test -z "$VERSION" && VERSION=34
-URL=https://download.fedoraproject.org/pub/fedora/linux/releases/${VERSION}/Workstation/x86_64/iso/Fedora-Workstation-Live-x86_64-${VERSION}-1.2.iso
-ISO=Fedora-Workstation-Live-x86_64-${VERSION}-1.2.iso
+test -z "$VERSION" && read -p "VERSION ?= " VERSION
+VERSION_MAJOR=$(echo $VERSION | awk -F "-" '{print $1}')
+URL=https://download.fedoraproject.org/pub/fedora/linux/releases/${VERSION_MAJOR}/Workstation/x86_64/iso/Fedora-Workstation-Live-x86_64-${VERSION}.iso
+URL_CHECKSUM=http://mirror.crucial.com.au/fedora/linux/releases/${VERSION_MAJOR}/Workstation/x86_64/iso/Fedora-Workstation-${VERSION}-x86_64-CHECKSUM
+ISO=Fedora-Workstation-Live-x86_64-${VERSION}.iso
+ISO_CHECKSUM=Fedora-Workstation-${VERSION}-x86_64-CHECKSUM
 
+test -s $ISO_CHECKSUM || curl -L -O $URL_CHECKSUM
 test -s $ISO || curl -L -O $URL
 SUBPATH=$ISO
 
