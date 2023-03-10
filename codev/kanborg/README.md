@@ -42,6 +42,7 @@
 - [datum/2023/DONE/archived.KBS-1.md](datum/2023/DONE/archived.KBS-1.md)   ```# CREDIT```
 - [datum/2023/DONE/archived.SPEC-0.md](datum/2023/DONE/archived.SPEC-0.md)   ```# FEATURE: yson format```
 - [datum/2023/DONE/ARTE-1.md](datum/2023/DONE/ARTE-1.md)   ```# ISSUE : yson - artefact-get```
+- [datum/2023/DONE/ARTE-4.md](datum/2023/DONE/ARTE-4.md)   ```# ISO : fedora sha256sum```
 - [datum/2023/DONE/DOCS-0.md](datum/2023/DONE/DOCS-0.md)   ```# awk : explore useful case```
 - [datum/2023/DONE/HCL-0.md](datum/2023/DONE/HCL-0.md)   ```# FEATURE : Vault integration```
 - [datum/2023/DONE/HCL-1.md](datum/2023/DONE/HCL-1.md)   ```# FEATURE : Consul as dns resolver```
@@ -64,7 +65,6 @@
 
 ### 5 BACKLOG
 
-- [datum/2023/BACKLOG/ARTE-4.md](datum/2023/BACKLOG/ARTE-4.md)   ```# ISO : fedora sha256sum```
 - [datum/2023/BACKLOG/CORTA-0.md](datum/2023/BACKLOG/CORTA-0.md)   ```# GRAPH THEORY : Neuron network```
 - [datum/2023/BACKLOG/E419-0.md](datum/2023/BACKLOG/E419-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/KBG-3.md](datum/2023/BACKLOG/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
@@ -74,6 +74,7 @@
 - [datum/2023/BACKLOG/LEAF-12.md](datum/2023/BACKLOG/LEAF-12.md)   ```# FIBO SHELL: svg```
 - [datum/2023/BACKLOG/LEAF-5.md](datum/2023/BACKLOG/LEAF-5.md)   ```# FEATURE : color system```
 - [datum/2023/BACKLOG/LEAF-7.md](datum/2023/BACKLOG/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
+- [datum/2023/BACKLOG/MDOS-2.md](datum/2023/BACKLOG/MDOS-2.md)   ```# toolset : build/compile```
 - [datum/2023/BACKLOG/NCEPT-0.md](datum/2023/BACKLOG/NCEPT-0.md)   ```# CONCEPT : Fractual system```
 - [datum/2023/BACKLOG/NCEPT-1.md](datum/2023/BACKLOG/NCEPT-1.md)   ```# SHORT-GUN : CODE```
 - [datum/2023/BACKLOG/NJS-1.md](datum/2023/BACKLOG/NJS-1.md)   ```# KANBORG : ELECTRON UI```
