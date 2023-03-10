@@ -29,6 +29,7 @@
 - [datum/2023/TODO/HCL-2.md](datum/2023/TODO/HCL-2.md)   ```# COWAD : select principal node```
 - [datum/2023/TODO/LEAF-13.md](datum/2023/TODO/LEAF-13.md)   ```# Clipboard: internode```
 - [datum/2023/TODO/LEAF-15.md](datum/2023/TODO/LEAF-15.md)   ```# ETO : Emerging Technology Observatory ```
+- [datum/2023/TODO/LEAF-18.md](datum/2023/TODO/LEAF-18.md)   ```# container: fedora mini-station```
 - [datum/2023/TODO/LEAF-4.md](datum/2023/TODO/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
 - [datum/2023/TODO/MDOS-0.md](datum/2023/TODO/MDOS-0.md)   ```# FEATURE : powershell for gvim```
 
