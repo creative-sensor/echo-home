@@ -5,6 +5,7 @@
 
 ### 1 WORK IN PROGRESS
 
+- [datum/2023/WIP/ARTE-5.md](datum/2023/WIP/ARTE-5.md)   ```# Workstation: AppImage```
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-16.md](datum/2023/WIP/LEAF-16.md)   ```# GRAPH DB : mono service```
@@ -73,6 +74,7 @@
 - [datum/2023/BACKLOG/LEAF-0.md](datum/2023/BACKLOG/LEAF-0.md)   ```# ISSUE : vim fgxp did not show .gitconfig```
 - [datum/2023/BACKLOG/LEAF-11.md](datum/2023/BACKLOG/LEAF-11.md)   ```# GIT-CLONE: single commit```
 - [datum/2023/BACKLOG/LEAF-12.md](datum/2023/BACKLOG/LEAF-12.md)   ```# FIBO SHELL: svg```
+- [datum/2023/BACKLOG/LEAF-19.md](datum/2023/BACKLOG/LEAF-19.md)   ```# AppImage : explore```
 - [datum/2023/BACKLOG/LEAF-5.md](datum/2023/BACKLOG/LEAF-5.md)   ```# FEATURE : color system```
 - [datum/2023/BACKLOG/LEAF-7.md](datum/2023/BACKLOG/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
 - [datum/2023/BACKLOG/MDOS-2.md](datum/2023/BACKLOG/MDOS-2.md)   ```# toolset : build/compile```
