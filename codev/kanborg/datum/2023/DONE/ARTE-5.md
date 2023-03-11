@@ -5,7 +5,7 @@
 - https://github.com/jgraph/drawio-desktop/releases/download/v20.8.16/drawio-x86_64-20.8.16.AppImage
 
 ### 1 SOLUTION
-
+- https://github.com/creative-sensor/echo-home/commit/7e89636661e53ae2b822986543ec36ee99038c4a
 
 ### 2 NOTES
 

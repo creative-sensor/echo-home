@@ -5,7 +5,6 @@
 
 ### 1 WORK IN PROGRESS
 
-- [datum/2023/WIP/ARTE-5.md](datum/2023/WIP/ARTE-5.md)   ```# Workstation: AppImage```
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-16.md](datum/2023/WIP/LEAF-16.md)   ```# GRAPH DB : mono service```
@@ -44,6 +43,7 @@
 - [datum/2023/DONE/archived.SPEC-0.md](datum/2023/DONE/archived.SPEC-0.md)   ```# FEATURE: yson format```
 - [datum/2023/DONE/ARTE-1.md](datum/2023/DONE/ARTE-1.md)   ```# ISSUE : yson - artefact-get```
 - [datum/2023/DONE/ARTE-4.md](datum/2023/DONE/ARTE-4.md)   ```# ISO : fedora sha256sum```
+- [datum/2023/DONE/ARTE-5.md](datum/2023/DONE/ARTE-5.md)   ```# Workstation: AppImage```
 - [datum/2023/DONE/DOCS-0.md](datum/2023/DONE/DOCS-0.md)   ```# awk : explore useful case```
 - [datum/2023/DONE/HCL-0.md](datum/2023/DONE/HCL-0.md)   ```# FEATURE : Vault integration```
 - [datum/2023/DONE/HCL-1.md](datum/2023/DONE/HCL-1.md)   ```# FEATURE : Consul as dns resolver```
