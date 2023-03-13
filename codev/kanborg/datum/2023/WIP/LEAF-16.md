@@ -13,6 +13,12 @@
 
 
 ### 4 JOURNAL
+###### 4.1
+- RedisInsight UI: https://redis.io/docs/ui/insight/
+- need persistent volume setup
+- need sample dataset (zodiac)
+- need function to search path
+
 ###### 4.0
 - https://people.engr.tamu.edu/davis/GraphBLAS.html
 
