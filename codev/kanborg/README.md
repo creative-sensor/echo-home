@@ -19,7 +19,6 @@
 
 ### 3 TO DO
 
-- [datum/2023/TODO/ARTE-2.md](datum/2023/TODO/ARTE-2.md)   ```# ISSUE : luks failed to active with passphrase```
 - [datum/2023/TODO/ARTE-3.md](datum/2023/TODO/ARTE-3.md)   ```# ISSUE : Fork repo from community to my github```
 - [datum/2023/TODO/CMW-0.md](datum/2023/TODO/CMW-0.md)   ```# commonwealth : vault function```
 - [datum/2023/TODO/CMW-1.md](datum/2023/TODO/CMW-1.md)   ```# process : background daemon management```
@@ -42,6 +41,7 @@
 - [datum/2023/DONE/archived.KBS-1.md](datum/2023/DONE/archived.KBS-1.md)   ```# CREDIT```
 - [datum/2023/DONE/archived.SPEC-0.md](datum/2023/DONE/archived.SPEC-0.md)   ```# FEATURE: yson format```
 - [datum/2023/DONE/ARTE-1.md](datum/2023/DONE/ARTE-1.md)   ```# ISSUE : yson - artefact-get```
+- [datum/2023/DONE/ARTE-2.md](datum/2023/DONE/ARTE-2.md)   ```# ISSUE : luks failed to active with passphrase```
 - [datum/2023/DONE/ARTE-4.md](datum/2023/DONE/ARTE-4.md)   ```# ISO : fedora sha256sum```
 - [datum/2023/DONE/ARTE-5.md](datum/2023/DONE/ARTE-5.md)   ```# Workstation: AppImage```
 - [datum/2023/DONE/DOCS-0.md](datum/2023/DONE/DOCS-0.md)   ```# awk : explore useful case```

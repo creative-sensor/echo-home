@@ -5,6 +5,7 @@
 
 ### 1 SOLUTION
 
+- Caused by typo (a lowercase was not expected)
 
 ### 2 NOTES
 
@@ -14,7 +15,11 @@
 
 ### 4 JOURNAL
 
-
+###### 4.0
+passphrase has been changed:
+```
+sudo cryptsetup luksChangeKey /dev/sdb -S 0
+```
 
 --------------------------------
 ```json
