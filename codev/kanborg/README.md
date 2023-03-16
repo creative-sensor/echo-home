@@ -7,7 +7,6 @@
 
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
-- [datum/2023/WIP/LEAF-16.md](datum/2023/WIP/LEAF-16.md)   ```# GRAPH DB : mono service```
 - [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
 - [datum/2023/WIP/LEAF-9.md](datum/2023/WIP/LEAF-9.md)   ```# KITE: to fly in cloud```
 - [datum/2023/WIP/MDOS-1.md](datum/2023/WIP/MDOS-1.md)   ```# ISO: windows artefact.sha256sum```
@@ -53,6 +52,7 @@
 - [datum/2023/DONE/KBG-4.md](datum/2023/DONE/KBG-4.md)   ```# FEATURE : add backlog column```
 - [datum/2023/DONE/KBG-5.md](datum/2023/DONE/KBG-5.md)   ```# kanborg : xcard to refresh in UI```
 - [datum/2023/DONE/LEAF-10.md](datum/2023/DONE/LEAF-10.md)   ```# gitlab : mono service```
+- [datum/2023/DONE/LEAF-16.md](datum/2023/DONE/LEAF-16.md)   ```# GRAPH DB : mono service```
 - [datum/2023/DONE/LEAF-17.md](datum/2023/DONE/LEAF-17.md)   ```# vim: python ide```
 - [datum/2023/DONE/LEAF-1.md](datum/2023/DONE/LEAF-1.md)   ```# CODEV : Makefile as graph workflow```
 - [datum/2023/DONE/LEAF-2.md](datum/2023/DONE/LEAF-2.md)   ```# FEATURE : cdx - teleport for cd command```
