@@ -5,11 +5,13 @@ CONTAINER_NAME=gitlab
 PUBLISH_HTTP=80
 PUBLISH_HTTPS=443
 PUBLISH_SSH=2222
+DKR_DNS=172.17.0.1
 # ----
 source .properd/VARSET
-
 mkdir -p  $GITLAB_HOME/{config,log,data}
 
+ANSWER=$(dig @$DKR_DNS consul.service.vector.consul +yaml  | yq .[0].message.response_message_data.ANSWER)
+[[ $ANSWER != 1 ]] && DKR_DNS=8.8.8.8
 
 docker container start $CONTAINER_NAME &>/dev/null ||
 docker run --detach \
@@ -21,7 +23,7 @@ docker run --detach \
     --volume $GITLAB_HOME/logs:/var/log/gitlab \
     --volume $GITLAB_HOME/data:/var/opt/gitlab \
     --shm-size 256m \
-    --dns 172.17.0.1 \
+    --dns $DKR_DNS \
     $DKR_IMAGE
 
 

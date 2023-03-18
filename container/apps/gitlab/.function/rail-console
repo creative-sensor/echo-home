@@ -1,0 +1,13 @@
+#!/bin/bash
+
+SCRIPT=$1
+VARSET_FILE=$2
+# ----
+
+# ----
+source .properd/VARSET
+# ----
+
+docker exec  -it \
+    $CONTAINER_NAME gitlab-rails console
+
