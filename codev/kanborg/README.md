@@ -5,30 +5,31 @@
 
 ### 1 WORK IN PROGRESS
 
+- [datum/2023/WIP/GILB-0.md](datum/2023/WIP/GILB-0.md)   ```# Gitlab : use Consul dns only when available```
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
-- [datum/2023/WIP/LEAF-9.md](datum/2023/WIP/LEAF-9.md)   ```# KITE: to fly in cloud```
 - [datum/2023/WIP/MDOS-1.md](datum/2023/WIP/MDOS-1.md)   ```# ISO: windows artefact.sha256sum```
 - [datum/2023/WIP/NJS-2.md](datum/2023/WIP/NJS-2.md)   ```# GLORIA: run objectory```
 
 ### 2 ON HOLD
 
 - [datum/2023/HOLD/ARTE-0.md](datum/2023/HOLD/ARTE-0.md)   ```# DEVICE: HP CHROMEBOX G2```
+- [datum/2023/HOLD/LEAF-9.md](datum/2023/HOLD/LEAF-9.md)   ```# KITE: to fly in cloud```
 
 ### 3 TO DO
 
 - [datum/2023/TODO/ARTE-3.md](datum/2023/TODO/ARTE-3.md)   ```# ISSUE : Fork repo from community to my github```
-- [datum/2023/TODO/CMW-0.md](datum/2023/TODO/CMW-0.md)   ```# commonwealth : vault function```
 - [datum/2023/TODO/CMW-1.md](datum/2023/TODO/CMW-1.md)   ```# process : background daemon management```
+- [datum/2023/TODO/CMW-2.md](datum/2023/TODO/CMW-2.md)   ```# commonwealth : vault function```
 - [datum/2023/TODO/DOCS-1.md](datum/2023/TODO/DOCS-1.md)   ```# short-gun : ```
 - [datum/2023/TODO/DROID-0.md](datum/2023/TODO/DROID-0.md)   ```# FEATURE : Fork GitJournal```
-- [datum/2023/TODO/GILB-0.md](datum/2023/TODO/GILB-0.md)   ```# Gitlab : use Consul dns only when available```
 - [datum/2023/TODO/HCL-2.md](datum/2023/TODO/HCL-2.md)   ```# COWAD : select principal node```
 - [datum/2023/TODO/LEAF-13.md](datum/2023/TODO/LEAF-13.md)   ```# Clipboard: internode```
 - [datum/2023/TODO/LEAF-15.md](datum/2023/TODO/LEAF-15.md)   ```# ETO : Emerging Technology Observatory ```
 - [datum/2023/TODO/LEAF-18.md](datum/2023/TODO/LEAF-18.md)   ```# container: fedora mini-station```
 - [datum/2023/TODO/LEAF-4.md](datum/2023/TODO/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
+- [datum/2023/TODO/MDOS-2.md](datum/2023/TODO/MDOS-2.md)   ```# toolset : build/compile```
 - [datum/2023/TODO/MDOS-3.md](datum/2023/TODO/MDOS-3.md)   ```# FEATURE : powershell for gvim```
 
 ### 4 DONE
@@ -67,6 +68,7 @@
 
 ### 5 BACKLOG
 
+- [datum/2023/BACKLOG/CMW-0.md](datum/2023/BACKLOG/CMW-0.md)   ```# Common : Wealth```
 - [datum/2023/BACKLOG/CORTA-0.md](datum/2023/BACKLOG/CORTA-0.md)   ```# GRAPH THEORY : Neuron network```
 - [datum/2023/BACKLOG/E419-0.md](datum/2023/BACKLOG/E419-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/GRTH-0.md](datum/2023/BACKLOG/GRTH-0.md)   ```# GRAPH : THEORY```
@@ -76,10 +78,10 @@
 - [datum/2023/BACKLOG/LEAF-11.md](datum/2023/BACKLOG/LEAF-11.md)   ```# GIT-CLONE: single commit```
 - [datum/2023/BACKLOG/LEAF-12.md](datum/2023/BACKLOG/LEAF-12.md)   ```# FIBO SHELL: svg```
 - [datum/2023/BACKLOG/LEAF-19.md](datum/2023/BACKLOG/LEAF-19.md)   ```# AppImage : explore```
+- [datum/2023/BACKLOG/LEAF-20.md](datum/2023/BACKLOG/LEAF-20.md)   ```# Boot : mono service```
 - [datum/2023/BACKLOG/LEAF-5.md](datum/2023/BACKLOG/LEAF-5.md)   ```# FEATURE : color system```
 - [datum/2023/BACKLOG/LEAF-7.md](datum/2023/BACKLOG/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
 - [datum/2023/BACKLOG/MDOS-0.md](datum/2023/BACKLOG/MDOS-0.md)   ```# FEATURE : powershell for gvim```
-- [datum/2023/BACKLOG/MDOS-2.md](datum/2023/BACKLOG/MDOS-2.md)   ```# toolset : build/compile```
 - [datum/2023/BACKLOG/NCEPT-0.md](datum/2023/BACKLOG/NCEPT-0.md)   ```# CONCEPT : Fractual system```
 - [datum/2023/BACKLOG/NCEPT-1.md](datum/2023/BACKLOG/NCEPT-1.md)   ```# SHORT-GUN : CODE```
 - [datum/2023/BACKLOG/NJS-0.md](datum/2023/BACKLOG/NJS-0.md)   ```# NODE : JS```

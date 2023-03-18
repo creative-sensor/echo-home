@@ -1,7 +1,7 @@
 # commonwealth : vault function
 --------------------------------
 ### 0 DESCRIPTION
-To continue undone work in LEAF-3
+- To continue undone work in LEAF-3
 
 ### 1 SOLUTION
 
