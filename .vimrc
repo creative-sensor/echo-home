@@ -169,12 +169,17 @@ fun! Terminator()
 endfun
 command! -nargs=0 Terminator call Terminator()
 
+function SessionMgmt()
+    let limit = 512
+    silent exec "! [[ ".limit." -lt $(wc -l Session.vim  | awk '{print $1}') ]] && rm Session.vim"
+endfunction
 
 
 "-------- [AUTOCMD] --------
 autocmd FileType yaml  : set tabstop=2
 "autocmd VimEnter * above terminal ++rows=7
 "autocmd VimEnter * if isdirectory(".git") | silent call FgXp(".") | endif
+autocmd VimEnter * silent call SessionMgmt()
 autocmd TerminalOpen * set termwinsize=0*0
     "termwinsize: auto-adjustable
 
