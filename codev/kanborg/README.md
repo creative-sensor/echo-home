@@ -56,7 +56,7 @@
 - [datum/2023/DONE/LEAF-16.md](datum/2023/DONE/LEAF-16.md)   ```# GRAPH DB : mono service```
 - [datum/2023/DONE/LEAF-17.md](datum/2023/DONE/LEAF-17.md)   ```# vim: python ide```
 - [datum/2023/DONE/LEAF-1.md](datum/2023/DONE/LEAF-1.md)   ```# CODEV : Makefile as graph workflow```
-- [datum/2023/DONE/LEAF-21.md](datum/2023/DONE/LEAF-21.md)   ```# VIM : remove aged Session.vim```
+- [datum/2023/DONE/LEAF-21.md](datum/2023/DONE/LEAF-21.md)   ```# VIM : remove aged Session.vim```
 - [datum/2023/DONE/LEAF-2.md](datum/2023/DONE/LEAF-2.md)   ```# FEATURE : cdx - teleport for cd command```
 - [datum/2023/DONE/LEAF-3.md](datum/2023/DONE/LEAF-3.md)   ```# FEATURE : commonwealth base```
 - [datum/2023/DONE/LEAF-6.md](datum/2023/DONE/LEAF-6.md)   ```# GUI : advanced```
