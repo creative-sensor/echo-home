@@ -15,6 +15,8 @@
 
 ### 4 JOURNAL
 
+###### 4.0
+- Technology Map:  https://promwad.com/company/technology-map
 
 
 --------------------------------
