@@ -1,0 +1,17 @@
+#!/bin/bash
+CONTAINER_DIR=$1
+# ----
+source .properd/VARSET
+source $CONTAINER_DIR/.properd/VARSET
+# ----
+
+IMAGE=$(echo $DKR_IMAGE | awk -F ":" '{print $1}')
+VERSION=$(echo $DKR_IMAGE | awk -F ":" '{print $2}')
+DKR_IMAGE_FILE=$ARTEFACT_DIR/$IMAGE/$VERSION.tar.gz
+if ! test -f $DKR_IMAGE_FILE ; then
+        mkdir -p $(dirname $DKR_IMAGE_FILE)
+        sudo docker pull ${DKR_IMAGE}
+        sudo docker save ${DKR_IMAGE} | gzip > ${DKR_IMAGE_FILE}
+fi
+
+ffunction artefacts

@@ -44,6 +44,8 @@ function ffunction {
         $(git_root)/codev/commonwealth/interface/$NAME $@
     fi
 }
+export -f ffunction
+
 # ---- ALIAS ----
 #alias vim='vimx'
 alias git-glog='git log --all --decorate --oneline --graph'
