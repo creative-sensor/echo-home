@@ -28,13 +28,21 @@ function cdx {
 }
 
 function git_root {
-    GIT_ROOT=$(git rev-parse --show-toplevel 2> /dev/null) &&
-        export GIT_ROOT=$GIT_ROOT &&
-        echo $GIT_ROOT && return
+    GIT_ROOT=$(git rev-parse --show-toplevel 2> /dev/null | awk -F ":" '{ $1="/"$1 ; print $1$2}') &&
+        export GIT_ROOT && echo $GIT_ROOT && return
     echo "NOT_A_GIT_ROOT"
 }
 export -f git_root
 
+function ffunction {
+    local NAME=$1
+    shift
+    if test -x .function/$NAME ; then
+        .function/$NAME $@
+    else
+        $(git_root)/codev/commonwealth/interface/$NAME $@
+    fi
+}
 # ---- ALIAS ----
 #alias vim='vimx'
 alias git-glog='git log --all --decorate --oneline --graph'
