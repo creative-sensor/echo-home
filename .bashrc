@@ -29,6 +29,14 @@ function git_root {
 }
 export -f git_root
 
+function ffunction {
+    local NAME=$1; shift
+    if test -x .function/$NAME ; then .function/$NAME $@
+    else
+        echo "ffunction: calling default"
+        $(git_root)/codev/commonwealth/interface/$NAME $@
+    fi
+}
 
 
 # ---- ALIAS ----
