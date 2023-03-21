@@ -37,6 +37,7 @@
 - [datum/2023/DONE/ARTE-2.md](datum/2023/DONE/ARTE-2.md)   ```# ISSUE : luks failed to active with passphrase```
 - [datum/2023/DONE/ARTE-4.md](datum/2023/DONE/ARTE-4.md)   ```# ISO : fedora sha256sum```
 - [datum/2023/DONE/ARTE-5.md](datum/2023/DONE/ARTE-5.md)   ```# Workstation: AppImage```
+- [datum/2023/DONE/CMW-3.md](datum/2023/DONE/CMW-3.md)   ```# FEATURE : default implementation for common functions```
 - [datum/2023/DONE/DOCS-0.md](datum/2023/DONE/DOCS-0.md)   ```# awk : explore useful case```
 - [datum/2023/DONE/GILB-0.md](datum/2023/DONE/GILB-0.md)   ```# Gitlab : use Consul dns only when available```
 - [datum/2023/DONE/HCL-0.md](datum/2023/DONE/HCL-0.md)   ```# FEATURE : Vault integration```
@@ -71,7 +72,6 @@
 ### 5 BACKLOG
 
 - [datum/2023/BACKLOG/CMW-0.md](datum/2023/BACKLOG/CMW-0.md)   ```# Common : Wealth```
-- [datum/2023/BACKLOG/CMW-3.md](datum/2023/BACKLOG/CMW-3.md)   ```# FEATURE : default implementation for common functions```
 - [datum/2023/BACKLOG/CORTA-0.md](datum/2023/BACKLOG/CORTA-0.md)   ```# GRAPH THEORY : Neuron network```
 - [datum/2023/BACKLOG/E419-0.md](datum/2023/BACKLOG/E419-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/GRTH-0.md](datum/2023/BACKLOG/GRTH-0.md)   ```# GRAPH : THEORY```
