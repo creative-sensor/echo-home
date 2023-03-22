@@ -1,0 +1,2 @@
+DKR_IMAGE=pantsel/konga:0.14.9
+CONTAINER_NAME=konga

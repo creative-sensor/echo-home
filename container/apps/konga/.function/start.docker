@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# ----
+PUBLISH=11337
+DETACH="--detach"
+CONTAINER_NAME=konga
+# ----
+source .properd/VARSET
+
+docker container start $CONTAINER_NAME &>/dev/null ||
+docker run $DETACH \
+    --name $CONTAINER_NAME \
+    -p $PUBLISH:1337 \
+    -e "NODE_ENV=production" \
+    -e "TOKEN_SECRET=${TOKEN_SECRET:-$(date)}" \
+    $DKR_IMAGE
+

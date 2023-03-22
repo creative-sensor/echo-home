@@ -5,3 +5,5 @@ ac108e462cb000e03e2670f8c4579e9efbd74d3f79d734be4de59d9561b77cad  ./authelia/aut
 af9aab96599b46ec9362336b18b21fcec487fbfe1cf0c6f609c2828e5a90a673  ./postgres/15.2.tar.gz
 4dd8f4c4f1f2e803be32d7bb2fcd31e0c1243107ab9870ef708a679d815cdbb4  ./haproxy/2.5.12.tar.gz
 468c6b6af1328be7d06ad98ca370c21b0f1d2fd87e154fc027d386975c063b50  ./fedora/37.tar.gz
+a8eaad557b55ae825da7fd7bcb569e6602352b84f3a36cd33d37e4edb571040e  ./pantsel/konga/0.14.9.tar.gz
+80664d5f925e315f291e73304e0eef96dd9e894c46c36c61e4c58c5edb0e8ecd  ./bitnami/kong/3.2.1.tar.gz
