@@ -1,0 +1,17 @@
+#!/bin/bash
+VARSET_EXT=$1
+# ----
+PGHOSTADDR=127.0.0.1
+PGPORT=5432
+PGDATABASE=postgres
+PGUSER=postgres
+# ----
+set -x
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+set +x
+# ----
+
+! test -r $PGPASSFILE && echo "PGPASSFILE!" && exit 1
+
+docker exec  -e PGPASSWORD=$(<$PASSWORD_FILE) -it $CONTAINER_NAME  psql -h $PGHOSTADDR -U $PGUSER  -d $PGDATABASE

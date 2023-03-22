@@ -1,0 +1,4 @@
+#!/bin/bash
+source .properd/VARSET
+# ----
+docker logs $@ $CONTAINER_NAME

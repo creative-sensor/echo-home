@@ -1,0 +1,4 @@
+source .properd/VARSET
+
+echo "Opening shell inside (( $CONTAINER_NAME ))"
+docker exec -it $CONTAINER_NAME bash

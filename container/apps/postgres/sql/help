@@ -1,0 +1,132 @@
+-- invoke external shell command
+\! echo "hello"
+
+-- List table
+\dt
+
+-- List full schema
+\dS
+
+-- Lists aggregate functions
+\da
+
+-- Lists access methods
+\dA
+
+-- Lists operator classes
+\dAc
+
+-- Lists operator families
+\dAf
+
+
+-- Lists operators associated with operator families
+\dAo
+
+-- Lists support functions associated with operator families
+\dAp
+
+-- Lists tablespaces
+\db
+
+-- Lists conversions between character-set encodings
+\dc
+
+-- Lists server configuration parameters and their values
+\dconfig
+
+-- Lists type casts
+\dC
+
+-- Shows the descriptions of objects 
+\dd
+
+-- Lists domains
+\dD
+
+-- Lists default access privilege settings
+\ddp
+
+
+-- Show : the letters E, i, m, s, t, and v stand for foreign table, index, materialized view, sequence, table, and view, respectively.
+\dE
+\di
+\dm
+\ds
+\dt
+\dv
+
+-- Lists foreign servers 
+\des
+
+-- Lists foreign tables 
+\det
+
+-- Lists user mappings
+\deu
+
+-- Lists foreign-data wrappers 
+\dew
+
+-- Lists functions
+\df
+
+-- Lists text search configurations
+\dF
+
+-- Lists text search dictionaries
+\dFd
+
+-- Lists text search parsers
+\dFp
+
+-- Lists text search templates
+\dFt
+
+-- Lists database roles
+\dg
+
+-- Lists large objects
+\dl
+
+-- Lists procedural languages
+\dL
+
+-- Lists schemas (namespaces)
+\dn
+
+-- Lists operators with their operand and result types
+\do
+
+-- Lists collations
+\dO
+
+-- Lists tables, views and sequences with their associated access privileges
+\dp [ pattern ]
+
+-- Lists partitioned relations
+\dP
+
+-- Lists defined configuration settings
+\drds
+
+-- Lists replication publications
+\dRp
+
+-- Lists replication subscriptions
+\dRs
+
+-- Lists data types
+\dT
+
+-- Lists database roles
+\du
+
+-- Lists installed extensions
+\dx
+
+-- Lists extended statistics
+\dX
+
+-- Lists event triggers
+\dy

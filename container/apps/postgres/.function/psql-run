@@ -1,0 +1,22 @@
+#!/bin/bash
+SQL_FILE=$1
+VARSET_EXT=$2
+# ----
+PGHOSTADDR=127.0.0.1
+PGPORT=5432
+PGDATABASE=postgres
+PGUSER=postgres
+# ----
+set -x
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+set +x
+# ----
+if test -r "$SQL_FILE"  ; then
+    grep -q -i --max-count=1 "create\|alter\|grant\|insert\|update\|add\|delete\|drop" $SQL_FILE &&
+        echo "SQL script may change database. Running in ${DELAY:-5}s" && sleep ${DELAY:-5}
+    docker exec -e PGPASSWORD=$(<$PASSWORD_FILE) -i $CONTAINER_NAME psql -h $PGHOSTADDR -U $PGUSER  -d $PGDATABASE < $SQL_FILE
+else
+    echo "SQL_FILE!" && exit 1
+fi
+

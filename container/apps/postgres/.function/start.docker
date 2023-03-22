@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# https://www.postgresql.org/docs/14/libpq-envars.html
+CONTAINER_NAME=postgres
+DKR_DNS=8.8.8.8
+POSTGRES_USER=postgres
+POSTGRES_DB=$POSTGRES_USER
+POSTGRES_HOST_AUTH_METHOD=scram-sha-256
+POSTGRES_INITDB_ARGS="--data-checksums --auth=$POSTGRES_HOST_AUTH_METHOD"
+POSTGRES_INITDB_WALDIR=
+PGDATA=/var/lib/postgresql/data
+POSTGRES_PASSWORD_FILE=/tmp/passwd
+PASSWORD_FILE=$(pwd)/tmp.passwd
+# ----
+source .properd/VARSET
+
+! test -d $DATA_DIR  &&
+    mkdir -p  $DATA_DIR/{config,log,data} &&
+    chmod 0777 $DATA_DIR
+
+touch $PASSWORD_FILE
+
+docker run --detach \
+    --rm \
+    --name $CONTAINER_NAME \
+    --dns $DKR_DNS \
+    --volume $PWD/$DATA_DIR/data:$PGDATA \
+    --volume $PASSWORD_FILE:$POSTGRES_PASSWORD_FILE:ro \
+    -e POSTGRES_USER=$POSTGRES_USER \
+    -e POSTGRES_PASSWORD_FILE=$POSTGRES_PASSWORD_FILE \
+    -e POSTGRES_DB=$POSTGRES_DB \
+    -e POSTGRES_INITDB_ARGS="$POSTGRES_INITDB_ARGS" \
+    -e PGDATA=$PGDATA \
+    $DKR_IMAGE
+
+
