@@ -1,0 +1,2 @@
+DKR_IMAGE=grafana/grafana:9.2.15
+CONTAINER_NAME=grafana

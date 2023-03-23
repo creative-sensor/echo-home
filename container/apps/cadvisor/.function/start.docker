@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+VARSET_EXT=$1
+# ---- |DEFAULT ----
+CONTAINER_NAME=cadvisor
+PUBLISH=50080
+# ---- |OVERRIDE ----
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+
+sudo docker run --detach \
+  --rm \
+  --volume=/:/rootfs:ro \
+  --volume=/var/run:/var/run:ro \
+  --volume=/sys:/sys:ro \
+  --volume=/var/lib/docker/:/var/lib/docker:ro \
+  --volume=/dev/disk/:/dev/disk:ro \
+  --publish=$PUBLISH:8080 \
+  --detach=true \
+  --name=$CONTAINER_NAME \
+  --privileged \
+  --device=/dev/kmsg \
+  $DKR_IMAGE
+  

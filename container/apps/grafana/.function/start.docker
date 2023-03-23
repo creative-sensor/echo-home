@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+# ----
+DKR_DNS=8.8.8.8
+PUBLISH=3000
+GF_PATHS_DATA=/var/lib/grafana
+GF_PATHS_LOGS=/var/log/grafana
+GF_PATHS_PLUGINS=/var/lib/grafana/plugins
+GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+GF_PATHS_CONFIG=/etc/grafana/grafana.ini
+DATA_DIR=datum
+CONFIG_SET=$PWD/config-set/grafana.ini
+
+# ----
+source .properd/VARSET
+# ----
+! test -d $DATA_DIR  &&
+    mkdir -p  $DATA_DIR/{data,logs,plugins,provisioning} &&
+    chmod -R 0777 $DATA_DIR
+
+
+docker run --detach \
+    --rm \
+    --name $CONTAINER_NAME \
+    --dns $DKR_DNS \
+    --volume $PWD/$DATA_DIR/data:$GF_PATHS_DATA \
+    --volume $PWD/$DATA_DIR/logs:$GF_PATHS_LOGS \
+    --volume $PWD/$DATA_DIR/plugins:$GF_PATHS_PLUGINS \
+    --volume $PWD/$DATA_DIR/provisioning:$GF_PATHS_PROVISIONING \
+    --volume $CONFIG_SET:$GF_PATHS_CONFIG:ro \
+    -e GF_PATHS_DATA=$GF_PATHS_DATA \
+    -e GF_PATHS_LOGS=$GF_PATHS_LOGS \
+    -e GF_PATHS_PLUGINS=$GF_PATHS_PLUGINS \
+    -e GF_PATHS_PROVISIONING=$GF_PATHS_PROVISIONING \
+    -e GF_PATHS_CONFIG=$GF_PATHS_CONFIG \
+    -p $PUBLISH:3000 \
+    $DKR_IMAGE    

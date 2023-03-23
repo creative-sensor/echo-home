@@ -1,0 +1,5 @@
+DKR_IMAGE=haproxy:2.5.12
+CONTAINER_NAME=haproxy
+DATA_DIR=datum
+PASSWORD_FILE=$PWD/tmp.passwd
+

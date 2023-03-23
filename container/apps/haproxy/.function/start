@@ -3,16 +3,9 @@
 # ---- |EXT ----
 VARSET_EXT=$1
 # ---- |DEFAULT ----
-CONTAINER_NAME=redig
 
 # ---- |OVERRIDE ----
 source .properd/VARSET
 test -n "$VARSET_EXT" && source $VARSET_EXT
 
 # ---- |MAIN ----
-docker run --detach \
-    -it \
-    --rm \
-    --name $CONTAINER_NAME \
-    -p 6379:6379 \
-    $DKR_IMAGE

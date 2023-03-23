@@ -1,0 +1,4 @@
+path.data: ${ELASTIC}/data
+path.logs: ${ELASTIC}/logs
+discovery.type: single-node
+node.name: es-g24q

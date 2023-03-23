@@ -1,4 +1,9 @@
-source .properd/VARSET
+#!/bin/bash
 
+SHELL_SELECT=$1
+source .properd/VARSET
+test -z "$DKR_IMAGE" && echo "DKR_IMAGE!" && exit 1
+test -z "$CONTAINER_NAME" && echo "CONTAINER_NAME!" && exit 1
+test -z "$SHELL_SELECT" && SHELL_SELECT=bash
 echo "Opening shell inside (( $CONTAINER_NAME ))"
-docker exec -it $CONTAINER_NAME bash
+docker exec -it $CONTAINER_NAME $SHELL_SELECT || docker run --rm -it --name $CONTAINER_NAME $DKR_IMAGE  $SHELL_SELECT

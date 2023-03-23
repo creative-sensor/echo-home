@@ -1,0 +1,3 @@
+DKR_IMAGE=bitnami/prometheus:2.43.0
+DATA_DIR=datum
+CONTAINER_NAME=prometheus

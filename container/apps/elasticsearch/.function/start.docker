@@ -1,0 +1,39 @@
+#!/bin/bash
+
+CONFIG_SET=$1
+# ----
+CONTAINER_NAME=haproxy
+DETACH=--detach
+DKR_DNS=8.8.8.8
+PUBLISH=9200
+DATUM_DIR=datum
+ELASTIC=elastic
+USER=elasticsearch
+ES_JAVA_OPTS="-Xms1000m -Xmx1000m"
+
+ELASTICSEARCH_BASE_DIR="/opt/bitnami/elasticsearch"
+ELASTICSEARCH_VOLUME_DIR="/bitnami/elasticsearch"
+ELASTICSEARCH_DATA_DIR="${ELASTICSEARCH_VOLUME_DIR}/data"
+ELASTICSEARCH_CONF_DIR="${ELASTICSEARCH_BASE_DIR}/config"
+ELASTICSEARCH_LOGS_DIR="${ELASTICSEARCH_BASE_DIR}/logs"
+
+# ----
+source .properd/VARSET
+# ----
+test -z "$CONFIG_SET" && CONFIG_SET=$PWD/config-set/elastic.yml
+! test -d $DATUM_DIR  &&
+    mkdir -p  $DATUM_DIR/{config,logs,data} &&
+    chmod -R 0777 $DATUM_DIR
+
+
+docker run $DETACH \
+    --rm \
+    --name $CONTAINER_NAME \
+    --dns $DKR_DNS \
+    --volume $PWD/$DATUM_DIR/data:$ELASTICSEARCH_DATA_DIR \
+    --volume $PWD/$DATUM_DIR/logs:$ELASTICSEARCH_LOGS_DIR \
+    -p $PUBLISH:9200 \
+    $DKR_IMAGE \
+        /opt/bitnami/scripts/elasticsearch/run.sh
+    
+#--volume $CONFIG_SET:$ELASTICSEARCH_CONF_DIR:ro \

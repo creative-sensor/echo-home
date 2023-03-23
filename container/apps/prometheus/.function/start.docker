@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# ----
+DKR_DNS=8.8.8.8
+PUBLISH=9090
+CONFIG_SET=$PWD/config-set/prometheus.yml
+PROMETH_CONFIG_FILE=/opt/bitnami/prometheus/conf/prometheus.yml
+PROMETH_DATA_DIR=/opt/bitnami/prometheus/data
+# ----
+source .properd/VARSET
+# ----
+! test -d $DATA_DIR  &&
+    mkdir -p  $DATA_DIR/{config,log,data} &&
+    chmod -R 0777 $DATA_DIR
+
+docker run --detach \
+    --rm \
+    --name $CONTAINER_NAME \
+    --dns $DKR_DNS \
+    --volume $PWD/$DATA_DIR/data:$PROMETH_DATA_DIR \
+    --volume $CONFIG_SET:$PROMETH_CONFIG_FILE:ro \
+    -p $PUBLISH:9090 \
+    $DKR_IMAGE  \
+        --config.file=$PROMETH_CONFIG_FILE \
+        --storage.tsdb.path=$PROMETH_DATA_DIR \
+        --web.console.libraries=/opt/bitnami/prometheus/conf/console_libraries \
+        --web.console.templates=/opt/bitnami/prometheus/conf/consoles
+

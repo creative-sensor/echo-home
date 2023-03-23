@@ -1,0 +1,8 @@
+#!/bin/bash
+BIND_ADDR=$1
+test -z "$BIND_ADDR" && BIND_ADDR=172.17.0.1
+
+for i in 1 2 3 ;  do
+    python3 -m http.server 5811$i --bind $BIND_ADDR &
+done
+

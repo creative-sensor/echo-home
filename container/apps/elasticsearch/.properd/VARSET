@@ -1,0 +1,4 @@
+DKR_IMAGE=bitnami/elasticsearch:7.17.9
+CONTAINER_NAME=elasticsearch
+DETACH="--detach"
+DATUM_DIR=datum

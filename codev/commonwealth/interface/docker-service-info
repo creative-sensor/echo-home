@@ -1,0 +1,9 @@
+#!/bin/bash
+# ----
+source .properd/VARSET
+# ----
+#
+jsonpath=$(docker container inspect $CONTAINER_NAME | find-jsonpath)
+echo "$jsonpath" | grep '.State.Health.Status'
+echo "$jsonpath" | grep '.NetworkSettings.Gateway'
+echo "$jsonpath" | grep '.NetworkSettings' | grep ".Ports.${PUBLISH_HTTP}/tcp\[0\].HostPort\|.Ports.${PUBLISH_HTTPS}/tcp\[0\].HostPort"

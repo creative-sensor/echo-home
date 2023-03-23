@@ -1,0 +1,26 @@
+#!/bin/bash
+
+CONFIG_SET=$1
+# ----
+CONTAINER_NAME=haproxy
+DKR_DNS=8.8.8.8
+PUBLISH=8080
+PUBLISH_STATS=8404
+# ----
+source .properd/VARSET
+
+test -z "$CONFIG_SET" && CONFIG_SET=$PWD/$DATA_DIR/config/haproxy.cfg
+! test -d $DATA_DIR  &&  mkdir -p  $DATA_DIR/{config,log,data}
+
+
+docker run --detach \
+    --rm \
+    --name $CONTAINER_NAME \
+    --dns $DKR_DNS \
+    --volume $CONFIG_SET:/usr/local/etc/haproxy/haproxy.cfg:ro \
+    --sysctl net.ipv4.ip_unprivileged_port_start=0 \
+    -p $PUBLISH:80 \
+    -p $PUBLISH_STATS:8404 \
+    $DKR_IMAGE
+
+

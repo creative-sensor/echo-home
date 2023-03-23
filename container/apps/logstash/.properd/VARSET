@@ -1,0 +1,4 @@
+DKR_IMAGE=bitnami/logstash:7.17.9
+CONTAINER_NAME=logstash
+DATUM_DIR=datum
+DETACH="--detach"

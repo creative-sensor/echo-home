@@ -1,0 +1,4 @@
+DKR_IMAGE=bitnami/kibana:7.17.9
+CONTAINER_NAME=kibana
+DATUM_DIR=datum
+DETACH="--detach"

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+SERVICE_SPEC=$1
+DROP=$2
+# ----
+# ----
+SERVICE_SPEC=$(readlink -f $SERVICE_SPEC)
+test -n "$DROP" && DROP=de
+cd $(git_root)/workstation/consul
+.function/service-register $SERVICE_SPEC $DROP

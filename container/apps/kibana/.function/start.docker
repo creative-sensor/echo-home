@@ -1,0 +1,40 @@
+#!/bin/bash
+
+CONFIG_SET=$1
+# ----
+CONTAINER_NAME=haproxy
+DKR_DNS=8.8.8.8
+PUBLISH=5601
+DETACH=--detach
+DATUM_DIR=datum
+KIBANA_ELASTICSEARCH_URL=172.17.0.1
+KIBANA_ELASTICSEARCH_PORT_NUMBER=9200
+KIBANA_VOLUME_DIR="/bitnami/kibana"
+KIBANA_BASE_DIR="/opt/bitnami/kibana"
+KIBANA_CONF_DIR="${KIBANA_BASE_DIR}/config"
+KIBANA_LOGS_DIR="${KIBANA_BASE_DIR}/logs"
+KIBANA_DATA_DIR="${KIBANA_VOLUME_DIR}/data"
+
+
+# ----
+source .properd/VARSET
+
+test -z "$CONFIG_SET" && CONFIG_SET=$PWD/$DATUM_DIR/config-set/kibana.yml
+! test -d $DATUM_DIR  &&
+    mkdir -p  $DATUM_DIR/{config,logs,data} &&
+    chmod -R 0777 $DATUM_DIR
+
+
+
+docker run $DETACH \
+    --rm \
+    --name $CONTAINER_NAME \
+    --dns $DKR_DNS \
+    --volume $PWD/$DATUM_DIR/data:$KIBANA_DATA_DIR \
+    --volume $PWD/$DATUM_DIR/logs:$KIBANA_LOGS_DIR \
+    -p $PUBLISH:5601 \
+    -e KIBANA_ELASTICSEARCH_URL=$KIBANA_ELASTICSEARCH_URL \
+    -e KIBANA_ELASTICSEARCH_PORT_NUMBER=$KIBANA_ELASTICSEARCH_PORT_NUMBER \
+    $DKR_IMAGE \
+        /opt/bitnami/scripts/kibana/run.sh
+
