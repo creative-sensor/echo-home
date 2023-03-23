@@ -8,7 +8,7 @@
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-22.md](datum/2023/WIP/LEAF-22.md)   ```# Kong-gateway : mono service```
-- [datum/2023/WIP/LEAF-23.md](datum/2023/WIP/LEAF-23.md)   ```# postgres : mono service```
+- [datum/2023/WIP/LEAF-24.md](datum/2023/WIP/LEAF-24.md)   ```# haproxy : mono service```
 - [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
 - [datum/2023/WIP/NJS-2.md](datum/2023/WIP/NJS-2.md)   ```# GLORIA: run objectory```
 
@@ -61,6 +61,7 @@
 - [datum/2023/DONE/LEAF-17.md](datum/2023/DONE/LEAF-17.md)   ```# vim: python ide```
 - [datum/2023/DONE/LEAF-1.md](datum/2023/DONE/LEAF-1.md)   ```# CODEV : Makefile as graph workflow```
 - [datum/2023/DONE/LEAF-21.md](datum/2023/DONE/LEAF-21.md)   ```# VIM : remove aged Session.vim```
+- [datum/2023/DONE/LEAF-23.md](datum/2023/DONE/LEAF-23.md)   ```# postgres : mono service```
 - [datum/2023/DONE/LEAF-2.md](datum/2023/DONE/LEAF-2.md)   ```# FEATURE : cdx - teleport for cd command```
 - [datum/2023/DONE/LEAF-3.md](datum/2023/DONE/LEAF-3.md)   ```# FEATURE : commonwealth base```
 - [datum/2023/DONE/LEAF-6.md](datum/2023/DONE/LEAF-6.md)   ```# GUI : advanced```
@@ -90,6 +91,7 @@
 - [datum/2023/BACKLOG/MDOS-0.md](datum/2023/BACKLOG/MDOS-0.md)   ```# FEATURE : powershell for gvim```
 - [datum/2023/BACKLOG/NCEPT-0.md](datum/2023/BACKLOG/NCEPT-0.md)   ```# CONCEPT : Fractual system```
 - [datum/2023/BACKLOG/NCEPT-1.md](datum/2023/BACKLOG/NCEPT-1.md)   ```# SHORT-GUN : CODE```
+- [datum/2023/BACKLOG/NCEPT-2.md](datum/2023/BACKLOG/NCEPT-2.md)   ```# RDBMS : Sharding with graph theory```
 - [datum/2023/BACKLOG/NJS-0.md](datum/2023/BACKLOG/NJS-0.md)   ```# NODE : JS```
 - [datum/2023/BACKLOG/NJS-1.md](datum/2023/BACKLOG/NJS-1.md)   ```# KANBORG : ELECTRON UI```
 - [datum/2023/BACKLOG/TSQA-0.md](datum/2023/BACKLOG/TSQA-0.md)   ```# TEST : QUALITY```
