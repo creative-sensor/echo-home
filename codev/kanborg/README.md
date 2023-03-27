@@ -86,6 +86,7 @@
 - [datum/2023/BACKLOG/LEAF-12.md](datum/2023/BACKLOG/LEAF-12.md)   ```# FIBO SHELL: svg```
 - [datum/2023/BACKLOG/LEAF-19.md](datum/2023/BACKLOG/LEAF-19.md)   ```# AppImage : explore```
 - [datum/2023/BACKLOG/LEAF-20.md](datum/2023/BACKLOG/LEAF-20.md)   ```# Boot : mono service```
+- [datum/2023/BACKLOG/LEAF-25.md](datum/2023/BACKLOG/LEAF-25.md)   ```# vim : rc/artillery```
 - [datum/2023/BACKLOG/LEAF-5.md](datum/2023/BACKLOG/LEAF-5.md)   ```# FEATURE : color system```
 - [datum/2023/BACKLOG/LEAF-7.md](datum/2023/BACKLOG/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
 - [datum/2023/BACKLOG/MDOS-0.md](datum/2023/BACKLOG/MDOS-0.md)   ```# FEATURE : powershell for gvim```
