@@ -9,6 +9,7 @@
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-22.md](datum/2023/WIP/LEAF-22.md)   ```# Kong-gateway : mono service```
 - [datum/2023/WIP/LEAF-24.md](datum/2023/WIP/LEAF-24.md)   ```# haproxy : mono service```
+- [datum/2023/WIP/LEAF-25.md](datum/2023/WIP/LEAF-25.md)   ```# vim : rc/artillery```
 - [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
 - [datum/2023/WIP/NJS-2.md](datum/2023/WIP/NJS-2.md)   ```# GLORIA: run objectory```
 
@@ -86,7 +87,6 @@
 - [datum/2023/BACKLOG/LEAF-12.md](datum/2023/BACKLOG/LEAF-12.md)   ```# FIBO SHELL: svg```
 - [datum/2023/BACKLOG/LEAF-19.md](datum/2023/BACKLOG/LEAF-19.md)   ```# AppImage : explore```
 - [datum/2023/BACKLOG/LEAF-20.md](datum/2023/BACKLOG/LEAF-20.md)   ```# Boot : mono service```
-- [datum/2023/BACKLOG/LEAF-25.md](datum/2023/BACKLOG/LEAF-25.md)   ```# vim : rc/artillery```
 - [datum/2023/BACKLOG/LEAF-5.md](datum/2023/BACKLOG/LEAF-5.md)   ```# FEATURE : color system```
 - [datum/2023/BACKLOG/LEAF-7.md](datum/2023/BACKLOG/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
 - [datum/2023/BACKLOG/MDOS-0.md](datum/2023/BACKLOG/MDOS-0.md)   ```# FEATURE : powershell for gvim```

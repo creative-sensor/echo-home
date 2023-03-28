@@ -14,7 +14,16 @@
 
 ### 4 JOURNAL
 
-
+###### 4.0
+prototype
+```
+vim-artillery host-abc
+    terminal:ssh host-acb
+    window: list
+        ssh host-abc:file > file buffer
+        file save
+        ssh > host-abc:file
+```
 
 --------------------------------
 ```json
