@@ -1,0 +1,138 @@
+"-------- [MISC] --------
+syntax on
+highlight CursorLine cterm=NONE ctermbg=251
+    "highlight CursorLine cterm=NONE ctermbg=24
+highlight Terminal ctermbg=23 ctermfg=15
+
+filetype on
+
+
+
+"-------- [VARSET] --------
+set laststatus=2
+set ruler
+set cursorline
+set hlsearch
+set nowrap
+set expandtab
+set tabstop=4
+set mouse=a
+set splitright
+set title titlestring=VIM\ \|\ %{fnamemodify(getcwd(),\ ':t')} titlelen=32
+    "output:  VIM | current_dirname
+set background=light
+set backspace=indent,eol,start
+
+
+
+
+
+
+"-------- [PLUGIN / VUNDLE] --------
+set nocompatible              " be iMproved, required
+filetype off                  " required
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+        "Plugin Manager
+Plugin 'thaerkh/vim-workspace'
+        "Workspace
+Plugin 'jreybert/vimagit'
+        "Git workflow
+Plugin 'tpope/vim-fugitive'
+        "Git commands
+Plugin 'junegunn/gv.vim'
+        "Git browser
+Plugin 'lifepillar/vim-solarized8'
+        "Colorscheme
+Plugin 'jlanzarotta/bufexplorer'
+        "Buffer Explorer
+Plugin 'Einenlum/yaml-revealer'
+        "echo yaml path'
+call vundle#end()            " required
+filetype plugin indent on    " required
+
+"-------- [VARSET] --------
+let g:artillery = "/tmp/vim-artillery"
+let g:artillery_target = g:artillery."/".$SSH_HOST
+let g:pid = getpid()
+"-------- [FUNCTIONS] --------
+
+
+function FgXp()
+    highlight Terminal ctermbg=228 ctermfg=0 guibg=#073042 guifg=#7ec1de
+    call term_start("ssh ".$SSH_HOST."  find ".$SUB_DIR." -type f")
+endfunction
+
+function! OpenFile(subpath)
+    let subpath = substitute(a:subpath, "\r","","g")
+    let target_path = g:artillery_target."/".subpath
+    exe "silent !mkdir -p $(dirname ".target_path.")"
+    exe "silent !scp ".$SSH_HOST.":".subpath." ".target_path
+    exe "tabnew ".target_path
+endfunction
+
+function! RefreshBuffer()
+    let buf_name = bufname()
+    let target_path = buf_name
+    let subpath = substitute(buf_name, g:artillery_target,"","")
+    exe "silent !scp ".$SSH_HOST.":".subpath." ".target_path
+endfunction
+
+function! SaveFile()
+    let buf_name = bufname()
+    let target_path = buf_name
+    let subpath = substitute(buf_name, g:artillery_target,"","")
+    exe "silent w! ".target_path
+    exe "silent !scp ".target_path." ".$SSH_HOST.":".subpath
+endfunction
+
+
+"-------- [AUTOCMD] --------
+autocmd FileType yaml  : set tabstop=2
+autocmd VimEnter * call FgXp()
+autocmd TerminalOpen * set termwinsize=0*0
+    "termwinsize: auto-adjustable
+
+
+
+
+"-------- [KEYMAP] --------
+map T : tabnew . <CR>
+    "New tab
+map C : s/^/#/<CR>
+    "Comment
+map uc : s/^#//<CR>
+    "Uncomment
+map Bp : bp<CR>
+    "Buffer back
+map Bn : bn<CR>
+    "Buffer next
+map aC : :%!column -t<CR>
+    "Format as columns
+map WW : call SaveFile() <CR>
+    "Save all
+map QQ : wqa<CR>
+    "Save and quit all
+map q0 : qa!<CR>
+    "Quit all
+map tty : call term_start("ssh ".$SSH_HOST)<CR>
+map ttu : below terminal ++rows=7<CR>
+
+
+
+vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
+    "LOOK UP KEYWORD
+    ":copy selected text into register '+'
+    ":vertical split window
+    ":and call function Grin which take
+    "content of '+' as argument
+
+nnoremap --    yy : call OpenFile("<C-R>"")  <CR>
+
+nnoremap rr    : call RefreshBuffer() <CR>
+
+    
+"-------- [POST-INIT] --------
+colorscheme solarized8_high

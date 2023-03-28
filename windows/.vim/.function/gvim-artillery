@@ -1,0 +1,10 @@
+#!/bin/bash
+
+SSH_HOST=$1
+SUB_DIR=$2
+test -z "$SSH_HOST" && echo "SSH_HOST!" && exit 1
+test -z "$SUB_DIR" && SUB_DIR='/home/creativ/tmp'
+export SSH_HOST=$SSH_HOST
+export SUB_DIR=${SUB_DIR#/}
+    # gvim auto-insert root gitbash path
+gvim -U ~/echo-home/windows/.vim/rc/artillery.gv  -u ~/echo-home/windows/.vim/rc/artillery &

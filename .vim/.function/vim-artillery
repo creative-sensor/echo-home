@@ -1,0 +1,9 @@
+#!/bin/bash
+
+SSH_HOST=$1
+SUB_DIR=$2
+test -z "$SSH_HOST" && echo "SSH_HOST!" && exit 1
+test -z "$SUB_DIR" && SUB_DIR='~'
+export SSH_HOST=$SSH_HOST
+export SUB_DIR=$SUB_DIR
+vim -u ~/.vim/rc/artillery

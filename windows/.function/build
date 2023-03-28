@@ -4,7 +4,7 @@ source .properd/VARSET
 # ---- install ----
 install .vimrc ~/
 install .gvimrc ~/
-install -d .vim ~/
+cp -r .vim ~/
 install .gitconfig ~/
 install .bashrc ~/
 install .bash_profile ~/

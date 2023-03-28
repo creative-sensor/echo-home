@@ -4,5 +4,6 @@
 install -m 0644 .vimrc $HOME
 install -m 0644 .gitconfig $HOME
 install -m 0644 .bashrc $HOME
+#install -m 0644 .ssh/config $HOME/.ssh/
 rsync -avr .vim/rc $HOME/.vim/
 

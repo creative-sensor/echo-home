@@ -1,0 +1,9 @@
+set shell=\"C:\Program\ Files\Git\bin\sh.exe\"
+set guifont=Consolas:h11
+set shellslash
+""highlight Terminal ctermbg=23 ctermfg=15 guibg=#073042 guifg=#7ec1de
+highlight Terminal ctermbg=23 ctermfg=15 guibg=#fff2cc guifg=#073763
+
+
+
+
