@@ -1,0 +1,5 @@
+#!/bin/bash -x
+
+BRANCH=$(git branch | grep "^\*.*" | awk '{print $2}')
+REMOTE=origin
+git pull $OPTION  $REMOTE $BRANCH
