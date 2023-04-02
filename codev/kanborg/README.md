@@ -5,6 +5,7 @@
 
 ### 1 WORK IN PROGRESS
 
+- [datum/2023/WIP/CMW-4.md](datum/2023/WIP/CMW-4.md)   ```# interface : get wired interface```
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-22.md](datum/2023/WIP/LEAF-22.md)   ```# Kong-gateway : mono service```
