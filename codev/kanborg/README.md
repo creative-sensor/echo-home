@@ -8,7 +8,6 @@
 - [datum/2023/WIP/CMW-4.md](datum/2023/WIP/CMW-4.md)   ```# interface : get wired interface```
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
-- [datum/2023/WIP/LEAF-18.md](datum/2023/WIP/LEAF-18.md)   ```# container: fedora mini-station```
 - [datum/2023/WIP/LEAF-22.md](datum/2023/WIP/LEAF-22.md)   ```# Kong-gateway : mono service```
 - [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
 - [datum/2023/WIP/NJS-2.md](datum/2023/WIP/NJS-2.md)   ```# GLORIA: run objectory```
@@ -59,6 +58,7 @@
 - [datum/2023/DONE/LEAF-10.md](datum/2023/DONE/LEAF-10.md)   ```# gitlab : mono service```
 - [datum/2023/DONE/LEAF-16.md](datum/2023/DONE/LEAF-16.md)   ```# GRAPH DB : mono service```
 - [datum/2023/DONE/LEAF-17.md](datum/2023/DONE/LEAF-17.md)   ```# vim: python ide```
+- [datum/2023/DONE/LEAF-18.md](datum/2023/DONE/LEAF-18.md)   ```# container: fedora mini-station```
 - [datum/2023/DONE/LEAF-1.md](datum/2023/DONE/LEAF-1.md)   ```# CODEV : Makefile as graph workflow```
 - [datum/2023/DONE/LEAF-21.md](datum/2023/DONE/LEAF-21.md)   ```# VIM : remove aged Session.vim```
 - [datum/2023/DONE/LEAF-23.md](datum/2023/DONE/LEAF-23.md)   ```# postgres : mono service```
