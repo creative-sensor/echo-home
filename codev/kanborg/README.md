@@ -91,7 +91,7 @@
 - [datum/2023/BACKLOG/LEAF-20.md](datum/2023/BACKLOG/LEAF-20.md)   ```# Boot : mono service```
 - [datum/2023/BACKLOG/LEAF-5.md](datum/2023/BACKLOG/LEAF-5.md)   ```# FEATURE : color system```
 - [datum/2023/BACKLOG/LEAF-7.md](datum/2023/BACKLOG/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
-- [datum/2023/BACKLOG/MDOS-0.md](datum/2023/BACKLOG/MDOS-0.md)   ```# FEATURE : powershell for gvim```
+- [datum/2023/BACKLOG/MDOS-0.md](datum/2023/BACKLOG/MDOS-0.md)   ```# MICROSOFT : WINDOWS```
 - [datum/2023/BACKLOG/MONO-0.md](datum/2023/BACKLOG/MONO-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/NCEPT-0.md](datum/2023/BACKLOG/NCEPT-0.md)   ```# CONCEPT : Fractual system```
 - [datum/2023/BACKLOG/NCEPT-1.md](datum/2023/BACKLOG/NCEPT-1.md)   ```# SHORT-GUN : CODE```
