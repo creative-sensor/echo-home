@@ -1,0 +1,28 @@
+#!/bin/bash
+
+DATUM_DIR=$1
+# ----
+CONTAINER_NAME=fedora-workman
+DKR_DNS=8.8.8.8
+PUBLISH=10022
+DETACH=--detach
+USER=root
+# ----
+source .properd/VARSET
+
+test -z "$DATUM_DIR" && DATUM_DIR=$(git_root)
+DATUM_DIR=$(readlink -f $DATUM_DIR)
+TARGET_DIR=/$(basename $DATUM_DIR)
+DKR_IMAGE_TAG=$(echo $DKR_IMAGE | awk -F ":" '{print $NF}')
+
+docker start $CONTAINER_NAME ||
+docker run $DETACH \
+    -it \
+    --name $CONTAINER_NAME-$DKR_IMAGE_TAG \
+    --hostname $CONTAINER_NAME-$DKR_IMAGE_TAG \
+    --dns $DKR_DNS \
+    --workdir $TARGET_DIR \
+    --volume $DATUM_DIR:$TARGET_DIR \
+    -p $PUBLISH:22 \
+    $DKR_IMAGE "bash"
+

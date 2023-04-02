@@ -1,0 +1,11 @@
+
+
+PATH=$PATH:~/.local/bin
+
+COLOR1='\[\033[38;5;33m\]'
+COLOR2='\[\033[38;5;33m\]'
+BOLD='\[\033[1m\]' # Work only if "allow bold text" setting is enabled
+STOP='\[\033[0m\]'
+
+PS1="[${BOLD}${COLOR1}\u${STOP}@${BOLD}${COLOR2}\h \W${STOP}]\$ "
+

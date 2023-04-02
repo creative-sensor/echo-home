@@ -1,11 +1,8 @@
 #!/bin/bash
 
-BASE="Fedora release 32"
-
-grep -q "$BASE" /etc/redhat-release || exit 1
 
 
-# ---- PACKAGE ---- 
+# ---- PACKAGE ----
 sudo dnf update -y
 
 sudo dnf install -y \
@@ -17,8 +14,7 @@ sudo dnf install -y \
     vim-X11 \
 
 sudo pip3 install --no-cache-dir \
-    yq 
+    yq
 
+cp .bashrc.edit $HOME
 
-# ---- CLEANUP ----
-sudo dnf clean all && rm -rf /var/cache/dnf

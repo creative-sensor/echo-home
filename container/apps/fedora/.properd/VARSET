@@ -1,0 +1,3 @@
+DKR_IMAGE=fedora:37
+DETACH=""
+CONTAINER_NAME=fedora-workman
