@@ -17,4 +17,5 @@ CMW : {"description":"Common Wealth","last_id":4,"related":""}
 DOCS : {"description":"Documentation","last_id":1,"related":""}
 GRTH : {"description":"Graph Theory","last_id":0,"related":""}
 TSQA : {"description":"Test and Quality","last_id":0,"related":""}
+VIM : {"description":"VIM Editor","last_id":0,"related":""}
 ```

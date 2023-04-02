@@ -97,3 +97,4 @@
 - [datum/2023/BACKLOG/NJS-0.md](datum/2023/BACKLOG/NJS-0.md)   ```# NODE : JS```
 - [datum/2023/BACKLOG/NJS-1.md](datum/2023/BACKLOG/NJS-1.md)   ```# KANBORG : ELECTRON UI```
 - [datum/2023/BACKLOG/TSQA-0.md](datum/2023/BACKLOG/TSQA-0.md)   ```# TEST : QUALITY```
+- [datum/2023/BACKLOG/VIM-0.md](datum/2023/BACKLOG/VIM-0.md)   ```# VIM : Bram Moolenaar ```
