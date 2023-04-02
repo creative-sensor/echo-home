@@ -8,6 +8,7 @@
 - [datum/2023/WIP/CMW-4.md](datum/2023/WIP/CMW-4.md)   ```# interface : get wired interface```
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
+- [datum/2023/WIP/LEAF-18.md](datum/2023/WIP/LEAF-18.md)   ```# container: fedora mini-station```
 - [datum/2023/WIP/LEAF-22.md](datum/2023/WIP/LEAF-22.md)   ```# Kong-gateway : mono service```
 - [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
 - [datum/2023/WIP/NJS-2.md](datum/2023/WIP/NJS-2.md)   ```# GLORIA: run objectory```
@@ -27,7 +28,6 @@
 - [datum/2023/TODO/HCL-2.md](datum/2023/TODO/HCL-2.md)   ```# COWAD : select principal node```
 - [datum/2023/TODO/LEAF-13.md](datum/2023/TODO/LEAF-13.md)   ```# Clipboard: internode```
 - [datum/2023/TODO/LEAF-15.md](datum/2023/TODO/LEAF-15.md)   ```# ETO : Emerging Technology Observatory ```
-- [datum/2023/TODO/LEAF-18.md](datum/2023/TODO/LEAF-18.md)   ```# container: fedora mini-station```
 - [datum/2023/TODO/LEAF-4.md](datum/2023/TODO/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
 - [datum/2023/TODO/MDOS-2.md](datum/2023/TODO/MDOS-2.md)   ```# toolset : build/compile```
 - [datum/2023/TODO/MDOS-3.md](datum/2023/TODO/MDOS-3.md)   ```# FEATURE : powershell for gvim```
@@ -74,6 +74,7 @@
 - [datum/2023/DONE/SPEC-0.md](datum/2023/DONE/SPEC-0.md)   ```# SPEC : yson format```
 - [datum/2023/DONE/SPEC-1.md](datum/2023/DONE/SPEC-1.md)   ```# SPEC : yson format - python implement```
 - [datum/2023/DONE/SPEC-2.md](datum/2023/DONE/SPEC-2.md)   ```# SPEC : bash.namespace```
+- [datum/2023/DONE/VIM-1.md](datum/2023/DONE/VIM-1.md)   ```# artillery : ssh multiplex```
 
 ### 5 BACKLOG
 
@@ -91,6 +92,7 @@
 - [datum/2023/BACKLOG/LEAF-5.md](datum/2023/BACKLOG/LEAF-5.md)   ```# FEATURE : color system```
 - [datum/2023/BACKLOG/LEAF-7.md](datum/2023/BACKLOG/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
 - [datum/2023/BACKLOG/MDOS-0.md](datum/2023/BACKLOG/MDOS-0.md)   ```# FEATURE : powershell for gvim```
+- [datum/2023/BACKLOG/MONO-0.md](datum/2023/BACKLOG/MONO-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/NCEPT-0.md](datum/2023/BACKLOG/NCEPT-0.md)   ```# CONCEPT : Fractual system```
 - [datum/2023/BACKLOG/NCEPT-1.md](datum/2023/BACKLOG/NCEPT-1.md)   ```# SHORT-GUN : CODE```
 - [datum/2023/BACKLOG/NCEPT-2.md](datum/2023/BACKLOG/NCEPT-2.md)   ```# RDBMS : Sharding with graph theory```
