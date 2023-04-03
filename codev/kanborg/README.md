@@ -81,7 +81,7 @@
 - [datum/2023/BACKLOG/ACLS-0.md](datum/2023/BACKLOG/ACLS-0.md)   ```# Access Control : Level System```
 - [datum/2023/BACKLOG/ASML-0.md](datum/2023/BACKLOG/ASML-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/CMW-0.md](datum/2023/BACKLOG/CMW-0.md)   ```# Common : Wealth```
-- [datum/2023/BACKLOG/CORTA-0.md](datum/2023/BACKLOG/CORTA-0.md)   ```# GRAPH THEORY : Neuron network```
+- [datum/2023/BACKLOG/CORTA-0.md](datum/2023/BACKLOG/CORTA-0.md)   ```# Cortana : Chief```
 - [datum/2023/BACKLOG/DBMS-0.md](datum/2023/BACKLOG/DBMS-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/DTUM-0.md](datum/2023/BACKLOG/DTUM-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/E419-0.md](datum/2023/BACKLOG/E419-0.md)   ```# ISSUE :```
@@ -102,6 +102,6 @@
 - [datum/2023/BACKLOG/NCEPT-2.md](datum/2023/BACKLOG/NCEPT-2.md)   ```# RDBMS : Sharding with graph theory```
 - [datum/2023/BACKLOG/NJS-0.md](datum/2023/BACKLOG/NJS-0.md)   ```# NODE : JS```
 - [datum/2023/BACKLOG/NJS-1.md](datum/2023/BACKLOG/NJS-1.md)   ```# KANBORG : ELECTRON UI```
-- [datum/2023/BACKLOG/OBSR-0.md](datum/2023/BACKLOG/OBSR-0.md)   ```# ISSUE :```
+- [datum/2023/BACKLOG/OBSR-0.md](datum/2023/BACKLOG/OBSR-0.md)   ```# Observability : Monitoring Eyes```
 - [datum/2023/BACKLOG/TSQA-0.md](datum/2023/BACKLOG/TSQA-0.md)   ```# TEST : QUALITY```
 - [datum/2023/BACKLOG/VIM-0.md](datum/2023/BACKLOG/VIM-0.md)   ```# VIM : Bram Moolenaar ```

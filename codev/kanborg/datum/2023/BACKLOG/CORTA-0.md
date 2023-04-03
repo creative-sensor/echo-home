@@ -1,7 +1,11 @@
-# GRAPH THEORY : Neuron network
+# Cortana : Chief
 --------------------------------
 ### 0 DESCRIPTION
 
+- Neuron network
+- Computer Vision
+
+<img alt="" src="https://oyster.ignimgs.com/wordpress/stg.ign.com/2020/11/taylor-cortana.jpg"/>
 
 ### 1 SOLUTION
 
