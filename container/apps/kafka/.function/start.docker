@@ -4,13 +4,23 @@ CONTAINER_NAME=kafka
 DKR_DNS=8.8.8.8
 DATUM_DIR=datum
 DETACH="--detach"
+KAFKA_BASE_DIR="/opt/bitnami/kafka"
+KAFKA_VOLUME_DIR="/bitnami/kafka"
+KAFKA_DATA_DIR="${KAFKA_VOLUME_DIR}/data"
+KAFKA_CONF_DIR="${KAFKA_BASE_DIR}/config"
+KAFKA_CONF_FILE="${KAFKA_CONF_DIR}/server.properties"
+KAFKA_MOUNTED_CONF_DIR="${KAFKA_VOLUME_DIR}/config"
+KAFKA_CERTS_DIR="${KAFKA_CONF_DIR}/certs"
+KAFKA_LOG_DIR="${KAFKA_BASE_DIR}/logs"
+KAFKA_HOME="$KAFKA_BASE_DIR"
+ALLOW_PLAINTEXT_LISTENER=no
 
 
 # ----
 source .properd/VARSET
-test -z "$CONFIG_SET" && CONFIG_SET=config-set/kong.conf
+test -z "$CONFIG_SET" && CONFIG_SET=config-set/kafka.properties
 ! test -d $DATUM_DIR  &&
-    mkdir -p  $DATUM_DIR/{config,server,logs} &&
+    mkdir -p  $DATUM_DIR/{data,config,logs,certs} &&
     chmod -R 0777 $DATUM_DIR
 DATUM_DIR=$(readlink -f $DATUM_DIR)
 CONFIG_SET=$(readlink -f $CONFIG_SET)
@@ -20,7 +30,7 @@ docker container start $CONTAINER_NAME &>/dev/null ||
 docker run $DETACH \
     --rm \
     --name $CONTAINER_NAME \
-    --volume $CONFIG_SET:$KONG_CONF_FILE \
-    --volume $DATUM_DIR/logs:$KONG_LOGS_DIR \
-    -e KONG_DATABASE=$KONG_DATABASE \
+    --volume $DATUM_DIR/data:$KAFKA_DATA_DIR \
+    --volume $DATUM_DIR/logs:$KAFKA_LOG_DIR \
+    -e ALLOW_PLAINTEXT_LISTENER=$ALLOW_PLAINTEXT_LISTENER \
     $DKR_IMAGE
