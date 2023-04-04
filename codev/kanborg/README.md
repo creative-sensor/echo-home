@@ -29,6 +29,8 @@
 - [datum/2023/TODO/MDOS-2.md](datum/2023/TODO/MDOS-2.md)   ```# toolset : build/compile```
 - [datum/2023/TODO/MDOS-3.md](datum/2023/TODO/MDOS-3.md)   ```# FEATURE : powershell for gvim```
 - [datum/2023/TODO/MDOS-4.md](datum/2023/TODO/MDOS-4.md)   ```# PowerShell: utilities for missing function in gitbash```
+- [datum/2023/TODO/OBSR-1.md](datum/2023/TODO/OBSR-1.md)   ```# ISSUE :```
+- [datum/2023/TODO/OBSR-2.md](datum/2023/TODO/OBSR-2.md)   ```# ELK : log collection for mono service```
 
 ### 4 DONE
 
