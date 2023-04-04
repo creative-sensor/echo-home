@@ -1,0 +1,2 @@
+set ttymouse=sgr
+
