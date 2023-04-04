@@ -40,7 +40,7 @@ function ffunction {
     if test -x .function/$NAME ; then
         .function/$NAME $@
     else
-        echo "ffunction: calling default"
+        echo "ffunction: calling default" 1>&2
         $(git_root)/codev/commonwealth/interface/$NAME $@
     fi
 }
