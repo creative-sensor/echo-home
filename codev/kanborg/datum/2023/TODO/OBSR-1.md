@@ -1,6 +1,8 @@
-# ISSUE :
+# prometheus: scrape of mono services
 --------------------------------
 ### 0 DESCRIPTION
+
+- to collect metric from all existing mono services
 
 
 ### 1 SOLUTION
