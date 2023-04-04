@@ -5,7 +5,6 @@
 
 ### 1 WORK IN PROGRESS
 
-- [datum/2023/WIP/CMW-4.md](datum/2023/WIP/CMW-4.md)   ```# interface : get wired interface```
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
@@ -45,6 +44,7 @@
 - [datum/2023/DONE/ARTE-5.md](datum/2023/DONE/ARTE-5.md)   ```# Workstation: AppImage```
 - [datum/2023/DONE/ARTE-6.md](datum/2023/DONE/ARTE-6.md)   ```# gitlab : docker image```
 - [datum/2023/DONE/CMW-3.md](datum/2023/DONE/CMW-3.md)   ```# FEATURE : default implementation for common functions```
+- [datum/2023/DONE/CMW-4.md](datum/2023/DONE/CMW-4.md)   ```# interface : ip.addr ```
 - [datum/2023/DONE/DOCS-0.md](datum/2023/DONE/DOCS-0.md)   ```# awk : explore useful case```
 - [datum/2023/DONE/GILB-0.md](datum/2023/DONE/GILB-0.md)   ```# Gitlab : use Consul dns only when available```
 - [datum/2023/DONE/HCL-0.md](datum/2023/DONE/HCL-0.md)   ```# FEATURE : Vault integration```
