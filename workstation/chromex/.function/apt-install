@@ -1,0 +1,13 @@
+xdpyinfo
+
+
+tput lines
+tput cols
+
+sudo apt install -y \
+    vim-gtk3 \
+    libnss3 \
+
+
+
+
