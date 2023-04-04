@@ -1,0 +1,3 @@
+DKR_IMAGE=bitnami/kafka:3.2.3
+CONTAINER_NAME=kafka
+DETACH=""

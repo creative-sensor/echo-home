@@ -1,0 +1,38 @@
+#!/bin/bash
+
+CONTAINER_NAME=kong
+DKR_DNS=8.8.8.8
+DATUM_DIR=datum
+DETACH="--detach"
+KONG_DATABASE=off 
+PUBLISH_PROXY_HTTP_PORT=8000
+PUBLISH_ADMIN_HTTP_PORT=8001
+KONG_PROXY_HTTP_PORT_NUMBER=8000
+KONG_ADMIN_HTTP_PORT_NUMBER=8001
+KONG_BASE_DIR="/opt/bitnami/kong"
+KONG_CONF_DIR="${KONG_BASE_DIR}/conf"
+KONG_CONF_FILE="${KONG_CONF_DIR}/kong.conf"
+KONG_SERVER_DIR="${KONG_BASE_DIR}/server"
+KONG_LOGS_DIR="${KONG_SERVER_DIR}/logs"
+
+
+# ----
+source .properd/VARSET
+test -z "$CONFIG_SET" && CONFIG_SET=config-set/kong.conf
+! test -d $DATUM_DIR  &&
+    mkdir -p  $DATUM_DIR/{config,server,logs} &&
+    chmod -R 0777 $DATUM_DIR
+DATUM_DIR=$(readlink -f $DATUM_DIR)
+CONFIG_SET=$(readlink -f $CONFIG_SET)
+
+
+docker container start $CONTAINER_NAME &>/dev/null ||
+docker run $DETACH \
+    --rm \
+    --name kong \
+    -p $PUBLISH_PROXY_HTTP_PORT:$KONG_PROXY_HTTP_PORT_NUMBER \
+    -p $PUBLISH_ADMIN_HTTP_PORT:$KONG_ADMIN_HTTP_PORT_NUMBER \
+    --volume $CONFIG_SET:$KONG_CONF_FILE \
+    --volume $DATUM_DIR/logs:$KONG_LOGS_DIR \
+    -e KONG_DATABASE=$KONG_DATABASE \
+    $DKR_IMAGE
