@@ -81,6 +81,7 @@
 ### 5 BACKLOG
 
 - [datum/2023/BACKLOG/ACLS-0.md](datum/2023/BACKLOG/ACLS-0.md)   ```# Access Control : Level System```
+- [datum/2023/BACKLOG/ARTE-7.md](datum/2023/BACKLOG/ARTE-7.md)   ```# WSL : distro image```
 - [datum/2023/BACKLOG/ASML-0.md](datum/2023/BACKLOG/ASML-0.md)   ```# Assembly : Mission```
 - [datum/2023/BACKLOG/CMW-0.md](datum/2023/BACKLOG/CMW-0.md)   ```# Common : Wealth```
 - [datum/2023/BACKLOG/CORTA-0.md](datum/2023/BACKLOG/CORTA-0.md)   ```# Cortana : Chief```
