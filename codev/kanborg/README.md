@@ -14,6 +14,7 @@
 ### 2 ON HOLD
 
 - [datum/2023/HOLD/ARTE-0.md](datum/2023/HOLD/ARTE-0.md)   ```# DEVICE: HP CHROMEBOX G2```
+- [datum/2023/HOLD/LEAF-4.md](datum/2023/HOLD/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
 - [datum/2023/HOLD/LEAF-9.md](datum/2023/HOLD/LEAF-9.md)   ```# KITE: to fly in cloud```
 
 ### 3 TO DO
@@ -26,11 +27,10 @@
 - [datum/2023/TODO/HCL-2.md](datum/2023/TODO/HCL-2.md)   ```# COWAD : select principal node```
 - [datum/2023/TODO/LEAF-13.md](datum/2023/TODO/LEAF-13.md)   ```# Clipboard: internode```
 - [datum/2023/TODO/LEAF-15.md](datum/2023/TODO/LEAF-15.md)   ```# ETO : Emerging Technology Observatory ```
-- [datum/2023/TODO/LEAF-4.md](datum/2023/TODO/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
+- [datum/2023/TODO/LEAF-26.md](datum/2023/TODO/LEAF-26.md)   ```# Serverless : as nanoservice```
 - [datum/2023/TODO/MDOS-2.md](datum/2023/TODO/MDOS-2.md)   ```# toolset : build/compile```
 - [datum/2023/TODO/MDOS-3.md](datum/2023/TODO/MDOS-3.md)   ```# FEATURE : powershell for gvim```
 - [datum/2023/TODO/MDOS-4.md](datum/2023/TODO/MDOS-4.md)   ```# PowerShell: utilities for missing function in gitbash```
-- [datum/2023/TODO/OBSR-1.md](datum/2023/TODO/OBSR-1.md)   ```# prometheus: scrape of mono services```
 
 ### 4 DONE
 
@@ -88,6 +88,7 @@
 - [datum/2023/BACKLOG/CORTA-0.md](datum/2023/BACKLOG/CORTA-0.md)   ```# Cortana : Chief```
 - [datum/2023/BACKLOG/DBMS-0.md](datum/2023/BACKLOG/DBMS-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/DTUM-0.md](datum/2023/BACKLOG/DTUM-0.md)   ```# ISSUE :```
+- [datum/2023/BACKLOG/DTUM-1.md](datum/2023/BACKLOG/DTUM-1.md)   ```# Backup : existing mono service```
 - [datum/2023/BACKLOG/E419-0.md](datum/2023/BACKLOG/E419-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/GRTH-0.md](datum/2023/BACKLOG/GRTH-0.md)   ```# GRAPH : THEORY```
 - [datum/2023/BACKLOG/KBG-3.md](datum/2023/BACKLOG/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
@@ -97,7 +98,6 @@
 - [datum/2023/BACKLOG/LEAF-12.md](datum/2023/BACKLOG/LEAF-12.md)   ```# FIBO SHELL: svg```
 - [datum/2023/BACKLOG/LEAF-19.md](datum/2023/BACKLOG/LEAF-19.md)   ```# AppImage : explore```
 - [datum/2023/BACKLOG/LEAF-20.md](datum/2023/BACKLOG/LEAF-20.md)   ```# Boot : mono service```
-- [datum/2023/BACKLOG/LEAF-26.md](datum/2023/BACKLOG/LEAF-26.md)   ```# Serverless : as nanoservice```
 - [datum/2023/BACKLOG/LEAF-5.md](datum/2023/BACKLOG/LEAF-5.md)   ```# FEATURE : color system```
 - [datum/2023/BACKLOG/LEAF-7.md](datum/2023/BACKLOG/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
 - [datum/2023/BACKLOG/MDOS-0.md](datum/2023/BACKLOG/MDOS-0.md)   ```# MICROSOFT : WINDOWS```
