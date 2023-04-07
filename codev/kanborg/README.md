@@ -82,6 +82,8 @@
 ### 5 BACKLOG
 
 - [datum/2023/BACKLOG/ACLS-0.md](datum/2023/BACKLOG/ACLS-0.md)   ```# Access Control : Level System```
+- [datum/2023/BACKLOG/ACLS-1.md](datum/2023/BACKLOG/ACLS-1.md)   ```# IDP : first database of user identity```
+- [datum/2023/BACKLOG/ACLS-2.md](datum/2023/BACKLOG/ACLS-2.md)   ```# Haproxy : API access control```
 - [datum/2023/BACKLOG/ARTE-7.md](datum/2023/BACKLOG/ARTE-7.md)   ```# WSL : distro image```
 - [datum/2023/BACKLOG/ASML-0.md](datum/2023/BACKLOG/ASML-0.md)   ```# Assembly : Mission```
 - [datum/2023/BACKLOG/CMW-0.md](datum/2023/BACKLOG/CMW-0.md)   ```# Common : Wealth```
@@ -102,6 +104,7 @@
 - [datum/2023/BACKLOG/LEAF-7.md](datum/2023/BACKLOG/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
 - [datum/2023/BACKLOG/MDOS-0.md](datum/2023/BACKLOG/MDOS-0.md)   ```# MICROSOFT : WINDOWS```
 - [datum/2023/BACKLOG/MONO-0.md](datum/2023/BACKLOG/MONO-0.md)   ```# ISSUE :```
+- [datum/2023/BACKLOG/MONO-1.md](datum/2023/BACKLOG/MONO-1.md)   ```# Apache : NiFi```
 - [datum/2023/BACKLOG/NCEPT-0.md](datum/2023/BACKLOG/NCEPT-0.md)   ```# CONCEPT : Fractual system```
 - [datum/2023/BACKLOG/NCEPT-1.md](datum/2023/BACKLOG/NCEPT-1.md)   ```# SHORT-GUN : CODE```
 - [datum/2023/BACKLOG/NCEPT-2.md](datum/2023/BACKLOG/NCEPT-2.md)   ```# RDBMS : Sharding with graph theory```
@@ -109,5 +112,7 @@
 - [datum/2023/BACKLOG/NJS-1.md](datum/2023/BACKLOG/NJS-1.md)   ```# KANBORG : ELECTRON UI```
 - [datum/2023/BACKLOG/NJS-3.md](datum/2023/BACKLOG/NJS-3.md)   ```# VIM : DOM```
 - [datum/2023/BACKLOG/OBSR-0.md](datum/2023/BACKLOG/OBSR-0.md)   ```# Observability : Monitoring Eyes```
+- [datum/2023/BACKLOG/OBSR-3.md](datum/2023/BACKLOG/OBSR-3.md)   ```# Grafana : metric dashboard```
+- [datum/2023/BACKLOG/OBSR-4.md](datum/2023/BACKLOG/OBSR-4.md)   ```# Kibana : dashboard of visualized log```
 - [datum/2023/BACKLOG/TSQA-0.md](datum/2023/BACKLOG/TSQA-0.md)   ```# TEST : QUALITY```
 - [datum/2023/BACKLOG/VIM-0.md](datum/2023/BACKLOG/VIM-0.md)   ```# VIM : Bram Moolenaar ```
