@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# ----
+DKR_DNS=8.8.8.8
+PUBLISH=9100
+# ----
+source .properd/VARSET
+# ----
+
+docker run --detach \
+    --rm \
+    --name $CONTAINER_NAME \
+    --dns $DKR_DNS \
+    -p $PUBLISH:9100 \
+    $DKR_IMAGE

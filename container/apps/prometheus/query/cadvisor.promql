@@ -1,0 +1,2 @@
+container_memory_usage_bytes{name="prometheus",instance="172.17.0.1:50080"}
+container_cpu_system_seconds_total{name="gredis",instance="172.17.0.1:50080"}

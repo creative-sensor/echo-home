@@ -3,16 +3,24 @@
 # ---- |EXT ----
 VARSET_EXT=$1
 # ---- |DEFAULT ----
-CONTAINER_NAME=redig
+CONTAINER_NAME=gredis
+PUBLISH=6379
+DETACH="--detach"
+DATUM_DIR=datum
 
 # ---- |OVERRIDE ----
 source .properd/VARSET
 test -n "$VARSET_EXT" && source $VARSET_EXT
 
 # ---- |MAIN ----
-docker run --detach \
-    -it \
+! test -d $DATUM_DIR  &&
+    mkdir -p  $DATUM_DIR/{config,log,data} &&
+    chmod -R 0777 $DATUM_DIR
+
+DATUM_DIR=$(readlink -f $DATUM_DIR)
+docker run $DETACH \
     --rm \
     --name $CONTAINER_NAME \
-    -p 6379:6379 \
+    -p $PUBLISH:6379 \
+    -v $DATUM_DIR/data:/data \
     $DKR_IMAGE
