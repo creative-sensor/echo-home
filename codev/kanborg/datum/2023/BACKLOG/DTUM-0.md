@@ -1,7 +1,15 @@
-# ISSUE :
+# Datum : Backup and Recovery
 --------------------------------
 ### 0 DESCRIPTION
+- Storage
+- Backup
+- Recovery
+- Failover
+- Replication
+- Versioning
+- Protection
 
+<img alt="" src="https://cdn.jim-nielsen.com/ios/512/vhs-cam-vintage-video-filters-2020-03-24.png"/>
 
 ### 1 SOLUTION
 

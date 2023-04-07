@@ -31,6 +31,7 @@
 - [datum/2023/TODO/MDOS-2.md](datum/2023/TODO/MDOS-2.md)   ```# toolset : build/compile```
 - [datum/2023/TODO/MDOS-3.md](datum/2023/TODO/MDOS-3.md)   ```# FEATURE : powershell for gvim```
 - [datum/2023/TODO/MDOS-4.md](datum/2023/TODO/MDOS-4.md)   ```# PowerShell: utilities for missing function in gitbash```
+- [datum/2023/TODO/OBSR-3.md](datum/2023/TODO/OBSR-3.md)   ```# Grafana : metric dashboard```
 
 ### 4 DONE
 
@@ -89,7 +90,7 @@
 - [datum/2023/BACKLOG/CMW-0.md](datum/2023/BACKLOG/CMW-0.md)   ```# Common : Wealth```
 - [datum/2023/BACKLOG/CORTA-0.md](datum/2023/BACKLOG/CORTA-0.md)   ```# Cortana : Chief```
 - [datum/2023/BACKLOG/DBMS-0.md](datum/2023/BACKLOG/DBMS-0.md)   ```# ISSUE :```
-- [datum/2023/BACKLOG/DTUM-0.md](datum/2023/BACKLOG/DTUM-0.md)   ```# ISSUE :```
+- [datum/2023/BACKLOG/DTUM-0.md](datum/2023/BACKLOG/DTUM-0.md)   ```# Datum : Backup and Recovery```
 - [datum/2023/BACKLOG/DTUM-1.md](datum/2023/BACKLOG/DTUM-1.md)   ```# Backup : existing mono service```
 - [datum/2023/BACKLOG/E419-0.md](datum/2023/BACKLOG/E419-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/GRTH-0.md](datum/2023/BACKLOG/GRTH-0.md)   ```# GRAPH : THEORY```
@@ -112,7 +113,6 @@
 - [datum/2023/BACKLOG/NJS-1.md](datum/2023/BACKLOG/NJS-1.md)   ```# KANBORG : ELECTRON UI```
 - [datum/2023/BACKLOG/NJS-3.md](datum/2023/BACKLOG/NJS-3.md)   ```# VIM : DOM```
 - [datum/2023/BACKLOG/OBSR-0.md](datum/2023/BACKLOG/OBSR-0.md)   ```# Observability : Monitoring Eyes```
-- [datum/2023/BACKLOG/OBSR-3.md](datum/2023/BACKLOG/OBSR-3.md)   ```# Grafana : metric dashboard```
 - [datum/2023/BACKLOG/OBSR-4.md](datum/2023/BACKLOG/OBSR-4.md)   ```# Kibana : dashboard of visualized log```
 - [datum/2023/BACKLOG/TSQA-0.md](datum/2023/BACKLOG/TSQA-0.md)   ```# TEST : QUALITY```
 - [datum/2023/BACKLOG/VIM-0.md](datum/2023/BACKLOG/VIM-0.md)   ```# VIM : Bram Moolenaar ```
