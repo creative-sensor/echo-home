@@ -1,0 +1,28 @@
+#!/bin/bash -e
+
+# ----
+DKR_DNS=8.8.8.8
+PUBLISH=3000
+DATUM_DIR=datum
+DASHBOARD_DIR=$DATUM_DIR/dashboard
+GRAFANA_URL=http://172.17.0.1:3000
+API_KEY=$(< $DATUM_DIR/tmp.api_key)
+# ----
+source .properd/VARSET
+# ----
+
+
+function curl_upload(){
+    local file=$1
+    curl -X POST \
+        -H "Authorization: Bearer $API_KEY" \
+        -H "Content-Type: application/json" \
+        -d @$file ${GRAFANA_URL}/api/dashboards/db
+
+}
+
+
+cd $DASHBOARD_DIR
+for i in $(find  -type f | sed 's,^\(./\),,' ) ; do
+    curl_upload $i
+done

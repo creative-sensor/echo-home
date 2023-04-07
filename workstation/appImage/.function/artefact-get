@@ -4,3 +4,5 @@ mkdir -p $ARTEFACT_DIR
 set -x
 curl -L -o  $ARTEFACT_DIR/marktext-v0.17.1-x86_64.AppImage  https://github.com/marktext/marktext/releases/download/v0.17.1/marktext-x86_64.AppImage
 curl -L -o $ARTEFACT_DIR/drawio-v20.8.16-x86_64.AppImage  https://github.com/jgraph/drawio-desktop/releases/download/v20.8.16/drawio-x86_64-20.8.16.AppImage
+curl -L -o $ARTEFACT_DIR/DomTerm-2.9.4.AppImage  https://github.com/PerBothner/DomTerm/releases/download/2.9.4/DomTerm.AppImage
+
