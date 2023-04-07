@@ -9,7 +9,7 @@
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
 - [datum/2023/WIP/NJS-2.md](datum/2023/WIP/NJS-2.md)   ```# GLORIA: run objectory```
-- [datum/2023/WIP/OBSR-1.md](datum/2023/WIP/OBSR-1.md)   ```# prometheus: scrape of mono services```
+- [datum/2023/WIP/OBSR-2.md](datum/2023/WIP/OBSR-2.md)   ```# ELK : log collection for mono service```
 
 ### 2 ON HOLD
 
@@ -30,7 +30,7 @@
 - [datum/2023/TODO/MDOS-2.md](datum/2023/TODO/MDOS-2.md)   ```# toolset : build/compile```
 - [datum/2023/TODO/MDOS-3.md](datum/2023/TODO/MDOS-3.md)   ```# FEATURE : powershell for gvim```
 - [datum/2023/TODO/MDOS-4.md](datum/2023/TODO/MDOS-4.md)   ```# PowerShell: utilities for missing function in gitbash```
-- [datum/2023/TODO/OBSR-2.md](datum/2023/TODO/OBSR-2.md)   ```# ELK : log collection for mono service```
+- [datum/2023/TODO/OBSR-1.md](datum/2023/TODO/OBSR-1.md)   ```# prometheus: scrape of mono services```
 
 ### 4 DONE
 
@@ -73,6 +73,7 @@
 - [datum/2023/DONE/MKG-0.md](datum/2023/DONE/MKG-0.md)   ```# FEATURE : internode i/o communication```
 - [datum/2023/DONE/MKG-1.md](datum/2023/DONE/MKG-1.md)   ```# FEATURE : node - simple editor```
 - [datum/2023/DONE/MKG-2.md](datum/2023/DONE/MKG-2.md)   ```# makegraph :  Happy ❤ Valentine```
+- [datum/2023/DONE/OBSR-1.md](datum/2023/DONE/OBSR-1.md)   ```# prometheus: scrape of mono services```
 - [datum/2023/DONE/SPEC-0.md](datum/2023/DONE/SPEC-0.md)   ```# SPEC : yson format```
 - [datum/2023/DONE/SPEC-1.md](datum/2023/DONE/SPEC-1.md)   ```# SPEC : yson format - python implement```
 - [datum/2023/DONE/SPEC-2.md](datum/2023/DONE/SPEC-2.md)   ```# SPEC : bash.namespace```
