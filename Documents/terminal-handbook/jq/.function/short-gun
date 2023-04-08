@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+VARSET_EXT=$1
+# ---- |DEFAULT ----
+
+# ---- |OVERRIDE ----
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+
+echo "m1hf ---- Set field with value"
+echo '{"a":10, "dashboard":{"id":345, "name":"values"}}'  |  jq '(.dashboard.id) = "null"'

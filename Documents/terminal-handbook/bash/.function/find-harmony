@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+BACKGROUND_CODE=$1
+FOREGROUND_CODE=$2
+# ---- |DEFAULT ----
+STOP='\e[0m'
+# ---- |OVERRIDE ----
+#source .properd/VARSET
+#test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+
+for b in {0..255} ; do
+    test -n "$BACKGROUND_CODE" && b=$BACKGROUND_CODE
+    for f in {0..255} ; do
+        test -n "$FOREGROUND_CODE" && f=$FOREGROUND_CODE
+        FG_COLOR='\e[38;5;'${f}'m'
+        BG_COLOR='\e[48;5;'${b}'m'
+        echo -e "${BG_COLOR}${FG_COLOR}BACKGROUND=${b}  foreground=${f}${STOP}"
+        test -n "$FOREGROUND_CODE" && break
+    done
+    test -n "$BACKGROUND_CODE" && break
+done
+
+
+ 

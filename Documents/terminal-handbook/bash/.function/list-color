@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+VARSET_EXT=$1
+# ---- |DEFAULT ----
+
+# ---- |OVERRIDE ----
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+
+
+STOP='\e[0m'
+for i in {0..255} ; do
+    BASH_FOREGROUND_COLOR='\033[38;5;'${i}'m'
+    BASH_BACKGROUND_COLOR='\033[48;5;'${i}'m'
+    FOREGROUND_COLOR='\e[38;5;'${i}'m'
+    BACKGROUND_COLOR='\e[48;5;'${i}'m'
+    echo -n -e ${BACKGROUND_COLOR}BASH_BACKGROUND_COLOR_$i=${STOP}
+    echo -n \'${BASH_BACKGROUND_COLOR}\'
+    echo -n "    "
+    echo -n -e ${FOREGROUND_COLOR}bash_foreground_color_$i=${STOP}
+    echo \'${BASH_FOREGROUND_COLOR}\'
+
+done
+
+
+ 
