@@ -1,0 +1,4 @@
+DKR_IMAGE=apache/nifi:latest
+CONTAINER_NAME=apache-nifi
+DATUM_DIR=datum
+DETACH=""
