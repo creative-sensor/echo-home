@@ -22,7 +22,6 @@
 - [datum/2023/TODO/ARTE-3.md](datum/2023/TODO/ARTE-3.md)   ```# ISSUE : Fork repo from community to my github```
 - [datum/2023/TODO/CMW-1.md](datum/2023/TODO/CMW-1.md)   ```# process : background daemon management```
 - [datum/2023/TODO/CMW-2.md](datum/2023/TODO/CMW-2.md)   ```# commonwealth : vault function```
-- [datum/2023/TODO/DOCS-1.md](datum/2023/TODO/DOCS-1.md)   ```# short-gun : ```
 - [datum/2023/TODO/DROID-0.md](datum/2023/TODO/DROID-0.md)   ```# FEATURE : Fork GitJournal```
 - [datum/2023/TODO/HCL-2.md](datum/2023/TODO/HCL-2.md)   ```# COWAD : select principal node```
 - [datum/2023/TODO/LEAF-13.md](datum/2023/TODO/LEAF-13.md)   ```# Clipboard: internode```
@@ -48,6 +47,7 @@
 - [datum/2023/DONE/CMW-3.md](datum/2023/DONE/CMW-3.md)   ```# FEATURE : default implementation for common functions```
 - [datum/2023/DONE/CMW-4.md](datum/2023/DONE/CMW-4.md)   ```# interface : ip.addr ```
 - [datum/2023/DONE/DOCS-0.md](datum/2023/DONE/DOCS-0.md)   ```# awk : explore useful case```
+- [datum/2023/DONE/DOCS-1.md](datum/2023/DONE/DOCS-1.md)   ```# short-gun : ```
 - [datum/2023/DONE/GILB-0.md](datum/2023/DONE/GILB-0.md)   ```# Gitlab : use Consul dns only when available```
 - [datum/2023/DONE/HCL-0.md](datum/2023/DONE/HCL-0.md)   ```# FEATURE : Vault integration```
 - [datum/2023/DONE/HCL-1.md](datum/2023/DONE/HCL-1.md)   ```# FEATURE : Consul as dns resolver```
