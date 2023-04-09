@@ -1,4 +1,5 @@
 #!/bin/bash
 source .properd/VARSET
 # ----
+docker inspect --format='{{.LogPath}}' $CONTAINER_NAME
 docker logs $@ $CONTAINER_NAME

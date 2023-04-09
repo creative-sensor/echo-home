@@ -21,6 +21,7 @@ source .properd/VARSET
 touch $PASSWORD_FILE
 
 docker run --detach \
+    $META_LABEL \
     --rm \
     --name $CONTAINER_NAME \
     --dns $DKR_DNS \

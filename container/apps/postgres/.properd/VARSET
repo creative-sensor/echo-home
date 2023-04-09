@@ -2,4 +2,4 @@ DKR_IMAGE=postgres:15.2
 CONTAINER_NAME=postgres
 DATA_DIR=datum
 PASSWORD_FILE=$PWD/tmp.passwd
-
+META_LABEL="--label co.elastic.logs/enabled=true"

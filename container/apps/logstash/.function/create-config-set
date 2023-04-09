@@ -1,0 +1,14 @@
+#!/bin/bash
+
+
+NAME=$1
+# ----
+source .properd/VARSET
+# ----
+test -z "$NAME" && echo "NAME!" && exit 1
+MULTI_PIPELINE_CONFIG=config-set/$NAME/config/pipelines.yml
+mkdir -p config-set/$NAME/{config,pipeline}
+
+export LOGSTASH_MOUNTED_PIPELINE_CONF_DIR=${LOGSTASH_MOUNTED_PIPELINE_CONF_DIR:-/opt/bitnami/logstash/pipeline}
+cat .template/pipelines.yml | envsubst >  $MULTI_PIPELINE_CONFIG
+touch config-set/$NAME/pipeline/logstash-fio.conf

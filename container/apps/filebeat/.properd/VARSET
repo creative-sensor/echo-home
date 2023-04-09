@@ -1,0 +1,4 @@
+DKR_IMAGE=elastic/filebeat:8.7.0
+CONTAINER_NAME=filebeat
+DATUM_DIR=datum
+DETACH=""

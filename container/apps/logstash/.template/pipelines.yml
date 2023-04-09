@@ -1,0 +1,4 @@
+- pipeline.id: logstash-fio
+  path.config: "${LOGSTASH_MOUNTED_PIPELINE_CONF_DIR}/logstash-fio.conf"
+  pipeline.workers: 1
+

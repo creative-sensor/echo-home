@@ -12,3 +12,6 @@ test -n "$VARSET_EXT" && source $VARSET_EXT
 
 echo "m1hf ---- Set field with value"
 echo '{"a":10, "dashboard":{"id":345, "name":"values"}}'  |  jq '(.dashboard.id) = "null"'
+
+echo "gt9r ---- Access non-alphabet field name"
+echo '{"data-root":"/datum/docker"}' | jq '.["data-root"]'

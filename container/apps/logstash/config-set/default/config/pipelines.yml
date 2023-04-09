@@ -1,0 +1,7 @@
+- pipeline.id: logstash-fio
+  path.config: "/opt/bitnami/logstash/pipeline/logstash-fio.conf"
+  pipeline.workers: 1
+
+- pipeline.id: docker-beat
+  path.config: "${LOGSTASH_MOUNTED_PIPELINE_CONF_DIR}/docker-beat.conf"
+  pipeline.workers: 1
