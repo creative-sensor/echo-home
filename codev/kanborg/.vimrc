@@ -125,7 +125,7 @@ function MoveCard(name)
     let card_short_name = fnamemodify(xname,':t')
         " vim: extract base name
     let yname = g:cycle_dir.'/'.column_name.'/'.card_short_name
-    exec 'silent !set -x ; git mv '.xname.' '.yname
+    exec 'silent !set -x ; git add '.xname.';  git mv '.xname.' '.yname
     exec 'silent read ! echo '.yname
 endfunction
 
