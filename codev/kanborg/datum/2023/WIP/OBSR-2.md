@@ -15,6 +15,8 @@
 
 ### 4 JOURNAL
 
+###### 4.0
+- filebeat image did not have docker module
 
 
 --------------------------------

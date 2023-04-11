@@ -13,12 +13,13 @@
 
 ### 2 ON HOLD
 
-- [datum/2023/HOLD/ARTE-0.md](datum/2023/HOLD/ARTE-0.md)   ```# DEVICE: HP CHROMEBOX G2```
+- [datum/2023/HOLD/ARTE-8.md](datum/2023/HOLD/ARTE-8.md)   ```# DEVICE: HP CHROMEBOX G2```
 - [datum/2023/HOLD/LEAF-4.md](datum/2023/HOLD/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
 - [datum/2023/HOLD/LEAF-9.md](datum/2023/HOLD/LEAF-9.md)   ```# KITE: to fly in cloud```
 
 ### 3 TO DO
 
+- [datum/2023/TODO/ACLS-1.md](datum/2023/TODO/ACLS-1.md)   ```# IDP : first database of user identity```
 - [datum/2023/TODO/ARTE-3.md](datum/2023/TODO/ARTE-3.md)   ```# ISSUE : Fork repo from community to my github```
 - [datum/2023/TODO/CMW-1.md](datum/2023/TODO/CMW-1.md)   ```# process : background daemon management```
 - [datum/2023/TODO/CMW-2.md](datum/2023/TODO/CMW-2.md)   ```# commonwealth : vault function```
@@ -83,8 +84,8 @@
 ### 5 BACKLOG
 
 - [datum/2023/BACKLOG/ACLS-0.md](datum/2023/BACKLOG/ACLS-0.md)   ```# Access Control : Level System```
-- [datum/2023/BACKLOG/ACLS-1.md](datum/2023/BACKLOG/ACLS-1.md)   ```# IDP : first database of user identity```
 - [datum/2023/BACKLOG/ACLS-2.md](datum/2023/BACKLOG/ACLS-2.md)   ```# Haproxy : API access control```
+- [datum/2023/BACKLOG/ARTE-0.md](datum/2023/BACKLOG/ARTE-0.md)   ```# Artefacts: The Art of Civilization```
 - [datum/2023/BACKLOG/ARTE-7.md](datum/2023/BACKLOG/ARTE-7.md)   ```# WSL : distro image```
 - [datum/2023/BACKLOG/ASML-0.md](datum/2023/BACKLOG/ASML-0.md)   ```# Assembly : Mission```
 - [datum/2023/BACKLOG/CMW-0.md](datum/2023/BACKLOG/CMW-0.md)   ```# Common : Wealth```
@@ -116,3 +117,4 @@
 - [datum/2023/BACKLOG/OBSR-4.md](datum/2023/BACKLOG/OBSR-4.md)   ```# Kibana : dashboard of visualized log```
 - [datum/2023/BACKLOG/TSQA-0.md](datum/2023/BACKLOG/TSQA-0.md)   ```# TEST : QUALITY```
 - [datum/2023/BACKLOG/VIM-0.md](datum/2023/BACKLOG/VIM-0.md)   ```# VIM : Bram Moolenaar ```
+- [datum/2023/BACKLOG/VIM-2.md](datum/2023/BACKLOG/VIM-2.md)   ```# monitor : TUI dashboard```
