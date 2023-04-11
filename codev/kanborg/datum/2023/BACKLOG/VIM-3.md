@@ -1,8 +1,11 @@
-# container : as native shell
+# monitor : TUI dashboard
 --------------------------------
 ### 0 DESCRIPTION
 
-- Possible to use container shell for a special environment exec
+Bring up a screen with multiple panel for TUI monitor
+
+- htop/top
+- 
 
 ### 1 SOLUTION
 

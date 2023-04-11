@@ -5,11 +5,11 @@
 
 ### 1 WORK IN PROGRESS
 
+- [datum/2023/WIP/ACLS-1.md](datum/2023/WIP/ACLS-1.md)   ```# IDP : first database of user identity```
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
 - [datum/2023/WIP/NJS-2.md](datum/2023/WIP/NJS-2.md)   ```# GLORIA: run objectory```
-- [datum/2023/WIP/OBSR-2.md](datum/2023/WIP/OBSR-2.md)   ```# ELK : log collection for mono service```
 
 ### 2 ON HOLD
 
@@ -19,7 +19,6 @@
 
 ### 3 TO DO
 
-- [datum/2023/TODO/ACLS-1.md](datum/2023/TODO/ACLS-1.md)   ```# IDP : first database of user identity```
 - [datum/2023/TODO/ARTE-3.md](datum/2023/TODO/ARTE-3.md)   ```# ISSUE : Fork repo from community to my github```
 - [datum/2023/TODO/CMW-1.md](datum/2023/TODO/CMW-1.md)   ```# process : background daemon management```
 - [datum/2023/TODO/CMW-2.md](datum/2023/TODO/CMW-2.md)   ```# commonwealth : vault function```
@@ -75,6 +74,7 @@
 - [datum/2023/DONE/MKG-1.md](datum/2023/DONE/MKG-1.md)   ```# FEATURE : node - simple editor```
 - [datum/2023/DONE/MKG-2.md](datum/2023/DONE/MKG-2.md)   ```# makegraph :  Happy ❤ Valentine```
 - [datum/2023/DONE/OBSR-1.md](datum/2023/DONE/OBSR-1.md)   ```# prometheus: scrape of mono services```
+- [datum/2023/DONE/OBSR-2.md](datum/2023/DONE/OBSR-2.md)   ```# ELK : log collection for mono service```
 - [datum/2023/DONE/OBSR-3.md](datum/2023/DONE/OBSR-3.md)   ```# Grafana : metric dashboard```
 - [datum/2023/DONE/SPEC-0.md](datum/2023/DONE/SPEC-0.md)   ```# SPEC : yson format```
 - [datum/2023/DONE/SPEC-1.md](datum/2023/DONE/SPEC-1.md)   ```# SPEC : yson format - python implement```
@@ -118,4 +118,5 @@
 - [datum/2023/BACKLOG/OBSR-4.md](datum/2023/BACKLOG/OBSR-4.md)   ```# Kibana : dashboard of visualized log```
 - [datum/2023/BACKLOG/TSQA-0.md](datum/2023/BACKLOG/TSQA-0.md)   ```# TEST : QUALITY```
 - [datum/2023/BACKLOG/VIM-0.md](datum/2023/BACKLOG/VIM-0.md)   ```# VIM : Bram Moolenaar ```
-- [datum/2023/BACKLOG/VIM-2.md](datum/2023/BACKLOG/VIM-2.md)   ```# monitor : TUI dashboard```
+- [datum/2023/BACKLOG/VIM-2.md](datum/2023/BACKLOG/VIM-2.md)   ```# container : as native shell```
+- [datum/2023/BACKLOG/VIM-3.md](datum/2023/BACKLOG/VIM-3.md)   ```# monitor : TUI dashboard```
