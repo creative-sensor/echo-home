@@ -6,16 +6,17 @@
 ### 1 WORK IN PROGRESS
 
 - [datum/2023/WIP/ACLS-1.md](datum/2023/WIP/ACLS-1.md)   ```# IDP : first database of user identity```
+- [datum/2023/WIP/KBG-6.md](datum/2023/WIP/KBG-6.md)   ```# ISSUE : Card duplicated when moved```
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
+- [datum/2023/WIP/LEAF-9.md](datum/2023/WIP/LEAF-9.md)   ```# The Paper Kites: free in cloud```
 - [datum/2023/WIP/NJS-2.md](datum/2023/WIP/NJS-2.md)   ```# GLORIA: run objectory```
 
 ### 2 ON HOLD
 
 - [datum/2023/HOLD/ARTE-8.md](datum/2023/HOLD/ARTE-8.md)   ```# DEVICE: HP CHROMEBOX G2```
 - [datum/2023/HOLD/LEAF-4.md](datum/2023/HOLD/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
-- [datum/2023/HOLD/LEAF-9.md](datum/2023/HOLD/LEAF-9.md)   ```# KITE: to fly in cloud```
 
 ### 3 TO DO
 
@@ -96,7 +97,6 @@
 - [datum/2023/BACKLOG/E419-0.md](datum/2023/BACKLOG/E419-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/GRTH-0.md](datum/2023/BACKLOG/GRTH-0.md)   ```# GRAPH : THEORY```
 - [datum/2023/BACKLOG/KBG-3.md](datum/2023/BACKLOG/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
-- [datum/2023/BACKLOG/KBG-6.md](datum/2023/BACKLOG/KBG-6.md)   ```# ISSUE : Card duplicated when moved```
 - [datum/2023/BACKLOG/KUBEX-0.md](datum/2023/BACKLOG/KUBEX-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/LEAF-0.md](datum/2023/BACKLOG/LEAF-0.md)   ```# ISSUE : vim fgxp did not show .gitconfig```
 - [datum/2023/BACKLOG/LEAF-11.md](datum/2023/BACKLOG/LEAF-11.md)   ```# GIT-CLONE: single commit```
