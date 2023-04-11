@@ -6,7 +6,6 @@
 ### 1 WORK IN PROGRESS
 
 - [datum/2023/WIP/ACLS-1.md](datum/2023/WIP/ACLS-1.md)   ```# IDP : first database of user identity```
-- [datum/2023/WIP/KBG-6.md](datum/2023/WIP/KBG-6.md)   ```# ISSUE : Card duplicated when moved```
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
@@ -31,6 +30,7 @@
 - [datum/2023/TODO/MDOS-2.md](datum/2023/TODO/MDOS-2.md)   ```# toolset : build/compile```
 - [datum/2023/TODO/MDOS-3.md](datum/2023/TODO/MDOS-3.md)   ```# FEATURE : powershell for gvim```
 - [datum/2023/TODO/MDOS-4.md](datum/2023/TODO/MDOS-4.md)   ```# PowerShell: utilities for missing function in gitbash```
+- [datum/2023/TODO/OBSR-4.md](datum/2023/TODO/OBSR-4.md)   ```# Kibana : dashboard of visualized log```
 
 ### 4 DONE
 
@@ -57,6 +57,7 @@
 - [datum/2023/DONE/KBG-2.md](datum/2023/DONE/KBG-2.md)   ```# FEATURE: project metadata as datum```
 - [datum/2023/DONE/KBG-4.md](datum/2023/DONE/KBG-4.md)   ```# FEATURE : add backlog column```
 - [datum/2023/DONE/KBG-5.md](datum/2023/DONE/KBG-5.md)   ```# kanborg : xcard to refresh in UI```
+- [datum/2023/DONE/KBG-6.md](datum/2023/DONE/KBG-6.md)   ```# ISSUE : Card duplicated when moved```
 - [datum/2023/DONE/LEAF-10.md](datum/2023/DONE/LEAF-10.md)   ```# gitlab : mono service```
 - [datum/2023/DONE/LEAF-16.md](datum/2023/DONE/LEAF-16.md)   ```# GRAPH DB : mono service```
 - [datum/2023/DONE/LEAF-17.md](datum/2023/DONE/LEAF-17.md)   ```# vim: python ide```
@@ -115,7 +116,6 @@
 - [datum/2023/BACKLOG/NJS-1.md](datum/2023/BACKLOG/NJS-1.md)   ```# KANBORG : ELECTRON UI```
 - [datum/2023/BACKLOG/NJS-3.md](datum/2023/BACKLOG/NJS-3.md)   ```# VIM : DOM```
 - [datum/2023/BACKLOG/OBSR-0.md](datum/2023/BACKLOG/OBSR-0.md)   ```# Observability : Monitoring Eyes```
-- [datum/2023/BACKLOG/OBSR-4.md](datum/2023/BACKLOG/OBSR-4.md)   ```# Kibana : dashboard of visualized log```
 - [datum/2023/BACKLOG/TSQA-0.md](datum/2023/BACKLOG/TSQA-0.md)   ```# TEST : QUALITY```
 - [datum/2023/BACKLOG/VIM-0.md](datum/2023/BACKLOG/VIM-0.md)   ```# VIM : Bram Moolenaar ```
 - [datum/2023/BACKLOG/VIM-2.md](datum/2023/BACKLOG/VIM-2.md)   ```# container : as native shell```
