@@ -1,0 +1,46 @@
+#!/bin/bash
+
+NAME=$1
+VARSET_EXT=$2
+# ----
+PUBLISH=9091
+AUTHELIA_JWT_SECRET_FILE=/secrets/JWT_SECRET
+AUTHELIA_SESSION_SECRET_FILE=/secrets/SESSION_SECRET
+AUTHELIA_STORAGE_POSTGRES_PASSWORD_FILE=/secrets/STORAGE_PASSWORD
+AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE=/secrets/STORAGE_ENCRYPTION_KEY
+AUTHELIA_SERVER_TLS_CERTIFICATE=/config/tls.certifcate.pem
+AUTHELIA_SERVER_TLS_KEY=/config/tls.key.pem
+export DEFAULT_REDIRECTION_URL=http://haproxy.service.vector.consul:8080/.function/
+
+
+# ----
+source .properd/VARSET
+# ----
+
+test -z "$NAME" && echo "NAME!" && exit 1
+DATUM_DIR=$DATUM_DIR/$NAME
+! test -d $DATUM_DIR  &&
+    mkdir -p  $DATUM_DIR/{config,logs,data,secrets}
+#    chmod -R 0777 $DATUM_DIR
+
+gen_random_password="openssl rand -hex 64"
+test -s $DATUM_DIR/$AUTHELIA_JWT_SECRET_FILE || $gen_random_password> $DATUM_DIR/$AUTHELIA_JWT_SECRET_FILE
+test -s $DATUM_DIR/$AUTHELIA_SESSION_SECRET_FILE || $gen_random_password > $DATUM_DIR/$AUTHELIA_SESSION_SECRET_FILE
+test -s $DATUM_DIR/$AUTHELIA_STORAGE_POSTGRES_PASSWORD_FILE || $gen_random_password > $DATUM_DIR/$AUTHELIA_STORAGE_POSTGRES_PASSWORD_FILE
+test -s $DATUM_DIR/$AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE ||  $gen_random_password  > $DATUM_DIR/$AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE
+
+cat .template/pki.csr.varset | envsubst > $DATUM_DIR/config/pki.csr.varset
+export $(ffunction pki-self.issue    $DATUM_DIR/config/pki.csr.varset)
+cp $SUBJECT  $DATUM_DIR/$AUTHELIA_SERVER_TLS_CERTIFICATE
+cp $SUBJECT_KEY  $DATUM_DIR/$AUTHELIA_SERVER_TLS_KEY
+
+TIMESTAMP=$(date +%s)
+cp $DATUM_DIR/config/configuration.yml $DATUM_DIR/config/configuration.yml.${TIMESTAMP} &>/dev/null
+cat .template/configuration.yml | envsubst > $DATUM_DIR/config/configuration.yml
+
+cp $DATUM_DIR/config/users_database.yml $DATUM_DIR/config/users_database.yml.${TIMESTAMP} &>/dev/null
+cat .template/users_database.yml  > $DATUM_DIR/config/users_database.yml
+
+echo "$NAME created!"
+
+

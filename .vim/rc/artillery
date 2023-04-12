@@ -117,7 +117,7 @@ map QQ : wqa<CR>
     "Save and quit all
 map q0 : qa!<CR>
     "Quit all
-map tty : call term_start("ssh ".$SSH_HOST)<CR>
+map tty : call term_start("ssh -t ".$SSH_HOST." cd ".$SUB_DIR." && bash")<CR>
 map ttu : below terminal ++rows=7<CR>
 
 

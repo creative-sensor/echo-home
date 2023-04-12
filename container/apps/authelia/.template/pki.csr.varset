@@ -1,0 +1,4 @@
+ISSUER=pkis
+ORG_NAME=authelia
+SUBJECT=authelia
+EXTENSION=server

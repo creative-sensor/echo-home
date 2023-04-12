@@ -1,0 +1,5 @@
+#!/bin/bash
+# ----
+
+interface=$(ip route | grep ^default | awk '{print $5}');
+ip addr show dev $interface | grep inet | awk '{print $2}' | head -1 | awk -F "/" '{print $1}'

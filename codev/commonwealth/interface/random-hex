@@ -1,0 +1,2 @@
+LENGTH=${1:-64}
+openssl rand -hex $LENGTH

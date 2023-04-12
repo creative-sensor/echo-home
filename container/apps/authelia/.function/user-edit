@@ -1,0 +1,20 @@
+#!/bin/bash
+
+CONFIG_SET=$1
+USERNAME=$2
+DISABLE=${3:-false}
+DISPLAY_NAME=${4:-User $(date +%s)}
+PASSWORD=${5:-$(openssl rand --base64 16)}
+# ----
+source .properd/VARSET
+# ----
+DATUM_DIR=$DATUM_DIR/$CONFIG_SET
+PASSWORD_HASH=$(.function/password-gen $PASSWORD)
+sudo chmod   0777 $DATUM_DIR/config/users_database.yml
+sudo cp $DATUM_DIR/config/users_database.yml  $DATUM_DIR/config/users_database.yml.$(date +%s)  &>/dev/null
+
+yq -i -y  \
+    "(.users.$USERNAME.disable) = $DISABLE |
+     (.users.$USERNAME.password) = \"$PASSWORD_HASH\" |
+     (.users.$USERNAME.displayname) = \"$DISPLAY_NAME\"
+    "    $DATUM_DIR/config/users_database.yml
