@@ -9,7 +9,6 @@
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
-- [datum/2023/WIP/LEAF-9.md](datum/2023/WIP/LEAF-9.md)   ```# The Paper Kites: free in cloud```
 - [datum/2023/WIP/NJS-2.md](datum/2023/WIP/NJS-2.md)   ```# GLORIA: run objectory```
 
 ### 2 ON HOLD
@@ -71,6 +70,7 @@
 - [datum/2023/DONE/LEAF-2.md](datum/2023/DONE/LEAF-2.md)   ```# FEATURE : cdx - teleport for cd command```
 - [datum/2023/DONE/LEAF-3.md](datum/2023/DONE/LEAF-3.md)   ```# FEATURE : commonwealth base```
 - [datum/2023/DONE/LEAF-6.md](datum/2023/DONE/LEAF-6.md)   ```# GUI : advanced```
+- [datum/2023/DONE/LEAF-9.md](datum/2023/DONE/LEAF-9.md)   ```# The Paper Kites: free in cloud```
 - [datum/2023/DONE/MDOS-1.md](datum/2023/DONE/MDOS-1.md)   ```# ISO: windows artefact.sha256sum```
 - [datum/2023/DONE/MKG-0.md](datum/2023/DONE/MKG-0.md)   ```# FEATURE : internode i/o communication```
 - [datum/2023/DONE/MKG-1.md](datum/2023/DONE/MKG-1.md)   ```# FEATURE : node - simple editor```
@@ -98,6 +98,7 @@
 - [datum/2023/BACKLOG/E419-0.md](datum/2023/BACKLOG/E419-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/GRTH-0.md](datum/2023/BACKLOG/GRTH-0.md)   ```# GRAPH : THEORY```
 - [datum/2023/BACKLOG/KBG-3.md](datum/2023/BACKLOG/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
+- [datum/2023/BACKLOG/KITE-0.md](datum/2023/BACKLOG/KITE-0.md)   ```# Paper : Kites```
 - [datum/2023/BACKLOG/KUBEX-0.md](datum/2023/BACKLOG/KUBEX-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/LEAF-0.md](datum/2023/BACKLOG/LEAF-0.md)   ```# ISSUE : vim fgxp did not show .gitconfig```
 - [datum/2023/BACKLOG/LEAF-11.md](datum/2023/BACKLOG/LEAF-11.md)   ```# GIT-CLONE: single commit```
