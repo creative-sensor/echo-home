@@ -6,6 +6,7 @@
 ### 1 WORK IN PROGRESS
 
 - [datum/2023/WIP/ACLS-1.md](datum/2023/WIP/ACLS-1.md)   ```# IDP : first database of user identity```
+- [datum/2023/WIP/KROS-1.md](datum/2023/WIP/KROS-1.md)   ```# Chrostini : display settings```
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
@@ -99,6 +100,7 @@
 - [datum/2023/BACKLOG/GRTH-0.md](datum/2023/BACKLOG/GRTH-0.md)   ```# GRAPH : THEORY```
 - [datum/2023/BACKLOG/KBG-3.md](datum/2023/BACKLOG/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
 - [datum/2023/BACKLOG/KITE-0.md](datum/2023/BACKLOG/KITE-0.md)   ```# Paper : Kites```
+- [datum/2023/BACKLOG/KROS-0.md](datum/2023/BACKLOG/KROS-0.md)   ```# Chromium : Alloy```
 - [datum/2023/BACKLOG/KUBEX-0.md](datum/2023/BACKLOG/KUBEX-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/LEAF-0.md](datum/2023/BACKLOG/LEAF-0.md)   ```# ISSUE : vim fgxp did not show .gitconfig```
 - [datum/2023/BACKLOG/LEAF-11.md](datum/2023/BACKLOG/LEAF-11.md)   ```# GIT-CLONE: single commit```
