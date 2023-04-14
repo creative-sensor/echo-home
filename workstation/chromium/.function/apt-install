@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+VARSET_EXT=$1
+# ---- |DEFAULT ----
+
+# ---- |OVERRIDE ----
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+#!/bin/bash
+
+sudo apt update
+sudo apt install \
+    python-is-python3 \
+    python3-pip \
+    nodejs \
+    make \
+    uuid-runtime \
+    jq \
+    rsync \
+    vim-gtk3 \
+    libnss3 \
+    libsecret-1-0
+
