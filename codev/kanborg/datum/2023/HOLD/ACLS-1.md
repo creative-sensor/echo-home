@@ -14,7 +14,9 @@
 
 ### 4 JOURNAL
 
+###### 4.0
 
+- Pending LEAF-27 : revise varset interface of pki-self so authelia can request signing
 
 --------------------------------
 ```json
