@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+VARSET_EXT=$1
+# ---- |DEFAULT ----
+DATUM_DIR=datum
+# ---- |OVERRIDE ----
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT && ARGS="VARSET_EXT=$(readlink -f $VARSET_EXT)"
+# ---- |MAIN ----
+make ca-signing $ARGS 1>&2
+
+# interface via varset
+echo   "
+        ISSUER=$(readlink -f $DATUM_DIR/$ISSUER/ca.cert.pem)
+        SUBJECT=$(readlink -f $DATUM_DIR/$ISSUER/subjects/$SUBJECT/cert.pem)
+        SUBJECT_KEY=$(readlink -f $DATUM_DIR/$ISSUER/subjects/$SUBJECT/key.pem)
+"

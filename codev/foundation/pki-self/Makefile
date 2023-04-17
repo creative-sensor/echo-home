@@ -1,30 +1,15 @@
 #--------------------------------
-include INPUT-SET.mk
+include .properd/VARSET.mk
 #--------------------------------
-
-datum = ./data
-ca_dir = ${datum}/${ISSUER}
-subject_dir = ${ca_dir}/subjects/${SUBJECT}
-subject_openssl_config = openssl.cnf.${ORG_NAME}.${SUBJECT}
-initial_serial = CCCCAAAA77770000
-
-
-
 
 
 ca-openssl-config:
-	sed -e "s/{{EXTENSION}}/${EXTENSION}/" \
-	    -e "s/{{CA_NAME}}/${ISSUER}/" \
-	    -e "s/{{SUBJECT}}/${ISSUER}/" \
-	    -e "s/{{ORG_NAME}}/AUTHORITY/" \
-	    openssl.cnf  >   openssl.cnf.ca.${ISSUER}
+	export DATUM_DIR=${datum}  CA_DIR=${ca_dir}  $$(< ${VARSET}) ; \
+	cat .template/openssl.cnf | envsubst  >   openssl.cnf.ca.${ISSUER}
 
 openssl-config:
-	sed -e "s/{{EXTENSION}}/${EXTENSION}/" \
-	    -e "s/{{CA_NAME}}/${ISSUER}/" \
-	    -e "s/{{SUBJECT}}/${SUBJECT}/" \
-	    -e "s/{{ORG_NAME}}/${ORG_NAME}/" \
-	    openssl.cnf  >   ${subject_openssl_config}
+	export DATUM_DIR=${datum}  CA_DIR=${ca_dir}  $$(< ${VARSET}) ; \
+	cat .template/openssl.cnf | envsubst  >   ${subject_openssl_config}
 
 
 ca: ca-openssl-config
@@ -72,14 +57,14 @@ csr-about: csr
 
 
 ca-signing: openssl-config   ca   csr
-	openssl ca -config ${subject_openssl_config} \
+	openssl ca -batch -config ${subject_openssl_config} \
 	    -in ${subject_dir}/csr.pem \
 	    -out ${subject_dir}/cert.pem
 
 
 cert-about: ${subject_dir}/cert.pem
 	openssl x509 -purpose  -text  -noout -in ${subject_dir}/cert.pem
-	    
+
 
 openssl-tools:
 	which openssl || yum install openssl -y
