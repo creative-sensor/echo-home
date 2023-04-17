@@ -1,3 +1,4 @@
 DKR_IMAGE=fedora:37
 DETACH=""
-CONTAINER_NAME=fedora-workman
+DKR_IMAGE_TAG=$(echo $DKR_IMAGE | awk -F ":" '{print $NF}')
+CONTAINER_NAME=fedora-workman-${DKR_IMAGE_TAG}

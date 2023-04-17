@@ -12,6 +12,8 @@ sudo dnf install -y \
     jq \
     vim \
     vim-X11 \
+    rsync \
+    openssh-server
 
 sudo pip3 install --no-cache-dir \
     yq

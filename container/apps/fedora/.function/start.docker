@@ -13,13 +13,12 @@ source .properd/VARSET
 test -z "$DATUM_DIR" && DATUM_DIR=$(git_root)
 DATUM_DIR=$(readlink -f $DATUM_DIR)
 TARGET_DIR=/$(basename $DATUM_DIR)
-DKR_IMAGE_TAG=$(echo $DKR_IMAGE | awk -F ":" '{print $NF}')
 
 docker start $CONTAINER_NAME ||
 docker run $DETACH \
     -it \
-    --name $CONTAINER_NAME-$DKR_IMAGE_TAG \
-    --hostname $CONTAINER_NAME-$DKR_IMAGE_TAG \
+    --name $CONTAINER_NAME \
+    --hostname $CONTAINER_NAME \
     --dns $DKR_DNS \
     --workdir $TARGET_DIR \
     --volume $DATUM_DIR:$TARGET_DIR \

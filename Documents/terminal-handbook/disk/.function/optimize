@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+VARSET_EXT=$1
+# ---- |DEFAULT ----
+
+# ---- |OVERRIDE ----
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+
+sudo systemctl disable systemd-journald.service
+sudo journalctl --vacuum-size=100M
+
+sudo docker system prune
+
+sudo dnf clean all
+
+sudo touch /etc/systemd/zram-generator.conf
