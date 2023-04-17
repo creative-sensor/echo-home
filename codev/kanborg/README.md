@@ -5,6 +5,7 @@
 
 ### 1 WORK IN PROGRESS
 
+- [datum/2023/WIP/ACLS-1.md](datum/2023/WIP/ACLS-1.md)   ```# IDP : first database of user identity```
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
@@ -12,7 +13,6 @@
 
 ### 2 ON HOLD
 
-- [datum/2023/HOLD/ACLS-1.md](datum/2023/HOLD/ACLS-1.md)   ```# IDP : first database of user identity```
 - [datum/2023/HOLD/ARTE-8.md](datum/2023/HOLD/ARTE-8.md)   ```# DEVICE: HP CHROMEBOX G2```
 - [datum/2023/HOLD/LEAF-4.md](datum/2023/HOLD/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
 
@@ -26,7 +26,6 @@
 - [datum/2023/TODO/LEAF-13.md](datum/2023/TODO/LEAF-13.md)   ```# Clipboard: internode```
 - [datum/2023/TODO/LEAF-15.md](datum/2023/TODO/LEAF-15.md)   ```# ETO : Emerging Technology Observatory ```
 - [datum/2023/TODO/LEAF-26.md](datum/2023/TODO/LEAF-26.md)   ```# Serverless : as nanoservice```
-- [datum/2023/TODO/LEAF-27.md](datum/2023/TODO/LEAF-27.md)   ```# pki-self: revise varset interface```
 - [datum/2023/TODO/LEAF-28.md](datum/2023/TODO/LEAF-28.md)   ```# terminal-handbook : disk```
 - [datum/2023/TODO/MDOS-2.md](datum/2023/TODO/MDOS-2.md)   ```# toolset : build/compile```
 - [datum/2023/TODO/MDOS-3.md](datum/2023/TODO/MDOS-3.md)   ```# FEATURE : powershell for gvim```
@@ -71,6 +70,7 @@
 - [datum/2023/DONE/LEAF-23.md](datum/2023/DONE/LEAF-23.md)   ```# postgres : mono service```
 - [datum/2023/DONE/LEAF-24.md](datum/2023/DONE/LEAF-24.md)   ```# Fleet : mono service```
 - [datum/2023/DONE/LEAF-25.md](datum/2023/DONE/LEAF-25.md)   ```# vim : rc/artillery```
+- [datum/2023/DONE/LEAF-27.md](datum/2023/DONE/LEAF-27.md)   ```# pki-self: revise varset interface```
 - [datum/2023/DONE/LEAF-2.md](datum/2023/DONE/LEAF-2.md)   ```# FEATURE : cdx - teleport for cd command```
 - [datum/2023/DONE/LEAF-3.md](datum/2023/DONE/LEAF-3.md)   ```# FEATURE : commonwealth base```
 - [datum/2023/DONE/LEAF-6.md](datum/2023/DONE/LEAF-6.md)   ```# GUI : advanced```
