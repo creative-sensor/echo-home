@@ -5,7 +5,6 @@
 
 ### 1 WORK IN PROGRESS
 
-- [datum/2023/WIP/ACLS-1.md](datum/2023/WIP/ACLS-1.md)   ```# IDP : first database of user identity```
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
@@ -35,6 +34,7 @@
 
 ### 4 DONE
 
+- [datum/2023/DONE/ACLS-1.md](datum/2023/DONE/ACLS-1.md)   ```# IDP : first database of user identity```
 - [datum/2023/DONE/archived.JBL-1.md](datum/2023/DONE/archived.JBL-1.md)   ```# ISSUE : JBL Charge 5```
 - [datum/2023/DONE/archived.KBG-1.md](datum/2023/DONE/archived.KBG-1.md)   ```# RELEASE : KANBORG```
 - [datum/2023/DONE/archived.KBG-2.md](datum/2023/DONE/archived.KBG-2.md)   ```# ISSUE : card not move when destination is empty```

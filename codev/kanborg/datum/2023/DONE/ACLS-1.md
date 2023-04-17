@@ -2,9 +2,12 @@
 --------------------------------
 ### 0 DESCRIPTION
 
+- user can login with password
+- successful login should redirect user to api gateway
 
 ### 1 SOLUTION
 
+https://github.com/creative-sensor/echo-home/commit/42ee3a9962d487afa92c42bf668eac23268ce187
 
 ### 2 NOTES
 
