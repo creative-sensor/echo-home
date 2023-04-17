@@ -27,6 +27,7 @@
 - [datum/2023/TODO/LEAF-15.md](datum/2023/TODO/LEAF-15.md)   ```# ETO : Emerging Technology Observatory ```
 - [datum/2023/TODO/LEAF-26.md](datum/2023/TODO/LEAF-26.md)   ```# Serverless : as nanoservice```
 - [datum/2023/TODO/LEAF-27.md](datum/2023/TODO/LEAF-27.md)   ```# pki-self: revise varset interface```
+- [datum/2023/TODO/LEAF-28.md](datum/2023/TODO/LEAF-28.md)   ```# terminal-handbook : disk```
 - [datum/2023/TODO/MDOS-2.md](datum/2023/TODO/MDOS-2.md)   ```# toolset : build/compile```
 - [datum/2023/TODO/MDOS-3.md](datum/2023/TODO/MDOS-3.md)   ```# FEATURE : powershell for gvim```
 - [datum/2023/TODO/MDOS-4.md](datum/2023/TODO/MDOS-4.md)   ```# PowerShell: utilities for missing function in gitbash```
@@ -92,6 +93,7 @@
 - [datum/2023/BACKLOG/ARTE-0.md](datum/2023/BACKLOG/ARTE-0.md)   ```# Artefacts: The Art of Civilization```
 - [datum/2023/BACKLOG/ARTE-7.md](datum/2023/BACKLOG/ARTE-7.md)   ```# WSL : distro image```
 - [datum/2023/BACKLOG/ASML-0.md](datum/2023/BACKLOG/ASML-0.md)   ```# Assembly : Mission```
+- [datum/2023/BACKLOG/ASML-1.md](datum/2023/BACKLOG/ASML-1.md)   ```# # SSO : Single Sign-On```
 - [datum/2023/BACKLOG/CMW-0.md](datum/2023/BACKLOG/CMW-0.md)   ```# Common : Wealth```
 - [datum/2023/BACKLOG/CORTA-0.md](datum/2023/BACKLOG/CORTA-0.md)   ```# Cortana : Chief```
 - [datum/2023/BACKLOG/DBMS-0.md](datum/2023/BACKLOG/DBMS-0.md)   ```# ISSUE :```
