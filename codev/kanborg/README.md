@@ -101,6 +101,7 @@
 - [datum/2023/BACKLOG/DTUM-0.md](datum/2023/BACKLOG/DTUM-0.md)   ```# Datum : Backup and Recovery```
 - [datum/2023/BACKLOG/DTUM-1.md](datum/2023/BACKLOG/DTUM-1.md)   ```# Backup : existing mono service```
 - [datum/2023/BACKLOG/E419-0.md](datum/2023/BACKLOG/E419-0.md)   ```# ISSUE :```
+- [datum/2023/BACKLOG/GILB-1.md](datum/2023/BACKLOG/GILB-1.md)   ```# ldap : authentication```
 - [datum/2023/BACKLOG/GRTH-0.md](datum/2023/BACKLOG/GRTH-0.md)   ```# GRAPH : THEORY```
 - [datum/2023/BACKLOG/KBG-3.md](datum/2023/BACKLOG/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
 - [datum/2023/BACKLOG/KITE-0.md](datum/2023/BACKLOG/KITE-0.md)   ```# Paper : Kites```
