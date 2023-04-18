@@ -1,6 +1,7 @@
 "-------- [MISC] --------
 syntax on
 highlight CursorLine cterm=NONE ctermbg=251
+highlight Terminal ctermbg=23 ctermfg=15 guibg=#073642   guifg=#93a1a1
     "highlight CursorLine cterm=NONE ctermbg=24
 filetype on
 
@@ -205,7 +206,7 @@ map QQ : wqa<CR>
     "Save and quit all
 map q0 : qa!<CR>
     "Quit all
-map tty : highlight Terminal ctermbg=23 ctermfg=15 guibg=#073042 guifg=#7ec1de \| below terminal ++rows=7<CR>
+map tty : below terminal ++rows=13<CR>
 
 "map <C-I> : tabnew . <CR>
 
