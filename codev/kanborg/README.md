@@ -25,7 +25,6 @@
 - [datum/2023/TODO/LEAF-13.md](datum/2023/TODO/LEAF-13.md)   ```# Clipboard: internode```
 - [datum/2023/TODO/LEAF-15.md](datum/2023/TODO/LEAF-15.md)   ```# ETO : Emerging Technology Observatory```
 - [datum/2023/TODO/LEAF-26.md](datum/2023/TODO/LEAF-26.md)   ```# Serverless : as nanoservice```
-- [datum/2023/TODO/LEAF-28.md](datum/2023/TODO/LEAF-28.md)   ```# terminal-handbook : disk```
 - [datum/2023/TODO/MDOS-2.md](datum/2023/TODO/MDOS-2.md)   ```# toolset : build/compile```
 - [datum/2023/TODO/MDOS-3.md](datum/2023/TODO/MDOS-3.md)   ```# FEATURE : powershell for gvim```
 - [datum/2023/TODO/MDOS-4.md](datum/2023/TODO/MDOS-4.md)   ```# PowerShell: utilities for missing function in gitbash```
@@ -35,6 +34,12 @@
 ### 4 DONE
 
 - [datum/2023/DONE/ACLS-1.md](datum/2023/DONE/ACLS-1.md)   ```# IDP : first database of user identity```
+- [datum/2023/DONE/archived.JBL-1.md](datum/2023/DONE/archived.JBL-1.md)   ```# ISSUE : JBL Charge 5```
+- [datum/2023/DONE/archived.KBG-1.md](datum/2023/DONE/archived.KBG-1.md)   ```# RELEASE : KANBORG```
+- [datum/2023/DONE/archived.KBG-2.md](datum/2023/DONE/archived.KBG-2.md)   ```# ISSUE : card not move when destination is empty```
+- [datum/2023/DONE/archived.KBG-3.md](datum/2023/DONE/archived.KBG-3.md)   ```# FIX: kanborg support for windows```
+- [datum/2023/DONE/archived.KBS-1.md](datum/2023/DONE/archived.KBS-1.md)   ```# CREDIT```
+- [datum/2023/DONE/archived.SPEC-0.md](datum/2023/DONE/archived.SPEC-0.md)   ```# FEATURE: yson format```
 - [datum/2023/DONE/ARTE-1.md](datum/2023/DONE/ARTE-1.md)   ```# ISSUE : yson - artefact-get```
 - [datum/2023/DONE/ARTE-2.md](datum/2023/DONE/ARTE-2.md)   ```# ISSUE : luks failed to active with passphrase```
 - [datum/2023/DONE/ARTE-4.md](datum/2023/DONE/ARTE-4.md)   ```# ISO : fedora sha256sum```
@@ -54,18 +59,19 @@
 - [datum/2023/DONE/KBG-5.md](datum/2023/DONE/KBG-5.md)   ```# kanborg : xcard to refresh in UI```
 - [datum/2023/DONE/KBG-6.md](datum/2023/DONE/KBG-6.md)   ```# ISSUE : Card duplicated when moved```
 - [datum/2023/DONE/KROS-1.md](datum/2023/DONE/KROS-1.md)   ```# Chrostini : display settings```
-- [datum/2023/DONE/LEAF-1.md](datum/2023/DONE/LEAF-1.md)   ```# CODEV : Makefile as graph workflow```
 - [datum/2023/DONE/LEAF-10.md](datum/2023/DONE/LEAF-10.md)   ```# gitlab : mono service```
 - [datum/2023/DONE/LEAF-16.md](datum/2023/DONE/LEAF-16.md)   ```# GRAPH DB : mono service```
 - [datum/2023/DONE/LEAF-17.md](datum/2023/DONE/LEAF-17.md)   ```# vim: python ide```
 - [datum/2023/DONE/LEAF-18.md](datum/2023/DONE/LEAF-18.md)   ```# container: fedora mini-station```
-- [datum/2023/DONE/LEAF-2.md](datum/2023/DONE/LEAF-2.md)   ```# FEATURE : cdx - teleport for cd command```
+- [datum/2023/DONE/LEAF-1.md](datum/2023/DONE/LEAF-1.md)   ```# CODEV : Makefile as graph workflow```
 - [datum/2023/DONE/LEAF-21.md](datum/2023/DONE/LEAF-21.md)   ```# VIM : remove aged Session.vim```
 - [datum/2023/DONE/LEAF-22.md](datum/2023/DONE/LEAF-22.md)   ```# Kong-gateway : mono service```
 - [datum/2023/DONE/LEAF-23.md](datum/2023/DONE/LEAF-23.md)   ```# postgres : mono service```
 - [datum/2023/DONE/LEAF-24.md](datum/2023/DONE/LEAF-24.md)   ```# Fleet : mono service```
 - [datum/2023/DONE/LEAF-25.md](datum/2023/DONE/LEAF-25.md)   ```# vim : rc/artillery```
 - [datum/2023/DONE/LEAF-27.md](datum/2023/DONE/LEAF-27.md)   ```# pki-self: revise varset interface```
+- [datum/2023/DONE/LEAF-28.md](datum/2023/DONE/LEAF-28.md)   ```# terminal-handbook : disk```
+- [datum/2023/DONE/LEAF-2.md](datum/2023/DONE/LEAF-2.md)   ```# FEATURE : cdx - teleport for cd command```
 - [datum/2023/DONE/LEAF-3.md](datum/2023/DONE/LEAF-3.md)   ```# FEATURE : commonwealth base```
 - [datum/2023/DONE/LEAF-6.md](datum/2023/DONE/LEAF-6.md)   ```# GUI : advanced```
 - [datum/2023/DONE/LEAF-9.md](datum/2023/DONE/LEAF-9.md)   ```# The Paper Kites: free in cloud```
@@ -80,12 +86,6 @@
 - [datum/2023/DONE/SPEC-1.md](datum/2023/DONE/SPEC-1.md)   ```# SPEC : yson format - python implement```
 - [datum/2023/DONE/SPEC-2.md](datum/2023/DONE/SPEC-2.md)   ```# SPEC : bash.namespace```
 - [datum/2023/DONE/VIM-1.md](datum/2023/DONE/VIM-1.md)   ```# artillery : ssh multiplex```
-- [datum/2023/DONE/archived.JBL-1.md](datum/2023/DONE/archived.JBL-1.md)   ```# ISSUE : JBL Charge 5```
-- [datum/2023/DONE/archived.KBG-1.md](datum/2023/DONE/archived.KBG-1.md)   ```# RELEASE : KANBORG```
-- [datum/2023/DONE/archived.KBG-2.md](datum/2023/DONE/archived.KBG-2.md)   ```# ISSUE : card not move when destination is empty```
-- [datum/2023/DONE/archived.KBG-3.md](datum/2023/DONE/archived.KBG-3.md)   ```# FIX: kanborg support for windows```
-- [datum/2023/DONE/archived.KBS-1.md](datum/2023/DONE/archived.KBS-1.md)   ```# CREDIT```
-- [datum/2023/DONE/archived.SPEC-0.md](datum/2023/DONE/archived.SPEC-0.md)   ```# FEATURE: yson format```
 
 ### 5 BACKLOG
 
