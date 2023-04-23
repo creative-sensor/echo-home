@@ -18,6 +18,9 @@
 
 ### 4 JOURNAL
 
+###### 4.0
+
+https://github.com/anaibol/awesome-serverless
 
 
 --------------------------------
