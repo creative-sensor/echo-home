@@ -59,7 +59,8 @@ STOP='\[\033[0m\]'
 
 PS1="[${BOLD}${COLOR1}\u${STOP}@${BOLD}${COLOR2}\h \W${STOP}]\$ "
 PROMPT_COMMAND='echo -ne "\033]0;$(basename $PWD)\007"'
-
+export TTY_FG_COLOR=15
+export TTY_BG_COLOR=23
 #export MOZILLA_FIREFOX_PROFILE=
 #export MOZILLA_THUNDERBIRD_PROFILE=
 #export GNUPGHOME=

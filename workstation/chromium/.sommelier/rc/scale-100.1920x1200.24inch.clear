@@ -1,3 +1,4 @@
+#rc: clear
 echo Xft.dpi: 144 | xrdb -merge
 export GDK_SCALE=1
 export GDK_SCALE_DPI=144

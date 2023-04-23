@@ -1,3 +1,4 @@
+#rc: sharp
 echo Xft.dpi: 168 | xrdb -merge
 export GDK_SCALE=1
 export GDK_SCALE_DPI=168

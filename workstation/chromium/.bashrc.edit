@@ -1,3 +1,4 @@
 alias ll='ls -la'
 alias vim='vim -c "set ttymouse=sgr" '
-
+export TTY_FG_COLOR=253
+export TTY_BG_COLOR=23
