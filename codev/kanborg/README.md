@@ -5,6 +5,7 @@
 
 ### 1 WORK IN PROGRESS
 
+- [datum/2023/WIP/KROS-2.md](datum/2023/WIP/KROS-2.md)   ```# ISSUE : dotconfig```
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-19.md](datum/2023/WIP/LEAF-19.md)   ```# AppImage : explore```
@@ -26,6 +27,7 @@
 - [datum/2023/TODO/LEAF-13.md](datum/2023/TODO/LEAF-13.md)   ```# Clipboard: internode```
 - [datum/2023/TODO/LEAF-15.md](datum/2023/TODO/LEAF-15.md)   ```# ETO : Emerging Technology Observatory```
 - [datum/2023/TODO/LEAF-26.md](datum/2023/TODO/LEAF-26.md)   ```# Serverless : as nanoservice```
+- [datum/2023/TODO/LEAF-30.md](datum/2023/TODO/LEAF-30.md)   ```# Jupyter :```
 - [datum/2023/TODO/MDOS-2.md](datum/2023/TODO/MDOS-2.md)   ```# toolset : build/compile```
 - [datum/2023/TODO/MDOS-3.md](datum/2023/TODO/MDOS-3.md)   ```# FEATURE : powershell for gvim```
 - [datum/2023/TODO/MDOS-4.md](datum/2023/TODO/MDOS-4.md)   ```# PowerShell: utilities for missing function in gitbash```
@@ -113,7 +115,6 @@
 - [datum/2023/BACKLOG/LEAF-12.md](datum/2023/BACKLOG/LEAF-12.md)   ```# FIBO SHELL: svg```
 - [datum/2023/BACKLOG/LEAF-20.md](datum/2023/BACKLOG/LEAF-20.md)   ```# Boot : mono service```
 - [datum/2023/BACKLOG/LEAF-29.md](datum/2023/BACKLOG/LEAF-29.md)   ```# btrfs : objectory```
-- [datum/2023/BACKLOG/LEAF-30.md](datum/2023/BACKLOG/LEAF-30.md)   ```# Jupyter :```
 - [datum/2023/BACKLOG/LEAF-5.md](datum/2023/BACKLOG/LEAF-5.md)   ```# FEATURE : color system```
 - [datum/2023/BACKLOG/LEAF-7.md](datum/2023/BACKLOG/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
 - [datum/2023/BACKLOG/MDOS-0.md](datum/2023/BACKLOG/MDOS-0.md)   ```# MICROSOFT : WINDOWS```
