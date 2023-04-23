@@ -60,6 +60,8 @@ let g:TODO = '2.TODO'
 let g:HOLD = '3.HOLD'
 let g:WIP = '4.WIP'
 let g:DONE= '5.DONE'
+let g:tty_fg_color = $TTY_FG_COLOR
+let g:tty_bg_color = $TTY_BG_COLOR
 
 "-------- [FUNCTIONS] --------
 
@@ -154,7 +156,7 @@ command! -nargs=1 Grin call GrepSource(<q-args>)
 
 fun! Terminator()
   " Mini Terminal
-  execute  "highlight Terminal ctermbg=23 ctermfg=15 guibg=#073642   guifg=#93a1a1 "
+  execute  "highlight Terminal ctermbg=".g:tty_bg_color." ctermfg=".g:tty_fg_color." guibg=#073642   guifg=#93a1a1 "
   execute  "below terminal ++rows=7"
 endfun
 command! -nargs=0 Terminator call Terminator()
@@ -191,7 +193,7 @@ map q0 : qa!<CR>
     "Quit all
 inoremap <F8><F8>  <C-o>: r! date "+\%Y-\%m-\%d.\%s"<CR>
     "temporarily switch to normal from insert mode and run command
-map tty : highlight Terminal ctermbg=23 ctermfg=15 guibg=darkblue guifg=lightgrey \| below terminal ++rows=7<CR>
+map tty : call Terminator()<CR>
 
 
 vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
