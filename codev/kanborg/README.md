@@ -5,6 +5,7 @@
 
 ### 1 WORK IN PROGRESS
 
+- [datum/2023/WIP/KITE-9.md](datum/2023/WIP/KITE-9.md)   ```# Docker : registry```
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-19.md](datum/2023/WIP/LEAF-19.md)   ```# AppImage : explore```
@@ -108,6 +109,14 @@
 - [datum/2023/BACKLOG/GRTH-0.md](datum/2023/BACKLOG/GRTH-0.md)   ```# GRAPH : THEORY```
 - [datum/2023/BACKLOG/KBG-3.md](datum/2023/BACKLOG/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
 - [datum/2023/BACKLOG/KITE-0.md](datum/2023/BACKLOG/KITE-0.md)   ```# Paper : Kites```
+- [datum/2023/BACKLOG/KITE-1.md](datum/2023/BACKLOG/KITE-1.md)   ```# Github : codespace/action```
+- [datum/2023/BACKLOG/KITE-2.md](datum/2023/BACKLOG/KITE-2.md)   ```# Gitlab :```
+- [datum/2023/BACKLOG/KITE-3.md](datum/2023/BACKLOG/KITE-3.md)   ```# Google : Workspaces```
+- [datum/2023/BACKLOG/KITE-4.md](datum/2023/BACKLOG/KITE-4.md)   ```# Facebook :```
+- [datum/2023/BACKLOG/KITE-5.md](datum/2023/BACKLOG/KITE-5.md)   ```# Sendgrid :```
+- [datum/2023/BACKLOG/KITE-6.md](datum/2023/BACKLOG/KITE-6.md)   ```# Sentry :```
+- [datum/2023/BACKLOG/KITE-7.md](datum/2023/BACKLOG/KITE-7.md)   ```# Microsoft :```
+- [datum/2023/BACKLOG/KITE-8.md](datum/2023/BACKLOG/KITE-8.md)   ```# Openshift :```
 - [datum/2023/BACKLOG/KROS-0.md](datum/2023/BACKLOG/KROS-0.md)   ```# Chromium : Alloy```
 - [datum/2023/BACKLOG/KUBEX-0.md](datum/2023/BACKLOG/KUBEX-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/LEAF-0.md](datum/2023/BACKLOG/LEAF-0.md)   ```# ISSUE : vim fgxp did not show .gitconfig```
