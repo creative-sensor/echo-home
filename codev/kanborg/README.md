@@ -5,7 +5,6 @@
 
 ### 1 WORK IN PROGRESS
 
-- [datum/2023/WIP/KITE-9.md](datum/2023/WIP/KITE-9.md)   ```# Docker : registry```
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-19.md](datum/2023/WIP/LEAF-19.md)   ```# AppImage : explore```
@@ -61,6 +60,7 @@
 - [datum/2023/DONE/KBG-4.md](datum/2023/DONE/KBG-4.md)   ```# FEATURE : add backlog column```
 - [datum/2023/DONE/KBG-5.md](datum/2023/DONE/KBG-5.md)   ```# kanborg : xcard to refresh in UI```
 - [datum/2023/DONE/KBG-6.md](datum/2023/DONE/KBG-6.md)   ```# ISSUE : Card duplicated when moved```
+- [datum/2023/DONE/KITE-9.md](datum/2023/DONE/KITE-9.md)   ```# Docker : registry```
 - [datum/2023/DONE/KROS-1.md](datum/2023/DONE/KROS-1.md)   ```# Chrostini : display settings```
 - [datum/2023/DONE/KROS-2.md](datum/2023/DONE/KROS-2.md)   ```# ISSUE : dotconfig```
 - [datum/2023/DONE/LEAF-10.md](datum/2023/DONE/LEAF-10.md)   ```# gitlab : mono service```
@@ -101,6 +101,7 @@
 - [datum/2023/BACKLOG/ASML-1.md](datum/2023/BACKLOG/ASML-1.md)   ```# # SSO : Single Sign-On```
 - [datum/2023/BACKLOG/CMW-0.md](datum/2023/BACKLOG/CMW-0.md)   ```# Common : Wealth```
 - [datum/2023/BACKLOG/CORTA-0.md](datum/2023/BACKLOG/CORTA-0.md)   ```# Cortana : Chief```
+- [datum/2023/BACKLOG/CTNR-0.md](datum/2023/BACKLOG/CTNR-0.md)   ```# public : encrypted```
 - [datum/2023/BACKLOG/DBMS-0.md](datum/2023/BACKLOG/DBMS-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/DTUM-0.md](datum/2023/BACKLOG/DTUM-0.md)   ```# Datum : Backup and Recovery```
 - [datum/2023/BACKLOG/DTUM-1.md](datum/2023/BACKLOG/DTUM-1.md)   ```# Backup : existing mono service```
