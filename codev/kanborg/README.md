@@ -5,6 +5,8 @@
 
 ### 1 WORK IN PROGRESS
 
+- [datum/2023/WIP/GILB-1.md](datum/2023/WIP/GILB-1.md)   ```# ldap : authentication```
+- [datum/2023/WIP/KITE-10.md](datum/2023/WIP/KITE-10.md)   ```# Terraform : init```
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-19.md](datum/2023/WIP/LEAF-19.md)   ```# AppImage : explore```
@@ -106,7 +108,6 @@
 - [datum/2023/BACKLOG/DTUM-0.md](datum/2023/BACKLOG/DTUM-0.md)   ```# Datum : Backup and Recovery```
 - [datum/2023/BACKLOG/DTUM-1.md](datum/2023/BACKLOG/DTUM-1.md)   ```# Backup : existing mono service```
 - [datum/2023/BACKLOG/E419-0.md](datum/2023/BACKLOG/E419-0.md)   ```# ISSUE :```
-- [datum/2023/BACKLOG/GILB-1.md](datum/2023/BACKLOG/GILB-1.md)   ```# ldap : authentication```
 - [datum/2023/BACKLOG/GRTH-0.md](datum/2023/BACKLOG/GRTH-0.md)   ```# GRAPH : THEORY```
 - [datum/2023/BACKLOG/KBG-3.md](datum/2023/BACKLOG/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
 - [datum/2023/BACKLOG/KITE-0.md](datum/2023/BACKLOG/KITE-0.md)   ```# Paper : Kites```
