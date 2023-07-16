@@ -20,6 +20,7 @@ set title titlestring=VIM\ \|\ %{fnamemodify(getcwd(),\ ':t')} titlelen=32
     "output:  VIM | current_dirname
 set background=light
 set backspace=indent,eol,start
+set foldlevelstart=10
 
 
 "-------- [PLUGIN] --------
@@ -58,6 +59,8 @@ Plugin 'jlanzarotta/bufexplorer'
         "Buffer Explorer
 Plugin 'Einenlum/yaml-revealer'
         "echo yaml path'
+Plugin 'pedrohdz/vim-yaml-folds'
+Plugin 'Yggdroot/indentLine'
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
