@@ -21,6 +21,7 @@ set title titlestring=VIM\ \|\ %{fnamemodify(getcwd(),\ ':t')} titlelen=32
     "output:  VIM | current_dirname
 set background=light
 set backspace=indent,eol,start
+set foldlevelstart=10
 
 
 "-------- [VARSET:g] --------
@@ -65,6 +66,9 @@ Plugin 'jlanzarotta/bufexplorer'
         "Buffer Explorer
 Plugin 'Einenlum/yaml-revealer'
         "echo yaml path'
+Plugin 'pedrohdz/vim-yaml-folds'
+Plugin 'Yggdroot/indentLine'
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -116,7 +120,7 @@ command! -nargs=1 FindGrep call FindGrep(<q-args>)
 function FgXp(pattern)
   " FIELD GIT EXPLORER
   let error_file = tempname()
-  exe '!find "./" -type f | grep -v "^./.git" | grep -i "'  .  a:pattern  .  '" | sed "s/\$/:1/" > '.error_file
+  exe '!find "./" -type f | grep -v "^./.git/" | grep -i "'  .  a:pattern  .  '" | sed "s/\$/:1/" > '.error_file
   set errorformat=%f:%l
   exe "cfile ". error_file
   copen

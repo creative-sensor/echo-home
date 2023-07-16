@@ -24,6 +24,7 @@ set guifont=Consolas:h11
 set shell=\"/c/Program\ Files/Git/bin/sh.exe\"
 set backspace=indent,eol,start
 set ffs=unix
+set foldlevelstart=10
 "-------- [PLUGIN] --------
 "filetype plugin on
 
@@ -60,6 +61,9 @@ Plugin 'jlanzarotta/bufexplorer'
         "Buffer Explorer
 Plugin 'Einenlum/yaml-revealer'
         "echo yaml path'
+Plugin 'pedrohdz/vim-yaml-folds'
+Plugin 'Yggdroot/indentLine'
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -111,7 +115,7 @@ command! -nargs=1 FindGrep call FindGrep(<q-args>)
 function FgXp(pattern)
   " FIELD GIT EXPLORER
   let error_file = tempname()
-  silent exe '!find "./" -type f | grep -v "^./.git" | grep -i "'  .  a:pattern  .  '" | sed "s/\$/:1/" > '.error_file
+  silent exe '!find "./" -type f | grep -v "^./.git/" | grep -i "'  .  a:pattern  .  '" | sed "s/\$/:1/" > '.error_file
   set errorformat=%f:%l
   exe "cfile ". error_file
   copen
