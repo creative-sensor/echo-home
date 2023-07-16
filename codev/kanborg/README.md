@@ -11,7 +11,6 @@
 - [datum/2023/WIP/LEAF-19.md](datum/2023/WIP/LEAF-19.md)   ```# AppImage : explore```
 - [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
 - [datum/2023/WIP/NJS-2.md](datum/2023/WIP/NJS-2.md)   ```# GLORIA: run objectory```
-- [datum/2023/WIP/VIM-5.md](datum/2023/WIP/VIM-5.md)   ```# vim : yaml tools```
 
 ### 2 ON HOLD
 
@@ -93,6 +92,7 @@
 - [datum/2023/DONE/SPEC-1.md](datum/2023/DONE/SPEC-1.md)   ```# SPEC : yson format - python implement```
 - [datum/2023/DONE/SPEC-2.md](datum/2023/DONE/SPEC-2.md)   ```# SPEC : bash.namespace```
 - [datum/2023/DONE/VIM-1.md](datum/2023/DONE/VIM-1.md)   ```# artillery : ssh multiplex```
+- [datum/2023/DONE/VIM-5.md](datum/2023/DONE/VIM-5.md)   ```# vim : yaml tools```
 
 ### 5 BACKLOG
 
