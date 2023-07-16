@@ -1,9 +1,7 @@
-# Leaf : misc
+# vim : yaml tools
 --------------------------------
 ### 0 DESCRIPTION
-- minor issue
-- uncategorized things
-- misc
+
 
 ### 1 SOLUTION
 
@@ -14,10 +12,11 @@
 ### 3 TEST/VERIFICATION
 
 
-### 4 DISCUSSION
+### 4 JOURNAL
+
 
 
 --------------------------------
 ```json
-{ "project_code": "LEAF" , "links": "" , "location": ".vimrc" , "fpoint": "1" }
+{ "project_code": "VIM" , "links": "" , "location": "" , "fpoint": "" }
 ```
