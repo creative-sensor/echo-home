@@ -17,6 +17,11 @@ Flash BIOS to install UEFI firmware
 
 ### 4 DISCUSSION
 
+###### 4.5
+
+- no longer required
+- take chromeos as a choice of workstation
+
 ###### 4.4
 - wiring for suzy-q: https://chromium.googlesource.com/chromiumos/third_party/hdctools/+/master/docs/ccd.md
 ###### 4.3

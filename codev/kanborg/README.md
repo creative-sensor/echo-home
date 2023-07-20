@@ -9,12 +9,12 @@
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-19.md](datum/2023/WIP/LEAF-19.md)   ```# AppImage : explore```
+- [datum/2023/WIP/LEAF-31.md](datum/2023/WIP/LEAF-31.md)   ```# Workstation platform : components```
 - [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
 - [datum/2023/WIP/NJS-2.md](datum/2023/WIP/NJS-2.md)   ```# GLORIA: run objectory```
 
 ### 2 ON HOLD
 
-- [datum/2023/HOLD/ARTE-8.md](datum/2023/HOLD/ARTE-8.md)   ```# DEVICE: HP CHROMEBOX G2```
 - [datum/2023/HOLD/LEAF-4.md](datum/2023/HOLD/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
 
 ### 3 TO DO
@@ -48,6 +48,7 @@
 - [datum/2023/DONE/ARTE-4.md](datum/2023/DONE/ARTE-4.md)   ```# ISO : fedora sha256sum```
 - [datum/2023/DONE/ARTE-5.md](datum/2023/DONE/ARTE-5.md)   ```# Workstation: AppImage```
 - [datum/2023/DONE/ARTE-6.md](datum/2023/DONE/ARTE-6.md)   ```# gitlab : docker image```
+- [datum/2023/DONE/ARTE-8.md](datum/2023/DONE/ARTE-8.md)   ```# DEVICE: HP CHROMEBOX G2```
 - [datum/2023/DONE/CMW-3.md](datum/2023/DONE/CMW-3.md)   ```# FEATURE : default implementation for common functions```
 - [datum/2023/DONE/CMW-4.md](datum/2023/DONE/CMW-4.md)   ```# interface : ip.addr ```
 - [datum/2023/DONE/DOCS-0.md](datum/2023/DONE/DOCS-0.md)   ```# awk : explore useful case```
