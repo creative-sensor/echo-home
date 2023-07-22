@@ -4,7 +4,7 @@ SPEC : {"description":"Spec of new concepts","last_id":2,"related":""}
 LEAF : {"description":"Short-lived | Narrow Scope | Low Priority | Uncategorized","last_id":31,"related":""}
 NCEPT : {"description":"Concept","last_id":2,"related":""}
 ARTE : {"description":"Artefacts Exware","last_id":8,"related":""}
-MDOS : {"description":"Microsoft Windows","last_id":4,"related":""}
+MDOS : {"description":"Microsoft Windows","last_id":5,"related":""}
 CORTA : {"description":"Cortana and Chief","last_id":0,"related":""}
 E419 : {"description":"Echo 419","last_id":0,"related":""}
 HCL : {"description":"Nomad","last_id":2,"related":""}
@@ -25,6 +25,7 @@ DBMS : {"description":"Database management system","last_id":0,"related":""}
 DTUM : {"description":"Datum","last_id":1,"related":""}
 ACLS : {"description":"Access Control Level System","last_id":2,"related":""}
 KITE : {"description":"The Paper Kites","last_id":10,"related":""}
-KROS : {"description":"Chromium","last_id":2,"related":""}
+KROS : {"description":"Chromium","last_id":3,"related":""}
 CTNR : {"description":"Containerization","last_id":0,"related":""}
+APLE : {"description":"Apple bit","last_id":1,"related":""}
 ```

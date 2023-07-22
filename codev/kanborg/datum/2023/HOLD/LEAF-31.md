@@ -2,7 +2,11 @@
 --------------------------------
 ### 0 DESCRIPTION
 
-To explores tools on major platforms
+To explores tools on major platforms:
+
+- MDOS-5
+- KROS-3
+- APLE-1
 
 ### 1 SOLUTION
 
@@ -42,6 +46,8 @@ apple-bit:
 
 ### 4 JOURNAL
 
+###### 4.0
+- Pending: MDOS-5
 
 
 --------------------------------
