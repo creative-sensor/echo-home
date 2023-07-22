@@ -125,7 +125,7 @@
 - [datum/2023/BACKLOG/KITE-7.md](datum/2023/BACKLOG/KITE-7.md)   ```# Microsoft :```
 - [datum/2023/BACKLOG/KITE-8.md](datum/2023/BACKLOG/KITE-8.md)   ```# Openshift :```
 - [datum/2023/BACKLOG/KROS-0.md](datum/2023/BACKLOG/KROS-0.md)   ```# Chromium : Alloy```
-- [datum/2023/BACKLOG/KROS-3.md](datum/2023/BACKLOG/KROS-3.md)   ```# chromium : application explorer```
+- [datum/2023/BACKLOG/KROS-3.md](datum/2023/BACKLOG/KROS-3.md)   ```# chromium : application explorer```
 - [datum/2023/BACKLOG/KUBEX-0.md](datum/2023/BACKLOG/KUBEX-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/LEAF-0.md](datum/2023/BACKLOG/LEAF-0.md)   ```# Leaf : misc```
 - [datum/2023/BACKLOG/LEAF-11.md](datum/2023/BACKLOG/LEAF-11.md)   ```# GIT-CLONE: single commit```
