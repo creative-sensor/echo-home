@@ -10,7 +10,7 @@
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-19.md](datum/2023/WIP/LEAF-19.md)   ```# AppImage : explore```
 - [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
-- [datum/2023/WIP/MDOS-5.md](datum/2023/WIP/MDOS-5.md)   ```# windows : application explorer```
+- [datum/2023/WIP/MDOS-5.md](datum/2023/WIP/MDOS-5.md)   ```# windows : application explorer```
 - [datum/2023/WIP/NJS-2.md](datum/2023/WIP/NJS-2.md)   ```# GLORIA: run objectory```
 
 ### 2 ON HOLD
@@ -20,7 +20,7 @@
 
 ### 3 TO DO
 
-- [datum/2023/TODO/APLE-1.md](datum/2023/TODO/APLE-1.md)   ```# ISSUE :```
+- [datum/2023/TODO/APLE-1.md](datum/2023/TODO/APLE-1.md)   ```# apple-bit : application explorer```
 - [datum/2023/TODO/ARTE-3.md](datum/2023/TODO/ARTE-3.md)   ```# ISSUE : Fork repo from community to my github```
 - [datum/2023/TODO/CMW-1.md](datum/2023/TODO/CMW-1.md)   ```# process : background daemon management```
 - [datum/2023/TODO/CMW-2.md](datum/2023/TODO/CMW-2.md)   ```# commonwealth : vault function```
@@ -101,7 +101,7 @@
 
 - [datum/2023/BACKLOG/ACLS-0.md](datum/2023/BACKLOG/ACLS-0.md)   ```# Access Control : Level System```
 - [datum/2023/BACKLOG/ACLS-2.md](datum/2023/BACKLOG/ACLS-2.md)   ```# Haproxy : API access control```
-- [datum/2023/BACKLOG/APLE-0.md](datum/2023/BACKLOG/APLE-0.md)   ```# Apple : bit```
+- [datum/2023/BACKLOG/APLE-0.md](datum/2023/BACKLOG/APLE-0.md)   ```# Apple : bit```
 - [datum/2023/BACKLOG/ARTE-0.md](datum/2023/BACKLOG/ARTE-0.md)   ```# Artefacts: The Art of Civilization```
 - [datum/2023/BACKLOG/ARTE-7.md](datum/2023/BACKLOG/ARTE-7.md)   ```# WSL : distro image```
 - [datum/2023/BACKLOG/ASML-0.md](datum/2023/BACKLOG/ASML-0.md)   ```# Assembly : Mission```

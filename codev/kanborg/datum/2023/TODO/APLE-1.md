@@ -1,4 +1,4 @@
-# ISSUE :
+# apple-bit : application explorer
 --------------------------------
 ### 0 DESCRIPTION
 
