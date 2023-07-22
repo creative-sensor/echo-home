@@ -10,6 +10,7 @@ install .bashrc ~/
 install .bash_profile ~/
 install .wslconfig ~/
 install .ConEmu.xml $APPDATA/ConEmu.xml
+install .terminal.settings.json  "$LOCALAPPDATA/Microsoft/Windows Terminal/settings.json"
 
 
 # ---- function T

@@ -13,5 +13,6 @@ curl -L -o $ARTIFACT_DIR/vscodeusersetup-x64-1.74.2.exe  https://az764295.vo.mse
 curl -L -o $ARTIFACT_DIR/marktext-setup-0.17.1.exe  https://github.com/marktext/marktext/releases/download/v0.17.1/marktext-setup.exe
 curl -L -o $ARTIFACT_DIR/node-v18.13.0-win-x64.zip  https://nodejs.org/dist/v18.13.0/node-v18.13.0-win-x64.zip
 curl -L -o $ARTIFACT_DIR/python-3.11.1-embed-amd64.zip  https://www.python.org/ftp/python/3.11.1/python-3.11.1-embed-amd64.zip
+curl -L -o $ARTIFACT_DIR/Microsoft.WindowsTerminal_1.17.11461.0_x64.zip  https://github.com/microsoft/terminal/releases/download/v1.17.11461.0/Microsoft.WindowsTerminal_1.17.11461.0_x64.zip
 
 #.function/artefact-get.conemu

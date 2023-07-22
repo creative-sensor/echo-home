@@ -222,6 +222,7 @@ vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
 vnoremap --    "+y : vsplit <C-R>+ <CR>
     "JUMP TO PATH
 
+nnoremap <F5><F5> : edit<CR>
     
 "-------- [POST-INIT] --------
 colorscheme solarized8_high
