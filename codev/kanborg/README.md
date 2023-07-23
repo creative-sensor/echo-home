@@ -79,6 +79,7 @@
 - [datum/2023/DONE/LEAF-6.md](datum/2023/DONE/LEAF-6.md)   ```# GUI : advanced```
 - [datum/2023/DONE/LEAF-9.md](datum/2023/DONE/LEAF-9.md)   ```# The Paper Kites: free in cloud```
 - [datum/2023/DONE/MDOS-1.md](datum/2023/DONE/MDOS-1.md)   ```# ISO: windows artefact.sha256sum```
+- [datum/2023/DONE/MDOS-6.md](datum/2023/DONE/MDOS-6.md)   ```# console-ui: Windows Terminal```
 - [datum/2023/DONE/MKG-0.md](datum/2023/DONE/MKG-0.md)   ```# FEATURE : internode i/o communication```
 - [datum/2023/DONE/MKG-1.md](datum/2023/DONE/MKG-1.md)   ```# FEATURE : node - simple editor```
 - [datum/2023/DONE/MKG-2.md](datum/2023/DONE/MKG-2.md)   ```# makegraph :  Happy ❤ Valentine```
