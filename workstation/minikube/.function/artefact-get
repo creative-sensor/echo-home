@@ -1,0 +1,6 @@
+#!/bin/bash
+
+ARTEFACT_DIR=${ARTEFACT_DIR:artefacts}
+mkdir -p $ARTEFACT_DIR
+curl -Lo $ARTEFACT_DIR/minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 \
+  && chmod +x minikube
