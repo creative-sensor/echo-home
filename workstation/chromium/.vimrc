@@ -212,10 +212,20 @@ map aC : :%!column -t<CR>
     "Format as columns
 map WW : wa<CR>
     "Save all
-map QQ : wqa<CR>
-    "Save and quit all
+map ww : w<CR>
+    "Save current window
 map q0 : qa!<CR>
     "Quit all
+map w0 : q!<CR>
+    "Quit current window
+map w1 : wq<CR>
+    "Save and quit current windows
+map e. : edit .<CR>
+    "new buffer in current window
+map v. : vsplit .<CR>
+    "new buffer on the right
+map s. : split .<CR>
+    "new buffer above
 map tty : call Terminator()<CR>
 
 "map <C-I> : tabnew . <CR>
