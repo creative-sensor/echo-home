@@ -1,39 +1,85 @@
 chromeos:
     browser:
-        chrome
+      - chrome
     editor:
-    communication:
-        - google meet
-        - zoom
-        - team
     draw:
-        - chrome canvas
+      - chrome canvas
+      - concepts
+      - krita
     terminal:
-        - linux development terminal 
-    music:
-        - soundcloud
+      - linux development terminal
     camera:
-        - chromeos camera  
- 
-chrome-browser:
+      - chromeos camera
+    screenshot:
+      - Screen capture
+    screencast:
+      - screencast
+    photo:
+      - google photo [browse + edit]
+      - gallery
+    video:
+    file-browser:
+      - Files
+    call:
+      - zoom
+      - google meet
+    map:
+      - google map
+
+
+chrome-web-browser:
+  extension:
     editor:
-        - Code Pad Text Editor
-        - 
-    office:
+      - Code Pad Text Editor
+      - text
+    monitor:
+      - cog - system info viewer
+    adblock:
+      - ublock origin
+    draw:
+  cloud-free:
+      music:
+        - soundcloud
+        - spotfiy
+        - youtube-music
+      video:
+        - youtube
+      office:
         - google keep
         - google spreadsheet
         - google docs
         - google slide
+        - google calendar
+        - google drive
+      call:
+        - google meet
+        - zoom
+      map:
+        - google map
+      draw:
+        - lucid chart
 linux:
     editor:
-        - bash/cli
-        - gvim
+      - bash/cli
+      - vim
+      - gvim
+      - marktext
     terminal:
-        - gnome-terminal
+      - gnome-terminal
     game:
-        - warzone
-
+      - warzone
+    browser:
+      - firefox
+    draw:
+      - gimp
+      - inkscape
+      - krita
+      - blender
 android:
     music:
-        - spotify
+      - spotify
     video:
+      -
+    call:
+      - skype
+      - team
