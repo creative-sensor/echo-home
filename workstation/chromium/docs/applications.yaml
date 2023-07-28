@@ -36,6 +36,8 @@ chrome-web-browser:
       - cog - system info viewer
     adblock:
       - ublock origin
+    remote-desktop:
+      - chrome remote desktop
     draw:
   cloud-free:
       music:
@@ -60,12 +62,12 @@ chrome-web-browser:
         - lucid chart
 linux:
     editor:
-      - bash/cli
       - vim
       - gvim
-      - marktext
+      - marktext.appImage
     terminal:
       - gnome-terminal
+      - bash
     game:
       - warzone
     browser:
@@ -75,6 +77,8 @@ linux:
       - inkscape
       - krita
       - blender
+      - drawio.appImage
+
 android:
     music:
       - spotify
@@ -83,3 +87,5 @@ android:
     call:
       - skype
       - team
+    vpn:
+      - nord-vpn
