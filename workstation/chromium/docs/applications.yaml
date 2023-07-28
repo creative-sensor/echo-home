@@ -1,0 +1,39 @@
+chromeos:
+    browser:
+        chrome
+    editor:
+    communication:
+        - google meet
+        - zoom
+        - team
+    draw:
+        - chrome canvas
+    terminal:
+        - linux development terminal 
+    music:
+        - soundcloud
+    camera:
+        - chromeos camera  
+ 
+chrome-browser:
+    editor:
+        - Code Pad Text Editor
+        - 
+    office:
+        - google keep
+        - google spreadsheet
+        - google docs
+        - google slide
+linux:
+    editor:
+        - bash/cli
+        - gvim
+    terminal:
+        - gnome-terminal
+    game:
+        - warzone
+
+android:
+    music:
+        - spotify
+    video:
