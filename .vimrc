@@ -109,7 +109,7 @@ endfun
 command! -nargs=1 FindGrep call FindGrep(<q-args>)
 
 
-function FgXp(pattern)
+function FgXp(pattern, maxdepth=32)
   " FIELD GIT EXPLORER
   let error_file = tempname()
   exe '!find "./" -maxdepth ' . a:maxdepth . ' -type f | grep -v "^./.git" | grep -i "'  .  a:pattern  .  '" | sed "s/\$/:1/" > '.error_file
@@ -117,7 +117,7 @@ function FgXp(pattern)
   exe "cfile ". error_file
   copen
   call delete(error_file)
-endfun
+endfunction
 command! -nargs=* FgXp call FgXp(<q-args>)
 
 
