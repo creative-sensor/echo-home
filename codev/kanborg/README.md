@@ -6,7 +6,6 @@
 ### 1 WORK IN PROGRESS
 
 - [datum/2023/WIP/GILB-1.md](datum/2023/WIP/GILB-1.md)   ```# ldap : authentication```
-- [datum/2023/WIP/KUBEX-1.md](datum/2023/WIP/KUBEX-1.md)   ```# minikube : mobile cluster```
 - [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2023/WIP/LEAF-19.md](datum/2023/WIP/LEAF-19.md)   ```# AppImage : explore```
@@ -69,6 +68,7 @@
 - [datum/2023/DONE/KITE-9.md](datum/2023/DONE/KITE-9.md)   ```# Docker : registry```
 - [datum/2023/DONE/KROS-1.md](datum/2023/DONE/KROS-1.md)   ```# Chrostini : display settings```
 - [datum/2023/DONE/KROS-2.md](datum/2023/DONE/KROS-2.md)   ```# ISSUE : dotconfig```
+- [datum/2023/DONE/KUBEX-1.md](datum/2023/DONE/KUBEX-1.md)   ```# minikube : mobile cluster```
 - [datum/2023/DONE/LEAF-10.md](datum/2023/DONE/LEAF-10.md)   ```# gitlab : mono service```
 - [datum/2023/DONE/LEAF-16.md](datum/2023/DONE/LEAF-16.md)   ```# GRAPH DB : mono service```
 - [datum/2023/DONE/LEAF-17.md](datum/2023/DONE/LEAF-17.md)   ```# vim: python ide```
