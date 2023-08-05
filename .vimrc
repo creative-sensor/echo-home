@@ -211,8 +211,7 @@ map q0 : qa!<CR>
 map tty : highlight Terminal ctermbg=23 ctermfg=254 guibg=#073042 guifg=#7ec1de \| below terminal ++rows=13<CR>
 
 map e3 : vsplit \| call FgXp(".",3)<CR>
-map e5 : vsplit \| call FgXp(".",5)<CR>
-map e7 : vsplit \| call FgXp(".",7)<CR>
+map e6 : vsplit \| call FgXp(".",6)<CR>
 map e9 : vsplit \| call FgXp(".",9)<CR>
     "List file at maxdepth=X
 
