@@ -117,10 +117,10 @@ endfun
 command! -nargs=1 FindGrep call FindGrep(<q-args>)
 
 
-function FgXp(pattern)
+function FgXp(pattern, maxdepth=32)
   " FIELD GIT EXPLORER
   let error_file = tempname()
-  exe '!find "./" -type f | grep -v "^./.git/" | grep -i "'  .  a:pattern  .  '" | sed "s/\$/:1/" > '.error_file
+  exe '!find "./" -maxdepth ' . a:maxdepth . ' -type f | grep -v "^./.git" | grep -i "'  .  a:pattern  .  '" | sed "s/\$/:1/" > '.error_file
   set errorformat=%f:%l
   exe "cfile ". error_file
   copen
@@ -218,7 +218,12 @@ map q0 : qa!<CR>
     "Quit all
 map tty : call Terminator()<CR>
 
-"map <C-I> : tabnew . <CR>
+map e3 : vsplit \| call FgXp(".",3)<CR>
+map e6 : vsplit \| call FgXp(".",6)<CR>
+map e9 : vsplit \| call FgXp(".",9)<CR>
+    "List file at maxdepth=X
+
+map t. : tabnew . <CR>
 
 vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
     "LOOK UP KEYWORD
