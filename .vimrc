@@ -21,7 +21,8 @@ set title titlestring=VIM\ \|\ %{fnamemodify(getcwd(),\ ':t')} titlelen=32
 set background=light
 set backspace=indent,eol,start
 set foldlevelstart=10
-
+let g:yaml_revealer_separator='▶'
+    "<C-v>uXXXX
 
 "-------- [PLUGIN] --------
 "filetype plugin on
