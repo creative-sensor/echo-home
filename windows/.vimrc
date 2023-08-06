@@ -25,6 +25,8 @@ set shell=\"/c/Program\ Files/Git/bin/sh.exe\"
 set backspace=indent,eol,start
 set ffs=unix
 set foldlevelstart=10
+let g:yaml_revealer_separator='➤'
+    "<C-v>u27a4
 "-------- [PLUGIN] --------
 "filetype plugin on
 
