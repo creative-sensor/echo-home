@@ -1,0 +1,6 @@
+NAMESPACE=$1
+DEPLOYMENT=$2
+source .function/varcheck-NAMESPACE
+source .function/varcheck-DEPLOYMENT
+
+kubectl get deployment $DEPLOYMENT -n $NAMESPACE -o yaml | vim -c "set ft=yaml" -

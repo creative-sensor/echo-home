@@ -1,0 +1,5 @@
+NAMESPACE=$1
+source .function/varcheck-NAMESPACE
+source .function/varcheck-INGRESS
+
+kubectl get ingress $INGRESS -n $NAMESPACE -o yaml | vim -c "set ft=yaml" -

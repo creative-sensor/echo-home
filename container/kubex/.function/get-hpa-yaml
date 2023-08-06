@@ -1,0 +1,5 @@
+NAMESPACE=$1
+HPA=$2
+source .function/varcheck-NAMESPACE
+source .function/varcheck-HPA
+kubectl get hpa $HPA -n $NAMESPACE -o yaml | vim -c "set ft=yaml" -

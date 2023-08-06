@@ -1,0 +1,5 @@
+NAMESPACE=$1
+source .function/varcheck-NAMESPACE
+source .function/varcheck-PVC
+
+kubectl get pvc $PVC -n $NAMESPACE -o yaml | vim -c "set ft=yaml" -

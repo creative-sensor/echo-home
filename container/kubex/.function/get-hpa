@@ -1,4 +1,4 @@
 NAMESPACE=$1
+HPA=$2
 source .function/varcheck-NAMESPACE
-
-kubectl get pvc -n $NAMESPACE
+kubectl get hpa -n $NAMESPACE

@@ -1,0 +1,2 @@
+NODE_NAME=$1
+kubectl get pods --all-namespaces -o wide --field-selector spec.nodeName=$NODE_NAME

@@ -1,0 +1,5 @@
+NAMESPACE=$1
+APISERVICE=$2
+source .function/varcheck-NAMESPACE
+source .function/varcheck-APISERVICE
+kubectl get apiservice $APISERVICE -n $NAMESPACE -o yaml

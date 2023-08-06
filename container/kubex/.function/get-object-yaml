@@ -1,0 +1,10 @@
+#!/bin/bash -x
+NAMESPACE=${1:default}
+OBJECT_TYPE=${2:service}
+
+
+LIST=$(kubectl get $OBJECT_TYPE -n $NAMESPACE | awk 'NR>1 {print $1}')
+
+for i in $LIST ; do
+    kubectl get $OBJECT_TYPE -n $NAMESPACE $i -o yaml > $OBJECT_TYPE.$i.yaml
+done

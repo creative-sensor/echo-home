@@ -1,0 +1,6 @@
+unalias vim
+alias ll='ls -la'
+alias sed='gsed'
+alias vimtf='vim -u ~/.vim/rc/hcl'
+PATH=$PATH:~/.docker/bin
+

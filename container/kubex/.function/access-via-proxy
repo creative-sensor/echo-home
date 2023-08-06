@@ -1,0 +1,10 @@
+#!/bin/bash -x
+
+NAMESPACE=$1
+SERVICE=$2
+API_PATH=$3
+SERVICE_PROTOCOL=${4:-http}
+SERVICE_PORT=${5:-80}
+TOKEN=$(yq -r '.users[0].user.token' < $KUBECONFIG)
+
+curl -v  -H "Authorization: Bearer $TOKEN" http://localhost:8001/api/v1/namespaces/${NAMESPACE}/services/${SERVICE_PROTOCOL}:${SERVICE}:${SERVICE_PORT}/proxy/#${API_PATH}

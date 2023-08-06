@@ -1,0 +1,6 @@
+NAMESPACE=$1
+SERVICE=$2
+source .function/varcheck-NAMESPACE
+source .function/varcheck-SERVICE
+
+kubectl get service $SERVICE -n $NAMESPACE -o yaml | vim -c "set ft=yaml" -

@@ -1,0 +1,6 @@
+if test -z "$HPA" ; then
+    echo -e "\n--------"
+    kubectl get hpa -n $NAMESPACE
+    read -p "HPA ? = " $HPA
+fi
+

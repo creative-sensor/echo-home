@@ -1,0 +1,6 @@
+if test -z "$APISERVICE" ; then
+    echo -e "\n--------"
+    kubectl get apiservice -n $NAMESPACE
+    read -p "APISERVICE ? = " APISERVICE
+fi
+
