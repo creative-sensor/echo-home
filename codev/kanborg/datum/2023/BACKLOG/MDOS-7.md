@@ -1,6 +1,7 @@
-# KAFKA : mono service
+# terminal : gvim cannot detect unix file path
 --------------------------------
 ### 0 DESCRIPTION
+
 
 
 ### 1 SOLUTION
@@ -13,15 +14,10 @@
 
 
 ### 4 JOURNAL
-##### 4.0
-- event-driven
-- apache nifi
-- node-red
-- dataflow programming
 
 
 
 --------------------------------
 ```json
-{ "project_code": "LEAF" , "links": "" , "location": "" , "fpoint": "" }
+{ "project_code": "MDOS" , "links": "" , "location": "" , "fpoint": "" }
 ```

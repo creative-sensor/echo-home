@@ -13,7 +13,8 @@
 
 
 ### 4 JOURNAL
-
+######  4.0
+- a service of python shell spin up from bash, using named pipe to exec code
 
 
 --------------------------------
