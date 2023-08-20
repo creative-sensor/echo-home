@@ -14,6 +14,6 @@ export CYCLE=$CYCLE
 export DATA_DIR=$DATA_DIR
 mkdir -p $DATA_DIR/${CYCLE}/{BACKLOG,TODO,HOLD,WIP,DONE}
 
-test -n "$GVIMPATH" && G_VIM=g
+test -n "$GVIMPATH" && G_VIM=g && export SHELL=/usr/bin/bash
 
 ${G_VIM}vim -u .vimrc

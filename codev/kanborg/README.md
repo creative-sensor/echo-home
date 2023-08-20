@@ -58,6 +58,7 @@
 - [datum/2023/DONE/KBG-4.md](datum/2023/DONE/KBG-4.md)   ```# FEATURE : add backlog column```
 - [datum/2023/DONE/KBG-5.md](datum/2023/DONE/KBG-5.md)   ```# kanborg : xcard to refresh in UI```
 - [datum/2023/DONE/KBG-6.md](datum/2023/DONE/KBG-6.md)   ```# ISSUE : Card duplicated when moved```
+- [datum/2023/DONE/KBG-7.md](datum/2023/DONE/KBG-7.md)   ```# file VIEW : unable to open in Windows Terminal```
 - [datum/2023/DONE/KITE-10.md](datum/2023/DONE/KITE-10.md)   ```# Terraform : init```
 - [datum/2023/DONE/KITE-9.md](datum/2023/DONE/KITE-9.md)   ```# Docker : registry```
 - [datum/2023/DONE/KROS-1.md](datum/2023/DONE/KROS-1.md)   ```# Chrostini : display settings```
