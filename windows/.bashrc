@@ -58,7 +58,8 @@ declare -A DICT
 export LOCAL_BIN=~/.local/bin
 export PYTHONPATH=~/AppData/Local/Programs/Python/Python310
 export PYTHONPATH_SCRIPT=$PYTHONPATH/Scripts
-export GVIMPATH='/c/Program Files (x86)/Vim/vim90'
+export GVIMPATH='/c/Program Files (x86)/Vim/vim90' &&
+    alias vim='"$GVIMPATH/vim.exe"'
 NODEPATH=$LOCAL_BIN/node-v18.13.0-win-x64
 GITBASH_PATH=/mingw64/bin:/usr/local/bin:/usr/bin:/bin:/mingw64/bin:/usr/bin/vendor_perl:/usr/bin/core_perl:/c/Windows/system32:/c/Windows:/c/Windows/System32/Wbem:/c/Windows/System32/WindowsPowerShell/v1.0:/c/Windows/System32/OpenSSH
 DOCKER_DESKTOP='/c/Program Files/Docker/Docker/resources/bin:/c/ProgramData/DockerDesktop/version-bin'
