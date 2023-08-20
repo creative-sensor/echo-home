@@ -20,8 +20,8 @@ set title titlestring=VIM\ \|\ %{fnamemodify(getcwd(),\ ':t')} titlelen=32
     "output:  VIM | current_dirname
 set background=light
 set guifont=Consolas:h11
-"set shell=\"/c/Program\ Files/Git/usr/bin/bash.exe\"
-set shell=\"/c/Program\ Files/Git/bin/sh.exe\"
+set shell=\"C:\Program\ Files\Git\bin\sh.exe\"
+set shellslash
 set backspace=indent,eol,start
 set ffs=unix
 set foldlevelstart=10
@@ -216,7 +216,7 @@ map QQ : wqa<CR>
     "Save and quit all
 map q0 : qa!<CR>
     "Quit all
-map tty : highlight Terminal ctermbg=23 ctermfg=15 guibg=#073042 guifg=#7ec1de \| below terminal ++rows=7<CR>
+map tty : highlight Terminal ctermbg=55 ctermfg=252 guibg=#073042 guifg=#7ec1de \| below terminal ++rows=7<CR>
 
 "map <C-I> : tabnew . <CR>
 
