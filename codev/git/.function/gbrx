@@ -1,0 +1,7 @@
+#!/bin/bash
+PATTERN=${1:-""}
+git branch | grep -in "$PATTERN"
+read -p "BRANCH_ID ?= " BRANCH_ID
+BRANCH_NAME=$(git branch | grep -in "$PATTERN" |
+                 awk -F ":  "   '$1 ~ '$BRANCH_ID'   {print $2}')
+git checkout $BRANCH_NAME
