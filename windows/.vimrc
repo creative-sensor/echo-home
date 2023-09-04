@@ -114,16 +114,22 @@ endfun
 command! -nargs=1 FindGrep call FindGrep(<q-args>)
 
 
-function FgXp(pattern)
+function FgXp(pattern, maxdepth=32)
   " FIELD GIT EXPLORER
   let error_file = tempname()
-  silent exe '!find "./" -type f | grep -v "^./.git/" | grep -i "'  .  a:pattern  .  '" | sed "s/\$/:1/" > '.error_file
+  exe '!find "./" -maxdepth ' . a:maxdepth . ' -type f | grep -v "^./.git" | grep -i "'  .  a:pattern  .  '" | sed "s/\$/:1/" > '.error_file
   set errorformat=%f:%l
   exe "cfile ". error_file
   copen
   call delete(error_file)
 endfun
 command! -nargs=* FgXp call FgXp(<q-args>)
+
+function EVsplitX(pattern,maxdepth=3)
+  vsplit
+  call FgXp(a:pattern,a:maxdepth)
+endfunction
+command! -nargs=* Evx call EVsplitX(<f-args>)
 
 
 fun! GrepSource(text)
@@ -217,6 +223,19 @@ map QQ : wqa<CR>
 map q0 : qa!<CR>
     "Quit all
 map tty : highlight Terminal ctermbg=23 ctermfg=15 guibg=#073042 guifg=#7ec1de \| below terminal ++rows=7<CR>
+
+map e3 : vsplit \| call FgXp(".",3)<CR>
+map e6 : vsplit \| call FgXp(".",6)<CR>
+map e9 : vsplit \| call FgXp(".",9)<CR>
+    "List file at maxdepth=X
+
+map e. : edit . <CR>
+map t. : tabnew . <CR>
+map s. : split . <CR>
+map v. : vsplit . <CR>
+map dff : windo diffthis<CR>
+map dfg : diffget<CR>
+
 
 "map <C-I> : tabnew . <CR>
 
