@@ -121,6 +121,12 @@ function FgXp(pattern, maxdepth=32)
 endfunction
 command! -nargs=* FgXp call FgXp(<q-args>)
 
+function EVsplitX(pattern,maxdepth=3)
+  vsplit
+  call FgXp(a:pattern,a:maxdepth)
+endfunction
+command! -nargs=* Evx call EVsplitX(<q-args>)
+
 
 fun! GrepSource(text)
   " GREP SOURCE CODE WHICH CONTAINS TEXT
@@ -216,7 +222,13 @@ map e6 : vsplit \| call FgXp(".",6)<CR>
 map e9 : vsplit \| call FgXp(".",9)<CR>
     "List file at maxdepth=X
 
+map e. : edit . <CR>
 map t. : tabnew . <CR>
+map s. : split . <CR>
+map v. : vsplit . <CR>
+map dff : windo diffthis<CR>
+map dfg : diffget<CR>
+
 
 vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
     "LOOK UP KEYWORD

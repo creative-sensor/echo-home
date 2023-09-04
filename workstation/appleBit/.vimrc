@@ -61,6 +61,8 @@ Plugin 'Einenlum/yaml-revealer'
         "echo yaml path'
 Plugin 'pedrohdz/vim-yaml-folds'
 Plugin 'Yggdroot/indentLine'
+Plugin 'hashivim/vim-terraform'
+        "Terraform highlight
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
