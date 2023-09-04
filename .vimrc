@@ -125,7 +125,7 @@ function EVsplitX(pattern,maxdepth=3)
   vsplit
   call FgXp(a:pattern,a:maxdepth)
 endfunction
-command! -nargs=* Evx call EVsplitX(<q-args>)
+command! -nargs=* Evx call EVsplitX(<f-args>)
 
 
 fun! GrepSource(text)
@@ -223,6 +223,7 @@ map e9 : vsplit \| call FgXp(".",9)<CR>
     "List file at maxdepth=X
 
 map e. : edit . <CR>
+map f5 : edit <CR>
 map t. : tabnew . <CR>
 map s. : split . <CR>
 map v. : vsplit . <CR>
