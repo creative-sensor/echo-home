@@ -17,7 +17,7 @@ test -n "$VARSET_EXT" && source $VARSET_EXT
     mkdir -p  $DATUM_DIR/{config,log,data} &&
     chmod -R 0777 $DATUM_DIR
 
-DATUM_DIR=$(readlink -f $DATUM_DIR)
+DATUM_DIR=/$(readlink -f $DATUM_DIR)
 docker run $DETACH \
     --rm \
     --name $CONTAINER_NAME \
