@@ -11,7 +11,6 @@
 - [datum/2023/WIP/LEAF-19.md](datum/2023/WIP/LEAF-19.md)   ```# AppImage : explore```
 - [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
 - [datum/2023/WIP/MDOS-5.md](datum/2023/WIP/MDOS-5.md)   ```# windows : application explorer```
-- [datum/2023/WIP/MDOS-9.md](datum/2023/WIP/MDOS-9.md)   ```# gredis : container mount```
 - [datum/2023/WIP/NJS-2.md](datum/2023/WIP/NJS-2.md)   ```# GLORIA: run objectory```
 
 ### 2 ON HOLD
@@ -85,6 +84,7 @@
 - [datum/2023/DONE/LEAF-9.md](datum/2023/DONE/LEAF-9.md)   ```# The Paper Kites: free in cloud```
 - [datum/2023/DONE/MDOS-1.md](datum/2023/DONE/MDOS-1.md)   ```# ISO: windows artefact.sha256sum```
 - [datum/2023/DONE/MDOS-6.md](datum/2023/DONE/MDOS-6.md)   ```# console-ui: Windows Terminal```
+- [datum/2023/DONE/MDOS-9.md](datum/2023/DONE/MDOS-9.md)   ```# gredis : container mount```
 - [datum/2023/DONE/MKG-0.md](datum/2023/DONE/MKG-0.md)   ```# FEATURE : internode i/o communication```
 - [datum/2023/DONE/MKG-1.md](datum/2023/DONE/MKG-1.md)   ```# FEATURE : node - simple editor```
 - [datum/2023/DONE/MKG-2.md](datum/2023/DONE/MKG-2.md)   ```# makegraph :  Happy ? Valentine```
