@@ -1,7 +1,9 @@
 # gredis : customize node meta+data
 --------------------------------
 ### 0 DESCRIPTION
-
+- extract subgraph by keyword (link or node meta)
+- immediate data persistence
+-
 
 ### 1 SOLUTION
 
