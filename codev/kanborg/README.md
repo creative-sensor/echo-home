@@ -5,19 +5,20 @@
 
 ### 1 WORK IN PROGRESS
 
-- [datum/2023/WIP/GILB-1.md](datum/2023/WIP/GILB-1.md)   ```# ldap : authentication```
 - [datum/2023/WIP/KITE-11.md](datum/2023/WIP/KITE-11.md)   ```# Constellation : android space```
-- [datum/2023/WIP/LEAF-11.md](datum/2023/WIP/LEAF-11.md)   ```# GROK: log transformer```
-- [datum/2023/WIP/LEAF-14.md](datum/2023/WIP/LEAF-14.md)   ```# KAFKA : mono service```
-- [datum/2023/WIP/LEAF-19.md](datum/2023/WIP/LEAF-19.md)   ```# AppImage : explore```
-- [datum/2023/WIP/LEAF-8.md](datum/2023/WIP/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
-- [datum/2023/WIP/MDOS-5.md](datum/2023/WIP/MDOS-5.md)   ```# windows : application explorer```
-- [datum/2023/WIP/NJS-2.md](datum/2023/WIP/NJS-2.md)   ```# GLORIA: run objectory```
+- [datum/2023/WIP/MONO-2.md](datum/2023/WIP/MONO-2.md)   ```# gredis : customize node meta+data```
 
 ### 2 ON HOLD
 
+- [datum/2023/HOLD/GILB-1.md](datum/2023/HOLD/GILB-1.md)   ```# ldap : authentication```
+- [datum/2023/HOLD/LEAF-11.md](datum/2023/HOLD/LEAF-11.md)   ```# GROK: log transformer```
+- [datum/2023/HOLD/LEAF-14.md](datum/2023/HOLD/LEAF-14.md)   ```# KAFKA : mono service```
+- [datum/2023/HOLD/LEAF-19.md](datum/2023/HOLD/LEAF-19.md)   ```# AppImage : explore```
 - [datum/2023/HOLD/LEAF-31.md](datum/2023/HOLD/LEAF-31.md)   ```# Workstation platform : components```
-- [datum/2023/HOLD/LEAF-4.md](datum/2023/HOLD/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
+- [datum/2023/HOLD/LEAF-4.md](datum/2023/HOLD/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
+- [datum/2023/HOLD/LEAF-8.md](datum/2023/HOLD/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
+- [datum/2023/HOLD/MDOS-5.md](datum/2023/HOLD/MDOS-5.md)   ```# windows : application explorer```
+- [datum/2023/HOLD/NJS-2.md](datum/2023/HOLD/NJS-2.md)   ```# GLORIA: run objectory```
 
 ### 3 TO DO
 
@@ -27,6 +28,7 @@
 - [datum/2023/TODO/CMW-2.md](datum/2023/TODO/CMW-2.md)   ```# commonwealth : vault function```
 - [datum/2023/TODO/DROID-1.md](datum/2023/TODO/DROID-1.md)   ```# FEATURE : Fork GitJournal```
 - [datum/2023/TODO/HCL-2.md](datum/2023/TODO/HCL-2.md)   ```# COWAD : select principal node```
+- [datum/2023/TODO/KROS-3.md](datum/2023/TODO/KROS-3.md)   ```# chromium : application explorer```
 - [datum/2023/TODO/LEAF-13.md](datum/2023/TODO/LEAF-13.md)   ```# Clipboard: internode```
 - [datum/2023/TODO/LEAF-15.md](datum/2023/TODO/LEAF-15.md)   ```# ETO : Emerging Technology Observatory```
 - [datum/2023/TODO/LEAF-26.md](datum/2023/TODO/LEAF-26.md)   ```# Serverless : as nanoservice```
@@ -133,7 +135,6 @@
 - [datum/2023/BACKLOG/KITE-7.md](datum/2023/BACKLOG/KITE-7.md)   ```# Microsoft :```
 - [datum/2023/BACKLOG/KITE-8.md](datum/2023/BACKLOG/KITE-8.md)   ```# Openshift :```
 - [datum/2023/BACKLOG/KROS-0.md](datum/2023/BACKLOG/KROS-0.md)   ```# Chromium : Alloy```
-- [datum/2023/BACKLOG/KROS-3.md](datum/2023/BACKLOG/KROS-3.md)   ```# chromium : application explorer```
 - [datum/2023/BACKLOG/KUBEX-0.md](datum/2023/BACKLOG/KUBEX-0.md)   ```# ISSUE :```
 - [datum/2023/BACKLOG/LEAF-0.md](datum/2023/BACKLOG/LEAF-0.md)   ```# Leaf : misc```
 - [datum/2023/BACKLOG/LEAF-11.md](datum/2023/BACKLOG/LEAF-11.md)   ```# GIT-CLONE: single commit```

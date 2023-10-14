@@ -9,6 +9,7 @@ A cluster of android devices
 
 ### 2 NOTES
 
+- depends: ```MONO-2```
 
 ### 3 TEST/VERIFICATION
 
