@@ -16,6 +16,14 @@
 
 ### 4 JOURNAL
 
+###### 4.0
+
+- /\ update node attributes
+- /\ get node by name/id
+- /  parse query output no-raw
+- /\ cli save OK
+- / extract subgraph
+
 
 
 --------------------------------
