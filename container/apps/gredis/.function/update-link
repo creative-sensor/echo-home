@@ -1,0 +1,22 @@
+#!/bin/bash
+GRAPH_NAME=$1
+LINK_TYPE=$2
+ATTR=$3
+VALUE=$4
+# ----
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+# ----
+source .properd/VARSET
+# ----
+test -z "$GRAPH_NAME" && exit 1
+test -n "$LINK_TYPE" && LINK_TYPE=":$LINK_TYPE"
+test -z "$ATTR" && exit 1
+export GRAPH_NAME
+export LINK_TYPE
+export ATTR
+export VALUE
+
+set -x
+cat .template/cmd/g.update_link | envsubst | docker exec -i $CONTAINER_NAME redis-cli -h $REDIS_HOST -p $REDIS_PORT
+

@@ -1,0 +1,1 @@
+GRAPH.QUERY "theory" "match(n) return n"

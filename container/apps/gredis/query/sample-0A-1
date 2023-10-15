@@ -1,0 +1,1 @@
+GRAPH.QUERY "theory" "MATCH (a:node)-[f]->(b:node), (c:node)-[r:hate]->(b:node) where a.name = 'Leo' RETURN a,b,c,f"

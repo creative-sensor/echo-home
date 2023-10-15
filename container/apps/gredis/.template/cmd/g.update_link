@@ -1,0 +1,1 @@
+GRAPH.QUERY "${GRAPH_NAME}" 'MATCH (a:node)-[r${LINK_TYPE}]->(b:node)  SET r.${ATTR}="${VALUE}"'

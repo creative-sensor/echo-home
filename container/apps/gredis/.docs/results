@@ -1,0 +1,12 @@
+1) 1) "n"
+2) 1) 1) 1) 1) "id"
+            2) (integer) 12
+         2) 1) "labels"
+            2) 1) "node"
+         3) 1) "properties"
+            2) 1) 1) "name"
+                  2) "Aquarius"
+               2) 1) "render"
+                  2) "curve"
+3) 1) "Cached execution: 1"
+   2) "Query internal execution time: 0.274798 milliseconds"

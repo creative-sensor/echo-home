@@ -38,3 +38,15 @@ done
 .function/link $GRAPH_NAME  Cancer Water  class
 .function/link $GRAPH_NAME  Scorpio Water  class
 .function/link $GRAPH_NAME  Pisces Water  class
+
+# ---- link-set 0A  ----
+.function/link $GRAPH_NAME  Gemini  Aquarius  love
+.function/link $GRAPH_NAME  Gemini  Aquarius  'hate {test: "true"}'
+.function/link $GRAPH_NAME  Gemini  Aquarius  'hate {approve: "true"}'
+.function/link $GRAPH_NAME  Aquarius  Leo  'hate {approve: "unknown"}'
+.function/link $GRAPH_NAME  Leo Earth  'live {location: "usa"}'
+.function/link $GRAPH_NAME  Capricornus   Fire  'live {season: "summer"}'
+.function/link $GRAPH_NAME  Taurus  Fire  'hate {tempurature: "high"}'
+.function/link $GRAPH_NAME  Leo  Cancer  'suffer {period: "final"}'
+.function/link $GRAPH_NAME  Leo  Air  'breathe {quality: "fresh"}'
+

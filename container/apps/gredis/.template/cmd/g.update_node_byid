@@ -1,0 +1,1 @@
+GRAPH.QUERY "${GRAPH_NAME}" 'MATCH (n:node) WHERE ID(n) = ${ID} SET n.${ATTR}="${VALUE}"'

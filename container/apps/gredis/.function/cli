@@ -4,9 +4,10 @@ REDIS_PORT=6379
 # ----
 source .properd/VARSET
 # ----
+OUTPUT_FORMAT=${OUTPUT_FORMAT:-raw}
 CMD=$1
 test -z "$CMD" &&
-    docker exec -i $CONTAINER_NAME redis-cli -h $REDIS_HOST -p $REDIS_PORT
+    docker exec -i $CONTAINER_NAME redis-cli --${OUTPUT_FORMAT} -h $REDIS_HOST -p $REDIS_PORT
 
 test -n "$CMD" &&
-    docker exec -it $CONTAINER_NAME redis-cli -h $REDIS_HOST -p $REDIS_PORT  $@
+    docker exec -it $CONTAINER_NAME redis-cli --${OUTPUT_FORMAT} -h $REDIS_HOST -p $REDIS_PORT  $@

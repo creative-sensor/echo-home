@@ -1,0 +1,10 @@
+#!/bin/bash
+GRAPH_NAME=$1
+ID=$2
+# ----
+source .properd/VARSET
+# ----
+test -z "$GRAPH_NAME" && .function/list && read -p "GRAPH_NAME ?= " GRAPH_NAME
+test -z "$ID" && .function/list-node $GRAPH_NAME && read -p "NodeID ?= " ID
+export OUTPUT_FORMAT=no-raw
+echo "GRAPH.RO_QUERY ${GRAPH_NAME}  \"MATCH (n) WHERE ID(n)=${ID} RETURN n\"" | .function/cli

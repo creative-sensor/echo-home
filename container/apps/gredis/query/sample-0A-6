@@ -1,0 +1,1 @@
+GRAPH.QUERY "theory" "MATCH (a:node)-[r:live]->(b:node) RETURN a,b"

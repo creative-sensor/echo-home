@@ -1,0 +1,1 @@
+GRAPH.QUERY "theory" "MATCH (a:node)-[r:hate]->(b:node) WHERE r.test = 'true' RETURN a,r,b"

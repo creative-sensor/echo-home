@@ -1,0 +1,1 @@
+GRAPH.QUERY "theory" "MATCH (a:node)-[]->(b:node) where a.name = 'Aquarius' RETURN a,b"
