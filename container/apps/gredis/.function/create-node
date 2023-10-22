@@ -1,6 +1,7 @@
-#!/bin/bash
+#!/bin/bash -x
 GRAPH_NAME=$1
 NODE_NAME=$2
+JSON_BLOCK=${3:-'{}'}
 # ----
 REDIS_HOST=127.0.0.1
 REDIS_PORT=6379
@@ -9,8 +10,16 @@ source .properd/VARSET
 # ----
 test -z "$GRAPH_NAME" && exit 1
 test -z "$NODE_NAME" && exit 1
+if ! echo $JSON_BLOCK | jq -c . &> /dev/null ; then
+    echo "JSON_BLOCK not valid!"
+    exit 1
+fi
+
+echo $JSON_BLOCK | jq -c .name | grep -q null &&
+    JSON_BLOCK=$(echo $JSON_BLOCK | jq -c "(.name) = \"$NODE_NAME\"")
 export GRAPH_NAME
 export NODE_NAME
+export JSON_BLOCK_PRUNED=$(echo $JSON_BLOCK | sed 's/" *:/:/g' | sed 's/, *"/,/g' | sed 's/^{ *"/{/')
 
 set -x
 cat .template/cmd/g.create_node | envsubst | docker exec -i $CONTAINER_NAME redis-cli -h $REDIS_HOST -p $REDIS_PORT
