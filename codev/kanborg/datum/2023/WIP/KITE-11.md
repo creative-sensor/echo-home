@@ -9,13 +9,16 @@ A cluster of android devices
 
 ### 2 NOTES
 
-- depends: ```MONO-2```
+- depends: ```MONO-2```,```MONO-3```
 
 ### 3 TEST/VERIFICATION
 
 
 ### 4 JOURNAL
 
+###### 4.0
+- ```MONO-2```
+- ```MONO-3```
 
 
 --------------------------------
