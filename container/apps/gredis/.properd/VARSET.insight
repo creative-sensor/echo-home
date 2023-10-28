@@ -1,0 +1,2 @@
+DKR_IMAGE=redislabs/redisinsight:1.13.1
+CONTAINER_NAME=red-insight

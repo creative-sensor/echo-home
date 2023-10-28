@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+ffunction docker-stop
+
+set -x
+source .properd/VARSET.insight
+docker stop $CONTAINER_NAME

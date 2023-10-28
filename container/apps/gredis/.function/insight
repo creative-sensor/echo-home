@@ -1,3 +1,31 @@
+#!/usr/bin/env bash
+
+# ---- |EXT ----
+VARSET_EXT=$1
+# ---- |DEFAULT ----
+CONTAINER_NAME=red-insight
+PUBLISH=8001
+DETACH="--detach"
+DATUM_DIR=datum
+
 DKR_IMAGE=redislabs/redisinsight:1.13.1
 
-docker run -v redisinsight:/db -p 8001:8001 $DKR_IMAGE
+# ---- |OVERRIDE ----
+source .properd/VARSET.insight
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+
+# ---- |MAIN ----
+DATUM_DIR=/$(readlink -f $DATUM_DIR)/insight
+! test -d $DATUM_DIR  &&
+    mkdir -p  $DATUM_DIR &&
+    chmod -R 0777 $DATUM_DIR
+
+docker run $DETACH \
+    --rm \
+    --name $CONTAINER_NAME \
+    -p $PUBLISH:8001 \
+    -v $DATUM_DIR:/db \
+    $DKR_IMAGE
+
+echo "Redis-Insight --> http://localhost:$PUBLISH"
