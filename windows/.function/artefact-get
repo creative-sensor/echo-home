@@ -16,5 +16,7 @@ curl -L -o $ARTIFACT_DIR/Microsoft.WindowsTerminal_1.17.11461.0_x64.zip  https:/
 curl -L -o $ARTIFACT_DIR/krita-x64-5.1.5-setup.exe  https://download.kde.org/stable/krita/5.1.5/krita-x64-5.1.5-setup.exe
 curl -L -o $ARTIFACT_DIR/OpenLens.6.5.2-366.exe  https://github.com/MuhammedKalkan/OpenLens/releases/download/v6.5.2-366/OpenLens.6.5.2-366.exe
 curl -L -o $ARTIFACT_DIR/OpenLens.6.5.2-366.msi  https://github.com/MuhammedKalkan/OpenLens/releases/download/v6.5.2-366/OpenLens.6.5.2-366.msi
+curl -L -o $ARTIFACT_DIR/VSCodiumUserSetup-x64-1.84.2.23319.exe  https://github.com/VSCodium/vscodium/releases/download/1.84.2.23319/VSCodiumUserSetup-x64-1.84.2.23319.exe
+
 
 #.function/artefact-get.conemu
