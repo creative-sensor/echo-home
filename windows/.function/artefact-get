@@ -9,11 +9,12 @@ curl -L -o $ARTIFACT_DIR/gvim_9.0.0000_x86_signed.exe  https://github.com/vim/vi
 curl -L -o $ARTIFACT_DIR/rclone-v1.60.0-windows-amd64.zip  https://downloads.rclone.org/v1.60.0/rclone-v1.60.0-windows-amd64.zip
 curl -L -o $ARTIFACT_DIR/nomad_1.4.3_windows_amd64.zip  https://releases.hashicorp.com/nomad/1.4.3/nomad_1.4.3_windows_amd64.zip
 curl -L -o $ARTIFACT_DIR/consul_1.14.3_windows_amd64.zip  https://releases.hashicorp.com/consul/1.14.3/consul_1.14.3_windows_amd64.zip
-curl -L -o $ARTIFACT_DIR/vscodeusersetup-x64-1.74.2.exe  https://az764295.vo.msecnd.net/stable/e8a3071ea4344d9d48ef8a4df2c097372b0c5161/vscodeusersetup-x64-1.74.2.exe
 curl -L -o $ARTIFACT_DIR/marktext-setup-0.17.1.exe  https://github.com/marktext/marktext/releases/download/v0.17.1/marktext-setup.exe
 curl -L -o $ARTIFACT_DIR/node-v18.13.0-win-x64.zip  https://nodejs.org/dist/v18.13.0/node-v18.13.0-win-x64.zip
 curl -L -o $ARTIFACT_DIR/python-3.11.1-embed-amd64.zip  https://www.python.org/ftp/python/3.11.1/python-3.11.1-embed-amd64.zip
 curl -L -o $ARTIFACT_DIR/Microsoft.WindowsTerminal_1.17.11461.0_x64.zip  https://github.com/microsoft/terminal/releases/download/v1.17.11461.0/Microsoft.WindowsTerminal_1.17.11461.0_x64.zip
 curl -L -o $ARTIFACT_DIR/krita-x64-5.1.5-setup.exe  https://download.kde.org/stable/krita/5.1.5/krita-x64-5.1.5-setup.exe
+curl -L -o $ARTIFACT_DIR/OpenLens.6.5.2-366.exe  https://github.com/MuhammedKalkan/OpenLens/releases/download/v6.5.2-366/OpenLens.6.5.2-366.exe
+curl -L -o $ARTIFACT_DIR/OpenLens.6.5.2-366.msi  https://github.com/MuhammedKalkan/OpenLens/releases/download/v6.5.2-366/OpenLens.6.5.2-366.msi
 
 #.function/artefact-get.conemu
