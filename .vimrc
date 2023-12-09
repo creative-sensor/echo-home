@@ -121,6 +121,17 @@ function FgXp(pattern, maxdepth=32)
 endfunction
 command! -nargs=* FgXp call FgXp(<q-args>)
 
+function Base64e()
+  " FIELD GIT EXPLORER
+  let error_file = tempname()
+  exe '!find "./" -maxdepth ' . a:maxdepth . ' -type f | grep -v "^./.git" | grep -i "'  .  a:pattern  .  '" | sed "s/\$/:1/" > '.error_file
+  set errorformat=%f:%l
+  exe "cfile ". error_file
+  copen
+  call delete(error_file)
+endfunction
+command! -nargs=* FgXp call FgXp(<q-args>)
+
 function EVsplitX(pattern,maxdepth=3)
   vsplit
   call FgXp(a:pattern,a:maxdepth)
@@ -230,7 +241,8 @@ map v. : vsplit . <CR>
 map dff : windo diffthis<CR>
 map dfg : diffget<CR>
 
-
+vnoremap ccp    "+y
+vnoremap cxx    "+d
 vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
     "LOOK UP KEYWORD
     ":copy selected text into register '+'
