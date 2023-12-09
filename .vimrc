@@ -122,15 +122,11 @@ endfunction
 command! -nargs=* FgXp call FgXp(<q-args>)
 
 function Base64e()
-  " FIELD GIT EXPLORER
-  let error_file = tempname()
-  exe '!find "./" -maxdepth ' . a:maxdepth . ' -type f | grep -v "^./.git" | grep -i "'  .  a:pattern  .  '" | sed "s/\$/:1/" > '.error_file
-  set errorformat=%f:%l
-  exe "cfile ". error_file
-  copen
-  call delete(error_file)
+  " BASE64 ENCODING
+  let file = bufname()
+  exec "vnew ".file."__base64"
+  exec 'silent read !base64 <'.file.'| tr -d -t "\n"'
 endfunction
-command! -nargs=* FgXp call FgXp(<q-args>)
 
 function EVsplitX(pattern,maxdepth=3)
   vsplit
@@ -226,6 +222,9 @@ map QQ : wqa<CR>
     "Save and quit all
 map q0 : qa!<CR>
     "Quit all
+map q1 : q!<CR>
+    "Quit current
+
 map tty : highlight Terminal ctermbg=23 ctermfg=254 guibg=#073042 guifg=#7ec1de \| below terminal ++rows=13<CR>
 
 map e3 : vsplit \| call FgXp(".",3)<CR>
@@ -240,9 +239,9 @@ map s. : split . <CR>
 map v. : vsplit . <CR>
 map dff : windo diffthis<CR>
 map dfg : diffget<CR>
+map b64 : call Base64e()<CR>
 
 vnoremap ccp    "+y
-vnoremap cxx    "+d
 vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
     "LOOK UP KEYWORD
     ":copy selected text into register '+'
