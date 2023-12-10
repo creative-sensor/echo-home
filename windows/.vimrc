@@ -125,6 +125,13 @@ function FgXp(pattern, maxdepth=32)
 endfun
 command! -nargs=* FgXp call FgXp(<q-args>)
 
+function Base64e()
+  " BASE64 ENCODING
+  let file = bufname()
+  exec "vnew ".file."__base64"
+  exec 'silent read !base64 <'.file.'| tr -d -t "\n"'
+endfunction
+
 function EVsplitX(pattern,maxdepth=3)
   vsplit
   call FgXp(a:pattern,a:maxdepth)
@@ -222,6 +229,9 @@ map QQ : wqa<CR>
     "Save and quit all
 map q0 : qa!<CR>
     "Quit all
+map q1 : q!<CR>
+    "Quit current
+
 map tty : highlight Terminal ctermbg=23 ctermfg=15 guibg=#073042 guifg=#7ec1de \| below terminal ++rows=7<CR>
 
 map e3 : vsplit \| call FgXp(".",3)<CR>
@@ -235,10 +245,12 @@ map s. : split . <CR>
 map v. : vsplit . <CR>
 map dff : windo diffthis<CR>
 map dfg : diffget<CR>
+map b64 : call Base64e()<CR>
 
 
 "map <C-I> : tabnew . <CR>
 
+vnoremap ccp    "+y
 vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
     "LOOK UP KEYWORD
     ":copy selected text into register '+'
