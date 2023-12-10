@@ -14,6 +14,9 @@
 
 ### 4 JOURNAL
 
+###### 4.0
+- winget: package manager
+- https://github.com/microsoft/winget-cli/releases/tag/v1.6.3133
 
 
 --------------------------------
