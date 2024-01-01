@@ -6,7 +6,9 @@
 ### 1 WORK IN PROGRESS
 
 - [datum/2024/WIP/KITE-11.md](datum/2024/WIP/KITE-11.md)   ```# Constellation : android space```
+- [datum/2024/WIP/KUBEX-2.md](datum/2024/WIP/KUBEX-2.md)   ```# minikube : service```
 - [datum/2024/WIP/MDOS-5.md](datum/2024/WIP/MDOS-5.md)   ```# windows : application explorer```
+- [datum/2024/WIP/VIM-7.md](datum/2024/WIP/VIM-7.md)   ```# kubectl: plugin```
 
 ### 2 ON HOLD
 
@@ -73,7 +75,6 @@
 - [datum/2024/BACKLOG/KITE-8.md](datum/2024/BACKLOG/KITE-8.md)   ```# Openshift :```
 - [datum/2024/BACKLOG/KROS-0.md](datum/2024/BACKLOG/KROS-0.md)   ```# Chromium : Alloy```
 - [datum/2024/BACKLOG/KUBEX-0.md](datum/2024/BACKLOG/KUBEX-0.md)   ```# Kubernetes : Cluster```
-- [datum/2024/BACKLOG/KUBEX-2.md](datum/2024/BACKLOG/KUBEX-2.md)   ```# ISSUE :```
 - [datum/2024/BACKLOG/LEAF-0.md](datum/2024/BACKLOG/LEAF-0.md)   ```# Leaf : misc```
 - [datum/2024/BACKLOG/LEAF-11.md](datum/2024/BACKLOG/LEAF-11.md)   ```# GIT-CLONE: single commit```
 - [datum/2024/BACKLOG/LEAF-12.md](datum/2024/BACKLOG/LEAF-12.md)   ```# FIBO SHELL: svg```
