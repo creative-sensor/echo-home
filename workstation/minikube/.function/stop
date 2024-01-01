@@ -9,4 +9,4 @@ source .properd/VARSET
 test -n "$VARSET_EXT" && source $VARSET_EXT
 
 # ---- |MAIN ----
-minikube start
+minikube stop

@@ -1,0 +1,5 @@
+#!/bin/bash -x
+
+ARTEFACT_DIR=${ARTEFACT_DIR:-artefacts}
+cp $ARTEFACT_DIR/minikube $LOCAL_BIN/
+chmod +x $LOCAL_BIN/minikube
