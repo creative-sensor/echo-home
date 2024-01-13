@@ -6,7 +6,6 @@
 ### 1 WORK IN PROGRESS
 
 - [datum/2024/WIP/KITE-11.md](datum/2024/WIP/KITE-11.md)   ```# Constellation : android space```
-- [datum/2024/WIP/KUBEX-2.md](datum/2024/WIP/KUBEX-2.md)   ```# minikube : service```
 - [datum/2024/WIP/MDOS-5.md](datum/2024/WIP/MDOS-5.md)   ```# windows : application explorer```
 - [datum/2024/WIP/VIM-7.md](datum/2024/WIP/VIM-7.md)   ```# kubectl: plugin```
 
@@ -38,10 +37,12 @@
 - [datum/2024/TODO/MDOS-3.md](datum/2024/TODO/MDOS-3.md)   ```# FEATURE : powershell for gvim```
 - [datum/2024/TODO/MDOS-4.md](datum/2024/TODO/MDOS-4.md)   ```# PowerShell: utilities for missing function in gitbash```
 - [datum/2024/TODO/MDOS-8.md](datum/2024/TODO/MDOS-8.md)   ```# window terminal : line buffer limit```
+- [datum/2024/TODO/MONO-4.md](datum/2024/TODO/MONO-4.md)   ```# helm : cli```
 - [datum/2024/TODO/VIM-4.md](datum/2024/TODO/VIM-4.md)   ```# rc : container x-ray```
 
 ### 4 DONE
 
+- [datum/2024/DONE/KUBEX-2.md](datum/2024/DONE/KUBEX-2.md)   ```# minikube : service```
 - [datum/2024/DONE/OBSR-4.md](datum/2024/DONE/OBSR-4.md)   ```# Kibana : dashboard of visualized log```
 
 ### 5 BACKLOG
