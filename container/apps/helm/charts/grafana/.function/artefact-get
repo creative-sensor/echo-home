@@ -1,0 +1,8 @@
+#!/bin/bash
+
+source .properd/VARSET
+
+helm repo add grafana https://grafana.github.io/helm-charts
+helm pull grafana/grafana --version $VERSION
+
+tar xf  grafana-$VERSION.tgz

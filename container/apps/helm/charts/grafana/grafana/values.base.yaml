@@ -6,10 +6,14 @@ datasources:
       - name: prom-stack
         type: prometheus
         uid: prom-0000
-        url: http://chrt-prom-stack-kube-prome-prometheus:9090
+        url: http://chrt-prom-stack-kube-prome-prometheus.prom-stack.svc.cluster.local:9090
         access: proxy
         isDefault: true
-
+      - name: loki-stack
+        type: loki
+        uid: loki-0000
+        url: http://chrt-loki-stack.loki-stack.svc.cluster.local:3100
+        access: proxy
 
 dashboardProviders:
     dashboardProviders.yaml:

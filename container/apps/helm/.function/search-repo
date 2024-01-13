@@ -1,0 +1,7 @@
+#!/bin/bash
+
+REPO=$1
+KEYWORD=$2
+#test -z "$REPO" && helm repo list
+#test -z "$KEYWORD" && 
+helm search repo $REPO $KEYWORD

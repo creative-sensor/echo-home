@@ -1,7 +1,11 @@
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm pull prometheus-community/kube-prometheus-stack
 
-tar xf kube-prometheus-stack*
+source .properd/VARSET
 
 cd kube-prometheus-stack
-helm upgrade --install --create-namespace -f values.test.yaml chrt-prom-stack ./
+helm upgrade --install \
+  --create-namespace \
+  -n ${NAMESPACE:-default} \
+  -f values.base.yaml  ${RELEASE_NAME:-chrt-prom-stack}  ./
+
+
+

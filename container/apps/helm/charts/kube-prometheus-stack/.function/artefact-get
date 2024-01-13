@@ -1,0 +1,10 @@
+#!/bin/bash 
+
+source .properd/VARSET
+
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm pull prometheus-community/kube-prometheus-stack  --version $VERSION
+
+tar xf kube-prometheus-stack-$VERSION.tgz
+
+

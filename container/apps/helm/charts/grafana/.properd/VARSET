@@ -1,1 +1,2 @@
-NAMESPACE=default
+NAMESPACE=grafana
+VERSION=6.57.4

@@ -17,6 +17,5 @@ curl -L -o $ARTIFACT_DIR/krita-x64-5.1.5-setup.exe  https://download.kde.org/sta
 curl -L -o $ARTIFACT_DIR/OpenLens.6.5.2-366.exe  https://github.com/MuhammedKalkan/OpenLens/releases/download/v6.5.2-366/OpenLens.6.5.2-366.exe
 curl -L -o $ARTIFACT_DIR/OpenLens.6.5.2-366.msi  https://github.com/MuhammedKalkan/OpenLens/releases/download/v6.5.2-366/OpenLens.6.5.2-366.msi
 curl -L -o $ARTIFACT_DIR/VSCodiumUserSetup-x64-1.84.2.23319.exe  https://github.com/VSCodium/vscodium/releases/download/1.84.2.23319/VSCodiumUserSetup-x64-1.84.2.23319.exe
+curl -L -o $ARTIFACT_DIR/minikube-windows-amd64-v1.32.0.exe https://github.com/kubernetes/minikube/releases/download/v1.32.0/minikube-windows-amd64.exe
 
-
-#.function/artefact-get.conemu

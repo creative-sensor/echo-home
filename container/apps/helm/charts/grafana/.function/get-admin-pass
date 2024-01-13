@@ -1,1 +1,2 @@
-kubectl get secret  chrt-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+source .properd/VARSET
+kubectl get secret  chrt-grafana -n ${NAMESPACE:-default} -o jsonpath="{.data.admin-password}" | base64 --decode ; echo

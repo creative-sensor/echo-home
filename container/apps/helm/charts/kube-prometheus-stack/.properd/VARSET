@@ -1,0 +1,3 @@
+NAMESPACE=prom-stack
+VERSION=55.11.0
+RELEASE_NAME=chrt-prom-stack

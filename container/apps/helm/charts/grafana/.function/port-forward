@@ -1,1 +1,2 @@
-kubectl port-forward service/chrt-grafana 8080:service
+source .properd/VARSET
+kubectl port-forward -n ${NAMESPACE:-default} service/chrt-grafana 8080:service
