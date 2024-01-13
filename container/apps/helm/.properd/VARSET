@@ -1,0 +1,4 @@
+HELM_VERSION=v3.13.3
+DKR_IMAGE=bitnami/prometheus:2.43.0
+DATA_DIR=datum
+CONTAINER_NAME=helm

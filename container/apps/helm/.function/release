@@ -1,0 +1,8 @@
+#!/bin/bash
+
+VALUES_FILE=$1
+
+RELEASE_NAME=
+NAMESPACE=${NAMESPACE:-default}
+cd $(dirname $VALUES_FILE)
+helm upgrade --install --create-namespace  -n $NAMESPACE  -f $VALUES_FILE  $RELEASE_NAME  ./

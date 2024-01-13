@@ -1,0 +1,6 @@
+#!/bin/bash
+ARTEFACT_DIR=${ARTEFACT_DIR:-artefacts}
+
+source .properd/VARSET
+mkdir -p $ARTEFACT_DIR
+curl -L -o $ARTEFACT_DIR/helm-${HELM_VERSION}-linux-amd64.tar.gz  https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz

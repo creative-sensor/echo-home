@@ -1,0 +1,30 @@
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: prom-stack
+        type: prometheus
+        uid: prom-0000
+        url: http://chrt-prom-stack-kube-prome-prometheus:9090
+        access: proxy
+        isDefault: true
+
+
+dashboardProviders:
+    dashboardProviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: 'base'
+          orgId: 1
+          folder: 'base'
+          type: file
+          disableDeletion: true
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/base
+
+dashboards:
+  base:
+    kube-global-view:
+      file: dashboards/kube-global-view.json

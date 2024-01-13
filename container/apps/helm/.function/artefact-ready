@@ -1,0 +1,13 @@
+#!/bin/bash
+ARTEFACT_DIR=${ARTEFACT_DIR:-artefacts}
+
+source .properd/VARSET
+
+cd $ARTEFACT_DIR
+GZ_FILE=helm-${HELM_VERSION}-linux-amd64.tar.gz
+tar -xzf $GZ_FILE linux-amd64/helm
+
+BIN_FILE=$(readlink -f linux-amd64/helm)
+
+chmod 0755 $BIN_FILE
+ln -sf $BIN_FILE   $LOCAL_BIN/helm
