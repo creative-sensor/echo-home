@@ -16,6 +16,10 @@
 
 ### 4 JOURNAL
 
+###### 4.0
+
+merged: https://github.com/creative-sensor/echo-home/commit/daa4b10f9bd630129ec2496a2f3f884ef9567bd7
+
 
 
 --------------------------------
