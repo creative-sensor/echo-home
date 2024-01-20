@@ -28,6 +28,7 @@
 - [datum/2024/TODO/DROID-1.md](datum/2024/TODO/DROID-1.md)   ```# FEATURE : Fork GitJournal```
 - [datum/2024/TODO/HCL-2.md](datum/2024/TODO/HCL-2.md)   ```# COWAD : select principal node```
 - [datum/2024/TODO/KROS-3.md](datum/2024/TODO/KROS-3.md)   ```# chromium : application explorer```
+- [datum/2024/TODO/KUBEX-3.md](datum/2024/TODO/KUBEX-3.md)   ```# ISSUE : log query dashboard```
 - [datum/2024/TODO/LEAF-13.md](datum/2024/TODO/LEAF-13.md)   ```# Clipboard: internode```
 - [datum/2024/TODO/LEAF-15.md](datum/2024/TODO/LEAF-15.md)   ```# ETO : Emerging Technology Observatory```
 - [datum/2024/TODO/LEAF-26.md](datum/2024/TODO/LEAF-26.md)   ```# Serverless : as nanoservice```
