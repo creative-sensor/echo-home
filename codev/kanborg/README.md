@@ -7,7 +7,6 @@
 
 - [datum/2024/WIP/KITE-11.md](datum/2024/WIP/KITE-11.md)   ```# Constellation : android space```
 - [datum/2024/WIP/MDOS-5.md](datum/2024/WIP/MDOS-5.md)   ```# windows : application explorer```
-- [datum/2024/WIP/MONO-4.md](datum/2024/WIP/MONO-4.md)   ```# helm : cli```
 
 ### 2 ON HOLD
 
@@ -42,6 +41,7 @@
 ### 4 DONE
 
 - [datum/2024/DONE/KUBEX-2.md](datum/2024/DONE/KUBEX-2.md)   ```# minikube : service```
+- [datum/2024/DONE/MONO-4.md](datum/2024/DONE/MONO-4.md)   ```# helm : base```
 - [datum/2024/DONE/OBSR-4.md](datum/2024/DONE/OBSR-4.md)   ```# Kibana : dashboard of visualized log```
 - [datum/2024/DONE/VIM-7.md](datum/2024/DONE/VIM-7.md)   ```# kubectl: plugin```
 
