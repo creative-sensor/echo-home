@@ -1,2 +1,6 @@
+#!/bin/bash 
+ARTIFACT_DIR=artefacts
 
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.28.0/bin/linux/amd64/kubectl
+mkdir -p $ARTIFACT_DIR 
+curl -L -o $ARTIFACT_DIR/kubectl https://storage.googleapis.com/kubernetes-release/release/v1.28.0/bin/linux/amd64/kubectl
+curl -L -o $ARTIFACT_DIR/stern.tar.gz https://github.com/stern/stern/releases/download/v1.28.0/stern_1.28.0_linux_amd64.tar.gz

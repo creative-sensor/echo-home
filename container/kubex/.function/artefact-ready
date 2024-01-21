@@ -1,0 +1,12 @@
+#!/bin/bash 
+ARTIFACT_DIR=artefacts
+
+ARTIFACT_DIR=$(readlink -f $ARTIFACT_DIR)
+NAME=kubectl &&
+    chmod 0755 $ARTIFACT_DIR/$NAME &&
+    ln -sf $ARTIFACT_DIR/$NAME $LOCAL_BIN/$NAME
+
+NAME=stern &&
+    mkdir -p $ARTIFACT_DIR/$NAME &&
+    tar xf $ARTIFACT_DIR/$NAME.tar.gz -C $ARTIFACT_DIR/$NAME &&
+    ln -sf $ARTIFACT_DIR/$NAME/$NAME $LOCAL_BIN/$NAME
