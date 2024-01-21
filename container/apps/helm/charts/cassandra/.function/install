@@ -6,3 +6,7 @@ helm upgrade --install \
   --create-namespace \
   -n ${NAMESPACE:-default} \
   -f values.base.yaml ${RELEASE_NAME:-chrt-jeager}  ./
+
+
+helm install --create-namespace -n cassandra chrt-cassandra oci://registry-1.docker.io/bitnamicharts/cassandra
+

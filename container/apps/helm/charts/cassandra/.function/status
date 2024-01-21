@@ -1,0 +1,1 @@
+kubectl exec -it --namespace ${NAMESPACE:-cassandra} $(kubectl get pods --namespace cassandra -l app.kubernetes.io/name=cassandra,app.kubernetes.io/instance=chrt-cassandra -o jsonpath='{.items[0].metadata.name}') nodetool status
