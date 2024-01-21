@@ -5,6 +5,6 @@ source .properd/VARSET
 mkdir -p $ARTIFACT_DIR
 helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
-helm pull grafana/loki --version $VERSION
-tar xf  loki-$VERSION.tgz
+helm pull grafana/loki-stack --version $VERSION
+tar xf  loki-stack-$VERSION.tgz
 
