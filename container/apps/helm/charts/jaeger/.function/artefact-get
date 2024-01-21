@@ -1,0 +1,15 @@
+#!/bin/bash
+
+source .properd/VARSET
+helm repo add elastic https://helm.elastic.co
+helm show values elastic/elasticsearch
+
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm show values bitnami/kafka
+
+helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+
+#helm pull jaegertracing/jaeger --version $VERSION
+
+#tar xf  jaeger-$VERSION.tgz
+cd jaeger && helm dependency build

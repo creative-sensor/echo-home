@@ -1,0 +1,8 @@
+
+source .properd/VARSET
+
+cd jaeger
+helm upgrade --install \
+  --create-namespace \
+  -n ${NAMESPACE:-default} \
+  -f values.base.yaml ${RELEASE_NAME:-chrt-jeager}  ./
