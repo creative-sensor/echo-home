@@ -5,6 +5,7 @@ To implement functions which provide native access to window system for Gvim bet
 
 ### 1 SOLUTION
 
+https://github.com/creative-sensor/echo-home/commit/6ad1052f0964d3fe3c656798e1c4c208ed5d28a4
 
 ### 2 NOTES
 

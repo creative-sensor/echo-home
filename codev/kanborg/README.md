@@ -35,7 +35,6 @@
 - [datum/2024/TODO/LEAF-26.md](datum/2024/TODO/LEAF-26.md)   ```# Serverless : as nanoservice```
 - [datum/2024/TODO/LEAF-30.md](datum/2024/TODO/LEAF-30.md)   ```# Jupyter :```
 - [datum/2024/TODO/MDOS-2.md](datum/2024/TODO/MDOS-2.md)   ```# toolset : build/compile```
-- [datum/2024/TODO/MDOS-3.md](datum/2024/TODO/MDOS-3.md)   ```# FEATURE : powershell for gvim```
 - [datum/2024/TODO/MDOS-4.md](datum/2024/TODO/MDOS-4.md)   ```# PowerShell: utilities for missing function in gitbash```
 - [datum/2024/TODO/MDOS-8.md](datum/2024/TODO/MDOS-8.md)   ```# window terminal : line buffer limit```
 - [datum/2024/TODO/VIM-4.md](datum/2024/TODO/VIM-4.md)   ```# rc : container x-ray```
@@ -44,6 +43,7 @@
 
 - [datum/2024/DONE/KUBEX-2.md](datum/2024/DONE/KUBEX-2.md)   ```# minikube : service```
 - [datum/2024/DONE/KUBEX-4.md](datum/2024/DONE/KUBEX-4.md)   ```# stern : multi-pod log```
+- [datum/2024/DONE/MDOS-3.md](datum/2024/DONE/MDOS-3.md)   ```# FEATURE : powershell for gvim```
 - [datum/2024/DONE/MONO-4.md](datum/2024/DONE/MONO-4.md)   ```# helm : base```
 - [datum/2024/DONE/OBSR-4.md](datum/2024/DONE/OBSR-4.md)   ```# Kibana : dashboard of visualized log```
 - [datum/2024/DONE/VIM-7.md](datum/2024/DONE/VIM-7.md)   ```# kubectl: plugin```
