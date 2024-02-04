@@ -127,7 +127,7 @@ function Base64e()
   " BASE64 ENCODING
   let file = bufname()
   exec "vnew ".file."__base64"
-  exec 'silent read !base64 <'.file.'| tr -d -t "\n"'
+  exec 'silent read !base64e.ps1 (Get-Content '.file.')'
 endfunction
 
 function EVsplitX(pattern,maxdepth=3)
