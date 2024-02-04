@@ -34,6 +34,7 @@
 - [datum/2024/TODO/LEAF-15.md](datum/2024/TODO/LEAF-15.md)   ```# ETO : Emerging Technology Observatory```
 - [datum/2024/TODO/LEAF-26.md](datum/2024/TODO/LEAF-26.md)   ```# Serverless : as nanoservice```
 - [datum/2024/TODO/LEAF-30.md](datum/2024/TODO/LEAF-30.md)   ```# Jupyter :```
+- [datum/2024/TODO/MDOS-10.md](datum/2024/TODO/MDOS-10.md)   ```# powerhell: some common linux interface```
 - [datum/2024/TODO/MDOS-2.md](datum/2024/TODO/MDOS-2.md)   ```# toolset : build/compile```
 - [datum/2024/TODO/MDOS-4.md](datum/2024/TODO/MDOS-4.md)   ```# PowerShell: utilities for missing function in gitbash```
 - [datum/2024/TODO/MDOS-8.md](datum/2024/TODO/MDOS-8.md)   ```# window terminal : line buffer limit```
