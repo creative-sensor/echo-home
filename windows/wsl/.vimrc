@@ -82,8 +82,9 @@ filetype plugin indent on    " required
 fun! FindJsonPath()
   " FIND JSON PATH
   let path_file = tempname()
-  let @j = expand("%:p")
-  exec '!find-jsonpath '.getreg('j').' > '.path_file
+  let path_file_wsl = g:TEMPNAME_WSL . fnamemodify(path_file,':t')
+  let buf_name = bufname()
+  exe '!bash -c "find-jsonpath $(readlink -f '.buf_name.') > '.path_file_wsl.'"'
   exec 'vsplit '.path_file
   exec 'set filetype=yaml'
   call delete(path_file)
@@ -94,8 +95,9 @@ command! -nargs=0 Jpath call FindJsonPath()
 fun! FindYamlPath()
   " FIND YAML PATH
   let path_file = tempname() . '.yaml'
-  let @y = expand("%:p")
-  exe '!find-yamlpath '.getreg('y').' > '.path_file
+  let path_file_wsl = g:TEMPNAME_WSL . fnamemodify(path_file,':t')
+  let buf_name = bufname()
+  exe '!bash -c "find-yamlpath $(readlink -f '.buf_name.') > '.path_file_wsl.'"'
   exe 'vsplit '.path_file
   call delete(path_file)
 endfun
@@ -105,7 +107,8 @@ command! -nargs=0 Ypath call FindYamlPath()
 fun! FindGrep(filename)
   " FIND FILES AND POPULATE THE QUICKFIX LIST
   let error_file = tempname()
-  exe '!find "./"| grep -i "'.a:filename.'" | xargs file | sed "s/:/:1:/" > '.error_file
+  let error_file_wsl = g:TEMPNAME_WSL . fnamemodify(error_file,':t')
+  exe '!bash -c "find ./| grep -i \"'.a:filename.'\" | xargs file | sed \"s/:/:1:/\" > '.error_file_wsl. '"'
   set errorformat=%f:%l:%m
   exe "cfile ". error_file
   copen
