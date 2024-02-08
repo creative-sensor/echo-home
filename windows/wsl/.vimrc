@@ -116,8 +116,8 @@ command! -nargs=1 FindGrep call FindGrep(<q-args>)
 
 function FgXp(pattern)
   " FIELD GIT EXPLORER
-  let error_file_windows = ".\\tmp.quickfix"
-  let error_file_wsl = "./tmp.quickfix"
+  let error_file_windows = tempname()
+  let error_file_wsl = "/mnt/c/Users/$USER/AppData/Local/Temp/" . fnamemodify(error_file_windows,':t')
   exe '!bash -c "find ./ -type f | grep -v "^./.git" | grep -i "'.a:pattern.'" | sed "s/\$/:1/" > '.error_file_wsl.'"'
   set errorformat=%f:%l
   exe "cfile ".error_file_windows
