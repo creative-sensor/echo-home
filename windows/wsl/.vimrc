@@ -147,7 +147,8 @@ fun! GrepSource(text)
   " :Grin text  " open window of search results
   " CTRLw gf    " open file in new tab
   let error_file = tempname()
-  exe '!grep -rin '.a:text.' >  '.error_file
+  let error_file_wsl = g:TEMPNAME_WSL . fnamemodify(error_file,':t')
+  exe '!bash -c "grep -rin '.a:text.' >  '.error_file_wsl .'"'
   set errorformat=%f:%l:%m
   exe "cfile ". error_file
   copen
