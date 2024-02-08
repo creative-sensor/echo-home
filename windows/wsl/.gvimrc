@@ -16,16 +16,6 @@ function WSL_set_shell()
     set shellxquote=" "
 endfunction
 
-function WSL_FgXp(pattern)
-  " FIELD GIT EXPLORER
-  let error_file_windows = ".\\tmp.quickfix"
-  let error_file_wsl = "./tmp.quickfix"
-  exe '!bash -c "find ./ -type f | grep -v "^./.git" | grep -i "'.a:pattern.'" | sed "s/\$/:1/" > '.error_file_wsl.'"'
-  set errorformat=%f:%l
-  exe "cfile ".error_file_windows
-  copen
-  call delete(error_file_windows)
-endfun
-command! -nargs=* FgXpWSL call WSL_FgXp(<q-args>)
+
 
 
