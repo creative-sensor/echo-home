@@ -120,7 +120,7 @@ function FgXp(pattern,maxdepth=32)
   let error_file_wsl = g:TEMPNAME_WSL . fnamemodify(error_file_windows,':t')
   silent exe '!bash -c "find ./ -maxdepth ' . a:maxdepth . ' -type f | grep -v "^./.git" | grep -i "'.a:pattern.'" | sed "s/\$/:1/" > '.error_file_wsl.'"'
   set errorformat=%f:%l
-  exe "cfile ".error_file_windows
+  silent exe "cfile ".error_file_windows
   copen
   call delete(error_file_windows)
 endfun
@@ -129,8 +129,10 @@ command! -nargs=* FgXp call FgXp(<q-args>)
 function Base64e()
   " BASE64 ENCODING
   let file = bufname()
-  exec 'silent read !bash -c "base64 <'.file.'| tr -d -t \"\n\""'
-  exec "vnew ".file."__base64"
+  let file_b64 = file."__base64"
+  silent exec '!bash -c "base64 <'.file.' |  tr -d -t \"\n\" > '.file_b64.'"'
+  silent exec 'vnew '.file_b64
+  call delete(file_b64)
 endfunction
 
 function EVsplitX(pattern,maxdepth=3)
