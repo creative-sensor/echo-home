@@ -65,6 +65,7 @@ Plugin 'Einenlum/yaml-revealer'
         "echo yaml path'
 Plugin 'pedrohdz/vim-yaml-folds'
 Plugin 'Yggdroot/indentLine'
+Plugin 'dstein64/vim-menu'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
