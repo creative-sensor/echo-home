@@ -7,6 +7,7 @@
 
 - [datum/2024/WIP/KITE-11.md](datum/2024/WIP/KITE-11.md)   ```# Constellation : android space```
 - [datum/2024/WIP/KUBEX-5.md](datum/2024/WIP/KUBEX-5.md)   ```# jaeger : tracing system```
+- [datum/2024/WIP/MDOS-11.md](datum/2024/WIP/MDOS-11.md)   ```# powershell : cdx```
 - [datum/2024/WIP/MDOS-5.md](datum/2024/WIP/MDOS-5.md)   ```# windows : application explorer```
 
 ### 2 ON HOLD
