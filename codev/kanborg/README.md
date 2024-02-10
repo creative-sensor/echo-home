@@ -7,7 +7,6 @@
 
 - [datum/2024/WIP/KITE-11.md](datum/2024/WIP/KITE-11.md)   ```# Constellation : android space```
 - [datum/2024/WIP/KUBEX-5.md](datum/2024/WIP/KUBEX-5.md)   ```# jaeger : tracing system```
-- [datum/2024/WIP/MDOS-11.md](datum/2024/WIP/MDOS-11.md)   ```# powershell : cdx```
 - [datum/2024/WIP/MDOS-5.md](datum/2024/WIP/MDOS-5.md)   ```# windows : application explorer```
 
 ### 2 ON HOLD
@@ -45,6 +44,7 @@
 - [datum/2024/DONE/KUBEX-2.md](datum/2024/DONE/KUBEX-2.md)   ```# minikube : service```
 - [datum/2024/DONE/KUBEX-4.md](datum/2024/DONE/KUBEX-4.md)   ```# stern : multi-pod log```
 - [datum/2024/DONE/MDOS-10.md](datum/2024/DONE/MDOS-10.md)   ```# powerhell: some common linux interface```
+- [datum/2024/DONE/MDOS-11.md](datum/2024/DONE/MDOS-11.md)   ```# powershell : cdx```
 - [datum/2024/DONE/MDOS-3.md](datum/2024/DONE/MDOS-3.md)   ```# FEATURE : powershell for gvim```
 - [datum/2024/DONE/MONO-4.md](datum/2024/DONE/MONO-4.md)   ```# helm : base```
 - [datum/2024/DONE/OBSR-4.md](datum/2024/DONE/OBSR-4.md)   ```# Kibana : dashboard of visualized log```
