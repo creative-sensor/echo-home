@@ -206,6 +206,8 @@ autocmd FileType yaml  : set tabstop=2
 autocmd VimEnter * silent call SessionMgmt()
 autocmd TerminalOpen * set termwinsize=0*0
     "termwinsize: auto-adjustable
+autocmd InsertEnter * highlight CursorLine ctermbg=190 guibg=#D5EE16 | highlight StatusLine ctermbg=190 guibg=#CCFF00
+autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#eee8d5 | highlight StatusLine ctermbg=254 guibg=#eee8d5
 
 
 
