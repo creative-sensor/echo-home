@@ -8,7 +8,6 @@
 - [datum/2024/WIP/KITE-11.md](datum/2024/WIP/KITE-11.md)   ```# Constellation : android space```
 - [datum/2024/WIP/KUBEX-5.md](datum/2024/WIP/KUBEX-5.md)   ```# jaeger : tracing system```
 - [datum/2024/WIP/MDOS-5.md](datum/2024/WIP/MDOS-5.md)   ```# windows : application explorer```
-- [datum/2024/WIP/VIM-8.md](datum/2024/WIP/VIM-8.md)   ```# wsl : vim shell```
 
 ### 2 ON HOLD
 
@@ -49,6 +48,7 @@
 - [datum/2024/DONE/MONO-4.md](datum/2024/DONE/MONO-4.md)   ```# helm : base```
 - [datum/2024/DONE/OBSR-4.md](datum/2024/DONE/OBSR-4.md)   ```# Kibana : dashboard of visualized log```
 - [datum/2024/DONE/VIM-7.md](datum/2024/DONE/VIM-7.md)   ```# kubectl: plugin```
+- [datum/2024/DONE/VIM-8.md](datum/2024/DONE/VIM-8.md)   ```# wsl : vim shell```
 
 ### 5 BACKLOG
 
