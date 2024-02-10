@@ -11,6 +11,7 @@ install .bash_profile ~/
 install .wslconfig ~/
 install .ConEmu.xml $APPDATA/ConEmu.xml
 install .terminal.settings.json  "$LOCALAPPDATA/Microsoft/Windows Terminal/settings.json"
+install Microsoft.PowerShell_profile.ps1  "$PROFILE_CUCH"
 
 
 # ---- function T
