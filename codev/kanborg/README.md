@@ -38,7 +38,6 @@
 - [datum/2024/TODO/MDOS-4.md](datum/2024/TODO/MDOS-4.md)   ```# PowerShell: utilities for missing function in gitbash```
 - [datum/2024/TODO/MDOS-8.md](datum/2024/TODO/MDOS-8.md)   ```# window terminal : line buffer limit```
 - [datum/2024/TODO/VIM-4.md](datum/2024/TODO/VIM-4.md)   ```# rc : container x-ray```
-- [datum/2024/TODO/VIM-9.md](datum/2024/TODO/VIM-9.md)   ```# menu : key notes```
 
 ### 4 DONE
 
@@ -51,6 +50,7 @@
 - [datum/2024/DONE/OBSR-4.md](datum/2024/DONE/OBSR-4.md)   ```# Kibana : dashboard of visualized log```
 - [datum/2024/DONE/VIM-7.md](datum/2024/DONE/VIM-7.md)   ```# kubectl: plugin```
 - [datum/2024/DONE/VIM-8.md](datum/2024/DONE/VIM-8.md)   ```# wsl : vim shell```
+- [datum/2024/DONE/VIM-9.md](datum/2024/DONE/VIM-9.md)   ```# menu : key notes```
 
 ### 5 BACKLOG
 
