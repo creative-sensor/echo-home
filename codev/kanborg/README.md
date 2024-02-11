@@ -38,6 +38,7 @@
 - [datum/2024/TODO/MDOS-4.md](datum/2024/TODO/MDOS-4.md)   ```# PowerShell: utilities for missing function in gitbash```
 - [datum/2024/TODO/MDOS-8.md](datum/2024/TODO/MDOS-8.md)   ```# window terminal : line buffer limit```
 - [datum/2024/TODO/VIM-4.md](datum/2024/TODO/VIM-4.md)   ```# rc : container x-ray```
+- [datum/2024/TODO/VIM-9.md](datum/2024/TODO/VIM-9.md)   ```# menu : key notes```
 
 ### 4 DONE
 
