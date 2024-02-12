@@ -68,7 +68,8 @@ Plugin 'Einenlum/yaml-revealer'
         "echo yaml path'
 Plugin 'pedrohdz/vim-yaml-folds'
 Plugin 'Yggdroot/indentLine'
-
+"Plugin 'rottencandy/vimkubectl'
+Plugin 'dstein64/vim-menu'
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -128,6 +129,19 @@ function FgXp(pattern, maxdepth=32)
 endfun
 command! -nargs=* FgXp call FgXp(<q-args>)
 
+function Base64e()
+  " BASE64 ENCODING
+  let file = bufname()
+  exec "vnew ".file."__base64"
+  exec 'silent read !base64 <'.file.'| tr -d -t "\n"'
+endfunction
+
+function EVsplitX(pattern,maxdepth=3)
+  vsplit
+  call FgXp(a:pattern,a:maxdepth)
+endfunction
+command! -nargs=* Evx call EVsplitX(<f-args>)
+
 
 fun! GrepSource(text)
   " GREP SOURCE CODE WHICH CONTAINS TEXT
@@ -141,6 +155,25 @@ fun! GrepSource(text)
   call delete(error_file)
 endfun
 command! -nargs=1 Grin call GrepSource(<q-args>)
+function Menus()
+    exec 'menu KEYDEX.base64e<Tab>b64    b64'
+    exec 'menu KEYDEX.base64d<Tab>b94    b94'
+    exec 'menu KEYDEX.FgXp.3<Tab>e3    e3'
+    exec 'menu KEYDEX.FgXp.6<Tab>e6    e6'
+    exec 'menu KEYDEX.FgXp.9<Tab>e9    e9'
+    exec 'menu KEYDEX.Git.STATUS    :Git <CR>tty<CR><C-w>L<C-w>='
+    exec 'menu KEYDEX.Git.glog    :Gclog<CR>'
+    exec 'menu KEYDEX.Git.log-graph    :GV<CR>'
+    exec 'menu KEYDEX.Git.add    s'
+    exec 'menu KEYDEX.Git.unstage    u'
+    exec 'menu KEYDEX.Git.diffCursor    ='
+    exec 'menu KEYDEX.Git.checkout    co<Space>'
+    exec 'menu KEYDEX.Git.branch    cb<Space>'
+    exec 'menu KEYDEX.Git.commit-Up<Tab>up    :Git commit -m "up"<CR>'
+    exec 'menu KEYDEX.Git.commit-amend<Tab>ca    ca'
+    exec 'menu KEYDEX.Git.commit<Tab>cc    cc'
+    exec 'menu KEYDEX.Git.rbia    :Git rbia '
+endfunction
 
 
 function SearchIndex(...)
@@ -193,6 +226,8 @@ autocmd FileType yaml  : set tabstop=2
 autocmd VimEnter * silent call SessionMgmt()
 autocmd TerminalOpen * set termwinsize=0*0
     "termwinsize: auto-adjustable
+autocmd InsertEnter * highlight CursorLine ctermbg=190 guibg=#D5EE16 | highlight StatusLine ctermbg=190 guibg=#CCFF00
+autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#eee8d5 | highlight StatusLine ctermbg=254 guibg=#eee8d5
 
 
 
@@ -223,8 +258,17 @@ map e6 : vsplit \| call FgXp(".",6)<CR>
 map e9 : vsplit \| call FgXp(".",9)<CR>
     "List file at maxdepth=X
 
+map e. : edit . <CR>
+map f5 : edit <CR>
 map t. : tabnew . <CR>
+map s. : split . <CR>
+map v. : vsplit . <CR>
+map dff : windo diffthis<CR>
+map dfg : diffget<CR>
+map b64 : call Base64e()<CR>
+map mnm : call Menus()<CR>
 
+vnoremap ccp    "+y
 vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
     "LOOK UP KEYWORD
     ":copy selected text into register '+'
