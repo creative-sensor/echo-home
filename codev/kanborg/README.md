@@ -24,6 +24,7 @@
 ### 3 TO DO
 
 - [datum/2024/TODO/APLE-1.md](datum/2024/TODO/APLE-1.md)   ```# apple-bit : application explorer```
+- [datum/2024/TODO/APLE-2.md](datum/2024/TODO/APLE-2.md)   ```# sync : macbook```
 - [datum/2024/TODO/ARTE-3.md](datum/2024/TODO/ARTE-3.md)   ```# ISSUE : Fork repo from community to my github```
 - [datum/2024/TODO/CMW-1.md](datum/2024/TODO/CMW-1.md)   ```# process : background daemon management```
 - [datum/2024/TODO/CMW-2.md](datum/2024/TODO/CMW-2.md)   ```# commonwealth : vault function```
