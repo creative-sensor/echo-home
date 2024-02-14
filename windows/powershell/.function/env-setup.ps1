@@ -1,3 +1,5 @@
-.\.function\env-add-path.ps1 "~\.local\bin"
-.\.function\env-add-path.ps1 "C:\Program Files (x86)\Vim\vim90"
-.\.function\env-add-path.ps1 "~\echo-home\windows\powershell\.function"
+.\.function\env-path-add.ps1 "C:\Program Files\Git\usr\bin"
+.\.function\env-path-add.ps1 "C:\Program Files\Git\bin\"
+.\.function\env-path-add.ps1 "C:\Program Files (x86)\Vim\vim90\"
+.\.function\env-path-add.ps1 "$HOME\.local\bin\"
+.\.function\env-path-add.ps1 "$HOME\echo-home\windows\powershell\.function\"
