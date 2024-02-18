@@ -5,6 +5,7 @@
 
 ### 1 WORK IN PROGRESS
 
+- [datum/2024/WIP/DROID-2.md](datum/2024/WIP/DROID-2.md)   ```# droidvim: vim for android```
 - [datum/2024/WIP/KITE-11.md](datum/2024/WIP/KITE-11.md)   ```# Constellation : android space```
 - [datum/2024/WIP/KUBEX-3.md](datum/2024/WIP/KUBEX-3.md)   ```# ISSUE : log query dashboard```
 - [datum/2024/WIP/KUBEX-5.md](datum/2024/WIP/KUBEX-5.md)   ```# jaeger : tracing system```
@@ -68,7 +69,6 @@
 - [datum/2024/BACKLOG/CTNR-0.md](datum/2024/BACKLOG/CTNR-0.md)   ```# public : encrypted```
 - [datum/2024/BACKLOG/DBMS-0.md](datum/2024/BACKLOG/DBMS-0.md)   ```# ISSUE :```
 - [datum/2024/BACKLOG/DROID-0.md](datum/2024/BACKLOG/DROID-0.md)   ```# Android : Platform```
-- [datum/2024/BACKLOG/DROID-2.md](datum/2024/BACKLOG/DROID-2.md)   ```# droidvim: vim for android```
 - [datum/2024/BACKLOG/DTUM-0.md](datum/2024/BACKLOG/DTUM-0.md)   ```# Datum : Backup and Recovery```
 - [datum/2024/BACKLOG/DTUM-1.md](datum/2024/BACKLOG/DTUM-1.md)   ```# Backup : existing mono service```
 - [datum/2024/BACKLOG/E419-0.md](datum/2024/BACKLOG/E419-0.md)   ```# ISSUE :```
