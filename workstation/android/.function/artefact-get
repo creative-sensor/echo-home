@@ -1,0 +1,2 @@
+ARTIFACT_DIR=artefacts
+curl -L -o $ARTIFACT_DIR/term-droidvim-release-v2.4.13.apk  https://github.com/shiftrot/droidvim/releases/download/v2.4.13/term-droidvim-release.apk
