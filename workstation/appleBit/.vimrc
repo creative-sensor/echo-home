@@ -64,6 +64,7 @@ Plugin 'pedrohdz/vim-yaml-folds'
 Plugin 'Yggdroot/indentLine'
 Plugin 'hashivim/vim-terraform'
         "Terraform highlight
+Plugin 'dstein64/vim-menu'
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -150,23 +151,23 @@ fun! GrepSource(text)
 endfun
 command! -nargs=1 Grin call GrepSource(<q-args>)
 function Menus()
-    exec 'menu KEYDEX.base64e<Tab>b64    b64'
-    exec 'menu KEYDEX.base64d<Tab>b94    b94'
-    exec 'menu KEYDEX.FgXp.3<Tab>e3    e3'
-    exec 'menu KEYDEX.FgXp.6<Tab>e6    e6'
-    exec 'menu KEYDEX.FgXp.9<Tab>e9    e9'
     exec 'menu KEYDEX.Git.STATUS    :Git <CR>tty<CR><C-w>L<C-w>='
     exec 'menu KEYDEX.Git.glog    :Gclog<CR>'
     exec 'menu KEYDEX.Git.log-graph    :GV<CR>'
     exec 'menu KEYDEX.Git.add    s'
     exec 'menu KEYDEX.Git.unstage    u'
     exec 'menu KEYDEX.Git.diffCursor    ='
-    exec 'menu KEYDEX.Git.checkout    co<Space>'
-    exec 'menu KEYDEX.Git.branch    cb<Space>'
-    exec 'menu KEYDEX.Git.commit-Up<Tab>up    :Git commit -m "up"<CR>'
+    exec 'menu KEYDEX.Git.checkout<Tab>co\<space\>    co<Space>'
+    exec 'menu KEYDEX.Git.branch<Tab>cb\<space\>    cb<Space>'
+    exec 'menu KEYDEX.Git.commit-UP<Tab>cup    cup'
     exec 'menu KEYDEX.Git.commit-amend<Tab>ca    ca'
     exec 'menu KEYDEX.Git.commit<Tab>cc    cc'
     exec 'menu KEYDEX.Git.rbia    :Git rbia '
+    exec 'menu KEYDEX.Utils.base64e<Tab>b64    b64'
+    exec 'menu KEYDEX.Utils.base64d<Tab>b94    b94'
+    exec 'menu KEYDEX.FgXp.3<Tab>e3    e3'
+    exec 'menu KEYDEX.FgXp.6<Tab>e6    e6'
+    exec 'menu KEYDEX.FgXp.9<Tab>e9    e9'
 endfunction
 
 
@@ -267,7 +268,8 @@ map dff : windo diffthis<CR>
 map dfg : diffget<CR>
 map b64 : call Base64e()<CR>
 map mnm : call Menus()<CR>
-
+map mn : Menu<CR>
+nnoremap cup : Git commit -m "up"<CR>
 
 vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
     "LOOK UP KEYWORD
