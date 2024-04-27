@@ -65,6 +65,8 @@ Plugin 'Yggdroot/indentLine'
 Plugin 'hashivim/vim-terraform'
         "Terraform highlight
 Plugin 'dstein64/vim-menu'
+Plugin 'equal-l2/vim-base64'
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
