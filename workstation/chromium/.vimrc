@@ -68,6 +68,7 @@ Plugin 'Einenlum/yaml-revealer'
         "echo yaml path'
 Plugin 'pedrohdz/vim-yaml-folds'
 Plugin 'Yggdroot/indentLine'
+Plugin 'hashivim/vim-terraform'
 "Plugin 'rottencandy/vimkubectl'
 Plugin 'dstein64/vim-menu'
 Plugin 'equal-l2/vim-base64'
@@ -272,6 +273,10 @@ map dfg : diffget<CR>
 map b64 : call Base64e()<CR>
 map mnm : call Menus()<CR>
 map mn : Menu<CR>
+
+vmap b64    \atob<Esc>
+vmap b94    \btoa<Esc>
+
 nnoremap cup : Git commit -m "up"<CR>
 
 vnoremap ccp    "+y

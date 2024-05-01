@@ -271,6 +271,10 @@ map dfg : diffget<CR>
 map b64 : call Base64e()<CR>
 map mnm : call Menus()<CR>
 map mn : Menu<CR>
+
+vmap b64    \atob<Esc>
+vmap b94    \btoa<Esc>
+
 nnoremap cup : Git commit -m "up"<CR>
 
 vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>

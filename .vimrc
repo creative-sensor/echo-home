@@ -159,7 +159,7 @@ function Menus()
     exec 'menu KEYDEX.Git.diffCursor    ='
     exec 'menu KEYDEX.Git.checkout    co<Space>'
     exec 'menu KEYDEX.Git.branch    cb<Space>'
-    exec 'menu KEYDEX.Git.commit-Up<Tab>cup   cup' 
+    exec 'menu KEYDEX.Git.commit-Up<Tab>cup   cup'
     exec 'menu KEYDEX.Git.commit-amend<Tab>ca    ca'
     exec 'menu KEYDEX.Git.commit<Tab>cc    cc'
     exec 'menu KEYDEX.Git.rbia    :Git rbia '
@@ -268,6 +268,10 @@ map dfg : diffget<CR>
 map b64 : call Base64e()<CR>
 map mnm : call Menus()<CR>
 map mn : Menu<CR>
+
+vmap b64    \atob<Esc>
+vmap b94    \btoa<Esc>
+
 nnoremap cup : Git commit -m "up"<CR>
 
 vnoremap ccp    "+y
