@@ -173,6 +173,8 @@ function Menus()
     exec 'menu KEYDEX.FgXp.3<Tab>e3    e3'
     exec 'menu KEYDEX.FgXp.6<Tab>e6    e6'
     exec 'menu KEYDEX.FgXp.9<Tab>e9    e9'
+    exec 'menu Buffers.listV<Tab>\\bv    \bv'
+    exec 'menu Buffers.listS<Tab>\\bs    \bs'
 endfunction
 
 
