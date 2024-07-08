@@ -9,6 +9,7 @@ gedrive_encrypt_id=$(cat $VOLUME_CACHE/$SUB_PATH/.properd/gedrive.yaml | yq --ra
 [[ $gedrive_bundle != "true" ]] && abort "FAILED AS BUNDLE MODE DISABLED [ $SUB_PATH/.properd/gedrive.yaml ]"
 
 echo "Writing in bundle mode"
+echo "$(date -u '+%Y-%m-%dT%H-%M-%SZ')  $HOSTNAME" >> $VOLUME_CACHE/$SUB_PATH/.properd/changelog
 cd $VOLUME_CACHE/$(dirname $SUB_PATH)
 tar cf   $(basename $SUB_PATH_BUNDLE)   $(basename $SUB_PATH)
 7z a -txz  $(basename $SUB_PATH_BUNDLE).xz  $(basename $SUB_PATH_BUNDLE)
