@@ -16,6 +16,7 @@ set expandtab
 set tabstop=4
 set mouse=a
 set splitright
+set paste
 set title titlestring=VIM\ \|\ %{fnamemodify(getcwd(),\ ':t')} titlelen=32
     "output:  VIM | current_dirname
 set background=light
