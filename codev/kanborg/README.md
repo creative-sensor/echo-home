@@ -10,6 +10,7 @@
 - [datum/2024/WIP/KUBEX-3.md](datum/2024/WIP/KUBEX-3.md)   ```# ISSUE : log query dashboard```
 - [datum/2024/WIP/KUBEX-5.md](datum/2024/WIP/KUBEX-5.md)   ```# jaeger : tracing system```
 - [datum/2024/WIP/MDOS-5.md](datum/2024/WIP/MDOS-5.md)   ```# windows : application explorer```
+- [datum/2024/WIP/VIM-10.md](datum/2024/WIP/VIM-10.md)   ```# preset : window layout```
 
 ### 2 ON HOLD
 
