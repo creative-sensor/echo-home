@@ -32,6 +32,7 @@
 - [datum/2024/TODO/CMW-1.md](datum/2024/TODO/CMW-1.md)   ```# process : background daemon management```
 - [datum/2024/TODO/CMW-2.md](datum/2024/TODO/CMW-2.md)   ```# commonwealth : vault function```
 - [datum/2024/TODO/DROID-1.md](datum/2024/TODO/DROID-1.md)   ```# FEATURE : Fork GitJournal```
+- [datum/2024/TODO/DTUM-2.md](datum/2024/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
 - [datum/2024/TODO/HCL-2.md](datum/2024/TODO/HCL-2.md)   ```# COWAD : select principal node```
 - [datum/2024/TODO/KROS-3.md](datum/2024/TODO/KROS-3.md)   ```# chromium : application explorer```
 - [datum/2024/TODO/LEAF-13.md](datum/2024/TODO/LEAF-13.md)   ```# Clipboard: internode```
