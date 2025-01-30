@@ -5,12 +5,10 @@
 
 ### 1 WORK IN PROGRESS
 
-- [datum/2025/WIP/DROID-2.md](datum/2025/WIP/DROID-2.md)   ```# droidvim: vim for android```
 - [datum/2025/WIP/KITE-11.md](datum/2025/WIP/KITE-11.md)   ```# Constellation : android space```
 - [datum/2025/WIP/KUBEX-3.md](datum/2025/WIP/KUBEX-3.md)   ```# ISSUE : log query dashboard```
 - [datum/2025/WIP/KUBEX-5.md](datum/2025/WIP/KUBEX-5.md)   ```# jaeger : tracing system```
-- [datum/2025/WIP/MDOS-5.md](datum/2025/WIP/MDOS-5.md)   ```# windows : application explorer```
-- [datum/2025/WIP/VIM-10.md](datum/2025/WIP/VIM-10.md)   ```# preset : window layout```
+- [datum/2025/WIP/MDOS-5.md](datum/2025/WIP/MDOS-5.md)   ```# windows : application explorer```
 
 ### 2 ON HOLD
 
@@ -45,7 +43,9 @@
 - [datum/2025/TODO/VIM-4.md](datum/2025/TODO/VIM-4.md)   ```# rc : container x-ray```
 
 ### 4 DONE
-
+
+- [datum/2025/DONE/DROID-2.md](datum/2025/DONE/DROID-2.md)   ```# droidvim: vim for android```
+- [datum/2025/DONE/VIM-10.md](datum/2025/DONE/VIM-10.md)   ```# preset : window layout```
 
 ### 5 BACKLOG
 

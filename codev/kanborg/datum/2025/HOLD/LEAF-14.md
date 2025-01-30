@@ -13,7 +13,12 @@
 
 
 ### 4 JOURNAL
-##### 4.0
+
+###### 4.1
+
+- no longer relevant
+
+###### 4.0
 - event-driven
 - apache nifi
 - node-red
