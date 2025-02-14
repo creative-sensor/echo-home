@@ -19,3 +19,5 @@ curl -L -o $ARTIFACT_DIR/OpenLens.6.5.2-366.msi  https://github.com/MuhammedKalk
 curl -L -o $ARTIFACT_DIR/VSCodiumUserSetup-x64-1.84.2.23319.exe  https://github.com/VSCodium/vscodium/releases/download/1.84.2.23319/VSCodiumUserSetup-x64-1.84.2.23319.exe
 curl -L -o $ARTIFACT_DIR/minikube-windows-amd64-v1.32.0.exe https://github.com/kubernetes/minikube/releases/download/v1.32.0/minikube-windows-amd64.exe
 curl -L -o $ARTIFACT_DIR/helm-v3.14.0-windows-amd64.zip  https://get.helm.sh/helm-v3.14.0-windows-amd64.zip
+curl -L -o $ARTIFACT_DIR/nvim-win64-v0.10.4.msi  https://github.com/neovim/neovim/releases/download/stable/nvim-win64.msi
+curl -L -o $ARTIFACT_DIR/neovide-v0.14.0.msi  https://github.com/neovide/neovide/releases/download/0.14.0/neovide.msi

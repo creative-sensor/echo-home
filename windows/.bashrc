@@ -62,7 +62,8 @@ export GVIMPATH='/c/Program Files (x86)/Vim/vim90'
 NODEPATH=$LOCAL_BIN/node-v18.13.0-win-x64
 GITBASH_PATH=/mingw64/bin:/usr/local/bin:/usr/bin:/bin:/mingw64/bin:/usr/bin/vendor_perl:/usr/bin/core_perl:/c/Windows/system32:/c/Windows:/c/Windows/System32/Wbem:/c/Windows/System32/WindowsPowerShell/v1.0:/c/Windows/System32/OpenSSH
 DOCKER_DESKTOP='/c/Program Files/Docker/Docker/resources/bin:/c/ProgramData/DockerDesktop/version-bin'
-PATH=$LOCAL_BIN:$NODEPATH:$PYTHONPATH:$PYTHONPATH_SCRIPT:$GITBASH_PATH:$GVIMPATH:$DOCKER_DESKTOP
+NVIMPATH='/c/Program Files/Neovim/bin:/c/Program Files/Neovide'
+PATH=$LOCAL_BIN:$NODEPATH:$PYTHONPATH:$PYTHONPATH_SCRIPT:$GITBASH_PATH:$GVIMPATH:$DOCKER_DESKTOP:$NVIMPATH
 
 COLOR1='\[\033[38;5;135m\]'
 COLOR2='\[\033[38;5;161m\]'
