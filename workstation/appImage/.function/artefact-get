@@ -6,4 +6,4 @@ curl -L -o  $ARTEFACT_DIR/marktext-v0.17.1-x86_64.AppImage  https://github.com/m
 curl -L -o $ARTEFACT_DIR/drawio-v20.8.16-x86_64.AppImage  https://github.com/jgraph/drawio-desktop/releases/download/v20.8.16/drawio-x86_64-20.8.16.AppImage
 curl -L -o $ARTEFACT_DIR/DomTerm-2.9.4.AppImage  https://github.com/PerBothner/DomTerm/releases/download/2.9.4/DomTerm.AppImage
 curl -L -o $ARTEFACT_DIR/OpenLens.AppImage   https://github.com/MuhammedKalkan/OpenLens/releases/download/v6.5.2-366/OpenLens-6.5.2-366.x86_64.AppImage
-
+curl -L -o $ARTEFACT_DIR/neovide.AppImage   https://github.com/neovide/neovide/releases/download/0.14.1/neovide.AppImage
