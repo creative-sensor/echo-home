@@ -269,6 +269,7 @@ map e6 : vsplit \| call FgXp(".",6)<CR>
 map e9 : vsplit \| call FgXp(".",9)<CR>
     "List file at maxdepth=X
 
+map f5 : edit <CR>
 map e. : edit . <CR>
 map t. : tabnew . <CR>
 map s. : split . <CR>
@@ -276,8 +277,7 @@ map v. : vsplit . <CR>
 map dff : windo diffthis<CR>
 map dfg : diffget<CR>
 map b64 : call Base64e()<CR>
-map mnm : call Menus()<CR>
-
+map ide : Git <CR>tty<CR><C-w>L<C-w>=
 vmap b64    \atob<Esc>
 vmap b94    \btoa<Esc>
 
