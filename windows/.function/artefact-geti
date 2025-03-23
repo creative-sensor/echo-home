@@ -1,4 +1,4 @@
-#!/bin/bash -x 
+#!/bin/bash 
 NAME=${1:-all}
 ARTIFACT_DIR=./artefacts
 ARTIFACT_YSON=.properd/artefacts.yaml
@@ -16,7 +16,6 @@ function download (){
 
 if [[ "$NAME" =~ "all" ]] ; then
 	LIST=$(cat $ARTIFACT_YSON | yq 'keys' | awk -F '"' '{print $2}')
-	echo $LIST
 	for i in $LIST ; do
 		download $i
 	done
