@@ -1,0 +1,3 @@
+helm: [ 1.6 , "https://get.helm.sh/helm-v3.14.0-windows-amd64.zip" , {"suffix":"msi"}]
+nvim: [ 0.10.4 , "https://github.com/neovim/neovim/releases/download/stable/nvim-win64.msi" , {"suffix":"msi"} ]
+neovide: [ 0.14.0 , "https://github.com/neovide/neovide/releases/download/0.14.0/neovide.msi" , {"suffix":"msi"} ]
