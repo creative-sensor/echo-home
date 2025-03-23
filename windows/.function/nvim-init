@@ -1,0 +1,6 @@
+#!/bin/bash -x
+
+cp -b .vimrc.neo ~/
+cp -rb AppData/Local/nvim ~/AppData/Local/
+
+
