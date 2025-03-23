@@ -1,0 +1,7 @@
+
+
+return {
+  {
+    "shaunsingh/solarized.nvim",
+  }
+}
