@@ -22,26 +22,17 @@ set title titlestring=VIM\ \|\ %{fnamemodify(getcwd(),\ ':t')} titlelen=32
 set background=light
 set guifont=Consolas:h11
 "set shell=\"/c/Program\ Files/Git/usr/bin/bash.exe\"
-"set shell=\"/c/Program\ Files/Git/bin/sh.exe\"
-set shell=\"sh.exe\"
+set shell=\"C:\Program\ Files\Git\bin\sh.exe\"
 set shellcmdflag=-c
+set shellxquote=" "
+set shellslash
+"set shellredir=>
 set backspace=indent,eol,start
 set ffs=unix
 set foldlevelstart=10
 let g:yaml_revealer_separator='➤'
     "<C-v>u27a4
-"-------- [PLUGIN] --------
-"filetype plugin on
 
-""NETRW
-"let g:netrw_browse_split = 3
-"    "netrw open file in a new tab
-"let g:netrw_altv = 1
-"let g:netrw_winsize = 25
-"augroup ProjectDrawer
-"  autocmd!
-"  autocmd VimEnter * :Vexplore
-"augroup END
 
 
 "-------- [PLUGIN / VUNDLE] --------
@@ -123,20 +114,13 @@ command! -nargs=1 FindGrep call FindGrep(<q-args>)
 function FgXp(pattern, maxdepth=32)
   " FIELD GIT EXPLORER
   let error_file = tempname()
-  exe '!find "./" -maxdepth ' . a:maxdepth . ' -type f | grep -v "^./.git" | grep -i "'  .  a:pattern  .  '" | sed "s/\$/:1/" > '.error_file
+  exe '!find ./ -maxdepth ' . a:maxdepth . ' -type f | grep -v "^./.git" | grep -i "'.a:pattern.'" | sed "s/\$/:1/" > '.error_file
   set errorformat=%f:%l
   exe "cfile ". error_file
   copen
   call delete(error_file)
 endfun
 command! -nargs=* FgXp call FgXp(<q-args>)
-
-function Base64e()
-  " BASE64 ENCODING
-  let file = bufname()
-  exec "vnew ".file."__base64"
-  exec 'silent read !base64 <'.file.'| tr -d -t "\n"'
-endfunction
 
 function EVsplitX(pattern,maxdepth=3)
   vsplit
@@ -181,42 +165,8 @@ function Menus()
 endfunction
 
 
-function SearchIndex(...)
-    " SEARCH INDEX IN ADM-NOTES
-    if @% == ""
-        echo "Select window to search first!"
-        return
-    endif
 
-    "Convert keywords into index string
-    let keyword_list = a:000
-    let index_string = a:1
-    for i in keyword_list[1:]
-            let index_string = index_string . "-" . i
-    endfor
 
-    "Build regex: \(^#KEYWORD\)\|\(-KEYWORD\)\|\(-KEYWORD-\)\|\(, KEYWORD \)
-    let myregex_head = "\\(^#" . index_string . "\\)\\|"
-    let myregex_case1 = "\\(-" . index_string . "\\)\\|"
-    let myregex_case2 = "\\(-" . index_string . "-\\)\\|"
-    let myregex_case3 = "\\(, " . index_string . "\\)"
-    let myregex = myregex_head . myregex_case1 . myregex_case2 . myregex_case3
-
-    "Search by index string
-    "hint: %:p means absolute path of file loaded in current window
-    execute "vimgrep /". myregex . "/g" . " " . expand('%:p')
-
-    "Open quickfix window for search results
-    execute "cw"
-endfunction
-command -nargs=* SearchIndex call SearchIndex (<f-args>)
-
-fun! Terminator()
-  " Mini Terminal
-  execute  "highlight Terminal ctermbg=23 ctermfg=15 guibg=#073642   guifg=#93a1a1 "
-  execute  "below terminal ++rows=7"
-endfun
-command! -nargs=0 Terminator call Terminator()
 
 function SessionMgmt()
     let limit = 512
@@ -277,7 +227,7 @@ map v. : vsplit . <CR>
 map dff : windo diffthis<CR>
 map dfg : diffget<CR>
 map b64 : call Base64e()<CR>
-map ide : Git <CR>tty<CR><C-w>L<C-w>=
+map dex : Git <CR>tty<CR><C-w>L<C-w>=
 vmap b64    \atob<Esc>
 vmap b94    \btoa<Esc>
 
