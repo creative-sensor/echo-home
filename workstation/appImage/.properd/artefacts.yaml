@@ -1,0 +1,6 @@
+nvim: [ 0.10.4 , "https://github.com/neovim/neovim/releases/download/v0.10.4/nvim-linux-x86_64.appimage" , {"suffix":"appImage"} ]
+marktext: [ 0.17.1 , "https://github.com/marktext/marktext/releases/download/v0.17.1/marktext-x86_64.AppImage", {"suffix":"appImage"} ]
+drawio: [ 26.1.1 , "https://github.com/jgraph/drawio-desktop/releases/download/v26.1.1/drawio-x86_64-26.1.1.AppImage", {"suffix":"appImage"} ]
+OpenLens: [ 6.5.2 , "https://github.com/MuhammedKalkan/OpenLens/releases/download/v6.5.2-366/OpenLens-6.5.2-366.x86_64.AppImage", {"suffix":"appImage"} ]
+
+

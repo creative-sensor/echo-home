@@ -1,1 +1,17 @@
 ARTEFACT_DIR=artefacts
+
+APT_LIST='
+    python-is-python3
+    python3-pip
+    nodejs
+    make
+    uuid-runtime
+    jq
+    yq
+    rsync
+    vim-gtk3
+    libnss3
+    libsecret-1-0
+    libfuse2
+  dkdl
+'

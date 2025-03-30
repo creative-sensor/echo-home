@@ -1,0 +1,8 @@
+#!/bin/bash -x
+
+mkdir -p ~/.config/nvim
+
+cp -b .vimrc.neo ~/
+cp -rb .config/nvim/init.vim  ~/.config/nvim
+
+

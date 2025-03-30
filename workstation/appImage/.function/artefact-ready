@@ -1,7 +1,7 @@
 source .properd/VARSET
 
 cd $ARTEFACT_DIR
-for app in  *.AppImage ; do
+for app in  *.appImage ; do
   app_name=$(echo $app | awk -F "-" '{print $1}')
   chmod 0700 $app
   ln -sf $(readlink -f $app) $LOCAL_BIN/$app_name
