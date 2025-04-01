@@ -8,7 +8,9 @@
 
 - https://www.makeuseof.com/what-is-appimage-and-how-to-run-it-linux/
   
-  ### 1 SOLUTION
+### 1 SOLUTION
+
+- to be collected in ```workstation/appImage``` by separate card
 
 ### 2 NOTES
 

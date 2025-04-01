@@ -5,6 +5,7 @@ lengthy command may overwrite existing text at the beginning of line
 
 ### 1 SOLUTION
 
+- won't do as issue not found in nvim
 
 ### 2 NOTES
 

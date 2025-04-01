@@ -10,6 +10,8 @@
 
 ### 1 SOLUTION
 
+- superseded by Windows Terminal
+
 ### 2 NOTES
 
 ### 3 TEST/VERIFICATION

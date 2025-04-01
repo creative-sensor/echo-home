@@ -18,7 +18,9 @@ To provision facility for building, compiling source code in windows
 
 ### 4 JOURNAL
 
+###### 4.0 
 
+- add/config library path will mess up the host, container-based recommended
 
 --------------------------------
 ```json

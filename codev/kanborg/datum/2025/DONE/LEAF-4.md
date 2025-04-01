@@ -5,6 +5,8 @@ given  the same objectory in different location, how to merge these separate  ve
 
 ### 1 SOLUTION
 
+- too much difficult to achieve
+- will try this with ```pedrive```
 
 ### 2 NOTES
 

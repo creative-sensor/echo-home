@@ -6,6 +6,7 @@
 
 ### 1 SOLUTION
 
+- no use case for now
 
 ### 2 NOTES
 

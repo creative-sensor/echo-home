@@ -6,7 +6,7 @@ Alternative Rsync in windows:  https://learn.microsoft.com/en-us/windows-server/
 
 ### 1 SOLUTION
 
-
+- won't do as oversized card
 ### 2 NOTES
 
 

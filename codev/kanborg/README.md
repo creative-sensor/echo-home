@@ -8,17 +8,14 @@
 - [datum/2025/WIP/KITE-11.md](datum/2025/WIP/KITE-11.md)   ```# Constellation : android space```
 - [datum/2025/WIP/KUBEX-3.md](datum/2025/WIP/KUBEX-3.md)   ```# ISSUE : log query dashboard```
 - [datum/2025/WIP/KUBEX-5.md](datum/2025/WIP/KUBEX-5.md)   ```# jaeger : tracing system```
-- [datum/2025/WIP/MDOS-5.md](datum/2025/WIP/MDOS-5.md)   ```# windows : application explorer```
+- [datum/2025/WIP/MDOS-5.md](datum/2025/WIP/MDOS-5.md)   ```# windows : application explorer```
+- [datum/2025/WIP/VIM-13.md](datum/2025/WIP/VIM-13.md)   ```# shell : container```
 
 ### 2 ON HOLD
 
 - [datum/2025/HOLD/GILB-1.md](datum/2025/HOLD/GILB-1.md)   ```# ldap : authentication```
-- [datum/2025/HOLD/LEAF-11.md](datum/2025/HOLD/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2025/HOLD/LEAF-14.md](datum/2025/HOLD/LEAF-14.md)   ```# KAFKA : mono service```
-- [datum/2025/HOLD/LEAF-19.md](datum/2025/HOLD/LEAF-19.md)   ```# AppImage : explore```
 - [datum/2025/HOLD/LEAF-31.md](datum/2025/HOLD/LEAF-31.md)   ```# Workstation platform : components```
-- [datum/2025/HOLD/LEAF-4.md](datum/2025/HOLD/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
-- [datum/2025/HOLD/LEAF-8.md](datum/2025/HOLD/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
 - [datum/2025/HOLD/NJS-2.md](datum/2025/HOLD/NJS-2.md)   ```# GLORIA: run objectory```
 
 ### 3 TO DO
@@ -37,9 +34,8 @@
 - [datum/2025/TODO/LEAF-15.md](datum/2025/TODO/LEAF-15.md)   ```# ETO : Emerging Technology Observatory```
 - [datum/2025/TODO/LEAF-26.md](datum/2025/TODO/LEAF-26.md)   ```# Serverless : as nanoservice```
 - [datum/2025/TODO/LEAF-30.md](datum/2025/TODO/LEAF-30.md)   ```# Jupyter :```
+- [datum/2025/TODO/MDOS-14.md](datum/2025/TODO/MDOS-14.md)   ```# Makefile: command```
 - [datum/2025/TODO/MDOS-2.md](datum/2025/TODO/MDOS-2.md)   ```# toolset : build/compile```
-- [datum/2025/TODO/MDOS-4.md](datum/2025/TODO/MDOS-4.md)   ```# PowerShell: utilities for missing function in gitbash```
-- [datum/2025/TODO/MDOS-8.md](datum/2025/TODO/MDOS-8.md)   ```# window terminal : line buffer limit```
 - [datum/2025/TODO/VIM-4.md](datum/2025/TODO/VIM-4.md)   ```# rc : container x-ray```
 
 ### 4 DONE
@@ -48,8 +44,14 @@
 - [datum/2025/DONE/DROID-2.md](datum/2025/DONE/DROID-2.md)   ```# droidvim: vim for android```
 - [datum/2025/DONE/KBG-8.md](datum/2025/DONE/KBG-8.md)   ```# reborn: nvim```
 - [datum/2025/DONE/KROS-4.md](datum/2025/DONE/KROS-4.md)   ```# nvim : init```
+- [datum/2025/DONE/LEAF-11.md](datum/2025/DONE/LEAF-11.md)   ```# GROK: log transformer```
+- [datum/2025/DONE/LEAF-19.md](datum/2025/DONE/LEAF-19.md)   ```# AppImage : explore```
+- [datum/2025/DONE/LEAF-4.md](datum/2025/DONE/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
+- [datum/2025/DONE/LEAF-8.md](datum/2025/DONE/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
 - [datum/2025/DONE/MDOS-12.md](datum/2025/DONE/MDOS-12.md)   ```# nvim : fix shell```
 - [datum/2025/DONE/MDOS-13.md](datum/2025/DONE/MDOS-13.md)   ```# nvim : shell WSL```
+- [datum/2025/DONE/MDOS-4.md](datum/2025/DONE/MDOS-4.md)   ```# PowerShell: utilities for missing function in gitbash```
+- [datum/2025/DONE/MDOS-8.md](datum/2025/DONE/MDOS-8.md)   ```# window terminal : line buffer limit```
 - [datum/2025/DONE/VIM-10.md](datum/2025/DONE/VIM-10.md)   ```# preset : window layout```
 - [datum/2025/DONE/VIM-11.md](datum/2025/DONE/VIM-11.md)   ```# NeoVim : init```
 - [datum/2025/DONE/VIM-12.md](datum/2025/DONE/VIM-12.md)   ```# nvim : colorscheme```
@@ -107,4 +109,5 @@
 - [datum/2025/BACKLOG/TSQA-0.md](datum/2025/BACKLOG/TSQA-0.md)   ```# TEST : QUALITY```
 - [datum/2025/BACKLOG/VIM-0.md](datum/2025/BACKLOG/VIM-0.md)   ```# VIM : Bram Moolenaar ```
 - [datum/2025/BACKLOG/VIM-2.md](datum/2025/BACKLOG/VIM-2.md)   ```# container : as native shell```
-- [datum/2025/BACKLOG/VIM-3.md](datum/2025/BACKLOG/VIM-3.md)   ```# monitor : TUI dashboard```
+- [datum/2025/BACKLOG/VIM-3.md](datum/2025/BACKLOG/VIM-3.md)   ```# monitor : TUI dashboard```
+- [datum/2025/BACKLOG/WGI-0.md](datum/2025/BACKLOG/WGI-0.md)   ```# Web Graphic: Interface```
