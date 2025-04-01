@@ -165,8 +165,21 @@ function Menus()
 endfunction
 
 
+function ShellWSL()
+    set shell=\"C:\Windows\System32\wsl.exe\"
+    set shellcmdflag=--
 
+    exec "below terminal"
 
+    set shell=\"C:\Program\ Files\Git\bin\sh.exe\"
+    set shellcmdflag=-c
+endfunction
+
+function ShellContainer()
+		" container list in quickfix
+		" select container
+		" term: docker exec -it <container>
+endfunction
 
 function SessionMgmt()
     let limit = 512
@@ -213,6 +226,7 @@ map q1 : q!<CR>
     "Quit current
 
 map tty : highlight Terminal ctermbg=23 ctermfg=15 guibg=#073042 guifg=#7ec1de \| below terminal <CR>
+map wsl : call ShellWSL() <CR>
 
 map e3 : vsplit \| call FgXp(".",3)<CR>
 map e6 : vsplit \| call FgXp(".",6)<CR>
