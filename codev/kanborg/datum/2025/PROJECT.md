@@ -1,10 +1,10 @@
 ```yaml
-KBG : {"description":"Kanborg code development","last_id":7,"related":""}
+KBG : {"description":"Kanborg code development","last_id":8,"related":""}
 SPEC : {"description":"Spec of new concepts","last_id":2,"related":""}
 LEAF : {"description":"Short-lived | Narrow Scope | Low Priority | Uncategorized","last_id":32,"related":""}
 NCEPT : {"description":"Concept","last_id":2,"related":""}
-ARTE : {"description":"Artefacts Exware","last_id":8,"related":""}
-MDOS : {"description":"Microsoft Windows","last_id":11,"related":""}
+ARTE : {"description":"Artefacts Exware","last_id":9,"related":""}
+MDOS : {"description":"Microsoft Windows","last_id":13,"related":""}
 CORTA : {"description":"Cortana and Chief","last_id":0,"related":""}
 E419 : {"description":"Echo 419","last_id":0,"related":""}
 HCL : {"description":"Nomad","last_id":2,"related":""}
@@ -17,7 +17,7 @@ CMW : {"description":"Common Wealth","last_id":4,"related":""}
 DOCS : {"description":"Documentation","last_id":1,"related":""}
 GRTH : {"description":"Graph Theory","last_id":0,"related":""}
 TSQA : {"description":"Test and Quality","last_id":0,"related":""}
-VIM : {"description":"VIM Editor","last_id":10,"related":""}
+VIM : {"description":"VIM Editor","last_id":12,"related":""}
 MONO : {"description":"Standalone docker container","last_id":4,"related":""}
 ASML : {"description":"System Assembly","last_id":1,"related":""}
 OBSR : {"description":"Observability","last_id":4,"related":""}
@@ -25,7 +25,7 @@ DBMS : {"description":"Database management system","last_id":0,"related":""}
 DTUM : {"description":"Datum","last_id":2,"related":""}
 ACLS : {"description":"Access Control Level System","last_id":2,"related":""}
 KITE : {"description":"The Paper Kites","last_id":11,"related":""}
-KROS : {"description":"Chromium","last_id":3,"related":""}
+KROS : {"description":"Chromium","last_id":4,"related":""}
 CTNR : {"description":"Containerization","last_id":0,"related":""}
 APLE : {"description":"Apple bit","last_id":2,"related":""}
 AIVE : {"description":"AI Vertex Eyes","last_id":0,"related":""}

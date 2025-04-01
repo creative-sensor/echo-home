@@ -44,8 +44,15 @@
 
 ### 4 DONE
 
+- [datum/2025/DONE/ARTE-9.md](datum/2025/DONE/ARTE-9.md)   ```# windows : artefact-geti```
 - [datum/2025/DONE/DROID-2.md](datum/2025/DONE/DROID-2.md)   ```# droidvim: vim for android```
-- [datum/2025/DONE/VIM-10.md](datum/2025/DONE/VIM-10.md)   ```# preset : window layout```
+- [datum/2025/DONE/KBG-8.md](datum/2025/DONE/KBG-8.md)   ```# reborn: nvim```
+- [datum/2025/DONE/KROS-4.md](datum/2025/DONE/KROS-4.md)   ```# nvim : init```
+- [datum/2025/DONE/MDOS-12.md](datum/2025/DONE/MDOS-12.md)   ```# nvim : fix shell```
+- [datum/2025/DONE/MDOS-13.md](datum/2025/DONE/MDOS-13.md)   ```# nvim : shell WSL```
+- [datum/2025/DONE/VIM-10.md](datum/2025/DONE/VIM-10.md)   ```# preset : window layout```
+- [datum/2025/DONE/VIM-11.md](datum/2025/DONE/VIM-11.md)   ```# NeoVim : init```
+- [datum/2025/DONE/VIM-12.md](datum/2025/DONE/VIM-12.md)   ```# nvim : colorscheme```
 
 ### 5 BACKLOG
 
