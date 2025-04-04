@@ -38,7 +38,6 @@ set nocompatible              " be iMproved, required
 filetype off                  " required
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-" let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
         "Plugin Manager
 Plugin 'thaerkh/vim-workspace'
@@ -59,16 +58,8 @@ Plugin 'pedrohdz/vim-yaml-folds'
 Plugin 'Yggdroot/indentLine'
 Plugin 'hashivim/vim-terraform'
 Plugin 'equal-l2/vim-base64'
-
-" All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
-" Brief help
-" :PluginList       - lists configured plugins
-" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
-" :PluginSearch foo - searches for foo; append `!` to refresh local cache
-" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
-
 
 
 "-------- [FUNCTIONS] --------
@@ -163,6 +154,18 @@ endfunction
 
 
 
+function ShellPython()
+    set shell=python
+    exec "below terminal"
+    set shell=bash
+endfunction
+
+
+function ShellContainer(image="ubuntu:latest",cmd="bash")
+		silent exec "!touch .env"
+		exec 'below term docker run --env-file .env -v "$(pwd):/dkr.$(basename $(pwd))" -it '.a:image.' '.a:cmd
+endfunction
+command! -nargs=1 ShellContainer call ShellContainer(<q-args>)
 
 
 function SessionMgmt()
