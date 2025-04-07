@@ -1,4 +1,4 @@
-# sync : macbook
+# apple-bit : application explorer
 --------------------------------
 ### 0 DESCRIPTION
 
@@ -14,7 +14,9 @@
 
 ### 4 JOURNAL
 
+##### 4.0
 
+won't do as too much broad
 
 --------------------------------
 ```json

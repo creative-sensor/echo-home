@@ -15,6 +15,9 @@
 
 ### 4 JOURNAL
 
+##### 4.0
+
+- no longer relevant in 2025 as cost of private development
 
 
 --------------------------------

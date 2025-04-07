@@ -1,7 +1,6 @@
-# terminal : gvim cannot detect unix file path
+# windows : application explorer
 --------------------------------
 ### 0 DESCRIPTION
-
 
 
 ### 1 SOLUTION
@@ -15,6 +14,13 @@
 
 ### 4 JOURNAL
 
+###### 4.1
+
+- won't do as too much general
+
+###### 4.0
+- winget: package manager
+- https://github.com/microsoft/winget-cli/releases/tag/v1.6.3133
 
 
 --------------------------------

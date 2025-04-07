@@ -1,7 +1,7 @@
-# chromium : application explorer
+# ldap : authentication
 --------------------------------
 ### 0 DESCRIPTION
-
+- integrate authelia as an IDP for gitlab
 
 ### 1 SOLUTION
 
@@ -14,9 +14,10 @@
 
 ### 4 JOURNAL
 
+- todo in KITE card
 
 
 --------------------------------
 ```json
-{ "project_code": "KROS" , "links": "" , "location": "" , "fpoint": "" }
+{ "project_code": "GILB" , "links": "" , "location": "" , "fpoint": "" }
 ```

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+VARSET_EXT=$1
+# ---- |DEFAULT ----
+CYCLE=$(date +%Y)
+DATA_DIR=./datum
+# ---- |OVERRIDE ----
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+export CYCLE=$CYCLE
+export DATA_DIR=$DATA_DIR
+mkdir -p $DATA_DIR/${CYCLE}/{BACKLOG,TODO,HOLD,WIP,DONE}
+
+test -n "$GVIMPATH" && G_VIM=g && export SHELL=/usr/bin/bash
+
+nvim -u .vimrc.neo

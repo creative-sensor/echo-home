@@ -1,8 +1,7 @@
-# FEATURE : color system
+# SPEC : Define new spec
 --------------------------------
 ### 0 DESCRIPTION
-- color search
-- color pattern
+
 
 ### 1 SOLUTION
 
@@ -19,5 +18,5 @@
 
 --------------------------------
 ```json
-{ "project_code": "LEAF" , "links": "" , "location": "" , "fpoint": "" }
+{ "project_code": "${PROJECT_CODE}" , "links": "${LINKS}" , "location": "${LOCATION}" , "fpoint": "${FPOINT}" }
 ```

@@ -1,6 +1,7 @@
-# windows : application explorer
+# terminal : gvim cannot detect unix file path
 --------------------------------
 ### 0 DESCRIPTION
+
 
 
 ### 1 SOLUTION
@@ -15,9 +16,9 @@
 ### 4 JOURNAL
 
 ###### 4.0
-- winget: package manager
-- https://github.com/microsoft/winget-cli/releases/tag/v1.6.3133
 
+- can set shellslash
+- won't do as migrated to nvim
 
 --------------------------------
 ```json

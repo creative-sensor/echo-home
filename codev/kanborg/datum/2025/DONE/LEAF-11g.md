@@ -7,6 +7,9 @@
 ### 1 SOLUTION
 
 
+- git-clone: --depth=1
+
+
 ### 2 NOTES
 
 

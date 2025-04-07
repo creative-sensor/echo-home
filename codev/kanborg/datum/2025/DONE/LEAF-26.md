@@ -18,6 +18,10 @@
 
 ### 4 JOURNAL
 
+###### 4.1
+
+can implement with workflow of cron/jobs but need a platform , todo later
+
 ###### 4.0
 
 https://github.com/anaibol/awesome-serverless

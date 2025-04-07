@@ -5,56 +5,59 @@
 
 ### 1 WORK IN PROGRESS
 
-- [datum/2025/WIP/KITE-11.md](datum/2025/WIP/KITE-11.md)   ```# Constellation : android space```
-- [datum/2025/WIP/KUBEX-3.md](datum/2025/WIP/KUBEX-3.md)   ```# ISSUE : log query dashboard```
-- [datum/2025/WIP/KUBEX-5.md](datum/2025/WIP/KUBEX-5.md)   ```# jaeger : tracing system```
-- [datum/2025/WIP/MDOS-5.md](datum/2025/WIP/MDOS-5.md)   ```# windows : application explorer```
-- [datum/2025/WIP/VIM-13.md](datum/2025/WIP/VIM-13.md)   ```# shell : container```
+- [datum/2025/WIP/MDOS-14.md](datum/2025/WIP/MDOS-14.md)   ```# Makefile: command```
+- [datum/2025/WIP/MDOS-2.md](datum/2025/WIP/MDOS-2.md)   ```# toolset : build/compile```
 
 ### 2 ON HOLD
 
-- [datum/2025/HOLD/GILB-1.md](datum/2025/HOLD/GILB-1.md)   ```# ldap : authentication```
-- [datum/2025/HOLD/LEAF-14.md](datum/2025/HOLD/LEAF-14.md)   ```# KAFKA : mono service```
+- [datum/2025/HOLD/KUBEX-3.md](datum/2025/HOLD/KUBEX-3.md)   ```# ISSUE : log query dashboard```
+- [datum/2025/HOLD/KUBEX-5.md](datum/2025/HOLD/KUBEX-5.md)   ```# jaeger : tracing system```
 - [datum/2025/HOLD/LEAF-31.md](datum/2025/HOLD/LEAF-31.md)   ```# Workstation platform : components```
-- [datum/2025/HOLD/NJS-2.md](datum/2025/HOLD/NJS-2.md)   ```# GLORIA: run objectory```
+- [datum/2025/HOLD/NJS-2.md](datum/2025/HOLD/NJS-2.md)   ```# GLORIA: run objectory```
+- [datum/2025/HOLD/VIM-4.md](datum/2025/HOLD/VIM-4.md)   ```# rc : container x-ray```
 
 ### 3 TO DO
 
 - [datum/2025/TODO/ADOBE-1.md](datum/2025/TODO/ADOBE-1.md)   ```# colorhunt.co : preset download```
-- [datum/2025/TODO/APLE-1.md](datum/2025/TODO/APLE-1.md)   ```# apple-bit : application explorer```
-- [datum/2025/TODO/APLE-2.md](datum/2025/TODO/APLE-2.md)   ```# sync : macbook```
-- [datum/2025/TODO/ARTE-3.md](datum/2025/TODO/ARTE-3.md)   ```# ISSUE : Fork repo from community to my github```
-- [datum/2025/TODO/CMW-1.md](datum/2025/TODO/CMW-1.md)   ```# process : background daemon management```
 - [datum/2025/TODO/CMW-2.md](datum/2025/TODO/CMW-2.md)   ```# commonwealth : vault function```
-- [datum/2025/TODO/DROID-1.md](datum/2025/TODO/DROID-1.md)   ```# FEATURE : Fork GitJournal```
 - [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
-- [datum/2025/TODO/HCL-2.md](datum/2025/TODO/HCL-2.md)   ```# COWAD : select principal node```
-- [datum/2025/TODO/KROS-3.md](datum/2025/TODO/KROS-3.md)   ```# chromium : application explorer```
 - [datum/2025/TODO/LEAF-13.md](datum/2025/TODO/LEAF-13.md)   ```# Clipboard: internode```
-- [datum/2025/TODO/LEAF-15.md](datum/2025/TODO/LEAF-15.md)   ```# ETO : Emerging Technology Observatory```
-- [datum/2025/TODO/LEAF-26.md](datum/2025/TODO/LEAF-26.md)   ```# Serverless : as nanoservice```
-- [datum/2025/TODO/LEAF-30.md](datum/2025/TODO/LEAF-30.md)   ```# Jupyter :```
-- [datum/2025/TODO/MDOS-14.md](datum/2025/TODO/MDOS-14.md)   ```# Makefile: command```
-- [datum/2025/TODO/MDOS-2.md](datum/2025/TODO/MDOS-2.md)   ```# toolset : build/compile```
-- [datum/2025/TODO/VIM-4.md](datum/2025/TODO/VIM-4.md)   ```# rc : container x-ray```
+- [datum/2025/TODO/LEAF-30.md](datum/2025/TODO/LEAF-30.md)   ```# Jupyter :```
 
 ### 4 DONE
 
+- [datum/2025/DONE/APLE-1.md](datum/2025/DONE/APLE-1.md)   ```# apple-bit : application explorer```
+- [datum/2025/DONE/APLE-2.md](datum/2025/DONE/APLE-2.md)   ```# sync : macbook```
+- [datum/2025/DONE/ARTE-3.md](datum/2025/DONE/ARTE-3.md)   ```# ISSUE : Fork repo from community to my github```
 - [datum/2025/DONE/ARTE-9.md](datum/2025/DONE/ARTE-9.md)   ```# windows : artefact-geti```
+- [datum/2025/DONE/CMW-1.md](datum/2025/DONE/CMW-1.md)   ```# process : background daemon management```
+- [datum/2025/DONE/DROID-1.md](datum/2025/DONE/DROID-1.md)   ```# FEATURE : Fork GitJournal```
 - [datum/2025/DONE/DROID-2.md](datum/2025/DONE/DROID-2.md)   ```# droidvim: vim for android```
+- [datum/2025/DONE/GILB-1.md](datum/2025/DONE/GILB-1.md)   ```# ldap : authentication```
+- [datum/2025/DONE/HCL-2.md](datum/2025/DONE/HCL-2.md)   ```# COWAD : select principal node```
 - [datum/2025/DONE/KBG-8.md](datum/2025/DONE/KBG-8.md)   ```# reborn: nvim```
+- [datum/2025/DONE/KITE-11.md](datum/2025/DONE/KITE-11.md)   ```# Constellation : android space```
+- [datum/2025/DONE/KROS-3.md](datum/2025/DONE/KROS-3.md)   ```# chromium : application explorer```
 - [datum/2025/DONE/KROS-4.md](datum/2025/DONE/KROS-4.md)   ```# nvim : init```
 - [datum/2025/DONE/LEAF-11.md](datum/2025/DONE/LEAF-11.md)   ```# GROK: log transformer```
+- [datum/2025/DONE/LEAF-11g.md](datum/2025/DONE/LEAF-11g.md)   ```# GIT-CLONE: single commit```
+- [datum/2025/DONE/LEAF-14.md](datum/2025/DONE/LEAF-14.md)   ```# KAFKA : mono service```
+- [datum/2025/DONE/LEAF-15.md](datum/2025/DONE/LEAF-15.md)   ```# ETO : Emerging Technology Observatory```
 - [datum/2025/DONE/LEAF-19.md](datum/2025/DONE/LEAF-19.md)   ```# AppImage : explore```
+- [datum/2025/DONE/LEAF-26.md](datum/2025/DONE/LEAF-26.md)   ```# Serverless : as nanoservice```
 - [datum/2025/DONE/LEAF-4.md](datum/2025/DONE/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
 - [datum/2025/DONE/LEAF-8.md](datum/2025/DONE/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
 - [datum/2025/DONE/MDOS-12.md](datum/2025/DONE/MDOS-12.md)   ```# nvim : fix shell```
 - [datum/2025/DONE/MDOS-13.md](datum/2025/DONE/MDOS-13.md)   ```# nvim : shell WSL```
 - [datum/2025/DONE/MDOS-4.md](datum/2025/DONE/MDOS-4.md)   ```# PowerShell: utilities for missing function in gitbash```
+- [datum/2025/DONE/MDOS-5.md](datum/2025/DONE/MDOS-5.md)   ```# windows : application explorer```
+- [datum/2025/DONE/MDOS-7.md](datum/2025/DONE/MDOS-7.md)   ```# terminal : gvim cannot detect unix file path```
 - [datum/2025/DONE/MDOS-8.md](datum/2025/DONE/MDOS-8.md)   ```# window terminal : line buffer limit```
 - [datum/2025/DONE/VIM-10.md](datum/2025/DONE/VIM-10.md)   ```# preset : window layout```
 - [datum/2025/DONE/VIM-11.md](datum/2025/DONE/VIM-11.md)   ```# NeoVim : init```
-- [datum/2025/DONE/VIM-12.md](datum/2025/DONE/VIM-12.md)   ```# nvim : colorscheme```
+- [datum/2025/DONE/VIM-12.md](datum/2025/DONE/VIM-12.md)   ```# nvim : colorscheme```
+- [datum/2025/DONE/VIM-13.md](datum/2025/DONE/VIM-13.md)   ```# shell : container```
+- [datum/2025/DONE/VIM-14.md](datum/2025/DONE/VIM-14.md)   ```# ShellContainer : startup with optional rcfile```
 
 ### 5 BACKLOG
 
@@ -89,14 +92,12 @@
 - [datum/2025/BACKLOG/KROS-0.md](datum/2025/BACKLOG/KROS-0.md)   ```# Chromium : Alloy```
 - [datum/2025/BACKLOG/KUBEX-0.md](datum/2025/BACKLOG/KUBEX-0.md)   ```# Kubernetes : Cluster```
 - [datum/2025/BACKLOG/LEAF-0.md](datum/2025/BACKLOG/LEAF-0.md)   ```# Leaf : misc```
-- [datum/2025/BACKLOG/LEAF-11.md](datum/2025/BACKLOG/LEAF-11.md)   ```# GIT-CLONE: single commit```
 - [datum/2025/BACKLOG/LEAF-12.md](datum/2025/BACKLOG/LEAF-12.md)   ```# FIBO SHELL: svg```
 - [datum/2025/BACKLOG/LEAF-20.md](datum/2025/BACKLOG/LEAF-20.md)   ```# Boot : mono service```
 - [datum/2025/BACKLOG/LEAF-29.md](datum/2025/BACKLOG/LEAF-29.md)   ```# btrfs : objectory```
-- [datum/2025/BACKLOG/LEAF-5.md](datum/2025/BACKLOG/LEAF-5.md)   ```# FEATURE : color system```
+- [datum/2025/BACKLOG/LEAF-5.md](datum/2025/BACKLOG/LEAF-5.md)   ```# SPEC : Define new spec```
 - [datum/2025/BACKLOG/LEAF-7.md](datum/2025/BACKLOG/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
 - [datum/2025/BACKLOG/MDOS-0.md](datum/2025/BACKLOG/MDOS-0.md)   ```# MICROSOFT : WINDOWS```
-- [datum/2025/BACKLOG/MDOS-7.md](datum/2025/BACKLOG/MDOS-7.md)   ```# terminal : gvim cannot detect unix file path```
 - [datum/2025/BACKLOG/MONO-0.md](datum/2025/BACKLOG/MONO-0.md)   ```# ISSUE :```
 - [datum/2025/BACKLOG/MONO-1.md](datum/2025/BACKLOG/MONO-1.md)   ```# Apache : NiFi```
 - [datum/2025/BACKLOG/NCEPT-0.md](datum/2025/BACKLOG/NCEPT-0.md)   ```# CONCEPT : Fractual system```

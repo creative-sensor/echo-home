@@ -1,4 +1,4 @@
-# apple-bit : application explorer
+# sync : macbook
 --------------------------------
 ### 0 DESCRIPTION
 
@@ -14,6 +14,9 @@
 
 ### 4 JOURNAL
 
+###### 4.0
+
+won't do as macbook is not my favorite choice
 
 
 --------------------------------

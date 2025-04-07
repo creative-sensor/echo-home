@@ -1,7 +1,7 @@
-# ldap : authentication
+# chromium : application explorer
 --------------------------------
 ### 0 DESCRIPTION
-- integrate authelia as an IDP for gitlab
+
 
 ### 1 SOLUTION
 
@@ -14,9 +14,12 @@
 
 ### 4 JOURNAL
 
+##### 4.0
+
+won't do as too much broad
 
 
 --------------------------------
 ```json
-{ "project_code": "GILB" , "links": "" , "location": "" , "fpoint": "" }
+{ "project_code": "KROS" , "links": "" , "location": "" , "fpoint": "" }
 ```

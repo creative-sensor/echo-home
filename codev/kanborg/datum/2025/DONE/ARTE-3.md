@@ -24,6 +24,9 @@ Repo to fork:
 
 ### 4 JOURNAL
 
+###### 4.0
+
+- no need as they are downloaded as artifacts
 
 
 --------------------------------

@@ -16,6 +16,10 @@ A cluster of android devices
 
 ### 4 JOURNAL
 
+###### 4.1
+
+- requirement not clear so todo in android related cards
+
 ###### 4.0
 - ```MONO-2```
 - ```MONO-3```
