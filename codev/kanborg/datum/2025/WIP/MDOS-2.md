@@ -22,10 +22,9 @@ To provision facility for building, compiling source code in windows
 
 - Dockerfile:
 ```
-# escape=`
 
 FROM mcr.microsoft.com/windows:ltsc2019-amd64
-# Restore the default Windows shell for correct batch processing.
+
 SHELL ["cmd", "/S", "/C"]
 
 RUN `
@@ -55,7 +54,10 @@ ENTRYPOINT ["C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\
 docker build -t buildtools:latest  .
 ```
 
-- TODO: need faster network download speed as large image 
+- DONE: need faster network download speed as large image 
+
+- search files: ```  Get-ChildItem  -Recurse -Path  '.\'  -Filter vcvarsall.bat ```
+
 
 ###### 4.0 
 
