@@ -175,9 +175,13 @@ endfunction
 
 function ShellContainer(image="ubuntu:latest",cmd="bash --rcfile /dkr/rc")
 	let color_ps1 = "Q09MT1JfQkc9J1xbXDAzM1s0ODs1OzkwbVxdJwpDT0xPUl9GRz0nXFtcMDMzWzM4OzU7MjUybVxdJwpTVE9QPSdcW1wwMzNbMG1cXScKClBTMT0iJHtDT0xPUl9CR30ke0NPTE9SX0ZHfVx1QFxoOlx3JHtTVE9QfSAiCg=="
-    silent exec '! touch .env; test -z "$(<.env)" && echo PROMPT_COMMAND="\"cd /dkr/$(basename $(pwd));unset PROMPT_COMMAND\"" > .env'
-    silent exec '! if tail -1 .env | grep -q ^PROMPT_COMMAND= ; then echo '.color_ps1.' | base64 -d >> .env ; fi'
-    exec 'below term MSYS_NO_PATHCONV=1 docker run --rm --env-file .env -v "$(pwd)/.env:/dkr/rc" -v "$(pwd):/dkr/$(basename $(pwd))" -it '.a:image.' '.a:cmd
+	let envfile = ".env.".substitute(a:image, ":", "__", "")
+	"if ! filereadable(envfile)
+	"	let envfile = ".env"
+	"endif
+    silent exec '! touch '.envfile.'; test -z "$(<'.envfile.')" && echo PROMPT_COMMAND="\"cd /dkr/$(basename $(pwd));unset PROMPT_COMMAND\"" > '.envfile
+    silent exec '! if tail -1 '.envfile '| grep -q ^PROMPT_COMMAND= ; then echo '.color_ps1.' | base64 -d >> '.envfile.' ; fi'
+    exec 'below term MSYS_NO_PATHCONV=1 docker run --rm --env-file '.envfile.' -v "$(pwd)/'.envfile.':/dkr/rc" -v "$(pwd):/dkr/$(basename $(pwd))" -it '.a:image.' '.a:cmd
 endfunction
 command! -nargs=1 ShellContainer call ShellContainer(<q-args>)
 
