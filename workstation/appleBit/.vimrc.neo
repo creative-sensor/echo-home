@@ -14,30 +14,25 @@ set hlsearch
 set nowrap
 set expandtab
 set tabstop=4
-set guicursor=a:blinkon100
+set mouse=a
 set splitright
 set paste
 set title titlestring=VIM\ \|\ %{fnamemodify(getcwd(),\ ':t')} titlelen=32
     "output:  VIM | current_dirname
 set background=light
-set guifont=Consolas:h11
-set shellcmdflag=-c
-set shellxquote=" "
-set shellslash
-"set shellredir=>
+set shell=\"/bin/bash\"
 set backspace=indent,eol,start
-set ffs=unix
+set ff=unix
 set foldlevelstart=10
 let g:yaml_revealer_separator='➤'
     "<C-v>u27a4
-
-
 
 "-------- [PLUGIN / VUNDLE] --------
 set nocompatible              " be iMproved, required
 filetype off                  " required
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
+" let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
         "Plugin Manager
 Plugin 'thaerkh/vim-workspace'
@@ -102,13 +97,20 @@ command! -nargs=1 FindGrep call FindGrep(<q-args>)
 function FgXp(pattern, maxdepth=32)
   " FIELD GIT EXPLORER
   let error_file = tempname()
-  exe '!find ./ -maxdepth ' . a:maxdepth . ' -type f | grep -v "^./.git" | grep -i "'.a:pattern.'" | sed "s/\$/:1/" > '.error_file
+  exe '!find "./" -maxdepth ' . a:maxdepth . ' -type f | grep -v "^./.git" | grep -i "'  .  a:pattern  .  '" | sed "s/\$/:1/" > '.error_file
   set errorformat=%f:%l
   exe "cfile ". error_file
   copen
   call delete(error_file)
 endfun
 command! -nargs=* FgXp call FgXp(<q-args>)
+
+function Base64e()
+  " BASE64 ENCODING
+  let file = bufname()
+  exec "vnew ".file."__base64"
+  exec 'silent read !base64 <'.file.'| tr -d -t "\n"'
+endfunction
 
 function EVsplitX(pattern,maxdepth=3)
   vsplit
@@ -130,34 +132,16 @@ fun! GrepSource(text)
 endfun
 command! -nargs=1 Grin call GrepSource(<q-args>)
 
-function Menus()
-    exec 'menu KEYDEX.Git.STATUS    :Git <CR>tty<CR><C-w>L<C-w>='
-    exec 'menu KEYDEX.Git.glog    :Gclog<CR>'
-    exec 'menu KEYDEX.Git.log-graph    :GV<CR>'
-    exec 'menu KEYDEX.Git.add    s'
-    exec 'menu KEYDEX.Git.unstage    u'
-    exec 'menu KEYDEX.Git.diffCursor    ='
-    exec 'menu KEYDEX.Git.checkout    co<Space>'
-    exec 'menu KEYDEX.Git.branch    cb<Space>'
-    exec 'menu KEYDEX.Git.commit-Up<Tab>up    :Git commit -m "up"<CR>'
-    exec 'menu KEYDEX.Git.commit-amend<Tab>ca    ca'
-    exec 'menu KEYDEX.Git.commit<Tab>cc    cc'
-    exec 'menu KEYDEX.Git.rbia    :Git rbia '
-    exec 'menu KEYDEX.Utils.base64e<Tab>b64    b64'
-    exec 'menu KEYDEX.Utils.base64d<Tab>b94    b94'
-    exec 'menu KEYDEX.FgXp.3<Tab>e3    e3'
-    exec 'menu KEYDEX.FgXp.6<Tab>e6    e6'
-    exec 'menu KEYDEX.FgXp.9<Tab>e9    e9'
-    exec 'menu Buffers.listV<Tab>\\bv    \bv'
-    exec 'menu Buffers.listS<Tab>\\bs    \bs'
-endfunction
+
+
 
 
 
 function ShellPython()
-    set shell=python
+    set shell=\"python.exe\"
+    set shellcmdflag=-c
     exec "below terminal"
-    set shell=bash
+    set shell=\"sh.exe\"
 endfunction
 
 
@@ -169,9 +153,10 @@ function ShellContainer(image="ubuntu:latest",cmd="bash --rcfile /dkr/rc")
 	"endif
     silent exec '! touch '.envfile.'; test -z "$(<'.envfile.')" && echo PROMPT_COMMAND="\"cd /dkr/$(basename $(pwd));unset PROMPT_COMMAND\"" > '.envfile
     silent exec '! if tail -1 '.envfile '| grep -q ^PROMPT_COMMAND= ; then echo '.color_ps1.' | base64 -d >> '.envfile.' ; fi'
-    exec 'below term sudo docker run --rm --env-file '.envfile.' -v "$(pwd)/'.envfile.':/dkr/rc" -v "$(pwd):/dkr/$(basename $(pwd))" -it '.a:image.' '.a:cmd
+    exec 'below term docker run --rm --env-file '.envfile.' -v "$(pwd)/'.envfile.':/dkr/rc" -v "$(pwd):/dkr/$(basename $(pwd))" -it '.a:image.' '.a:cmd
 endfunction
 command! -nargs=1 ShellContainer call ShellContainer(<q-args>)
+
 
 
 function SessionMgmt()
@@ -185,14 +170,10 @@ endfunction
 
 "-------- [AUTOCMD] --------
 autocmd FileType yaml  : set tabstop=2
-"autocmd VimEnter * above terminal ++rows=7
-"autocmd VimEnter * if isdirectory(".git") | silent call FgXp(".") | endif
 autocmd VimEnter * silent call SessionMgmt()
-"autocmd TerminalOpen * set termwinsize=0*0
-    "termwinsize: auto-adjustable
 autocmd InsertEnter * highlight CursorLine ctermbg=190 guibg=#D5EE16 | highlight StatusLine ctermbg=190 guibg=#CCFF00
 autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#eee8d5 | highlight StatusLine ctermbg=254 guibg=#eee8d5
-
+" akss
 
 
 
@@ -219,14 +200,15 @@ map q1 : q!<CR>
     "Quit current
 
 map tty : highlight Terminal ctermbg=23 ctermfg=15 guibg=#073042 guifg=#7ec1de \| below terminal <CR>
+map wsl : call ShellWSL() <CR>
 
 map e3 : vsplit \| call FgXp(".",3)<CR>
 map e6 : vsplit \| call FgXp(".",6)<CR>
 map e9 : vsplit \| call FgXp(".",9)<CR>
     "List file at maxdepth=X
 
-map f5 : edit <CR>
 map e. : edit . <CR>
+map f5 : edit <CR>
 map t. : tabnew . <CR>
 map s. : split . <CR>
 map v. : vsplit . <CR>
