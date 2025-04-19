@@ -6,7 +6,8 @@
 ### 1 WORK IN PROGRESS
 
 - [datum/2025/WIP/MDOS-14.md](datum/2025/WIP/MDOS-14.md)   ```# Makefile: command```
-- [datum/2025/WIP/MDOS-2.md](datum/2025/WIP/MDOS-2.md)   ```# toolset : build/compile```
+- [datum/2025/WIP/MDOS-2.md](datum/2025/WIP/MDOS-2.md)   ```# toolset : build/compile```
+- [datum/2025/WIP/VIM-16.md](datum/2025/WIP/VIM-16.md)   ```# envsc : templates```
 
 ### 2 ON HOLD
 
@@ -57,7 +58,8 @@
 - [datum/2025/DONE/VIM-11.md](datum/2025/DONE/VIM-11.md)   ```# NeoVim : init```
 - [datum/2025/DONE/VIM-12.md](datum/2025/DONE/VIM-12.md)   ```# nvim : colorscheme```
 - [datum/2025/DONE/VIM-13.md](datum/2025/DONE/VIM-13.md)   ```# shell : container```
-- [datum/2025/DONE/VIM-14.md](datum/2025/DONE/VIM-14.md)   ```# ShellContainer : startup with optional rcfile```
+- [datum/2025/DONE/VIM-14.md](datum/2025/DONE/VIM-14.md)   ```# ShellContainer : startup with optional rcfile```
+- [datum/2025/DONE/VIM-15.md](datum/2025/DONE/VIM-15.md)   ```# envsc: env for each shell container image```
 
 ### 5 BACKLOG
 
