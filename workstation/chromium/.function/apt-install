@@ -12,5 +12,5 @@ test -n "$VARSET_EXT" && source $VARSET_EXT
 #!/bin/bash
 
 sudo apt update
-sudo apt install $APT_LIST
+sudo apt install -y $APT_LIST
 

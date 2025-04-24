@@ -13,4 +13,6 @@ APT_LIST='
     libnss3
     libsecret-1-0
     libfuse2
+	gettext
+	docker.io
 '
