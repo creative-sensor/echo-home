@@ -1,7 +1,7 @@
 #!/bin/bash -x
 
 mkdir -p ~/.config/nvim
-
+test -s ~/.vim/vim-plug/plug.vim || git clone https://github.com/junegunn/vim-plug.git ~/.vim/vim-plug
 cp -b .vimrc.neo ~/
 cp -rb .config/nvim/init.vim  ~/.config/nvim
 
