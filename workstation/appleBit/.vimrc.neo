@@ -14,7 +14,8 @@ set hlsearch
 set nowrap
 set expandtab
 set tabstop=4
-set mouse=a
+"set mouse=a
+set guicursor=n-v-i:underline
 set splitright
 set paste
 set title titlestring=VIM\ \|\ %{fnamemodify(getcwd(),\ ':t')} titlelen=32
@@ -56,6 +57,16 @@ Plugin 'equal-l2/vim-base64'
 call vundle#end()            " required
 filetype plugin indent on    " required
 
+"-------- [PLUGIN / VIM-PLUG] --------
+source ~/.vim/vim-plug/plug.vim
+call plug#begin()
+" List your plugins here
+"Plug 'nvim-pack/nvim-spectre'
+Plug 'nvim-tree/nvim-web-devicons'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-lualine/lualine.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+call plug#end()
 
 "-------- [FUNCTIONS] --------
 
@@ -236,5 +247,10 @@ vnoremap --    "+y : vsplit <C-R>+ <CR>
 
 nnoremap <F5><F5> : edit<CR>
 
+"-------- [LUA-INIT] --------
+lua require("nvim-web-devicons")
+lua require('lualine').setup()
+"lua require('lualine.themes.gruvbox_light')
+lua require('lualine.themes.powerline')
 "-------- [POST-INIT] --------
 colorscheme solarized8_high
