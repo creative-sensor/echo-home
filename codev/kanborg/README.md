@@ -5,6 +5,8 @@
 
 ### 1 WORK IN PROGRESS
 
+- [datum/2025/WIP/KITE-12.md](datum/2025/WIP/KITE-12.md)   ```# MongoDB : Atlas```
+- [datum/2025/WIP/KITE-8.md](datum/2025/WIP/KITE-8.md)   ```# Openshift :```
 - [datum/2025/WIP/MDOS-14.md](datum/2025/WIP/MDOS-14.md)   ```# Makefile: command```
 - [datum/2025/WIP/MDOS-2.md](datum/2025/WIP/MDOS-2.md)   ```# toolset : build/compile```
 
@@ -21,6 +23,7 @@
 - [datum/2025/TODO/ADOBE-1.md](datum/2025/TODO/ADOBE-1.md)   ```# colorhunt.co : preset download```
 - [datum/2025/TODO/CMW-2.md](datum/2025/TODO/CMW-2.md)   ```# commonwealth : vault function```
 - [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
+- [datum/2025/TODO/KITE-13.md](datum/2025/TODO/KITE-13.md)   ```# sops : env```
 - [datum/2025/TODO/KROS-5.md](datum/2025/TODO/KROS-5.md)   ```#  :```
 - [datum/2025/TODO/LEAF-13.md](datum/2025/TODO/LEAF-13.md)   ```# Clipboard: internode```
 - [datum/2025/TODO/LEAF-30.md](datum/2025/TODO/LEAF-30.md)   ```# Jupyter :```
@@ -102,7 +105,6 @@
 - [datum/2025/BACKLOG/KITE-5.md](datum/2025/BACKLOG/KITE-5.md)   ```# Sendgrid :```
 - [datum/2025/BACKLOG/KITE-6.md](datum/2025/BACKLOG/KITE-6.md)   ```# Sentry :```
 - [datum/2025/BACKLOG/KITE-7.md](datum/2025/BACKLOG/KITE-7.md)   ```# Microsoft :```
-- [datum/2025/BACKLOG/KITE-8.md](datum/2025/BACKLOG/KITE-8.md)   ```# Openshift :```
 - [datum/2025/BACKLOG/KROS-0.md](datum/2025/BACKLOG/KROS-0.md)   ```# Chromium : Alloy```
 - [datum/2025/BACKLOG/KUBEX-0.md](datum/2025/BACKLOG/KUBEX-0.md)   ```# Kubernetes : Cluster```
 - [datum/2025/BACKLOG/LEAF-0.md](datum/2025/BACKLOG/LEAF-0.md)   ```# Leaf : misc```
