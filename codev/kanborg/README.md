@@ -6,9 +6,7 @@
 ### 1 WORK IN PROGRESS
 
 - [datum/2025/WIP/MDOS-14.md](datum/2025/WIP/MDOS-14.md)   ```# Makefile: command```
-- [datum/2025/WIP/MDOS-16.md](datum/2025/WIP/MDOS-16.md)   ```# vim: plug```
 - [datum/2025/WIP/MDOS-2.md](datum/2025/WIP/MDOS-2.md)   ```# toolset : build/compile```
-- [datum/2025/WIP/VIM-17.md](datum/2025/WIP/VIM-17.md)   ```# nvim: init on linux```
 
 ### 2 ON HOLD
 
@@ -47,6 +45,7 @@
 - [datum/2025/DONE/HCL-2.md](datum/2025/DONE/HCL-2.md)   ```# COWAD : select principal node```
 - [datum/2025/DONE/KBG-8.md](datum/2025/DONE/KBG-8.md)   ```# reborn: nvim```
 - [datum/2025/DONE/KITE-11.md](datum/2025/DONE/KITE-11.md)   ```# Constellation : android space```
+- [datum/2025/DONE/KITE-1.md](datum/2025/DONE/KITE-1.md)   ```# Github : codespace/action```
 - [datum/2025/DONE/KROS-3.md](datum/2025/DONE/KROS-3.md)   ```# chromium : application explorer```
 - [datum/2025/DONE/KROS-4.md](datum/2025/DONE/KROS-4.md)   ```# nvim : init```
 - [datum/2025/DONE/LEAF-11g.md](datum/2025/DONE/LEAF-11g.md)   ```# GIT-CLONE: single commit```
@@ -60,6 +59,7 @@
 - [datum/2025/DONE/MDOS-12.md](datum/2025/DONE/MDOS-12.md)   ```# nvim : fix shell```
 - [datum/2025/DONE/MDOS-13.md](datum/2025/DONE/MDOS-13.md)   ```# nvim : shell WSL```
 - [datum/2025/DONE/MDOS-15.md](datum/2025/DONE/MDOS-15.md)   ```# nvim: envsc```
+- [datum/2025/DONE/MDOS-16.md](datum/2025/DONE/MDOS-16.md)   ```# vim: plug```
 - [datum/2025/DONE/MDOS-4.md](datum/2025/DONE/MDOS-4.md)   ```# PowerShell: utilities for missing function in gitbash```
 - [datum/2025/DONE/MDOS-5.md](datum/2025/DONE/MDOS-5.md)   ```# windows : application explorer```
 - [datum/2025/DONE/MDOS-7.md](datum/2025/DONE/MDOS-7.md)   ```# terminal : gvim cannot detect unix file path```
@@ -71,6 +71,7 @@
 - [datum/2025/DONE/VIM-14.md](datum/2025/DONE/VIM-14.md)   ```# ShellContainer : startup with optional rcfile```
 - [datum/2025/DONE/VIM-15.md](datum/2025/DONE/VIM-15.md)   ```# envsc: env for each shell container image```
 - [datum/2025/DONE/VIM-16.md](datum/2025/DONE/VIM-16.md)   ```# envsc : templates```
+- [datum/2025/DONE/VIM-17.md](datum/2025/DONE/VIM-17.md)   ```# nvim: init on linux```
 
 ### 5 BACKLOG
 
@@ -95,7 +96,6 @@
 - [datum/2025/BACKLOG/GRTH-0.md](datum/2025/BACKLOG/GRTH-0.md)   ```# GRAPH : THEORY```
 - [datum/2025/BACKLOG/KBG-3.md](datum/2025/BACKLOG/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
 - [datum/2025/BACKLOG/KITE-0.md](datum/2025/BACKLOG/KITE-0.md)   ```# Paper : Kites```
-- [datum/2025/BACKLOG/KITE-1.md](datum/2025/BACKLOG/KITE-1.md)   ```# Github : codespace/action```
 - [datum/2025/BACKLOG/KITE-2.md](datum/2025/BACKLOG/KITE-2.md)   ```# Gitlab :```
 - [datum/2025/BACKLOG/KITE-3.md](datum/2025/BACKLOG/KITE-3.md)   ```# Google : Workspaces```
 - [datum/2025/BACKLOG/KITE-4.md](datum/2025/BACKLOG/KITE-4.md)   ```# Facebook :```
