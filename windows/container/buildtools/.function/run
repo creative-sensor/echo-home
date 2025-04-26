@@ -1,3 +1,0 @@
-
-TAG=${1:-latest}
-docker run --rm -it -v .:/c/tmp buildtools:${TAG}
