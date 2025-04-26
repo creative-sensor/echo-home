@@ -24,7 +24,7 @@ OBSR : {"description":"Observability","last_id":4,"related":""}
 DBMS : {"description":"Database management system","last_id":0,"related":""}
 DTUM : {"description":"Datum","last_id":2,"related":""}
 ACLS : {"description":"Access Control Level System","last_id":2,"related":""}
-KITE : {"description":"The Paper Kites","last_id":15,"related":""}
+KITE : {"description":"The Paper Kites","last_id":16,"related":""}
 KROS : {"description":"Chromium","last_id":5,"related":""}
 CTNR : {"description":"Containerization","last_id":0,"related":""}
 APLE : {"description":"Apple bit","last_id":4,"related":""}

@@ -26,6 +26,7 @@
 - [datum/2025/TODO/CMW-2.md](datum/2025/TODO/CMW-2.md)   ```# commonwealth : vault function```
 - [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
 - [datum/2025/TODO/KITE-13.md](datum/2025/TODO/KITE-13.md)   ```# sops : env```
+- [datum/2025/TODO/KITE-16.md](datum/2025/TODO/KITE-16.md)   ```# Chrome : box```
 - [datum/2025/TODO/KROS-5.md](datum/2025/TODO/KROS-5.md)   ```#  :```
 - [datum/2025/TODO/LEAF-13.md](datum/2025/TODO/LEAF-13.md)   ```# Clipboard: internode```
 - [datum/2025/TODO/LEAF-30.md](datum/2025/TODO/LEAF-30.md)   ```# Jupyter :```
