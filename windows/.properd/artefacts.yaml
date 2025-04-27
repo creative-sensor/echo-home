@@ -23,3 +23,4 @@ make: [ 3.81 , "https://onboardcloud.dl.sourceforge.net/project/gnuwin32/make/3.
 vlc: [ 3.0.21 , "https://mirror.freedif.org/videolan/vlc/3.0.21/win64/vlc-3.0.21-win64.exe" ]
 docker: [ 4.39.0 , "https://desktop.docker.com/win/main/amd64/184744/Docker%20Desktop%20Installer.exe" ]
 vs_BuildTools: [ 4.39.0 , "https://download.visualstudio.microsoft.com/download/pr/ae26f186-44f0-4ea2-880c-4cf0acbab905/985f13b08eee04b8d0ee5a061652b77f5d4a2d594bcf62ebfbf2b809d0745d03/vs_BuildTools.exe" ]
+sops: [ 3.10.2 , "https://github.com/getsops/sops/releases/download/v3.10.2/sops-v3.10.2.amd64.exe" ]
