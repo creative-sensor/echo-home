@@ -5,9 +5,6 @@
 
 ### 1 WORK IN PROGRESS
 
-- [datum/2025/WIP/KITE-12.md](datum/2025/WIP/KITE-12.md)   ```# MongoDB : Atlas```
-- [datum/2025/WIP/KITE-14.md](datum/2025/WIP/KITE-14.md)   ```# Docker : hub```
-- [datum/2025/WIP/KITE-15.md](datum/2025/WIP/KITE-15.md)   ```# Slack : workspace```
 - [datum/2025/WIP/KITE-8.md](datum/2025/WIP/KITE-8.md)   ```# Openshift :```
 - [datum/2025/WIP/MDOS-14.md](datum/2025/WIP/MDOS-14.md)   ```# Makefile: command```
 - [datum/2025/WIP/MDOS-2.md](datum/2025/WIP/MDOS-2.md)   ```# toolset : build/compile```
@@ -25,8 +22,6 @@
 - [datum/2025/TODO/ADOBE-1.md](datum/2025/TODO/ADOBE-1.md)   ```# colorhunt.co : preset download```
 - [datum/2025/TODO/CMW-2.md](datum/2025/TODO/CMW-2.md)   ```# commonwealth : vault function```
 - [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
-- [datum/2025/TODO/KITE-13.md](datum/2025/TODO/KITE-13.md)   ```# sops : env```
-- [datum/2025/TODO/KITE-16.md](datum/2025/TODO/KITE-16.md)   ```# Chrome : box```
 - [datum/2025/TODO/KROS-5.md](datum/2025/TODO/KROS-5.md)   ```#  :```
 - [datum/2025/TODO/LEAF-13.md](datum/2025/TODO/LEAF-13.md)   ```# Clipboard: internode```
 - [datum/2025/TODO/LEAF-30.md](datum/2025/TODO/LEAF-30.md)   ```# Jupyter :```
@@ -51,6 +46,11 @@
 - [datum/2025/DONE/HCL-2.md](datum/2025/DONE/HCL-2.md)   ```# COWAD : select principal node```
 - [datum/2025/DONE/KBG-8.md](datum/2025/DONE/KBG-8.md)   ```# reborn: nvim```
 - [datum/2025/DONE/KITE-11.md](datum/2025/DONE/KITE-11.md)   ```# Constellation : android space```
+- [datum/2025/DONE/KITE-12.md](datum/2025/DONE/KITE-12.md)   ```# MongoDB : Atlas```
+- [datum/2025/DONE/KITE-13.md](datum/2025/DONE/KITE-13.md)   ```# sops : env```
+- [datum/2025/DONE/KITE-14.md](datum/2025/DONE/KITE-14.md)   ```# Docker : hub```
+- [datum/2025/DONE/KITE-15.md](datum/2025/DONE/KITE-15.md)   ```# Slack : workspace```
+- [datum/2025/DONE/KITE-16.md](datum/2025/DONE/KITE-16.md)   ```# Chrome : box```
 - [datum/2025/DONE/KITE-1.md](datum/2025/DONE/KITE-1.md)   ```# Github : codespace/action```
 - [datum/2025/DONE/KROS-3.md](datum/2025/DONE/KROS-3.md)   ```# chromium : application explorer```
 - [datum/2025/DONE/KROS-4.md](datum/2025/DONE/KROS-4.md)   ```# nvim : init```
