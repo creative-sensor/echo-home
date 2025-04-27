@@ -5,6 +5,7 @@
 
 ### 1 WORK IN PROGRESS
 
+- [datum/2025/WIP/KITE-17.md](datum/2025/WIP/KITE-17.md)   ```# ISSUE :```
 - [datum/2025/WIP/KITE-8.md](datum/2025/WIP/KITE-8.md)   ```# Openshift :```
 - [datum/2025/WIP/MDOS-14.md](datum/2025/WIP/MDOS-14.md)   ```# Makefile: command```
 - [datum/2025/WIP/MDOS-2.md](datum/2025/WIP/MDOS-2.md)   ```# toolset : build/compile```
