@@ -20,6 +20,7 @@
 ### 3 TO DO
 
 - [datum/2025/TODO/ADOBE-1.md](datum/2025/TODO/ADOBE-1.md)   ```# colorhunt.co : preset download```
+- [datum/2025/TODO/ARTE-10.md](datum/2025/TODO/ARTE-10.md)   ```# windows : sops```
 - [datum/2025/TODO/CMW-2.md](datum/2025/TODO/CMW-2.md)   ```# commonwealth : vault function```
 - [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
 - [datum/2025/TODO/KROS-5.md](datum/2025/TODO/KROS-5.md)   ```#  :```
