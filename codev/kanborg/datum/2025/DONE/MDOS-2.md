@@ -9,6 +9,7 @@ To provision facility for building, compiling source code in windows
 
 ### 1 SOLUTION
 
+https://github.com/creative-sensor/echo-home/commit/46caa2a8e94208c73a0b52efc17ce266897a0c12
 
 ### 2 NOTES
 
