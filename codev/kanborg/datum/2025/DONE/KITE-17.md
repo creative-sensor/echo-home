@@ -1,27 +1,23 @@
-# Google : Workspaces
-
+# Phone : Android
 --------------------------------
-
 ### 0 DESCRIPTION
 
-- IAM / service account
-
-- IDP
-
-- Workspaces / Gsuite
-
-- APIS
+account: g*o*l*g*c
 
 ### 1 SOLUTION
 
+
 ### 2 NOTES
+
 
 ### 3 TEST/VERIFICATION
 
+
 ### 4 JOURNAL
 
---------------------------------
 
+
+--------------------------------
 ```json
 { "project_code": "KITE" , "links": "" , "location": "" , "fpoint": "" }
 ```
