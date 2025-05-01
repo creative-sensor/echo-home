@@ -5,7 +5,6 @@
 
 ### 1 WORK IN PROGRESS
 
-- [datum/2025/WIP/KITE-3.md](datum/2025/WIP/KITE-3.md)   ```# Google : Firebase/Studio IDX```
 - [datum/2025/WIP/KITE-8.md](datum/2025/WIP/KITE-8.md)   ```# Openshift :```
 
 ### 2 ON HOLD
@@ -47,6 +46,7 @@
 - [datum/2025/DONE/KITE-15.md](datum/2025/DONE/KITE-15.md)   ```# Slack : workspace```
 - [datum/2025/DONE/KITE-16.md](datum/2025/DONE/KITE-16.md)   ```# Chrome : box```
 - [datum/2025/DONE/KITE-17.md](datum/2025/DONE/KITE-17.md)   ```# Phone : Android```
+- [datum/2025/DONE/KITE-3.md](datum/2025/DONE/KITE-3.md)   ```# Google : Firebase/Studio IDX```
 - [datum/2025/DONE/KROS-3.md](datum/2025/DONE/KROS-3.md)   ```# chromium : application explorer```
 - [datum/2025/DONE/KROS-4.md](datum/2025/DONE/KROS-4.md)   ```# nvim : init```
 - [datum/2025/DONE/LEAF-11.md](datum/2025/DONE/LEAF-11.md)   ```# GROK: log transformer```
