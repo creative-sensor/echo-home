@@ -21,7 +21,7 @@ set title titlestring=VIM\ \|\ %{fnamemodify(getcwd(),\ ':t')} titlelen=32
 set background=light
 set guifont=Consolas:h11
 "set shell=\"/c/Program\ Files/Git/usr/bin/bash.exe\"
-set shell=\"C:\Program\ Files\Git\bin\sh.exe\"
+"set shell=\"C:\Program\ Files\Git\bin\sh.exe\"
 set shellcmdflag=-c
 set shellxquote=" "
 set shellslash
