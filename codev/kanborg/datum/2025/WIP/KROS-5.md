@@ -1,7 +1,8 @@
-#  :
+# nvim : copy menu
 --------------------------------
 ### 0 DESCRIPTION
 
+could not copy to system clipboard from penguin box
 
 ### 1 SOLUTION
 

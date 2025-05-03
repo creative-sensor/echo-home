@@ -5,7 +5,8 @@
 
 ### 1 WORK IN PROGRESS
 
-- [datum/2025/WIP/KITE-8.md](datum/2025/WIP/KITE-8.md)   ```# Openshift :```
+- [datum/2025/WIP/KITE-8.md](datum/2025/WIP/KITE-8.md)   ```# Openshift :```
+- [datum/2025/WIP/KROS-5.md](datum/2025/WIP/KROS-5.md)   ```# nvim : copy menu```
 
 ### 2 ON HOLD
 
@@ -21,7 +22,6 @@
 - [datum/2025/TODO/ARTE-10.md](datum/2025/TODO/ARTE-10.md)   ```# windows : sops```
 - [datum/2025/TODO/CMW-2.md](datum/2025/TODO/CMW-2.md)   ```# commonwealth : vault function```
 - [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
-- [datum/2025/TODO/KROS-5.md](datum/2025/TODO/KROS-5.md)   ```#  :```
 - [datum/2025/TODO/LEAF-13.md](datum/2025/TODO/LEAF-13.md)   ```# Clipboard: internode```
 - [datum/2025/TODO/LEAF-30.md](datum/2025/TODO/LEAF-30.md)   ```# Jupyter :```
 
