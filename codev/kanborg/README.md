@@ -5,6 +5,7 @@
 
 ### 1 WORK IN PROGRESS
 
+- [datum/2025/WIP/KITE-18.md](datum/2025/WIP/KITE-18.md)   ```# adobe : creative cloud```
 - [datum/2025/WIP/KITE-8.md](datum/2025/WIP/KITE-8.md)   ```# Openshift :```
 - [datum/2025/WIP/KROS-5.md](datum/2025/WIP/KROS-5.md)   ```# nvim : copy menu```
 
