@@ -5,7 +5,6 @@
 
 ### 1 WORK IN PROGRESS
 
-- [datum/2025/WIP/KITE-18.md](datum/2025/WIP/KITE-18.md)   ```# adobe : creative cloud```
 - [datum/2025/WIP/KITE-8.md](datum/2025/WIP/KITE-8.md)   ```# Openshift :```
 - [datum/2025/WIP/KROS-5.md](datum/2025/WIP/KROS-5.md)   ```# nvim : copy menu```
 
@@ -13,7 +12,6 @@
 
 - [datum/2025/HOLD/KUBEX-3.md](datum/2025/HOLD/KUBEX-3.md)   ```# ISSUE : log query dashboard```
 - [datum/2025/HOLD/KUBEX-5.md](datum/2025/HOLD/KUBEX-5.md)   ```# jaeger : tracing system```
-- [datum/2025/HOLD/LEAF-31.md](datum/2025/HOLD/LEAF-31.md)   ```# Workstation platform : components```
 - [datum/2025/HOLD/NJS-2.md](datum/2025/HOLD/NJS-2.md)   ```# GLORIA: run objectory```
 - [datum/2025/HOLD/VIM-4.md](datum/2025/HOLD/VIM-4.md)   ```# rc : container x-ray```
 
@@ -21,7 +19,6 @@
 
 - [datum/2025/TODO/ADOBE-1.md](datum/2025/TODO/ADOBE-1.md)   ```# colorhunt.co : preset download```
 - [datum/2025/TODO/ARTE-10.md](datum/2025/TODO/ARTE-10.md)   ```# windows : sops```
-- [datum/2025/TODO/CMW-2.md](datum/2025/TODO/CMW-2.md)   ```# commonwealth : vault function```
 - [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
 - [datum/2025/TODO/LEAF-13.md](datum/2025/TODO/LEAF-13.md)   ```# Clipboard: internode```
 - [datum/2025/TODO/LEAF-30.md](datum/2025/TODO/LEAF-30.md)   ```# Jupyter :```
@@ -47,6 +44,7 @@
 - [datum/2025/DONE/KITE-15.md](datum/2025/DONE/KITE-15.md)   ```# Slack : workspace```
 - [datum/2025/DONE/KITE-16.md](datum/2025/DONE/KITE-16.md)   ```# Chrome : box```
 - [datum/2025/DONE/KITE-17.md](datum/2025/DONE/KITE-17.md)   ```# Phone : Android```
+- [datum/2025/DONE/KITE-18.md](datum/2025/DONE/KITE-18.md)   ```# adobe : creative cloud```
 - [datum/2025/DONE/KITE-3.md](datum/2025/DONE/KITE-3.md)   ```# Google : Firebase/Studio IDX```
 - [datum/2025/DONE/KROS-3.md](datum/2025/DONE/KROS-3.md)   ```# chromium : application explorer```
 - [datum/2025/DONE/KROS-4.md](datum/2025/DONE/KROS-4.md)   ```# nvim : init```
@@ -56,6 +54,7 @@
 - [datum/2025/DONE/LEAF-15.md](datum/2025/DONE/LEAF-15.md)   ```# ETO : Emerging Technology Observatory```
 - [datum/2025/DONE/LEAF-19.md](datum/2025/DONE/LEAF-19.md)   ```# AppImage : explore```
 - [datum/2025/DONE/LEAF-26.md](datum/2025/DONE/LEAF-26.md)   ```# Serverless : as nanoservice```
+- [datum/2025/DONE/LEAF-31.md](datum/2025/DONE/LEAF-31.md)   ```# Workstation platform : components```
 - [datum/2025/DONE/LEAF-4.md](datum/2025/DONE/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
 - [datum/2025/DONE/LEAF-8.md](datum/2025/DONE/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
 - [datum/2025/DONE/MDOS-12.md](datum/2025/DONE/MDOS-12.md)   ```# nvim : fix shell```
@@ -96,6 +95,7 @@
 - [datum/2025/BACKLOG/ASML-0.md](datum/2025/BACKLOG/ASML-0.md)   ```# Assembly : Mission```
 - [datum/2025/BACKLOG/ASML-1.md](datum/2025/BACKLOG/ASML-1.md)   ```# # SSO : Single Sign-On```
 - [datum/2025/BACKLOG/CMW-0.md](datum/2025/BACKLOG/CMW-0.md)   ```# Common : Wealth```
+- [datum/2025/BACKLOG/CMW-2.md](datum/2025/BACKLOG/CMW-2.md)   ```# commonwealth : vault function```
 - [datum/2025/BACKLOG/CORTA-0.md](datum/2025/BACKLOG/CORTA-0.md)   ```# Cortana : Chief```
 - [datum/2025/BACKLOG/CTNR-0.md](datum/2025/BACKLOG/CTNR-0.md)   ```# public : encrypted```
 - [datum/2025/BACKLOG/DBMS-0.md](datum/2025/BACKLOG/DBMS-0.md)   ```# ISSUE :```

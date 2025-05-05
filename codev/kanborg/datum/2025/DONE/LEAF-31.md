@@ -4,9 +4,9 @@
 
 To explores tools on major platforms:
 
-- MDOS-5
-- KROS-3
-- APLE-1
+- /\ MDOS-5
+- /\ KROS-3
+- /\ APLE-1
 
 ### 1 SOLUTION
 
