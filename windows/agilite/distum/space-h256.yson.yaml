@@ -1,0 +1,5 @@
+e832d4c2c99300436096b2e990220068e69ede845137a9dd63eff0a51e8a14e9: { pfi: ["ntfs-e8cf6529/path/abc","ntfs-d42c9ee/path/defg"] , meta: {} }
+e4410b5695cfc83bc2a33a124e8689a50c942978d0164e77724407d2a5cefb0d: { pfi: ["ntfs-e8cf6529/Documents/cat-dog-lion"] , meta: {"note":"zoo"} }
+cf75403b5aadd868c197af2209d5fccde5752509ce230b6e34659c7c48be98ec: { pfi: ["ntfs-74239d8/tmp/000000334444444.pdf","ntfs-e8cf6529/tmp/kkkkk5555-33333.pdf"] }
+4f7e403b5a9dd86bc197af2209d5fccde5752509ce230b6e34659c7c48be98ec: { pfi: ["ntfs-fec2c0eb/Music/2022/770aaa000334444444","ntfs-74239d8/Music/backup/xyz.yaml"] }
+

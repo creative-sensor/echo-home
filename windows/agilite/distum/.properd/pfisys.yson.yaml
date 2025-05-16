@@ -1,0 +1,6 @@
+ntfs-e8cf6529: { region:"US" , host:"" , mount: "D" }
+xfs-74239d8: { region:"JP" , host:"" , mount: "D" }
+ext4-d42c9ee: { region:"DE" , host:"" , mount: "D" }
+btrfs-d42c9ee: { region:"UK" , host:"" , mount: "D" }
+ntfs-d42c9ee: { region:"FR" , host:"" , mount: "D" }
+ntfs-fec2c0eb: { region:"CA" , host:"" , mount: "D" }

@@ -1,0 +1,6 @@
+#!/bin/bash 
+STR=$1
+SPACE=space-h256.yson.yaml
+test -f $STR && STR=$(sha256sum $STR | awk '{print $1}')
+grep -m 1 "$STR" $SPACE | yq -C
+	
