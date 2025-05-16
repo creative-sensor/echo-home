@@ -23,7 +23,9 @@
 
 - [datum/2025/TODO/ADOBE-1.md](datum/2025/TODO/ADOBE-1.md)   ```# colorhunt.co : preset download```
 - [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
-- [datum/2025/TODO/LEAF-30.md](datum/2025/TODO/LEAF-30.md)   ```# Jupyter :```
+- [datum/2025/TODO/DTUM-3.md](datum/2025/TODO/DTUM-3.md)   ```# distum : space-h256```
+- [datum/2025/TODO/LEAF-30.md](datum/2025/TODO/LEAF-30.md)   ```# Jupyter :```
+- [datum/2025/TODO/MDOS-17.md](datum/2025/TODO/MDOS-17.md)   ```# cli : uuidgen```
 
 ### 4 DONE
 
