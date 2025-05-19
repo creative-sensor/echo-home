@@ -1,0 +1,9 @@
+declare -A path_dict
+
+path_dict["marktext"]="$HOME/AppData/Local/Programs/MarkText"
+
+for key in "${!path_dict[@]}"; do
+  PATH+=":${path_dict[$key]}"
+done
+
+unset path_dict
