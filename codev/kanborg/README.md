@@ -6,7 +6,7 @@
 ### 1 WORK IN PROGRESS
 
 - [datum/2025/WIP/KITE-7.md](datum/2025/WIP/KITE-7.md)   ```# Microsoft : Copilot```
-- [datum/2025/WIP/KITE-8.md](datum/2025/WIP/KITE-8.md)   ```# Openshift :```
+- [datum/2025/WIP/KITE-8.md](datum/2025/WIP/KITE-8.md)   ```# claude.ai :```
 - [datum/2025/WIP/KROS-5.md](datum/2025/WIP/KROS-5.md)   ```# nvim : copy menu```
 - [datum/2025/WIP/LEAF-13.md](datum/2025/WIP/LEAF-13.md)   ```# Clipboard: internode```
 
