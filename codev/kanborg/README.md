@@ -5,12 +5,11 @@
 
 ### 1 WORK IN PROGRESS
 
-- [datum/2025/WIP/ARTE-10.md](datum/2025/WIP/ARTE-10.md)   ```# windows : sops```
-- [datum/2025/WIP/ARTE-11.md](datum/2025/WIP/ARTE-11.md)   ```# windows : ripgrep```
 - [datum/2025/WIP/KITE-7.md](datum/2025/WIP/KITE-7.md)   ```# Microsoft : Copilot```
 - [datum/2025/WIP/KITE-8.md](datum/2025/WIP/KITE-8.md)   ```# Openshift :```
 - [datum/2025/WIP/KROS-5.md](datum/2025/WIP/KROS-5.md)   ```# nvim : copy menu```
-- [datum/2025/WIP/LEAF-13.md](datum/2025/WIP/LEAF-13.md)   ```# Clipboard: internode```
+- [datum/2025/WIP/LEAF-13.md](datum/2025/WIP/LEAF-13.md)   ```# Clipboard: internode```
+- [datum/2025/WIP/MDOS-18.md](datum/2025/WIP/MDOS-18.md)   ```# env PATH : marktext```
 
 ### 2 ON HOLD
 
@@ -32,6 +31,8 @@
 - [datum/2025/DONE/APLE-1.md](datum/2025/DONE/APLE-1.md)   ```# apple-bit : application explorer```
 - [datum/2025/DONE/APLE-2.md](datum/2025/DONE/APLE-2.md)   ```# sync : macbook```
 - [datum/2025/DONE/APLE-3.md](datum/2025/DONE/APLE-3.md)   ```# Vim : Plug```
+- [datum/2025/DONE/ARTE-10.md](datum/2025/DONE/ARTE-10.md)   ```# windows : sops```
+- [datum/2025/DONE/ARTE-11.md](datum/2025/DONE/ARTE-11.md)   ```# windows : ripgrep```
 - [datum/2025/DONE/ARTE-3.md](datum/2025/DONE/ARTE-3.md)   ```# ISSUE : Fork repo from community to my github```
 - [datum/2025/DONE/ARTE-9.md](datum/2025/DONE/ARTE-9.md)   ```# windows : artefact-geti```
 - [datum/2025/DONE/CMW-1.md](datum/2025/DONE/CMW-1.md)   ```# process : background daemon management```
