@@ -8,8 +8,7 @@
 - [datum/2025/WIP/KITE-7.md](datum/2025/WIP/KITE-7.md)   ```# Microsoft : Copilot```
 - [datum/2025/WIP/KITE-8.md](datum/2025/WIP/KITE-8.md)   ```# Openshift :```
 - [datum/2025/WIP/KROS-5.md](datum/2025/WIP/KROS-5.md)   ```# nvim : copy menu```
-- [datum/2025/WIP/LEAF-13.md](datum/2025/WIP/LEAF-13.md)   ```# Clipboard: internode```
-- [datum/2025/WIP/MDOS-18.md](datum/2025/WIP/MDOS-18.md)   ```# env PATH : marktext```
+- [datum/2025/WIP/LEAF-13.md](datum/2025/WIP/LEAF-13.md)   ```# Clipboard: internode```
 
 ### 2 ON HOLD
 
@@ -67,6 +66,7 @@
 - [datum/2025/DONE/MDOS-14.md](datum/2025/DONE/MDOS-14.md)   ```# Makefile: command```
 - [datum/2025/DONE/MDOS-15.md](datum/2025/DONE/MDOS-15.md)   ```# nvim: envsc```
 - [datum/2025/DONE/MDOS-16.md](datum/2025/DONE/MDOS-16.md)   ```# vim: plug```
+- [datum/2025/DONE/MDOS-18.md](datum/2025/DONE/MDOS-18.md)   ```# env PATH : marktext```
 - [datum/2025/DONE/MDOS-2.md](datum/2025/DONE/MDOS-2.md)   ```# toolset : build/compile```
 - [datum/2025/DONE/MDOS-4.md](datum/2025/DONE/MDOS-4.md)   ```# PowerShell: utilities for missing function in gitbash```
 - [datum/2025/DONE/MDOS-5.md](datum/2025/DONE/MDOS-5.md)   ```# windows : application explorer```
@@ -124,6 +124,7 @@
 - [datum/2025/BACKLOG/LEAF-5.md](datum/2025/BACKLOG/LEAF-5.md)   ```# SPEC : Define new spec```
 - [datum/2025/BACKLOG/LEAF-7.md](datum/2025/BACKLOG/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
 - [datum/2025/BACKLOG/MDOS-0.md](datum/2025/BACKLOG/MDOS-0.md)   ```# MICROSOFT : WINDOWS```
+- [datum/2025/BACKLOG/MDOS-19.md](datum/2025/BACKLOG/MDOS-19.md)   ```# bash prompt : new stylish string```
 - [datum/2025/BACKLOG/MONO-0.md](datum/2025/BACKLOG/MONO-0.md)   ```# ISSUE :```
 - [datum/2025/BACKLOG/MONO-1.md](datum/2025/BACKLOG/MONO-1.md)   ```# Apache : NiFi```
 - [datum/2025/BACKLOG/NCEPT-0.md](datum/2025/BACKLOG/NCEPT-0.md)   ```# CONCEPT : Fractual system```

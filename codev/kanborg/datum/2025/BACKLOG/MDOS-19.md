@@ -1,4 +1,4 @@
-# env PATH : marktext
+# bash prompt : new stylish string
 --------------------------------
 ### 0 DESCRIPTION
 
