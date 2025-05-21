@@ -2,10 +2,13 @@
 
 PFI_DRIVE=${1:-test}
 PFI_SUBFILTER=.pfi/subfilter
-PFI_ID=ntfs-e12ab890
 LIST_tmp=.pfi/list.tmp
 YSON_H256=.pfi/h256.yson.yaml
 
+
+PFI_ID=$(.function/part-guid.ps1 $PFI_DRIVE)
+[[ "$PFI_ID" =~ "null" ]] && PFI_ID=$(.function/part-id.ps1 $PFI_DRIVE)
+echo "PFI ID: $PFI_ID"
 
 cd $PFI_DRIVE
 mkdir -p .pfi
@@ -24,7 +27,9 @@ done < $PFI_SUBFILTER
 
 
 echo "Building space H256"
-sha256sum  $(< $LIST_tmp) > $YSON_H256 2>/dev/null
+sed -i   -e 's/^/\"/' -e 's/$/\" /' $LIST_tmp
+
+bash -c "sha256sum  $(echo $(< $LIST_tmp)) > $YSON_H256 2>/dev/null"
 sed -i \
     -e "s/ \*/: {\"pfi\":[\"$PFI_ID\//" \
     -e 's/$/"]}/' \

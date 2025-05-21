@@ -4,9 +4,9 @@ import yaml,json,sys
 
 def merge_yaml_keep_left(left_file, right_file):
     try:
-        with open(left_file, 'r') as f:
+        with open(left_file, 'r', encoding='utf-8') as f:
             left_data = yaml.safe_load(f) or {}
-        with open(right_file, 'r') as f:
+        with open(right_file, 'r', encoding='utf-8') as f:
             right_data = yaml.safe_load(f) or {}
 
         def update_dict(target, source):
@@ -20,9 +20,9 @@ def merge_yaml_keep_left(left_file, right_file):
 
         update_dict(left_data, right_data)
 
-        with open(left_file, 'w') as f:
+        with open(left_file, 'w', encoding='utf-8') as f:
             for key, value in left_data.items():
-                inline_json = json.dumps(value, separators=(',', ':'))
+                inline_json = json.dumps(value, separators=(',', ':'), ensure_ascii=False)
                 f.write(key + ": " + inline_json + "\n")
             
 
