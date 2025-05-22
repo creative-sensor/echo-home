@@ -7,7 +7,7 @@ YSON_H256=.pfi/h256.yson.yaml
 
 
 PFI_ID=$(.function/part-guid.ps1 $PFI_DRIVE)
-[[ "$PFI_ID" =~ "null" ]] && PFI_ID=$(.function/part-id.ps1 $PFI_DRIVE)
+test -z "$PFI_ID" && PFI_ID=$(.function/part-id.ps1 $PFI_DRIVE)
 echo "PFI ID: $PFI_ID"
 
 cd $PFI_DRIVE
