@@ -125,7 +125,6 @@
 - [datum/2025/BACKLOG/LEAF-7.md](datum/2025/BACKLOG/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
 - [datum/2025/BACKLOG/MDOS-0.md](datum/2025/BACKLOG/MDOS-0.md)   ```# MICROSOFT : WINDOWS```
 - [datum/2025/BACKLOG/MDOS-19.md](datum/2025/BACKLOG/MDOS-19.md)   ```# bash prompt : new stylish string```
-- [datum/2025/BACKLOG/MDOS-20.md](datum/2025/BACKLOG/MDOS-20.md)   ```# rsync : source rebuild```
 - [datum/2025/BACKLOG/MONO-0.md](datum/2025/BACKLOG/MONO-0.md)   ```# ISSUE :```
 - [datum/2025/BACKLOG/MONO-1.md](datum/2025/BACKLOG/MONO-1.md)   ```# Apache : NiFi```
 - [datum/2025/BACKLOG/NCEPT-0.md](datum/2025/BACKLOG/NCEPT-0.md)   ```# CONCEPT : Fractual system```
