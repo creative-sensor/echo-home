@@ -12,6 +12,10 @@ cf75403b5aadd868c197af2209d5fccde5752509ce230b6e34659c7c48be98ec: { disk: ["fs-i
 
 ### 1 SOLUTION
 
+- https://github.com/creative-sensor/echo-home/commit/80b99768b10a9fc66a2e461b556d8689643cfaf3
+- ...
+- https://github.com/creative-sensor/echo-home/commit/cb0edfa18ca032a41ca7ee1cf6f7f778f2ad1abd
+
 
 ### 2 NOTES
 
