@@ -1,0 +1,37 @@
+#!/bin/bash 
+
+PFI_DRIVE=${1:-test}
+PFI_SUBFILTER=.pfi/subfilter
+LIST_tmp=.pfi/list.tmp
+YSON_H256=.pfi/h256.yson.yaml
+
+
+PFI_ID=$(.function/part-guid.ps1 $PFI_DRIVE)
+test -z "$PFI_ID" && PFI_ID=$(.function/part-id.ps1 $PFI_DRIVE)
+echo "PFI ID: $PFI_ID"
+
+cd $PFI_DRIVE
+mkdir -p .pfi
+test -s $PFI_SUBFILTER || echo ".pfi|-" > $PFI_SUBFILTER
+
+rm $LIST_tmp
+while read line ; do
+  PFI_subdir=$(echo $line | awk -F '\\|-' '{print $1}')
+  PFI_filter=$(echo $line | awk -F'\\|-'    '{ for (i=2; i<= NF; i++) {printf "%s ",$i} }'  )
+  find $PFI_subdir -type f >> $LIST_tmp
+  for filter in $PFI_filter ; do
+	    echo "filtering: $filter"
+      sed -i "/$filter/d" $LIST_tmp
+  done
+done < $PFI_SUBFILTER
+
+
+echo "Building space H256"
+sed -i   -e 's/^/\"/' -e 's/$/\" /' $LIST_tmp
+
+bash -c "sha256sum  $(echo $(< $LIST_tmp)) > $YSON_H256 2>/dev/null"
+sed -i \
+    -e "s/ \*/: {\"pfi\":[\"$PFI_ID\//" \
+    -e 's/$/"]}/' \
+    $YSON_H256
+find $(readlink -f .pfi) -type f
