@@ -18,6 +18,7 @@ rm $LIST_tmp $YSON_H256
 while read line ; do
   PFI_subdir=$(echo $line | awk -F '\\|-' '{print $1}')
   PFI_filter=$(echo $line | awk -F'\\|-'    '{ for (i=2; i<= NF; i++) {printf "%s ",$i} }'  )
+  test -z "$PFI_subdir" && continue
   find $PFI_subdir -type f >> $LIST_tmp
   for filter in $PFI_filter ; do
 	    echo "filtering: $filter"
