@@ -65,12 +65,13 @@ DOCKER_DESKTOP='/c/Program Files/Docker/Docker/resources/bin:/c/ProgramData/Dock
 NVIMPATH='/c/Program Files/Neovim/bin:/c/Program Files/Neovide'
 PATH=$LOCAL_BIN:$NODEPATH:$PYTHONPATH:$PYTHONPATH_SCRIPT:$GITBASH_PATH:$GVIMPATH:$DOCKER_DESKTOP:$NVIMPATH
 
-COLOR1='\[\033[38;5;135m\]'
-COLOR2='\[\033[38;5;161m\]'
-BOLD='\[\033[1m\]' # Work only if "allow bold text" setting is enabled
+COLOR_BG='\[\033[48;5;30m\]'
+COLOR_BG2='\[\033[48;5;8m\]'
+COLOR_FG='\[\033[38;5;252m\]'
+COLOR_FG2='\[\033[38;5;30m\]'
 STOP='\[\033[0m\]'
 
-PS1="[${BOLD}${COLOR1}\u${STOP}@${BOLD}${COLOR2}\h \W${STOP}]\$ "
+PS1="${COLOR_BG}${COLOR_FG}\h${STOP}${COLOR_BG2}${COLOR_FG2} \W ${STOP} ${COLOR_FG2}▰${STOP} "
 PROMPT_COMMAND='echo -ne "\033]0;$(basename $PWD)\007"'
 
 
