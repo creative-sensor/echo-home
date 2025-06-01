@@ -10,7 +10,6 @@ install .bashrc ~/
 install .bashrc.path ~/
 install .bash_profile ~/
 install .wslconfig ~/
-install .ConEmu.xml $APPDATA/ConEmu.xml
 install .terminal.settings.json  "$LOCALAPPDATA/Microsoft/Windows Terminal/settings.json"
 
 
@@ -18,3 +17,5 @@ install .terminal.settings.json  "$LOCALAPPDATA/Microsoft/Windows Terminal/setti
 .function/symlink
 cd .. && .function/symlink && cd -
 #.function/artefact-ready
+source ~/.bashrc
+test -z "$(yq -V | grep -o mikefarah)" && curl -L -o $LOCAL_BIN/yq "https://github.com/mikefarah/yq/releases/download/v4.45.4/yq_windows_amd64.exe" && chmod 0755 $LOCAL_BIN/yq

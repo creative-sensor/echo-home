@@ -1,6 +1,5 @@
 set -x
 GITROOT=$(git rev-parse --show-toplevel)
-#ln -sf ~/AppData/Local/Programs/Python/Python310/Scripts/yq  $LOCAL_BIN/yq
 ln -sf /usr/bin/gpg  $LOCAL_BIN/gpg2
 ln -sf '/c/Program Files/7-Zip/7z.exe' $LOCAL_BIN/7z
 ln -sf $GITROOT/codev/yson/.function/start.py  $LOCAL_BIN/yson
