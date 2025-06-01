@@ -1,0 +1,17 @@
+#!/bin/bash 
+PFI_MOUNT=$1
+PFI_INVENTORY=${2:-.properd/pfisys.yson.yaml}
+PFI_ID=$(echo $PFI_MOUNT | awk -F"-" '{print $NF}')
+
+usedgb=$(df --block-size=G $PFI_MOUNT | tail -1 | awk '{sub("G","",$3);print $3}')
+freegb=$(df --block-size=G $PFI_MOUNT | tail -1 | awk '{sub("G","",$4);print $4}')
+
+[[ "$(yq .$PFI_ID $PFI_INVENTORY 2>1)" =~ "null" ]] && echo "$PFI_ID: {\"host\":\"$HOSTNAME\"}" >> $PFI_INVENTORY
+
+yq -i "
+    .$PFI_ID.host = \"$HOSTNAME\" |
+    .$PFI_ID.free_GB = \"$freegb\" |
+    .$PFI_ID.used_GB = \"$usedgb\"
+    "  $PFI_INVENTORY
+
+yq ".$PFI_ID" $PFI_INVENTORY
