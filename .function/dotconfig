@@ -8,3 +8,7 @@ rsync -avr .ssh/config* $HOME/.ssh/ &&
     chmod 0644  $HOME/.ssh/config
 rsync -avr .vim/rc $HOME/.vim/
 
+source ~/.bashrc
+test -z "$(yq -V | grep -o mikefarah)" \
+	&& curl -L -o $LOCAL_BIN/yq "https://github.com/mikefarah/yq/releases/download/v4.45.4/yq_linux_amd64" \
+	&& chmod 0755 $LOCAL_BIN/yq
