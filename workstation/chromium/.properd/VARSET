@@ -7,7 +7,6 @@ APT_LIST='
     make
     uuid-runtime
     jq
-    yq
     rsync
     vim-gtk3
     libnss3

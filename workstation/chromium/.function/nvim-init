@@ -1,8 +1,9 @@
 #!/bin/bash -x
-
-mkdir -p ~/.config/nvim
-
+which nvim \
+    || curl -o $LOCAL_BIN/nvim -L "https://github.com/neovim/neovim/releases/download/v0.11.2/nvim-linux-x86_64.appimage" \
+    && chmod 0755 $LOCAL_BIN/nvim
+test -s ~/.vim/vim-plug/plug.vim || git clone https://github.com/junegunn/vim-plug.git ~/.vim/vim-plug
 cp -b .vimrc.neo ~/
 cp -rb .config/nvim/init.vim  ~/.config/nvim
-
+nvim -c "PlugInstall" -c "qall"
 

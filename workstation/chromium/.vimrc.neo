@@ -61,6 +61,23 @@ Plugin 'equal-l2/vim-base64'
 call vundle#end()            " required
 filetype plugin indent on    " required
 
+"-------- [PLUGIN / VIM-PLUG] --------
+source ~/.vim/vim-plug/plug.vim
+call plug#begin()
+" List your plugins here
+Plug 'nvim-tree/nvim-web-devicons'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-lualine/lualine.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'shaunsingh/solarized.nvim'
+Plug 'ellisonleao/gruvbox.nvim'
+call plug#end()
+
+
+"-------- [LUA-INIT] --------
+set rtp+=~/.vim/lua
+lua require("neo-init")
+
 
 "-------- [FUNCTIONS] --------
 
@@ -191,7 +208,7 @@ autocmd VimEnter * silent call SessionMgmt()
 "autocmd TerminalOpen * set termwinsize=0*0
     "termwinsize: auto-adjustable
 autocmd InsertEnter * highlight CursorLine ctermbg=190 guibg=#D5EE16 | highlight StatusLine ctermbg=190 guibg=#CCFF00
-autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#eee8d5 | highlight StatusLine ctermbg=254 guibg=#eee8d5
+autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#dadeaf | highlight StatusLine ctermbg=254 guibg=#eee8d5
 
 
 
@@ -255,4 +272,4 @@ vnoremap --    "+y : vsplit <C-R>+ <CR>
 nnoremap <F5><F5> : edit<CR>
 
 "-------- [POST-INIT] --------
-colorscheme solarized8_high
+colorscheme gruvbox

@@ -2,3 +2,12 @@ alias ll='ls -la'
 alias vim='vim -c "set ttymouse=sgr" '
 export TTY_FG_COLOR=253
 export TTY_BG_COLOR=23
+
+COLOR_BG='\[\033[48;5;30m\]'
+COLOR_BG2='\[\033[48;5;16m\]'
+COLOR_FG='\[\033[38;5;232m\]'
+COLOR_FG2='\[\033[38;5;30m\]'
+STOP='\[\033[0m\]'
+
+PS1="${COLOR_BG}${COLOR_FG} \h ${STOP}${COLOR_BG2}${COLOR_FG2} \W ${STOP} ${COLOR_FG2}▰${STOP}  "
+
