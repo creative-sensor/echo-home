@@ -5,7 +5,7 @@
 
 ### 1 WORK IN PROGRESS
 
-- [datum/2025/WIP/DTUM-5.md](datum/2025/WIP/DTUM-5.md)   ```# distum : linux```
+- [datum/2025/WIP/CORTA-1.md](datum/2025/WIP/CORTA-1.md)   ```# test : first AI product```
 - [datum/2025/WIP/KITE-7.md](datum/2025/WIP/KITE-7.md)   ```# Microsoft : Copilot```
 - [datum/2025/WIP/KITE-8.md](datum/2025/WIP/KITE-8.md)   ```# claude.ai :```
 - [datum/2025/WIP/KROS-5.md](datum/2025/WIP/KROS-5.md)   ```# nvim : copy menu```
@@ -39,6 +39,7 @@
 - [datum/2025/DONE/DROID-2.md](datum/2025/DONE/DROID-2.md)   ```# droidvim: vim for android```
 - [datum/2025/DONE/DTUM-3.md](datum/2025/DONE/DTUM-3.md)   ```# distum : space-h256```
 - [datum/2025/DONE/DTUM-4.md](datum/2025/DONE/DTUM-4.md)   ```# distum : usage amount```
+- [datum/2025/DONE/DTUM-5.md](datum/2025/DONE/DTUM-5.md)   ```# distum : linux```
 - [datum/2025/DONE/GILB-1.md](datum/2025/DONE/GILB-1.md)   ```# ldap : authentication```
 - [datum/2025/DONE/HCL-2.md](datum/2025/DONE/HCL-2.md)   ```# COWAD : select principal node```
 - [datum/2025/DONE/KBG-8.md](datum/2025/DONE/KBG-8.md)   ```# reborn: nvim```
