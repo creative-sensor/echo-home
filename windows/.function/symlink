@@ -4,3 +4,4 @@ ln -sf /usr/bin/gpg  $LOCAL_BIN/gpg2
 ln -sf '/c/Program Files/7-Zip/7z.exe' $LOCAL_BIN/7z
 ln -sf $GITROOT/codev/yson/.function/start.py  $LOCAL_BIN/yson
 ln -sf $GITROOT/windows/.vim/.function/gvim-artillery  $LOCAL_BIN/gvim-artillery
+ln -sf $GITROOT/codev/awk/.function/kev  $LOCAL_BIN/kev

@@ -1,0 +1,55 @@
+#!/usr/bin/awk -f
+
+BEGIN {
+    if (ARGC < 2) {
+        print "Usage (CLI args): " ARGV[0] " <key_to_find> key1=value1 [key2=value2 ...]" > "/dev/stderr"
+        print "Usage (stdin):    <stdin_lines> | " ARGV[0] " <key_to_find>" > "/dev/stderr"
+        exit 1 # Exit with error status
+    }
+    key_to_find = ARGV[1]
+    key_found_flag = 0
+
+    # agrs: k=v
+    if (ARGC > 2) { 
+        for (i = 2; i < ARGC; i++) {
+            current_arg_from_cli = ARGV[i]
+            separator_index = index(current_arg_from_cli, "=")
+
+            if (separator_index > 0) {
+                current_key = substr(current_arg_from_cli, 1, separator_index - 1)
+                current_value = substr(current_arg_from_cli, separator_index + 1)
+
+                if (current_key == key_to_find) {
+                    print current_value
+                    exit 0
+                }
+            }
+        }
+        exit 1 
+    }
+		ARGV[1] = ""
+}
+
+# stdin: k=v
+{
+    current_line_from_stdin = $0 
+
+    separator_index = index(current_line_from_stdin, "=")
+
+    if (separator_index > 0) { 
+        current_key = substr(current_line_from_stdin, 1, separator_index - 1)
+        current_value = substr(current_line_from_stdin, separator_index + 1)
+
+        if (current_key == key_to_find) {
+            print current_value
+            key_found_flag = 1 
+            exit 0 
+        }
+    }
+}
+
+END {
+    if (ARGC == 2 && key_found_flag == 0) {
+        exit 1
+    }
+}
