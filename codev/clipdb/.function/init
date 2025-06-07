@@ -1,0 +1,8 @@
+#!/bin/bash
+KEY=${1:-public}
+BUS=${3:-local}
+
+CONTENT=$(powershell "Get-Clipboard")
+
+#mongo insert content
+

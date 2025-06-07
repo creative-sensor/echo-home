@@ -1,0 +1,8 @@
+#!/bin/bash
+KEY=$1:-public
+BUS=${2:-common}
+
+source provider/mongo
+powershell "Set-Clipboard -Value \"$content\""
+echo "Paste ready!"
+

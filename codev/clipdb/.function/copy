@@ -1,0 +1,9 @@
+#!/bin/bash
+KEY=${1:-public}
+BUS=${2:-common}
+
+CONTENT=$(powershell "Get-Clipboard")
+source provider/mongo
+echo "Copied!"
+echo "$CONTENT"
+
