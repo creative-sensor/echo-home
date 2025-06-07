@@ -1,0 +1,37 @@
+#!/bin/bash 
+
+PFI_DRIVE=${1:-test}
+SUBDIR=${2:-.}
+SPACE_H256=${3:-space-h256.yson.yaml}
+# ---- <> ----
+
+LIST_tmp=.pfi/list.segment
+YSON_H256=.pfi/h256.yson.yaml.segment
+
+
+PFI_ID=$(.function/part-guid.ps1 $PFI_DRIVE)
+test -z "$PFI_ID" && PFI_ID=$(.function/part-id.ps1 $PFI_DRIVE)
+echo "PFI ID: $PFI_ID"
+
+cd $PFI_DRIVE
+mkdir -p .pfi
+rm $LIST_tmp $YSON_H256
+find $SUBDIR -type f > $LIST_tmp
+
+
+echo "Building segment H256"
+
+while IFS= read -r  item ; do
+	sha256sum "$item" >> $YSON_H256 
+done < $LIST_tmp
+
+sed -i \
+    -e "s/ \*/: {\"pfi\":[\"$PFI_ID\//" \
+    -e 's/$/"]}/' \
+    $YSON_H256
+
+find $(readlink -f .pfi) -type f | grep segment
+
+cd -
+echo "Merging segment $PFI_ID/$SUBDIR"
+.function/merge.py $SPACE_H256 $PFI_DRIVE/$YSON_H256
