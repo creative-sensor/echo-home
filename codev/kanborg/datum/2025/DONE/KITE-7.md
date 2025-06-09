@@ -6,6 +6,8 @@
 
 ### 1 SOLUTION
 
+g*.o*
+
 ### 2 NOTES
 
 ### 3 TEST/VERIFICATION

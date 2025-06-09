@@ -5,11 +5,8 @@
 
 ### 1 WORK IN PROGRESS
 
-- [datum/2025/WIP/KITE-7.md](datum/2025/WIP/KITE-7.md)   ```# Microsoft : Copilot```
-- [datum/2025/WIP/KITE-8.md](datum/2025/WIP/KITE-8.md)   ```# claude.ai :```
 - [datum/2025/WIP/KROS-5.md](datum/2025/WIP/KROS-5.md)   ```# nvim : copy menu```
-- [datum/2025/WIP/LEAF-13.md](datum/2025/WIP/LEAF-13.md)   ```# Clipboard: internode```
-- [datum/2025/WIP/MDOS-17.md](datum/2025/WIP/MDOS-17.md)   ```# cli : uuidgen```
+- [datum/2025/WIP/LEAF-13.md](datum/2025/WIP/LEAF-13.md)   ```# Clipboard: internode```
 
 ### 2 ON HOLD
 
@@ -52,7 +49,13 @@
 - [datum/2025/DONE/KITE-16.md](datum/2025/DONE/KITE-16.md)   ```# Chrome : box```
 - [datum/2025/DONE/KITE-17.md](datum/2025/DONE/KITE-17.md)   ```# Phone : Android```
 - [datum/2025/DONE/KITE-18.md](datum/2025/DONE/KITE-18.md)   ```# adobe : creative cloud```
+- [datum/2025/DONE/KITE-19.md](datum/2025/DONE/KITE-19.md)   ```# blackbox : ai```
+- [datum/2025/DONE/KITE-20.md](datum/2025/DONE/KITE-20.md)   ```# perplexity : ai```
+- [datum/2025/DONE/KITE-21.md](datum/2025/DONE/KITE-21.md)   ```# grok : x ai```
+- [datum/2025/DONE/KITE-22.md](datum/2025/DONE/KITE-22.md)   ```# cursor : ai```
 - [datum/2025/DONE/KITE-3.md](datum/2025/DONE/KITE-3.md)   ```# Google : Firebase/Studio IDX```
+- [datum/2025/DONE/KITE-7.md](datum/2025/DONE/KITE-7.md)   ```# Microsoft : Copilot```
+- [datum/2025/DONE/KITE-8.md](datum/2025/DONE/KITE-8.md)   ```# claude.ai :```
 - [datum/2025/DONE/KROS-3.md](datum/2025/DONE/KROS-3.md)   ```# chromium : application explorer```
 - [datum/2025/DONE/KROS-4.md](datum/2025/DONE/KROS-4.md)   ```# nvim : init```
 - [datum/2025/DONE/LEAF-11.md](datum/2025/DONE/LEAF-11.md)   ```# GROK: log transformer```
@@ -69,6 +72,7 @@
 - [datum/2025/DONE/MDOS-14.md](datum/2025/DONE/MDOS-14.md)   ```# Makefile: command```
 - [datum/2025/DONE/MDOS-15.md](datum/2025/DONE/MDOS-15.md)   ```# nvim: envsc```
 - [datum/2025/DONE/MDOS-16.md](datum/2025/DONE/MDOS-16.md)   ```# vim: plug```
+- [datum/2025/DONE/MDOS-17.md](datum/2025/DONE/MDOS-17.md)   ```# cli : uuidgen```
 - [datum/2025/DONE/MDOS-18.md](datum/2025/DONE/MDOS-18.md)   ```# env PATH : marktext```
 - [datum/2025/DONE/MDOS-19.md](datum/2025/DONE/MDOS-19.md)   ```# bash prompt : new stylish string```
 - [datum/2025/DONE/MDOS-2.md](datum/2025/DONE/MDOS-2.md)   ```# toolset : build/compile```

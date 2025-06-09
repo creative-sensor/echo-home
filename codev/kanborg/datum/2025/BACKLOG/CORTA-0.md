@@ -12,6 +12,16 @@
 
 ### 2 NOTES
 
+- AI system:
+```
+https://www.blackbox.ai/
+https://copilot.microsoft.com
+https://claude.ai/
+https://www.perplexity.ai/
+https://x.ai/grok
+https://www.cursor.com/
+```
+
 
 ### 3 TEST/VERIFICATION
 
