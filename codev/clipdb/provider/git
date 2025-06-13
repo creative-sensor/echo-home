@@ -1,0 +1,16 @@
+BRANCH=clipdb
+METHOD=${1:-copy}
+CLIP_ENC=${CLIP}.gpg
+GPG_KEY=${2:-71B517A9588518FD790E7568C8A921F275CF677E}
+
+if [[ "$METHOD" == "copy" ]]; then
+  gpg --yes -e -r $GPG_KEY -o $CLIP_ENC  $CLIP
+  git add $CLIP_ENC \
+    && git commit --amend -m "copy"  &>/dev/null \
+    && git push --force origin $BRANCH &>/dev/null
+else
+  git checkout ./$CLIP_ENC &>/dev/null \
+    && git pull --rebase origin $BRANCH &>/dev/null
+  gpg -d $CLIP_ENC &>/dev/null
+fi
+

@@ -1,0 +1,8 @@
+#!/bin/bash
+CLIP=clip.txt
+PROVIDER=${1:-git}
+powershell "Get-Clipboard" > $CLIP
+source provider/git copy
+echo "---- Copy that ----"
+cat $CLIP
+

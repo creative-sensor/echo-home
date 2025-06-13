@@ -1,0 +1,8 @@
+#!/bin/bash
+CLIP=clip.txt
+PROVIDER=${1:-git}
+
+source provider/git paste
+powershell "cat $CLIP | Set-Clipboard"
+echo "Paste ready!"
+
