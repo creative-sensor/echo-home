@@ -1,1 +1,8 @@
-business and military settings to indicate th
+CONTENT=ENC[AES256_GCM,data:HsKXcc/7YxRGlnqc/Gr6gb/V,iv:OY+RgEfbTZrfCuAEHP/jnFNwpls119J8BLNYik8c50k=,tag:EAXcmabWVu2EKAuWimvlrw==,type:str]
+sops_lastmodified=2025-06-13T09:03:34Z
+sops_mac=ENC[AES256_GCM,data:9903pYggiS/HLAXxoYQ59cssqMtGfu3dGcOcl9n/RgGZmtPNJfODTy4EvNZmqXkm2P+oaNZNUa3Gq/WhgmU9r9HHE4yjxORcENrdcIO6fQH1oSUy78LRlf/vkSuRhk4GIP3boLHRqpfIlPKUYNEfH2naremvTsyKjIjNyijORTw=,iv:fpTxPdyCWzE8TwbSU93Zxw4mbS1aP+qz4Q1Sr53+E2k=,tag:+b/jCgCYZYM1sFZWKqfHvw==,type:str]
+sops_pgp__list_0__map_created_at=2025-06-13T09:03:34Z
+sops_pgp__list_0__map_enc=-----BEGIN PGP MESSAGE-----\n\nhQEMA0qe8tF/2+WbAQf+I9on51g5i1SeGFiLLDePxcOzrlJGp37kwfMooxhmBUVf\nKgd7hdde2AxKbp54BMFMSYhESg9NXLBbutaEsvqILpFt8njZT7nCP9zvKfGRRTxB\nOd5hVB5eIeZK7hdpbI6HXy2ulcplYksVENvlXdB0G4A4T9zTPWJorC/UrABtYfuM\nz0cld+489wYDJZcvsht+HparMzHD0xkaFh/0KHoKIs4lbVk1nXgs2Qn/fMob4XgH\nNEIr1Dfj93FeZqM90Rrvcf2HHiuqoFLcYChth9CV3WgLwAFQLAehqJxomgz72ko8\n6JOOfGx1NmWgWyOaOSYlc43urX4B3XdB/A/kjJwLrdJeAbqxb06tAbg0l1+ARvv+\nshyq+87QAusUXaSVATGtps6e0d673j429yrMQYVSGjgZdwoihB2eO1GoVfvhL9KZ\nqvCKp/MT5NQg27mCsPZP0RgJrdlhz+FB6i2GnlDKAg==\n=5no6\n-----END PGP MESSAGE-----
+sops_pgp__list_0__map_fp=71B517A9588518FD790E7568C8A921F275CF677E
+sops_unencrypted_suffix=_unencrypted
+sops_version=3.10.2

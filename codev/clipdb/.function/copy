@@ -1,9 +1,8 @@
 #!/bin/bash
-KEY=${1:-public}
-BUS=${2:-common}
-
-CONTENT=$(powershell "Get-Clipboard")
-source provider/github
+CLIP=clip.txt
+PROVIDER=${1:-git}
+powershell "Get-Clipboard" > $CLIP
+source provider/git copy
 echo "---- Copy that ----"
-echo "$CONTENT"
+cat $CLIP
 

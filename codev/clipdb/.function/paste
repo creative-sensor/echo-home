@@ -1,8 +1,8 @@
 #!/bin/bash
-KEY=$1:-public
-BUS=${2:-common}
+CLIP=clip.txt
+PROVIDER=${1:-git}
 
-source provider/mongo
-powershell "Set-Clipboard -Value \"$content\""
+source provider/git paste
+powershell "cat $CLIP | Set-Clipboard"
 echo "Paste ready!"
 
