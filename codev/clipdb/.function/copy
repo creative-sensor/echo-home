@@ -3,7 +3,7 @@ KEY=${1:-public}
 BUS=${2:-common}
 
 CONTENT=$(powershell "Get-Clipboard")
-source provider/mongo
+source provider/github
 echo "Copied!"
 echo "$CONTENT"
 

@@ -56,7 +56,7 @@ alias ll='ls -la '
 # ---- VARSET ----
 declare -A DICT
 export LOCAL_BIN=~/.local/bin
-export PYTHONPATH=~/AppData/Local/Programs/Python/Python310
+export PYTHONPATH=~/AppData/Local/Programs/Python/Python313
 export PYTHONPATH_SCRIPT=$PYTHONPATH/Scripts
 export GVIMPATH='/c/Program Files (x86)/Vim/vim90'
 NODEPATH=$LOCAL_BIN/node-v18.13.0-win-x64
