@@ -4,6 +4,6 @@ BUS=${2:-common}
 
 CONTENT=$(powershell "Get-Clipboard")
 source provider/github
-echo "Copied!"
+echo "---- Copy that ----"
 echo "$CONTENT"
 
