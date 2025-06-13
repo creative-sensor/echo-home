@@ -6,7 +6,7 @@
 ### 1 WORK IN PROGRESS
 
 - [datum/2025/WIP/KROS-5.md](datum/2025/WIP/KROS-5.md)   ```# nvim : copy menu```
-- [datum/2025/WIP/LEAF-13.md](datum/2025/WIP/LEAF-13.md)   ```# Clipboard: internode```
+- [datum/2025/WIP/LEAF-30.md](datum/2025/WIP/LEAF-30.md)   ```# Jupyter :```
 
 ### 2 ON HOLD
 
@@ -18,8 +18,7 @@
 ### 3 TO DO
 
 - [datum/2025/TODO/ADOBE-1.md](datum/2025/TODO/ADOBE-1.md)   ```# colorhunt.co : preset download```
-- [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
-- [datum/2025/TODO/LEAF-30.md](datum/2025/TODO/LEAF-30.md)   ```# Jupyter :```
+- [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
 
 ### 4 DONE
 
@@ -60,6 +59,7 @@
 - [datum/2025/DONE/KROS-4.md](datum/2025/DONE/KROS-4.md)   ```# nvim : init```
 - [datum/2025/DONE/LEAF-11.md](datum/2025/DONE/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2025/DONE/LEAF-11g.md](datum/2025/DONE/LEAF-11g.md)   ```# GIT-CLONE: single commit```
+- [datum/2025/DONE/LEAF-13.md](datum/2025/DONE/LEAF-13.md)   ```# Clipboard: internode```
 - [datum/2025/DONE/LEAF-14.md](datum/2025/DONE/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2025/DONE/LEAF-15.md](datum/2025/DONE/LEAF-15.md)   ```# ETO : Emerging Technology Observatory```
 - [datum/2025/DONE/LEAF-19.md](datum/2025/DONE/LEAF-19.md)   ```# AppImage : explore```
