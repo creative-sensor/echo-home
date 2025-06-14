@@ -1,8 +1,8 @@
 #!/bin/bash
-CLIP=clip.txt
-PROVIDER=${1:-git}
+CLIP=${1:-clip.txt}
+PROVIDER=${2:-git}
 
 source provider/git paste
-cat $CLIP | wl-copy || powershell "cat $CLIP | Set-Clipboard"
+powershell "cat $CLIP | Set-Clipboard" || cat $CLIP | wl-copy 
 echo "Paste ready!"
 
