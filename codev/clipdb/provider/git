@@ -11,6 +11,6 @@ if [[ "$METHOD" == "copy" ]]; then
 else
   git checkout ./$CLIP_ENC &>/dev/null \
     && git pull --rebase origin $BRANCH &>/dev/null
-  gpg -d -o $CLIP $CLIP_ENC &>/dev/null
+  gpg --yes -d -o $CLIP $CLIP_ENC &>/dev/null
 fi
 
