@@ -5,6 +5,7 @@
 
 ### 1 WORK IN PROGRESS
 
+- [datum/2025/WIP/DTUM-6.md](datum/2025/WIP/DTUM-6.md)   ```# gauge : usage```
 - [datum/2025/WIP/KITE-23.md](datum/2025/WIP/KITE-23.md)   ```# SAIL: source```
 - [datum/2025/WIP/KROS-5.md](datum/2025/WIP/KROS-5.md)   ```# nvim : copy menu```
 - [datum/2025/WIP/LEAF-30.md](datum/2025/WIP/LEAF-30.md)   ```# Jupyter :```
