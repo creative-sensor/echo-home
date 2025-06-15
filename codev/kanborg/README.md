@@ -5,6 +5,7 @@
 
 ### 1 WORK IN PROGRESS
 
+- [datum/2025/WIP/KITE-23.md](datum/2025/WIP/KITE-23.md)   ```# SAIL: source```
 - [datum/2025/WIP/KROS-5.md](datum/2025/WIP/KROS-5.md)   ```# nvim : copy menu```
 - [datum/2025/WIP/LEAF-30.md](datum/2025/WIP/LEAF-30.md)   ```# Jupyter :```
 
@@ -17,8 +18,9 @@
 
 ### 3 TO DO
 
-- [datum/2025/TODO/ADOBE-1.md](datum/2025/TODO/ADOBE-1.md)   ```# colorhunt.co : preset download```
-- [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
+- [datum/2025/TODO/CORTA-2.md](datum/2025/TODO/CORTA-2.md)   ```# lmstudio : LLM```
+- [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
+- [datum/2025/TODO/MDOS-20.md](datum/2025/TODO/MDOS-20.md)   ```# rsync : source rebuild```
 
 ### 4 DONE
 
@@ -64,6 +66,7 @@
 - [datum/2025/DONE/LEAF-15.md](datum/2025/DONE/LEAF-15.md)   ```# ETO : Emerging Technology Observatory```
 - [datum/2025/DONE/LEAF-19.md](datum/2025/DONE/LEAF-19.md)   ```# AppImage : explore```
 - [datum/2025/DONE/LEAF-26.md](datum/2025/DONE/LEAF-26.md)   ```# Serverless : as nanoservice```
+- [datum/2025/DONE/LEAF-29.md](datum/2025/DONE/LEAF-29.md)   ```# btrfs : objectory```
 - [datum/2025/DONE/LEAF-31.md](datum/2025/DONE/LEAF-31.md)   ```# Workstation platform : components```
 - [datum/2025/DONE/LEAF-4.md](datum/2025/DONE/LEAF-4.md)   ```# VERSIONING:  multi-location datum```
 - [datum/2025/DONE/LEAF-8.md](datum/2025/DONE/LEAF-8.md)   ```# DomTerm : DOM terminal emulator```
@@ -80,6 +83,7 @@
 - [datum/2025/DONE/MDOS-5.md](datum/2025/DONE/MDOS-5.md)   ```# windows : application explorer```
 - [datum/2025/DONE/MDOS-7.md](datum/2025/DONE/MDOS-7.md)   ```# terminal : gvim cannot detect unix file path```
 - [datum/2025/DONE/MDOS-8.md](datum/2025/DONE/MDOS-8.md)   ```# window terminal : line buffer limit```
+- [datum/2025/DONE/NJS-3.md](datum/2025/DONE/NJS-3.md)   ```# VIM : DOM```
 - [datum/2025/DONE/VIM-10.md](datum/2025/DONE/VIM-10.md)   ```# preset : window layout```
 - [datum/2025/DONE/VIM-11.md](datum/2025/DONE/VIM-11.md)   ```# NeoVim : init```
 - [datum/2025/DONE/VIM-12.md](datum/2025/DONE/VIM-12.md)   ```# nvim : colorscheme```
@@ -100,6 +104,7 @@
 - [datum/2025/BACKLOG/ACLS-0.md](datum/2025/BACKLOG/ACLS-0.md)   ```# Access Control : Level System```
 - [datum/2025/BACKLOG/ACLS-2.md](datum/2025/BACKLOG/ACLS-2.md)   ```# Haproxy : API access control```
 - [datum/2025/BACKLOG/ADOBE-0.md](datum/2025/BACKLOG/ADOBE-0.md)   ```# ISSUE :```
+- [datum/2025/BACKLOG/ADOBE-1.md](datum/2025/BACKLOG/ADOBE-1.md)   ```# colorhunt.co : preset download```
 - [datum/2025/BACKLOG/AIVE-0.md](datum/2025/BACKLOG/AIVE-0.md)   ```# AI : Vertex Eyes```
 - [datum/2025/BACKLOG/APLE-0.md](datum/2025/BACKLOG/APLE-0.md)   ```# Apple : bit```
 - [datum/2025/BACKLOG/APLE-4.md](datum/2025/BACKLOG/APLE-4.md)   ```# ISSUE :```
@@ -128,11 +133,9 @@
 - [datum/2025/BACKLOG/LEAF-0.md](datum/2025/BACKLOG/LEAF-0.md)   ```# Leaf : misc```
 - [datum/2025/BACKLOG/LEAF-12.md](datum/2025/BACKLOG/LEAF-12.md)   ```# FIBO SHELL: svg```
 - [datum/2025/BACKLOG/LEAF-20.md](datum/2025/BACKLOG/LEAF-20.md)   ```# Boot : mono service```
-- [datum/2025/BACKLOG/LEAF-29.md](datum/2025/BACKLOG/LEAF-29.md)   ```# btrfs : objectory```
 - [datum/2025/BACKLOG/LEAF-5.md](datum/2025/BACKLOG/LEAF-5.md)   ```# SPEC : Define new spec```
 - [datum/2025/BACKLOG/LEAF-7.md](datum/2025/BACKLOG/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
 - [datum/2025/BACKLOG/MDOS-0.md](datum/2025/BACKLOG/MDOS-0.md)   ```# MICROSOFT : WINDOWS```
-- [datum/2025/BACKLOG/MDOS-20.md](datum/2025/BACKLOG/MDOS-20.md)   ```# rsync : source rebuild```
 - [datum/2025/BACKLOG/MONO-0.md](datum/2025/BACKLOG/MONO-0.md)   ```# ISSUE :```
 - [datum/2025/BACKLOG/MONO-1.md](datum/2025/BACKLOG/MONO-1.md)   ```# Apache : NiFi```
 - [datum/2025/BACKLOG/NCEPT-0.md](datum/2025/BACKLOG/NCEPT-0.md)   ```# CONCEPT : Fractual system```
@@ -140,7 +143,6 @@
 - [datum/2025/BACKLOG/NCEPT-2.md](datum/2025/BACKLOG/NCEPT-2.md)   ```# RDBMS : Sharding with graph theory```
 - [datum/2025/BACKLOG/NJS-0.md](datum/2025/BACKLOG/NJS-0.md)   ```# NODE : JS```
 - [datum/2025/BACKLOG/NJS-1.md](datum/2025/BACKLOG/NJS-1.md)   ```# KANBORG : ELECTRON UI```
-- [datum/2025/BACKLOG/NJS-3.md](datum/2025/BACKLOG/NJS-3.md)   ```# VIM : DOM```
 - [datum/2025/BACKLOG/OBSR-0.md](datum/2025/BACKLOG/OBSR-0.md)   ```# Observability : Monitoring Eyes```
 - [datum/2025/BACKLOG/TSQA-0.md](datum/2025/BACKLOG/TSQA-0.md)   ```# TEST : QUALITY```
 - [datum/2025/BACKLOG/VIM-0.md](datum/2025/BACKLOG/VIM-0.md)   ```# VIM : Bram Moolenaar ```

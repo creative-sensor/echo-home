@@ -1,17 +1,16 @@
-# btrfs : objectory
+# SAIL: source
 --------------------------------
 ### 0 DESCRIPTION
-Operations on subvolume:
-- list
-- create
-- mount
-- delete
+
+Utilities for SAIL
 
 ### 1 SOLUTION
 
 
 ### 2 NOTES
 
+- windows/msn/news-and-interests
+- 
 
 ### 3 TEST/VERIFICATION
 
@@ -22,5 +21,5 @@ Operations on subvolume:
 
 --------------------------------
 ```json
-{ "project_code": "LEAF" , "links": "" , "location": "" , "fpoint": "" }
+{ "project_code": "KITE" , "links": "" , "location": "" , "fpoint": "" }
 ```

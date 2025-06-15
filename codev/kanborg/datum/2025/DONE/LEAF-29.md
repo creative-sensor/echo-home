@@ -1,0 +1,27 @@
+# btrfs : objectory
+--------------------------------
+### 0 DESCRIPTION
+Operations on subvolume:
+- list
+- create
+- mount
+- delete
+
+### 1 SOLUTION
+
+
+### 2 NOTES
+
+
+### 3 TEST/VERIFICATION
+
+
+### 4 JOURNAL
+
+###### 4.0
+unclear
+
+--------------------------------
+```json
+{ "project_code": "LEAF" , "links": "" , "location": "" , "fpoint": "" }
+```

@@ -1,8 +1,8 @@
-# VIM : DOM
+# lmstudio : LLM
 --------------------------------
 ### 0 DESCRIPTION
 
-- Use DOM to implement a simplified VIM
+https://lmstudio.ai/
 
 ### 1 SOLUTION
 
@@ -19,5 +19,5 @@
 
 --------------------------------
 ```json
-{ "project_code": "NJS" , "links": "" , "location": "" , "fpoint": "" }
+{ "project_code": "CORTA" , "links": "" , "location": "" , "fpoint": "" }
 ```
