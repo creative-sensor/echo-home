@@ -1,0 +1,8 @@
+#!/bin/bash
+CLIP_BRANCH=clipdb
+git checkout $CLIP_BRANCH || git checkout origin/$CLIP_BRANCH -b $CLIP_BRANCH
+git pull --rebase origin master
+git rebase --skip
+
+git pull --rebase origin $CLIP_BRANCH
+git rebase --skip
