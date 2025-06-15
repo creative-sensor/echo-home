@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+
+import yaml,json,sys
+
+def gauge(pfi_path):
+    try:
+        with open(pfi_path, 'r', encoding='utf-8') as f:
+            pfi_yson = yaml.safe_load(f) or {}           
+    
+        for key, value in pfi_yson.items():
+            used_GB = value["used_GB"]
+            free_GB = value["free_GB"]
+            percentage = round(int(used_GB) / (int(used_GB) + int(free_GB)) * 100)
+            host = "\033[48;5;8m" + value["host"] + " \033[0m"
+            generate_color_bar(percentage,f"{host} {used_GB}+{free_GB} GB")
+    
+    except FileNotFoundError:
+        print("Error: One or both input files not found.")
+    except yaml.YAMLError as e:
+        print(f"Error parsing YAML file: {e}")
+
+
+
+def generate_color_bar(percentage, label="host"):
+    """Generate a simple color bar in the terminal."""
+    bar = '\033[38;5;5m' + '=' * percentage + '\033[0m\033[38;5;22m' + '.' * (100 - percentage) + '\033[0m'
+    print(f"{percentage:02d}% {bar} {label}")
+
+pfi_path = sys.argv[1]
+gauge(pfi_path)
+
