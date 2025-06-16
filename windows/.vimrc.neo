@@ -211,6 +211,29 @@ endfunction
 function StartUp()
 endfunction
 
+
+function YsonLine()
+  normal! yy
+	let yson_filename = bufname('%')
+	let yson_bufnr = bufnr(yson_filename)
+	let yson_winids = win_findbuf(yson_bufnr)
+
+  let yson_line = yson_filename."_line.json"
+  let bufnr = bufnr(yson_line)
+	if bufnr != -1
+		let winids = win_findbuf(bufnr)
+    call win_gotoid(winids[0])
+		execute '%delete _'
+  else
+    execute 'split '.yson_line 
+	endif
+  let command = "echo '".@"."' | yq -o json"
+	let @" = system(command)
+  normal! p
+	call win_gotoid(yson_winids[0])
+endfunction
+
+
 "-------- [AUTOCMD] --------
 autocmd FileType yaml  : set tabstop=2
 "autocmd VimEnter * above terminal ++rows=7
@@ -225,6 +248,7 @@ autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#dadeaf | highlight
 
 
 "-------- [KEYMAP] --------
+map ys : call YsonLine() <CR>
 map T : tabnew . <CR>
     "New tab
 map C : s/^/#/<CR>
