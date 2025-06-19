@@ -52,12 +52,13 @@ alias date-epoch='date +%Y-%m-%d_%s'
 export LOCAL_BIN=~/.local/bin
 PATH=$PATH:$LOCAL_BIN
 
-COLOR1='\[\033[38;5;34m\]'
-COLOR2='\[\033[38;5;161m\]'
-BOLD='\[\033[1m\]' # Work only if "allow bold text" setting is enabled
+COLOR_BG='\[\033[48;5;208m\]'
+COLOR_BG2='\[\033[48;5;234m\]'
+COLOR_FG='\[\033[1;34m\[\033[38;5;234m\]'
+COLOR_FG2='\[\033[38;5;208m\]'
 STOP='\[\033[0m\]'
 
-PS1="[${BOLD}${COLOR1}\u${STOP}@${BOLD}${COLOR2}\h \W${STOP}]\$ "
+PS1="${COLOR_BG}${COLOR_FG} \h ${STOP}${COLOR_BG2}${COLOR_FG2} \W ${STOP} ${COLOR_FG2}▰${STOP}  "
 PROMPT_COMMAND='echo -ne "\033]0;$(basename $PWD)\007"'
 export TTY_FG_COLOR=15
 export TTY_BG_COLOR=23
