@@ -12,4 +12,6 @@ APT_LIST='
     libnss3
     libsecret-1-0
     libfuse2
+    wl-clipboard
+    gnupg2
 '
