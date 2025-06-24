@@ -5,11 +5,8 @@
 
 ### 1 WORK IN PROGRESS
 
-- [datum/2025/WIP/DTUM-6.md](datum/2025/WIP/DTUM-6.md)   ```# gauge : usage```
-- [datum/2025/WIP/KITE-23.md](datum/2025/WIP/KITE-23.md)   ```# SAIL: source```
 - [datum/2025/WIP/KROS-5.md](datum/2025/WIP/KROS-5.md)   ```# nvim : copy menu```
-- [datum/2025/WIP/LEAF-30.md](datum/2025/WIP/LEAF-30.md)   ```# Jupyter :```
-- [datum/2025/WIP/VIM-18.md](datum/2025/WIP/VIM-18.md)   ```# yson : line view```
+- [datum/2025/WIP/LEAF-30.md](datum/2025/WIP/LEAF-30.md)   ```# Jupyter :```
 
 ### 2 ON HOLD
 
@@ -40,6 +37,7 @@
 - [datum/2025/DONE/DTUM-3.md](datum/2025/DONE/DTUM-3.md)   ```# distum : space-h256```
 - [datum/2025/DONE/DTUM-4.md](datum/2025/DONE/DTUM-4.md)   ```# distum : usage amount```
 - [datum/2025/DONE/DTUM-5.md](datum/2025/DONE/DTUM-5.md)   ```# distum : linux```
+- [datum/2025/DONE/DTUM-6.md](datum/2025/DONE/DTUM-6.md)   ```# gauge : usage```
 - [datum/2025/DONE/GILB-1.md](datum/2025/DONE/GILB-1.md)   ```# ldap : authentication```
 - [datum/2025/DONE/HCL-2.md](datum/2025/DONE/HCL-2.md)   ```# COWAD : select principal node```
 - [datum/2025/DONE/KBG-8.md](datum/2025/DONE/KBG-8.md)   ```# reborn: nvim```
@@ -56,6 +54,7 @@
 - [datum/2025/DONE/KITE-20.md](datum/2025/DONE/KITE-20.md)   ```# perplexity : ai```
 - [datum/2025/DONE/KITE-21.md](datum/2025/DONE/KITE-21.md)   ```# grok : x ai```
 - [datum/2025/DONE/KITE-22.md](datum/2025/DONE/KITE-22.md)   ```# cursor : ai```
+- [datum/2025/DONE/KITE-23.md](datum/2025/DONE/KITE-23.md)   ```# SAIL: source```
 - [datum/2025/DONE/KITE-3.md](datum/2025/DONE/KITE-3.md)   ```# Google : Firebase/Studio IDX```
 - [datum/2025/DONE/KITE-7.md](datum/2025/DONE/KITE-7.md)   ```# Microsoft : Copilot```
 - [datum/2025/DONE/KITE-8.md](datum/2025/DONE/KITE-8.md)   ```# claude.ai :```
@@ -94,6 +93,7 @@
 - [datum/2025/DONE/VIM-15.md](datum/2025/DONE/VIM-15.md)   ```# envsc: env for each shell container image```
 - [datum/2025/DONE/VIM-16.md](datum/2025/DONE/VIM-16.md)   ```# envsc : templates```
 - [datum/2025/DONE/VIM-17.md](datum/2025/DONE/VIM-17.md)   ```# nvim: init on linux```
+- [datum/2025/DONE/VIM-18.md](datum/2025/DONE/VIM-18.md)   ```# yson : line view```
 - [datum/2025/DONE/archived.JBL-1.md](datum/2025/DONE/archived.JBL-1.md)   ```# ISSUE : JBL Charge 5```
 - [datum/2025/DONE/archived.KBG-1.md](datum/2025/DONE/archived.KBG-1.md)   ```# RELEASE : KANBORG```
 - [datum/2025/DONE/archived.KBG-2.md](datum/2025/DONE/archived.KBG-2.md)   ```# ISSUE : card not move when destination is empty```
