@@ -197,6 +197,12 @@ function SessionMgmt()
     silent exec "! [[ ".limit." -lt $(wc -l Session.vim  | awk '{print $1}') ]] && rm Session.vim"
 endfunction
 
+function CopyWL()
+  let b:cpf = '/run/user/'.expand('$UID').'/cpwlvim'
+  call luaeval('require("mimd--wl-copy").write(_A)',b:cpf)
+  silent exec '!cat '.b:cpf.'| base64 -d | wl-copy'
+endfunction
+
 function StartUp()
 endfunction
 
@@ -255,6 +261,7 @@ map dex : Git <CR>tty<CR><C-w>L<C-w>=
 map hls : set hls!<CR>
 vmap b64    \atob<Esc>
 vmap b94    \btoa<Esc>
+vmap YY    y<Esc>:call CopyWL()<CR>
 
 nnoremap cup : Git commit -m "up"<CR>
 
