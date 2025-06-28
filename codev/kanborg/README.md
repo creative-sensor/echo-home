@@ -118,7 +118,8 @@
 - [datum/2025/BACKLOG/CMW-2.md](datum/2025/BACKLOG/CMW-2.md)   ```# commonwealth : vault function```
 - [datum/2025/BACKLOG/CORTA-0.md](datum/2025/BACKLOG/CORTA-0.md)   ```# Cortana : Chief```
 - [datum/2025/BACKLOG/CTNR-0.md](datum/2025/BACKLOG/CTNR-0.md)   ```# public : encrypted```
-- [datum/2025/BACKLOG/DBMS-0.md](datum/2025/BACKLOG/DBMS-0.md)   ```# ISSUE :```
+- [datum/2025/BACKLOG/DBMS-0.md](datum/2025/BACKLOG/DBMS-0.md)   ```# Database : Meta System```
+- [datum/2025/BACKLOG/DBMS-1.md](datum/2025/BACKLOG/DBMS-1.md)   ```# Vector : Search```
 - [datum/2025/BACKLOG/DROID-0.md](datum/2025/BACKLOG/DROID-0.md)   ```# Android : Platform```
 - [datum/2025/BACKLOG/DTUM-0.md](datum/2025/BACKLOG/DTUM-0.md)   ```# Datum : Backup and Recovery```
 - [datum/2025/BACKLOG/DTUM-1.md](datum/2025/BACKLOG/DTUM-1.md)   ```# Backup : existing mono service```

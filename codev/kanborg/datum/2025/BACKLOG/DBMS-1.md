@@ -1,10 +1,6 @@
-# Database : Meta System
+# Vector : Search
 --------------------------------
 ### 0 DESCRIPTION
-
-- DB technology
-- Data structure
-- Data Modelling
 
 
 ### 1 SOLUTION
