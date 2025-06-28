@@ -17,6 +17,7 @@
 ### 3 TO DO
 
 - [datum/2025/TODO/CORTA-2.md](datum/2025/TODO/CORTA-2.md)   ```# lmstudio : LLM```
+- [datum/2025/TODO/DROID-3.md](datum/2025/TODO/DROID-3.md)   ```# android : studio```
 - [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
 - [datum/2025/TODO/MDOS-20.md](datum/2025/TODO/MDOS-20.md)   ```# rsync : source rebuild```
 
