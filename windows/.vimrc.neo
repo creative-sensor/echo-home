@@ -34,6 +34,13 @@ let g:yaml_revealer_separator='➤'
     "<C-v>u27a4
 
 
+"-------- [GUI / NEOVIDE] --------
+if exists('g:neovide')
+  let g:neovide_cursor_animation_length = 0
+  let g:neovide_cursor_vfx_mode = ""
+  let g:neovide_scroll_animation_length = 0.001
+  set guifont=Cascadia\ Mono:h12
+endif
 
 "-------- [PLUGIN / VUNDLE] --------
 set nocompatible              " be iMproved, required
