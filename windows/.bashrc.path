@@ -2,6 +2,7 @@ declare -A path_dict
 
 path_dict["marktext"]="$HOME/AppData/Local/Programs/MarkText"
 path_dict["wfunction"]="$HOME/echo-home/windows/.function"
+path_dict["go"]="$PROGRAMFILES/Go/bin"
 
 for key in "${!path_dict[@]}"; do
   PATH+=":${path_dict[$key]}"

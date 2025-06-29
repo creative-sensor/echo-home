@@ -24,3 +24,4 @@ docker: [ 4.39.0 , "https://desktop.docker.com/win/main/amd64/184744/Docker%20De
 vs_BuildTools: [ 4.39.0 , "https://download.visualstudio.microsoft.com/download/pr/ae26f186-44f0-4ea2-880c-4cf0acbab905/985f13b08eee04b8d0ee5a061652b77f5d4a2d594bcf62ebfbf2b809d0745d03/vs_BuildTools.exe" ]
 sops: [ 3.10.2 , "https://github.com/getsops/sops/releases/download/v3.10.2/sops-v3.10.2.amd64.exe" ]
 ripgrep: [ 14.1.1 , "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-pc-windows-msvc.zip", {"suffix":"zip"} ]
+go: [ 1.24.4 , "https://go.dev/dl/go1.24.4.windows-amd64.msi", {"suffix":"msi"} ]
