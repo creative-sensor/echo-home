@@ -1,11 +1,12 @@
-# container : as native shell
+# gui : neovide
 --------------------------------
 ### 0 DESCRIPTION
 
-- Possible to use container shell for a special environment exec
+- to fix UX
 
 ### 1 SOLUTION
 
+https://github.com/creative-sensor/echo-home/commit/87489ac023c4afeb763ff93d349273191a45afd2
 
 ### 2 NOTES
 

@@ -6,7 +6,8 @@
 ### 1 WORK IN PROGRESS
 
 - [datum/2025/WIP/LEAF-30.md](datum/2025/WIP/LEAF-30.md)   ```# Jupyter :```
-- [datum/2025/WIP/MDOS-21.md](datum/2025/WIP/MDOS-21.md)   ```# lang runtime : go```
+- [datum/2025/WIP/MDOS-21.md](datum/2025/WIP/MDOS-21.md)   ```# lang runtime : go```
+- [datum/2025/WIP/VIM-19.md](datum/2025/WIP/VIM-19.md)   ```# gui : neovide```
 
 ### 2 ON HOLD
 
@@ -99,6 +100,7 @@
 - [datum/2025/DONE/VIM-16.md](datum/2025/DONE/VIM-16.md)   ```# envsc : templates```
 - [datum/2025/DONE/VIM-17.md](datum/2025/DONE/VIM-17.md)   ```# nvim: init on linux```
 - [datum/2025/DONE/VIM-18.md](datum/2025/DONE/VIM-18.md)   ```# yson : line view```
+- [datum/2025/DONE/VIM-2.md](datum/2025/DONE/VIM-2.md)   ```# container : as native shell```
 - [datum/2025/DONE/archived.JBL-1.md](datum/2025/DONE/archived.JBL-1.md)   ```# ISSUE : JBL Charge 5```
 - [datum/2025/DONE/archived.KBG-1.md](datum/2025/DONE/archived.KBG-1.md)   ```# RELEASE : KANBORG```
 - [datum/2025/DONE/archived.KBG-2.md](datum/2025/DONE/archived.KBG-2.md)   ```# ISSUE : card not move when destination is empty```
@@ -154,6 +156,5 @@
 - [datum/2025/BACKLOG/OBSR-0.md](datum/2025/BACKLOG/OBSR-0.md)   ```# Observability : Monitoring Eyes```
 - [datum/2025/BACKLOG/TSQA-0.md](datum/2025/BACKLOG/TSQA-0.md)   ```# TEST : QUALITY```
 - [datum/2025/BACKLOG/VIM-0.md](datum/2025/BACKLOG/VIM-0.md)   ```# VIM : Bram Moolenaar ```
-- [datum/2025/BACKLOG/VIM-2.md](datum/2025/BACKLOG/VIM-2.md)   ```# container : as native shell```
 - [datum/2025/BACKLOG/VIM-3.md](datum/2025/BACKLOG/VIM-3.md)   ```# monitor : TUI dashboard```
 - [datum/2025/BACKLOG/WGI-0.md](datum/2025/BACKLOG/WGI-0.md)   ```# Web Graphic: Interface```
