@@ -1,0 +1,1 @@
+powershell 'msiexec.exe  /i ${pwd}\artefacts\go-1.24.4.msi  /passive'
