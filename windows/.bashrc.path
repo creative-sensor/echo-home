@@ -1,13 +1,13 @@
 declare -A path_dict
 
-path_dict["gitbash"]='/mingw64/bin:/usr/local/bin:/usr/bin:/bin:/mingw64/bin:/usr/bin/vendor_perl:/usr/bin/core_perl:/c/Windows/system32:/c/Windows:/c/Windows/System32/Wbem:/c/Windows/System32/WindowsPowerShell/v1.0:/c/Windows/System32/OpenSSH'
 path_dict["python_scripts"]=$PYTHONPATH/Scripts
 path_dict["gvim"]='/c/Program Files (x86)/Vim/vim90'
 path_dict["marktext"]="$HOME/AppData/Local/Programs/MarkText"
 path_dict["wfunction"]="$HOME/echo-home/windows/.function"
 path_dict["go"]="$PROGRAMFILES/Go/bin"
 path_dict["node"]=$LOCAL_BIN/node-v18.13.0-win-x64
-path_dict["neovide"]='/c/Program Files/Neovim/bin:/c/Program Files/Neovide'
+path_dict["nvim"]='/c/Program Files/Neovim/bin'
+path_dict["neovide"]='/c/Program Files/Neovide'
 path_dict["docker_desktop"]='/c/Program Files/Docker/Docker/resources/bin:/c/ProgramData/DockerDesktop/version-bin'
 
 
