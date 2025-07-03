@@ -1,0 +1,8 @@
+E302|CONTROL| [12km/h]    [80C]    [4.2G]    [12000ft]
+F921|FIRE| 40GB    hotest   northbound 
+U932|LAUNCH| push    stable
+J231|RUN| fast   mach4
+M390|RELEASE|
+C329|SWEEP
+M211|GEAR_DOWN| down    ready
+D823|DROP| detached
