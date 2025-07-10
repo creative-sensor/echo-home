@@ -1,6 +1,6 @@
 
 sudo dnf update -y
-sudo dnf install -y $(<RPM_PLUS) 
+sudo dnf install --skip-unavailable -y $(<RPM_PLUS)  
 
 
 
