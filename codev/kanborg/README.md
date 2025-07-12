@@ -21,7 +21,8 @@
 
 - [datum/2025/TODO/CORTA-2.md](datum/2025/TODO/CORTA-2.md)   ```# lmstudio : LLM```
 - [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
-- [datum/2025/TODO/MDOS-20.md](datum/2025/TODO/MDOS-20.md)   ```# rsync : source rebuild```
+- [datum/2025/TODO/MDOS-20.md](datum/2025/TODO/MDOS-20.md)   ```# rsync : source rebuild```
+- [datum/2025/TODO/MDOS-25.md](datum/2025/TODO/MDOS-25.md)   ```# vscodium : python ide```
 
 ### 4 DONE
 
