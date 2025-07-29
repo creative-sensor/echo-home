@@ -136,7 +136,8 @@
 - [datum/2025/BACKLOG/DTUM-0.md](datum/2025/BACKLOG/DTUM-0.md)   ```# Datum : Backup and Recovery```
 - [datum/2025/BACKLOG/DTUM-1.md](datum/2025/BACKLOG/DTUM-1.md)   ```# Backup : existing mono service```
 - [datum/2025/BACKLOG/E419-0.md](datum/2025/BACKLOG/E419-0.md)   ```# ISSUE :```
-- [datum/2025/BACKLOG/GGPU-0.md](datum/2025/BACKLOG/GGPU-0.md)   ```# ISSUE :```
+- [datum/2025/BACKLOG/GGPU-0.md](datum/2025/BACKLOG/GGPU-0.md)   ```# General : GPU```
+- [datum/2025/BACKLOG/GGPU-2.md](datum/2025/BACKLOG/GGPU-2.md)   ```# Intel : XeSS```
 - [datum/2025/BACKLOG/GRTH-0.md](datum/2025/BACKLOG/GRTH-0.md)   ```# GRAPH : THEORY```
 - [datum/2025/BACKLOG/KBG-3.md](datum/2025/BACKLOG/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
 - [datum/2025/BACKLOG/KITE-0.md](datum/2025/BACKLOG/KITE-0.md)   ```# Paper : Kites```

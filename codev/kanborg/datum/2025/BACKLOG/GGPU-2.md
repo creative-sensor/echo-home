@@ -1,12 +1,8 @@
-# General : GPU
+# Intel : XeSS
 --------------------------------
 ### 0 DESCRIPTION
 
-- Gaming
-- Imaging
-- Graphics Processing
-- Parallel Processing 
-- GPU Chip
+- https://github.com/intel/xess
 
 ### 1 SOLUTION
 
