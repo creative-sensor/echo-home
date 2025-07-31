@@ -1,6 +1,6 @@
 alias ll='ls -la'
 alias vim='vim -c "set ttymouse=sgr" '
-alias neovide='WAYLAND_DISPLAY="" neovide --no-multigrid'
+alias nvide='WAYLAND_DISPLAY="" neovide --no-multigrid --fork &'
 export TTY_FG_COLOR=253
 export TTY_BG_COLOR=23
 
