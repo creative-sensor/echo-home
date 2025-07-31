@@ -6,9 +6,14 @@ https://lmstudio.ai/
 
 ### 1 SOLUTION
 
+https://github.com/creative-sensor/echo-home/commit/b5fd3fcd5e18d05d1b062d9815478dc57f22ba19
 
 ### 2 NOTES
 
+- mistralai/codestral-22b-v0.1
+- google/gemma-3-12b
+- microsoft/phi-4-reasoning-plus
+- ibm/granite-3.2-8b
 
 ### 3 TEST/VERIFICATION
 

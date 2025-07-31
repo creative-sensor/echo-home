@@ -6,6 +6,7 @@
 ### 1 WORK IN PROGRESS
 
 - [datum/2025/WIP/ASML-2.md](datum/2025/WIP/ASML-2.md)   ```# MLOps : high-level [2]```
+- [datum/2025/WIP/CORTA-2.md](datum/2025/WIP/CORTA-2.md)   ```# lmstudio : LLM```
 - [datum/2025/WIP/DROID-3.md](datum/2025/WIP/DROID-3.md)   ```# android : studio```
 - [datum/2025/WIP/LEAF-30.md](datum/2025/WIP/LEAF-30.md)   ```# Jupyter :```
 - [datum/2025/WIP/MDOS-22.md](datum/2025/WIP/MDOS-22.md)   ```# lang runtime : lua```
@@ -20,7 +21,6 @@
 
 ### 3 TO DO
 
-- [datum/2025/TODO/CORTA-2.md](datum/2025/TODO/CORTA-2.md)   ```# lmstudio : LLM```
 - [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
 - [datum/2025/TODO/GGPU-1.md](datum/2025/TODO/GGPU-1.md)   ```# video : codecs```
 - [datum/2025/TODO/MDOS-20.md](datum/2025/TODO/MDOS-20.md)   ```# rsync : source rebuild```
