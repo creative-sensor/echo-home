@@ -1,9 +1,10 @@
-#!/bin/bash -x
+#!/bin/bash
 
 
 
 DKR_ENV=${DKR_ENV:-".env"}
-
+envsc="Q09MT1JfQkc9J1xbXDAzM1s0ODs1OzE2bVxdJwpDT0xPUl9CRzE9J1xbXDAzM1s0ODs1OzUybVxdJwpDT0xPUl9GRz0nXFtcMDMzWzM4OzU7MjUybVxdJwpTVE9QPSdcW1wwMzNbMG1cXScKUFMxPSIke0NPTE9SX0JHfSR7Q09MT1JfRkd9IERSSSAke0NPTE9SX0JHMX0gXFcgJHtTVE9QfSDilrYgIgo="
+if ! test -s $DKR_ENV ;then echo $envsc | base64 -d > $DKR_ENV ;fi
 source $DKR_ENV
 
 DKR_IMAGE=${DKR_IMAGE:-"ubuntu:latest"}
