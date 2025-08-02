@@ -67,4 +67,5 @@ export TTY_BG_COLOR=23
 #export GNUPGHOME=
 
 # ---- EDIT ----
+test -r ~/.bashrc.path && source ~/.bashrc.path
 test -r ~/.bashrc.edit && source ~/.bashrc.edit
