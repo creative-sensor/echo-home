@@ -10,6 +10,7 @@
 - [datum/2025/WIP/DROID-3.md](datum/2025/WIP/DROID-3.md)   ```# android : studio```
 - [datum/2025/WIP/LEAF-30.md](datum/2025/WIP/LEAF-30.md)   ```# Jupyter :```
 - [datum/2025/WIP/MDOS-22.md](datum/2025/WIP/MDOS-22.md)   ```# lang runtime : lua```
+- [datum/2025/WIP/MONO-5.md](datum/2025/WIP/MONO-5.md)   ```# dri : env```
 - [datum/2025/WIP/VIM-20.md](datum/2025/WIP/VIM-20.md)   ```# vim : pad [2]```
 
 ### 2 ON HOLD
@@ -153,7 +154,7 @@
 - [datum/2025/BACKLOG/LEAF-5.md](datum/2025/BACKLOG/LEAF-5.md)   ```# SPEC : Define new spec```
 - [datum/2025/BACKLOG/LEAF-7.md](datum/2025/BACKLOG/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
 - [datum/2025/BACKLOG/MDOS-0.md](datum/2025/BACKLOG/MDOS-0.md)   ```# MICROSOFT : WINDOWS```
-- [datum/2025/BACKLOG/MONO-0.md](datum/2025/BACKLOG/MONO-0.md)   ```# ISSUE :```
+- [datum/2025/BACKLOG/MONO-0.md](datum/2025/BACKLOG/MONO-0.md)   ```# Mono : lithium```
 - [datum/2025/BACKLOG/MONO-1.md](datum/2025/BACKLOG/MONO-1.md)   ```# Apache : NiFi```
 - [datum/2025/BACKLOG/NCEPT-0.md](datum/2025/BACKLOG/NCEPT-0.md)   ```# CONCEPT : Fractual system```
 - [datum/2025/BACKLOG/NCEPT-1.md](datum/2025/BACKLOG/NCEPT-1.md)   ```# SHORT-GUN : CODE```
