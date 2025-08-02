@@ -1,6 +1,6 @@
 #!/bin/bash -x
 test -s ~/.vim/vim-plug/plug.vim || git clone https://github.com/junegunn/vim-plug.git ~/.vim/vim-plug
 cp -b .vimrc.neo ~/
-mkdir -p ~/.config && cp -rb .config/nvim ~/.config/
+mkdir -p ~/.config && cp -rb -f .config/nvim ~/.config/
 mkdir -p ~/.vim/lua && cp -b .vim/lua/*.lua ~/.vim/lua/
 nvim -c "PlugInstall" -c "qall"

@@ -15,4 +15,5 @@ APT_LIST='
     wl-clipboard
     gnupg2
     gettext-base
+    docker.io
 '
