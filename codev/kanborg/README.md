@@ -10,7 +10,6 @@
 - [datum/2025/WIP/DROID-3.md](datum/2025/WIP/DROID-3.md)   ```# android : studio```
 - [datum/2025/WIP/LEAF-30.md](datum/2025/WIP/LEAF-30.md)   ```# Jupyter :```
 - [datum/2025/WIP/MDOS-22.md](datum/2025/WIP/MDOS-22.md)   ```# lang runtime : lua```
-- [datum/2025/WIP/MONO-5.md](datum/2025/WIP/MONO-5.md)   ```# dri : env```
 - [datum/2025/WIP/VIM-20.md](datum/2025/WIP/VIM-20.md)   ```# vim : pad [2]```
 
 ### 2 ON HOLD
@@ -95,6 +94,7 @@
 - [datum/2025/DONE/MDOS-5.md](datum/2025/DONE/MDOS-5.md)   ```# windows : application explorer```
 - [datum/2025/DONE/MDOS-7.md](datum/2025/DONE/MDOS-7.md)   ```# terminal : gvim cannot detect unix file path```
 - [datum/2025/DONE/MDOS-8.md](datum/2025/DONE/MDOS-8.md)   ```# window terminal : line buffer limit```
+- [datum/2025/DONE/MONO-5.md](datum/2025/DONE/MONO-5.md)   ```# dri : env```
 - [datum/2025/DONE/NJS-3.md](datum/2025/DONE/NJS-3.md)   ```# VIM : DOM```
 - [datum/2025/DONE/VIM-10.md](datum/2025/DONE/VIM-10.md)   ```# preset : window layout```
 - [datum/2025/DONE/VIM-11.md](datum/2025/DONE/VIM-11.md)   ```# NeoVim : init```
