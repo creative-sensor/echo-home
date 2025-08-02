@@ -14,6 +14,7 @@ https://github.com/creative-sensor/echo-home/commit/b5fd3fcd5e18d05d1b062d981547
 - google/gemma-3-12b
 - microsoft/phi-4-reasoning-plus
 - ibm/granite-3.2-8b
+- qwen3-4b
 
 ### 3 TEST/VERIFICATION
 
@@ -21,6 +22,9 @@ https://github.com/creative-sensor/echo-home/commit/b5fd3fcd5e18d05d1b062d981547
 ### 4 JOURNAL
 
 
+###### 4.0
+
+- / hardware capability check for categorization
 
 --------------------------------
 ```json
