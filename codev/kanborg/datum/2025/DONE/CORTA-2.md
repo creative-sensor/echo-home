@@ -1,4 +1,4 @@
-# lmstudio : LLM
+# lmstudio : LLM [8]
 --------------------------------
 ### 0 DESCRIPTION
 
@@ -15,6 +15,7 @@ https://github.com/creative-sensor/echo-home/commit/b5fd3fcd5e18d05d1b062d981547
 - microsoft/phi-4-reasoning-plus
 - ibm/granite-3.2-8b
 - qwen3-4b
+- liquid/lfm2-1.2b (lightweight)
 
 ### 3 TEST/VERIFICATION
 
@@ -22,9 +23,13 @@ https://github.com/creative-sensor/echo-home/commit/b5fd3fcd5e18d05d1b062d981547
 ### 4 JOURNAL
 
 
+###### 4.1
+
+- context separation per topic
+
 ###### 4.0
 
-- / hardware capability check for categorization
+- /\ hardware capability check for categorization
 
 --------------------------------
 ```json
