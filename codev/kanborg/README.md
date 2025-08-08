@@ -5,7 +5,7 @@
 
 ### 1 WORK IN PROGRESS
 
-- [datum/2025/WIP/ASML-2.md](datum/2025/WIP/ASML-2.md)   ```# MLOps : high-level [2]```
+- [datum/2025/WIP/ASML-2.md](datum/2025/WIP/ASML-2.md)   ```# MLOps : high-level [3]```
 - [datum/2025/WIP/DROID-3.md](datum/2025/WIP/DROID-3.md)   ```# android : studio```
 - [datum/2025/WIP/LEAF-30.md](datum/2025/WIP/LEAF-30.md)   ```# Jupyter :```
 - [datum/2025/WIP/MDOS-22.md](datum/2025/WIP/MDOS-22.md)   ```# lang runtime : lua```
@@ -131,6 +131,8 @@
 - [datum/2025/BACKLOG/CMW-0.md](datum/2025/BACKLOG/CMW-0.md)   ```# Common : Wealth```
 - [datum/2025/BACKLOG/CMW-2.md](datum/2025/BACKLOG/CMW-2.md)   ```# commonwealth : vault function```
 - [datum/2025/BACKLOG/CORTA-0.md](datum/2025/BACKLOG/CORTA-0.md)   ```# Cortana : Chief```
+- [datum/2025/BACKLOG/CORTA-4.md](datum/2025/BACKLOG/CORTA-4.md)   ```# pytorch : start```
+- [datum/2025/BACKLOG/CORTA-5.md](datum/2025/BACKLOG/CORTA-5.md)   ```# tensorflow : start```
 - [datum/2025/BACKLOG/CTNR-0.md](datum/2025/BACKLOG/CTNR-0.md)   ```# public : encrypted```
 - [datum/2025/BACKLOG/DBMS-0.md](datum/2025/BACKLOG/DBMS-0.md)   ```# Database : Meta System```
 - [datum/2025/BACKLOG/DBMS-1.md](datum/2025/BACKLOG/DBMS-1.md)   ```# Vector : Search```

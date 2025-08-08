@@ -5,7 +5,7 @@ LEAF : {"description":"Short-lived | Narrow Scope | Low Priority | Uncategorized
 NCEPT : {"description":"Concept","last_id":2,"related":""}
 ARTE : {"description":"Artefacts Exware","last_id":11,"related":""}
 MDOS : {"description":"Microsoft Windows","last_id":25,"related":""}
-CORTA : {"description":"Cortana and Chief","last_id":3,"related":""}
+CORTA : {"description":"Cortana and Chief","last_id":5,"related":""}
 E419 : {"description":"Echo 419","last_id":0,"related":""}
 HCL : {"description":"Nomad","last_id":2,"related":""}
 DROID : {"description":"Android","last_id":3,"related":""}
