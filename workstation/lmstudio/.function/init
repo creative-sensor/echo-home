@@ -13,6 +13,7 @@ test -n "$VARSET_EXT" && source $VARSET_EXT
 
 git clone https://github.com/lmstudio-ai/lmstudio-js.git --recursive
 cd lmstudio-js
-cp ../.env ./
+cp ../.env.full ./
 dri npm install
-dri npm run build
+#dri npm run build
+dri npm run make-cli
