@@ -1,18 +1,12 @@
 #!/usr/bin/env bash
 #set -x
-# ---- |EXT ----
-VARSET_EXT=$1
-# ---- |DEFAULT ----
 
-# ---- |OVERRIDE ----
-source .properd/VARSET
-test -n "$VARSET_EXT" && source $VARSET_EXT
-
-# ---- |MAIN ----
-
+LMS_VERSION=6694994
 
 git clone https://github.com/lmstudio-ai/lmstudio-js.git --recursive
 cd lmstudio-js
+git checkout $LMS_VERSION 
 export DKR_ENV=../.env.full
 dri npm install
 dri npm run build-cli
+dri npm run build-lmstudio
