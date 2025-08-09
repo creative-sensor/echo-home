@@ -2,4 +2,4 @@
 
 BRANCH=${1:-main}
 MESSAGE=${2:-squash merge $BRANCH}
-git merge --squash $BRANCH && git cm "$MESSAGE"
+git merge --squash $BRANCH && git cm -m "$MESSAGE"

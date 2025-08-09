@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#set -x
+
+LMS_VERSION=6694994
+
+git clone https://github.com/lmstudio-ai/lmstudio-js.git --recursive
+cd lmstudio-js
+git checkout $LMS_VERSION 
+export DKR_ENV=../.env.full
+dri npm install
+dri npm run build-cli
+dri npm run build-lmstudio

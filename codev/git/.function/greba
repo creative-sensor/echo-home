@@ -1,0 +1,4 @@
+#!/bin/bash -x
+
+BRANCH=${1:-main}
+git rebase $BRANCH || git rebase --skip
