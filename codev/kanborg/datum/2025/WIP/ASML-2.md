@@ -12,6 +12,20 @@
 
 ### 4 JOURNAL
 
+###### 4.5 transformer
+
+- [Transformer Explainer: LLM Transformer Model Visually Explained](https://poloclub.github.io/transformer-explainer/)
+
+- https://d3js.org/
+
+- [Word embeddings &nbsp;|&nbsp; Text &nbsp;|&nbsp; TensorFlow](https://www.tensorflow.org/text/guide/word_embeddings)
+
+- https://medium.com/image-processing-with-python/input-embedding-sublayer-in-the-transformer-model-7346f160567d
+
+- https://medium.com/image-processing-with-python/the-feedforward-network-ffn-in-the-transformer-model-6bb6e0ff18d
+
+- [GitHub - poloclub/transformer-explainer: Transformer Explained Visually: Learn How LLM Transformer Models Work with Interactive Visualization](https://github.com/poloclub/transformer-explainer)
+
 ###### 4.4 architecture
 
 - rnn
