@@ -1,0 +1,5 @@
+#!/bin/bash -x
+
+BRANCH=${1:-main}
+MESSAGE=${2:-squash merge $BRANCH}
+git merge --squash $BRANCH && git cm "$MESSAGE"

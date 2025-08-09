@@ -1,0 +1,5 @@
+#!/bin/bash -x
+
+REMOTE=${2:-origin}
+BRANCH=${1:-HEAD}
+git fetch $REMOTE $BRANCH

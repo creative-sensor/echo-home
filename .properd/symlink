@@ -5,7 +5,9 @@ codev/git/.function/gforce
 codev/git/.function/gpush
 codev/git/.function/gpull
 codev/git/.function/gpul1
+codev/git/.function/gfch
 codev/git/.function/gbrx
+codev/git/.function/gsquash
 codev/rev-chain/.function/rev-chain-touch
 container/.function/runbox
 .vim/.function/vim-artillery
