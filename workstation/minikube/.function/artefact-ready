@@ -3,3 +3,5 @@
 ARTEFACT_DIR=${ARTEFACT_DIR:-artefacts}
 cp $ARTEFACT_DIR/minikube $LOCAL_BIN/
 chmod +x $LOCAL_BIN/minikube
+
+mount | grep -m 1 -o /mnt/chrome && sudo usermod -aG docker $USER && newgrp docker
