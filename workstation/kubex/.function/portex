@@ -1,0 +1,35 @@
+#!/bin/bash 
+
+PORTEX_LIST=/tmp/.portex
+PORTEX_YSON=$PORTEX_LIST.yson
+kubectl get svc --all-namespaces -o  go-template='
+{{range $k_svc,$v_svc := .items}}
+{{range.spec.ports}}
+ {{.protocol}}{{"|service|"}}{{$v_svc.metadata.namespace}}{{"|"}}{{$v_svc.metadata.name}}{{"|"}}{{or .name ".NAME" }}{{"|"}}{{.port}}{{"\n"}}
+{{end}}
+{{end}}' > $PORTEX_LIST
+
+
+kubectl get pod --all-namespaces -o  go-template='
+{{range $k_pod,$v_pod := .items}}
+{{range $k_con,$v_con := .spec.containers}}
+{{range $k_port,$v_port := $v_con.ports}}
+ {{.protocol}}{{"|pod|"}}{{$v_pod.metadata.namespace}}{{"|"}}{{$v_pod.metadata.name}}{{"|"}}{{ or .name ".NAME" }}{{"|"}}{{.containerPort}}{{"\n"}}
+{{end}}
+{{end}}
+{{end}}'>> $PORTEX_LIST
+
+cat $PORTEX_LIST |  sed -r '/^\s*$/d' | sort -u > $PORTEX_LIST.tmp
+cat $PORTEX_LIST.tmp | grep -n '.*' > $PORTEX_YSON 
+cat $PORTEX_LIST.tmp | grep --color -n '|\|TCP\|UDP\|[0-9]\+$' 
+
+read -p "PORT_ID ?= " PORT_ID
+TYPE=$(cat $PORTEX_YSON | yq .$PORT_ID | awk -F "|" '{print $2}')
+NAMESPACE=$(cat $PORTEX_YSON | yq .$PORT_ID | awk -F "|" '{print $3}')
+OBJECT=$(cat $PORTEX_YSON | yq .$PORT_ID | awk -F "|" '{print $4}')
+PORT=$(cat $PORTEX_YSON | yq ."$PORT_ID" | awk -F "|" '{print $NF}')
+
+test  $PORT -gt 1000  && PORTEX=$PORT
+set -x
+kubectl port-forward -n $NAMESPACE  $TYPE/$OBJECT   $PORTEX:$PORT &
+

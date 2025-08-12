@@ -1,13 +1,7 @@
 #!/usr/bin/env bash
 #set -x
-NODES=$1
-# ---- |EXT ----
-VARSET_EXT=$1
-# ---- |DEFAULT ----
-NODES=${NODES:-1}
-# ---- |OVERRIDE ----
-source .properd/VARSET
-test -n "$VARSET_EXT" && source $VARSET_EXT
 
-# ---- |MAIN ----
-minikube start --nodes=$NODES
+source .properd/VARSET
+
+minikube start --driver=docker
+
