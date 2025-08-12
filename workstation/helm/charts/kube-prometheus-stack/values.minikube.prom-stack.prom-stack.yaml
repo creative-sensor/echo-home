@@ -1,0 +1,9 @@
+_helm_:
+  release: prom-stack
+  namespace: prom-stack
+  chart: prometheus-community/kube-prometheus-stack
+  chart_version: 76.2.1
+
+
+grafana:
+  enabled: false

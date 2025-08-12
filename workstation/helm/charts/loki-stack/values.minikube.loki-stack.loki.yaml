@@ -1,0 +1,8 @@
+_helm_:
+  release: loki-stack
+  namespace: loki-stack
+  chart: grafana/loki-stack
+  chart_version: 2.10.2
+
+test_pod:
+  enabled: false

@@ -1,3 +1,10 @@
+_helm_:
+  release: grafana
+  namespace: grafana
+  chart: grafana/grafana
+  chart_version: 9.3.2
+  chart_local: yes
+
 
 datasources:
   datasources.yaml:
@@ -6,13 +13,13 @@ datasources:
       - name: prom-stack
         type: prometheus
         uid: prom-0000
-        url: http://chrt-prom-stack-kube-prome-prometheus.prom-stack.svc.cluster.local:9090
+        url: http://prom-stack-kube-prometheus-prometheus.prom-stack.svc.cluster.local:9090
         access: proxy
         isDefault: true
       - name: loki-stack
         type: loki
         uid: loki-0000
-        url: http://chrt-loki-stack.loki-stack.svc.cluster.local:3100
+        url: http://loki-stack.loki-stack.svc.cluster.local:3100
         access: proxy
 
 dashboardProviders:

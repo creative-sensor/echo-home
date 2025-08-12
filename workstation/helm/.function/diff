@@ -1,0 +1,12 @@
+#!/bin/bash
+
+VALUES_FILE=$1
+
+
+RELEASE=$(cat $VALUES_FILE |  yq ._helm_.release)
+CHART=$(cat $VALUES_FILE |  yq ._helm_.chart)
+CHART_VERSION=$(cat $VALUES_FILE |  yq ._helm_.chart_version)
+NAMESPACE=$(cat $VALUES_FILE |  yq ._helm_.namespace)
+
+set -x
+helm diff upgrade  $RELEASE $CHART --version $CHART_VERSION -n $NAMESPACE --allow-unreleased -f $VALUES_FILE

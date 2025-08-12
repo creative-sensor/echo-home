@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#set -x
+
+source .properd/VARSET
+
+minikube start --driver=docker --cpus 4 --memory 16000
+
