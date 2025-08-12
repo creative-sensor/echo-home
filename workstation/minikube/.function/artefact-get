@@ -2,6 +2,9 @@
 
 ARTEFACT_DIR=${ARTEFACT_DIR:-artefacts}
 mkdir -p $ARTEFACT_DIR
-curl -Lo $ARTEFACT_DIR/minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 \
-  && chmod +x minikube
+
+[[ $OS =~ "Windows_NT" ]] && curl -Lo $ARTEFACT_DIR/minikube https://github.com/kubernetes/minikube/releases/download/v1.36.0/minikube-windows-amd64.exe
+[[ $OS =~ "TN" ]] && curl -Lo $ARTEFACT_DIR/minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+
+chmod +x $ARTEFACT_DIR/minikube
 
