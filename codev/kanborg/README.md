@@ -7,6 +7,7 @@
 
 - [datum/2025/WIP/ASML-2.md](datum/2025/WIP/ASML-2.md)   ```# MLOps : high-level [3]```
 - [datum/2025/WIP/DROID-3.md](datum/2025/WIP/DROID-3.md)   ```# android : studio```
+- [datum/2025/WIP/KUBEX-6.md](datum/2025/WIP/KUBEX-6.md)   ```# minikube : driver=docker```
 - [datum/2025/WIP/LEAF-30.md](datum/2025/WIP/LEAF-30.md)   ```# Jupyter :```
 - [datum/2025/WIP/MDOS-22.md](datum/2025/WIP/MDOS-22.md)   ```# lang runtime : lua```
 - [datum/2025/WIP/VIM-20.md](datum/2025/WIP/VIM-20.md)   ```# vim : pad [2]```
