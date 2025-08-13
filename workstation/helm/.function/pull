@@ -10,4 +10,5 @@ CHART_LOCAL=$(cat $VALUES_FILE |  yq ._helm_.chart_local)
 NAMESPACE=$(cat $VALUES_FILE |  yq ._helm_.namespace)
 
 set -x
-helm pull $CHART --version $CHART_VERSION  --destination $(dirname $VALUES_FILE)
+cd charts
+helm pull $CHART --version $CHART_VERSION && tar xzf $(basename $CHART)-$CHART_VERSION.tgz

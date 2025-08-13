@@ -4,5 +4,4 @@ _helm_:
   namespace: kdash
   chart: kubernetes-dashboard/kubernetes-dashboard
   chart_version: 7.13.0
-  chart_local: yes
 
