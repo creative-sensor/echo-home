@@ -1,0 +1,4 @@
+unzip $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.zip
+cp windows-amd64/helm.exe  $LOCAL_BIN/
+rm -rf windows-amd64
+
