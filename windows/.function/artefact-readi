@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash -x 
 NAME=${1:-all}
 ARTIFACT_DIR=./artefacts
 ARTIFACT_YSON=.properd/artefacts.yaml
@@ -9,13 +9,16 @@ function ready (){
 	local ARTIFACT_URL=$(cat $ARTIFACT_YSON | yq -r ".${name}[1]")
 	local ARTIFACT_SUFFIX=$(cat $ARTIFACT_YSON | yq -r ".${name}[2].suffix")
 	[[ "$ARTIFACT_SUFFIX" =~ "null" ]] && ARTIFACT_SUFFIX=exe
-    test -r $ARTIFACT_DIR/.function/ready/$name && $ARTIFACT_DIR/.function/ready/$name && return
+    
     if [[ "$ARTIFACT_SUFFIX" =~ "msi" ]]; then
-        set -x
         default_cmd="msiexec.exe  /i \${pwd}\artefacts\\$name-$ARTIFACT_VERSION.msi  /passive"
         powershell "$default_cmd"
-        set +x
+        sleep 60
+        return
     fi
+
+    test -r $ARTIFACT_DIR/.function/ready/$name && source $ARTIFACT_DIR/.function/ready/$name && return
+    ln -sf $(pwd)/artefacts/$name-$ARTIFACT_VERSION  $LOCAL_BIN/$name
 }
 
 mkdir -p $ARTIFACT_DIR
