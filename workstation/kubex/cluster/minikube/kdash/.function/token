@@ -1,0 +1,1 @@
+kubectl.exe  create token ureadonly -n kdash
