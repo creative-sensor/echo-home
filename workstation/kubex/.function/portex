@@ -29,7 +29,15 @@ NAMESPACE=$(cat $PORTEX_YSON | yq .$PORT_ID | awk -F "|" '{print $3}')
 OBJECT=$(cat $PORTEX_YSON | yq .$PORT_ID | awk -F "|" '{print $4}')
 PORT=$(cat $PORTEX_YSON | yq ."$PORT_ID" | awk -F "|" '{print $NF}')
 
-test  $PORT -gt 1000  && PORTEX=$PORT
+if test  $PORT -gt 1000; then
+    PORTEX=$PORT
+else
+    PINNED_IP=$(echo $1 |  awk -F ":" '{print $1}')
+    PINNED_PORT=$(echo $1 |  awk -F ":" '{print $2}')
+    test -z "$PINNED_PORT" && PINNED_PORT=$PINNED_IP && unset PINNED_IP
+    PORTEX=$PINNED_PORT
+fi
+
 set -x
-kubectl port-forward -n $NAMESPACE  $TYPE/$OBJECT   $PORTEX:$PORT &
+kubectl port-forward -n $NAMESPACE  $TYPE/$OBJECT  --address ${PINNED_IP:-127.0.0.1}  $PORTEX:$PORT &
 

@@ -1,1 +1,2 @@
-kubectl.exe  create token ureadonly -n kdash
+#!/bin/bash -x
+kubectl  create token ureadonly -n kdash
