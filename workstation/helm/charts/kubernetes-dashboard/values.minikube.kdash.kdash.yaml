@@ -12,17 +12,6 @@ app:
       - kdash.kubex
       - localhost
     ingressClassName: nginx
-    useDefaultAnnotations: false
-    annotations:
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-    issuer:
-      name: disabled
-    tls:
-      enabled: false
 
-kong:
-  proxy:
-    http:
-      enabled: true
 
 
