@@ -1,0 +1,10 @@
+_helm_:
+  release: inginx
+  namespace: ingress-nginx
+  chart: ingress-nginx/ingress-nginx
+  chart_version: 4.13.1
+
+
+controller:
+  service:
+    type: ClusterIP 
