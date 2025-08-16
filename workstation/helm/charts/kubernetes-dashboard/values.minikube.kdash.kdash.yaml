@@ -5,3 +5,22 @@ _helm_:
   chart: kubernetes-dashboard/kubernetes-dashboard
   chart_version: 7.13.0
 
+app:
+  ingress:
+    enabled: true
+    hosts:
+      - kdash.kubex
+      - localhost
+    ingressClassName: nginx
+    useDefaultAnnotations: false
+    annotations:
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    issuer:
+      name: disabled
+    tls:
+      enabled: false
+
+kong:
+  proxy:
+    http:
+      enabled: true
