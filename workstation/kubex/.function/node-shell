@@ -1,0 +1,10 @@
+#!/bin/bash 
+NODE=${1:-minikube}
+IMAGE=${2:-ubuntu}
+NAMESPACE=${3:-default}
+RC="Q09MT1JfQkc9J1xbXDAzM1s0ODs1OzE2bVxdJwpDT0xPUl9CRzE9J1xbXDAzM1s0ODs1OzRtXF0nCkNPTE9SX0ZHPSdcW1wwMzNbMzg7NTsyNTJtXF0nClNUT1A9J1xbXDAzM1swbVxdJwpQUzE9IiR7Q09MT1JfQkd9JHtDT0xPUl9GR30gSzhTaCAke0NPTE9SX0JHMX0gXFcgJHtTVE9QfSDilrZcWyAgXF0iCg=="
+kubectl debug node/$NODE \
+  -it --image=$IMAGE \
+  -n $NAMESPACE \
+  --env RC="$RC" \
+  -- bash -c 'echo $RC | base64 -d > /tmp/rc; bash --rcfile /tmp/rc'
