@@ -7,13 +7,13 @@
 
 - [datum/2025/WIP/ASML-2.md](datum/2025/WIP/ASML-2.md)   ```# MLOps : high-level [6]```
 - [datum/2025/WIP/DROID-3.md](datum/2025/WIP/DROID-3.md)   ```# android : studio```
+- [datum/2025/WIP/KUBEX-3.md](datum/2025/WIP/KUBEX-3.md)   ```# ISSUE : log query dashboard```
 - [datum/2025/WIP/LEAF-30.md](datum/2025/WIP/LEAF-30.md)   ```# Jupyter :```
 - [datum/2025/WIP/MDOS-22.md](datum/2025/WIP/MDOS-22.md)   ```# lang runtime : lua```
 - [datum/2025/WIP/VIM-20.md](datum/2025/WIP/VIM-20.md)   ```# vim : pad [2]```
 
 ### 2 ON HOLD
 
-- [datum/2025/HOLD/KUBEX-3.md](datum/2025/HOLD/KUBEX-3.md)   ```# ISSUE : log query dashboard```
 - [datum/2025/HOLD/KUBEX-5.md](datum/2025/HOLD/KUBEX-5.md)   ```# jaeger : tracing system```
 - [datum/2025/HOLD/NJS-2.md](datum/2025/HOLD/NJS-2.md)   ```# GLORIA: run objectory```
 - [datum/2025/HOLD/VIM-4.md](datum/2025/HOLD/VIM-4.md)   ```# rc : container x-ray```
@@ -23,8 +23,7 @@
 - [datum/2025/TODO/CORTA-3.md](datum/2025/TODO/CORTA-3.md)   ```# lmstudio : cli```
 - [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
 - [datum/2025/TODO/GGPU-1.md](datum/2025/TODO/GGPU-1.md)   ```# video : codecs```
-- [datum/2025/TODO/MDOS-20.md](datum/2025/TODO/MDOS-20.md)   ```# rsync : source rebuild```
-- [datum/2025/TODO/MONO-6.md](datum/2025/TODO/MONO-6.md)   ```# mlflows : container```
+- [datum/2025/TODO/MDOS-20.md](datum/2025/TODO/MDOS-20.md)   ```# rsync : source rebuild```
 
 ### 4 DONE
 
@@ -99,6 +98,7 @@
 - [datum/2025/DONE/MDOS-7.md](datum/2025/DONE/MDOS-7.md)   ```# terminal : gvim cannot detect unix file path```
 - [datum/2025/DONE/MDOS-8.md](datum/2025/DONE/MDOS-8.md)   ```# window terminal : line buffer limit```
 - [datum/2025/DONE/MONO-5.md](datum/2025/DONE/MONO-5.md)   ```# dri : env```
+- [datum/2025/DONE/MONO-6.md](datum/2025/DONE/MONO-6.md)   ```# mlflows : container```
 - [datum/2025/DONE/NJS-3.md](datum/2025/DONE/NJS-3.md)   ```# VIM : DOM```
 - [datum/2025/DONE/VIM-10.md](datum/2025/DONE/VIM-10.md)   ```# preset : window layout```
 - [datum/2025/DONE/VIM-11.md](datum/2025/DONE/VIM-11.md)   ```# NeoVim : init```
