@@ -3,12 +3,12 @@
 
 
 DKR_ENV=${DKR_ENV:-".env"}
+DKR_IMAGE=${DKR_IMAGE:-"ubuntu:latest"}
+DKR_CMD=${@:-bash --rcfile /dkr/rc}
 envsc="Q09MT1JfQkc9J1xbXDAzM1s0ODs1OzE2bVxdJwpDT0xPUl9CRzE9J1xbXDAzM1s0ODs1OzUybVxdJwpDT0xPUl9GRz0nXFtcMDMzWzM4OzU7MjUybVxdJwpTVE9QPSdcW1wwMzNbMG1cXScKUFMxPSIke0NPTE9SX0JHfSR7Q09MT1JfRkd9IERSSSAke0NPTE9SX0JHMX0gXFcgJHtTVE9QfSDilrZcWyAgXF0iCg=="
 if ! test -s $DKR_ENV ;then echo $envsc | base64 -d > $DKR_ENV ;fi
 source $DKR_ENV
 
-DKR_IMAGE=${DKR_IMAGE:-"ubuntu:latest"}
-CMD=${@:-bash --rcfile /dkr/rc}
 test -n "$DKR_PORT" && DKR_EXPOSE="--publish 0.0.0.0:$DKR_PORT:$DKR_PORT"
 
 sudo docker run \
@@ -20,4 +20,4 @@ sudo docker run \
     --workdir "/cpwd" \
     $DKR_EXPOSE \
     $DKR_RUNAS \
-    $DKR_IMAGE $CMD
+    $DKR_IMAGE $DKR_CMD
