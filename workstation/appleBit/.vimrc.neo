@@ -28,6 +28,14 @@ set foldlevelstart=10
 let g:yaml_revealer_separator='➤'
     "<C-v>u27a4
 
+"-------- [GUI / NEOVIDE] --------
+if exists('g:neovide')
+  let g:neovide_cursor_animation_length = 0
+  let g:neovide_cursor_vfx_mode = ""
+  let g:neovide_scroll_animation_length = 0.001
+"  set guifont=SF\ Mono:h14
+endif
+
 "-------- [PLUGIN / VUNDLE] --------
 set nocompatible              " be iMproved, required
 filetype off                  " required
@@ -66,7 +74,15 @@ Plug 'nvim-tree/nvim-web-devicons'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'nvim-telescope/telescope.nvim'
+Plug 'shaunsingh/solarized.nvim'
+Plug 'ellisonleao/gruvbox.nvim'
 call plug#end()
+
+
+"-------- [LUA-INIT] --------
+set rtp+=~/.vim/lua
+lua require("neo-init")
+
 
 "-------- [FUNCTIONS] --------
 
@@ -149,10 +165,9 @@ command! -nargs=1 Grin call GrepSource(<q-args>)
 
 
 function ShellPython()
-    set shell=\"python.exe\"
-    set shellcmdflag=-c
+    set shell=python
     exec "below terminal"
-    set shell=\"sh.exe\"
+    set shell=bash
 endfunction
 
 
@@ -169,7 +184,6 @@ endfunction
 command! -nargs=1 ShellContainer call ShellContainer(<q-args>)
 
 
-
 function SessionMgmt()
     let limit = 512
     "exec "! set -x ; rm $(find Session.vim -mtime +7)"
@@ -179,16 +193,40 @@ endfunction
 function StartUp()
 endfunction
 
+
+function YsonLine()
+  normal! yy
+  let yson_filename = bufname('%')
+  let yson_bufnr = bufnr(yson_filename)
+  let yson_winids = win_findbuf(yson_bufnr)
+
+  let yson_line = yson_filename."_line.json"
+  let bufnr = bufnr(yson_line)
+  if bufnr != -1
+    let winids = win_findbuf(bufnr)
+    call win_gotoid(winids[0])
+    execute '%delete _'
+  else
+    execute 'split '.yson_line 
+  endif
+  let command = "echo '".@"."' | yq -o json"
+  let @" = system(command)
+  normal! p
+  call win_gotoid(yson_winids[0])
+endfunction
+
+
 "-------- [AUTOCMD] --------
 autocmd FileType yaml  : set tabstop=2
 autocmd VimEnter * silent call SessionMgmt()
 autocmd InsertEnter * highlight CursorLine ctermbg=190 guibg=#D5EE16 | highlight StatusLine ctermbg=190 guibg=#CCFF00
-autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#eee8d5 | highlight StatusLine ctermbg=254 guibg=#eee8d5
+autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#dadeaf | highlight StatusLine ctermbg=254 guibg=#eee8d5
 " akss
 
 
 
 "-------- [KEYMAP] --------
+map ys : call YsonLine() <CR>
 map T : tabnew . <CR>
     "New tab
 map C : s/^/#/<CR>
@@ -211,15 +249,14 @@ map q1 : q!<CR>
     "Quit current
 
 map tty : highlight Terminal ctermbg=23 ctermfg=15 guibg=#073042 guifg=#7ec1de \| below terminal <CR>
-map wsl : call ShellWSL() <CR>
 
 map e3 : vsplit \| call FgXp(".",3)<CR>
 map e6 : vsplit \| call FgXp(".",6)<CR>
 map e9 : vsplit \| call FgXp(".",9)<CR>
     "List file at maxdepth=X
 
-map e. : edit . <CR>
 map f5 : edit <CR>
+map e. : edit . <CR>
 map t. : tabnew . <CR>
 map s. : split . <CR>
 map v. : vsplit . <CR>
@@ -247,10 +284,7 @@ vnoremap --    "+y : vsplit <C-R>+ <CR>
 
 nnoremap <F5><F5> : edit<CR>
 
-"-------- [LUA-INIT] --------
-lua require("nvim-web-devicons")
-lua require('lualine').setup()
-"lua require('lualine.themes.gruvbox_light')
-lua require('lualine.themes.powerline')
 "-------- [POST-INIT] --------
-colorscheme solarized8_high
+"colorscheme solarized8_high
+"colorscheme solarized
+colorscheme gruvbox
