@@ -1,0 +1,30 @@
+#!/bin/bash -x 
+NAME=${1:-all}
+ARTIFACT_DIR=./artefacts
+ARTIFACT_YSON=.properd/artefacts.yaml
+
+function ready (){
+	local name=$1
+	local ARTIFACT_VERSION=$(cat $ARTIFACT_YSON | yq -r ".${name}[0]")
+	local ARTIFACT_URL=$(cat $ARTIFACT_YSON | yq -r ".${name}[1]")
+	local ARTIFACT_SUFFIX=$(cat $ARTIFACT_YSON | yq -r ".${name}[2].suffix")
+	[[ "$ARTIFACT_SUFFIX" =~ "null" ]] && ARTIFACT_SUFFIX=exe
+    
+    if [[ "$ARTIFACT_SUFFIX" =~ "msi" ]]; then
+        sleep 60
+        return
+    fi
+
+    test -r $ARTIFACT_DIR/.function/ready/$name && source $ARTIFACT_DIR/.function/ready/$name && return
+    ln -sf $(pwd)/artefacts/$name-$ARTIFACT_VERSION  $LOCAL_BIN/$name
+}
+
+mkdir -p $ARTIFACT_DIR
+if [[ "$NAME" =~ "all" ]] ; then
+	LIST=$(cat $ARTIFACT_YSON | yq 'keys' | awk -F ' ' '{print $2}')
+	for i in $LIST ; do
+		ready $i
+	done
+	exit
+fi
+ready $NAME

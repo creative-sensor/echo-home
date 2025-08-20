@@ -1,0 +1,10 @@
+declare -A path_dict
+
+path_dict["rtfunction"]="$HOME/echo-home/.function"
+
+
+for key in "${!path_dict[@]}"; do
+  PATH+=":${path_dict[$key]}"
+done
+
+unset path_dict

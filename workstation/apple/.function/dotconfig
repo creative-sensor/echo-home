@@ -1,0 +1,11 @@
+#!/bin/bash -x
+
+# ---- install ----
+install -m 0644 .vimrc $HOME
+install -m 0644 .gitconfig $HOME
+install -m 0644 .bashrc.path $HOME
+
+source ~/.bashrc
+test -z "$(yq -V | grep -o mikefarah)" \
+	&& curl -L -o $LOCAL_BIN/yq "https://github.com/mikefarah/yq/releases/download/v4.47.1/yq_darwin_arm64" \
+	&& chmod 0755 $LOCAL_BIN/yq

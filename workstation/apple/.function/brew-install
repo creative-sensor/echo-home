@@ -1,0 +1,11 @@
+#!/bin/bash -x
+
+# ---- install ----
+export HOMEBREW_NO_AUTO_UPDATE=yes
+LIST='
+  minikube
+  neovide
+'
+
+
+brew install $LIST
