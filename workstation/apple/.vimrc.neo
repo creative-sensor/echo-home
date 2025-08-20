@@ -14,14 +14,16 @@ set hlsearch
 set nowrap
 set expandtab
 set tabstop=4
-"set mouse=a
-set guicursor=n-v-i:underline
+set guicursor=a:blinkon100
 set splitright
 set paste
 set title titlestring=VIM\ \|\ %{fnamemodify(getcwd(),\ ':t')} titlelen=32
     "output:  VIM | current_dirname
 set background=light
-set shell=\"/bin/bash\"
+set shellcmdflag=-c
+set shellxquote=" "
+set shellslash
+"set shellredir=>
 set backspace=indent,eol,start
 set ff=unix
 set foldlevelstart=10
@@ -41,7 +43,6 @@ set nocompatible              " be iMproved, required
 filetype off                  " required
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-" let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
         "Plugin Manager
 Plugin 'thaerkh/vim-workspace'
@@ -67,16 +68,15 @@ filetype plugin indent on    " required
 
 "-------- [PLUGIN / VIM-PLUG] --------
 source ~/.vim/vim-plug/plug.vim
-"call plug#begin()
+call plug#begin()
 " List your plugins here
-"Plug 'nvim-pack/nvim-spectre'
-"Plug 'nvim-tree/nvim-web-devicons'
-"Plug 'nvim-lua/plenary.nvim'
-"Plug 'nvim-lualine/lualine.nvim'
-"Plug 'nvim-telescope/telescope.nvim'
-"Plug 'shaunsingh/solarized.nvim'
-"Plug 'ellisonleao/gruvbox.nvim'
-"call plug#end()
+Plug 'nvim-tree/nvim-web-devicons'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-lualine/lualine.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'shaunsingh/solarized.nvim'
+Plug 'ellisonleao/gruvbox.nvim'
+call plug#end()
 
 
 "-------- [LUA-INIT] --------
@@ -218,10 +218,13 @@ endfunction
 
 "-------- [AUTOCMD] --------
 autocmd FileType yaml  : set tabstop=2
+"autocmd VimEnter * above terminal ++rows=7
+"autocmd VimEnter * if isdirectory(".git") | silent call FgXp(".") | endif
 autocmd VimEnter * silent call SessionMgmt()
+"autocmd TerminalOpen * set termwinsize=0*0
+    "termwinsize: auto-adjustable
 autocmd InsertEnter * highlight CursorLine ctermbg=190 guibg=#D5EE16 | highlight StatusLine ctermbg=190 guibg=#CCFF00
-autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#dadeaf | highlight StatusLine ctermbg=254 guibg=#eee8d5
-" akss
+autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#f3f9a9 | highlight StatusLine ctermbg=254 guibg=#eee8d5
 
 
 
