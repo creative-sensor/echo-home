@@ -1,0 +1,1 @@
+ln -sf /Applications/Neovide.app/Contents/MacOS/neovide  $LOCAL_BIN/neovide

@@ -8,9 +8,10 @@ function ready (){
 	local ARTIFACT_VERSION=$(cat $ARTIFACT_YSON | yq -r ".${name}[0]")
 	local ARTIFACT_URL=$(cat $ARTIFACT_YSON | yq -r ".${name}[1]")
 	local ARTIFACT_SUFFIX=$(cat $ARTIFACT_YSON | yq -r ".${name}[2].suffix")
-	[[ "$ARTIFACT_SUFFIX" =~ "null" ]] && ARTIFACT_SUFFIX=exe
+	[[ "$ARTIFACT_SUFFIX" =~ "null" ]] && ARTIFACT_SUFFIX=dmg
     
-    if [[ "$ARTIFACT_SUFFIX" =~ "msi" ]]; then
+    if [[ "$ARTIFACT_SUFFIX" =~ "pkg" ]]; then
+        #sudo installer -pkg /Volumes/YourAppName/$name.pkg -target /
         sleep 60
         return
     fi
