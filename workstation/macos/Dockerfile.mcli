@@ -1,0 +1,4 @@
+from ubuntu:latest
+
+RUN apt update -y && \
+    apt install -y git gettext jq
