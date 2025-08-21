@@ -8,7 +8,7 @@ function download (){
 	local ARTIFACT_VERSION=$(cat $ARTIFACT_YSON | yq -r ".${name}[0]")
 	local ARTIFACT_URL=$(cat $ARTIFACT_YSON | yq -r ".${name}[1]")
 	local ARTIFACT_SUFFIX=$(cat $ARTIFACT_YSON | yq -r ".${name}[2].suffix")
-	[[ "$ARTIFACT_SUFFIX" =~ "null" ]] && ARTIFACT_SUFFIX=exe
+	[[ "$ARTIFACT_SUFFIX" =~ "null" ]] && ARTIFACT_SUFFIX=dmg
 	set -x
 	curl -s -L -o $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.$ARTIFACT_SUFFIX  $ARTIFACT_URL
 	set +x

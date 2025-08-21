@@ -17,7 +17,7 @@ function ready (){
     fi
 
     test -r $ARTIFACT_DIR/.function/ready/$name && source $ARTIFACT_DIR/.function/ready/$name && return
-    ln -sf $(pwd)/artefacts/$name-$ARTIFACT_VERSION  $LOCAL_BIN/$name
+    ln -sf $(pwd)/artefacts/$name-$ARTIFACT_VERSION.${ARTIFACT_SUFFIX}  $LOCAL_BIN/$name
 }
 
 mkdir -p $ARTIFACT_DIR

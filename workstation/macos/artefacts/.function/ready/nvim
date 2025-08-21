@@ -1,3 +1,3 @@
-rm -rf $ARTIFACT_DIR/nvim-macos-arm64
-tar xzf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.tar.gz -C $ARTIFACT_DIR/
-ln -sf $(pwd)/$ARTIFACT_DIR/nvim-macos-arm64/bin/nvim  $LOCAL_BIN/nvim
+rm -rf $LOCAL_BIN/nvim-macos-arm64
+tar xzf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.tar.gz -C $LOCAL_BIN/
+ln -sf $LOCAL_BIN/nvim-macos-arm64/bin/nvim  $LOCAL_BIN/nvim
