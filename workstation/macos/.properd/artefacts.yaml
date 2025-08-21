@@ -2,7 +2,7 @@ helm: [ 3.18.6 , "https://get.helm.sh/helm-v3.18.6-darwin-arm64.tar.gz" , {"suff
 nvim: [ 0.11.3 , "https://github.com/neovim/neovim/releases/download/v0.11.3/nvim-macos-arm64.tar.gz" , {"suffix":"tar.gz"} ]
 neovide: [ 0.15.1 , "https://github.com/neovide/neovide/releases/download/0.15.1/Neovide-aarch64-apple-darwin.dmg" ]
 p7zip: [ 2201 , "" ]
-python: [ 3.13.2 , "" ]
+python: [ 3.13.7 , "https://www.python.org/ftp/python/3.13.7/python-3.13.7-macos11.pkg", {"suffix":"pkg"} ]
 kubectl: [ 1.32.0 , "" ]
 rclone: [ 1.69.1 , "" , {"suffix":"zip"}]
 node: [ 22.14.0 , "" , {"suffix":"zip"}]

@@ -1,0 +1,4 @@
+tar xzf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.tar.gz -C $ARTIFACT_DIR
+cp $ARTIFACT_DIR/darwin-arm64/helm  $LOCAL_BIN/$name
+chmod +x $LOCAL_BIN/$name
+rm -r $ARTIFACT_DIR/darwin-arm64
