@@ -1,7 +1,18 @@
 from ubuntu:latest
 
-RUN userdel ubuntu && \
-    groupadd -g 1000 creativ &&  useradd  -o -u 1000 -g 1000  -d /home/creativ creativ
+ARG UID
+ARG GID
+ARG USERNAME
+ARG HOMEDIR
+
 RUN apt update -y && \
     apt install -y git gettext jq
+
+RUN userdel games && \
+    userdel ubuntu && \
+    groupdel dialout && \
+    groupdel staff && \
+    groupadd -g 20 staff && \
+    useradd  -o -u $UID -g $GID  -d $HOMEDIR $USERNAME
+
 

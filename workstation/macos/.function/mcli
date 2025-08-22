@@ -20,6 +20,6 @@ sudo docker run \
     --env-file $DKR_ENV \
     --workdir "$(pwd)" \
     $DKR_EXPOSE \
-    -u $(id -u) \
+    -u 501:20 \
     $DKR_IMAGE $DKR_CMD
 
