@@ -1,4 +1,7 @@
 from ubuntu:latest
 
+RUN userdel ubuntu && \
+    groupadd -g 1000 creativ &&  useradd  -o -u 1000 -g 1000  -d /home/creativ creativ
 RUN apt update -y && \
     apt install -y git gettext jq
+
