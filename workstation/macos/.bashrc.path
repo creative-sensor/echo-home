@@ -1,4 +1,4 @@
-declare -A path_dict
+declare -a path_dict
 
 path_dict["rtfunction"]="$HOME/echo-home/.function"
 path_dict["mcfunction"]="$HOME/echo-home/workstation/macos/.function"
