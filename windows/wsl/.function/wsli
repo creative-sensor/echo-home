@@ -1,0 +1,3 @@
+
+
+wsl --cd "$PWD" -- ls '\/mnt/c'
