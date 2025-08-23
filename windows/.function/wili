@@ -20,6 +20,6 @@ MSYS_NO_PATHCONV=1 docker run \
     --env-file $DKR_ENV \
     --workdir "$(pwd)" \
     $DKR_EXPOSE \
-    -u $(id -u):$(id -g) \
+    -u ${DKR_RUNAS:-"$(id -u):$(id -g)"} \
     $DKR_IMAGE $DKR_CMD
 
