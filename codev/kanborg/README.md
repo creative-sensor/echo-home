@@ -25,6 +25,7 @@
 - [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
 - [datum/2025/TODO/GGPU-1.md](datum/2025/TODO/GGPU-1.md)   ```# video : codecs```
 - [datum/2025/TODO/MDOS-20.md](datum/2025/TODO/MDOS-20.md)   ```# rsync : source rebuild```
+- [datum/2025/TODO/MDOS-27.md](datum/2025/TODO/MDOS-27.md)   ```# ISSUE :```
 
 ### 4 DONE
 
