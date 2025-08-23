@@ -25,7 +25,6 @@
 - [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
 - [datum/2025/TODO/GGPU-1.md](datum/2025/TODO/GGPU-1.md)   ```# video : codecs```
 - [datum/2025/TODO/MDOS-20.md](datum/2025/TODO/MDOS-20.md)   ```# rsync : source rebuild```
-- [datum/2025/TODO/MDOS-26.md](datum/2025/TODO/MDOS-26.md)   ```# wili : windows linux interface```
 
 ### 4 DONE
 
@@ -95,6 +94,7 @@
 - [datum/2025/DONE/MDOS-23.md](datum/2025/DONE/MDOS-23.md)   ```# lang runtime : node```
 - [datum/2025/DONE/MDOS-24.md](datum/2025/DONE/MDOS-24.md)   ```# lang runtime : python```
 - [datum/2025/DONE/MDOS-25.md](datum/2025/DONE/MDOS-25.md)   ```# vscodium : python ide```
+- [datum/2025/DONE/MDOS-26.md](datum/2025/DONE/MDOS-26.md)   ```# wili : windows linux interface```
 - [datum/2025/DONE/MDOS-4.md](datum/2025/DONE/MDOS-4.md)   ```# PowerShell: utilities for missing function in gitbash```
 - [datum/2025/DONE/MDOS-5.md](datum/2025/DONE/MDOS-5.md)   ```# windows : application explorer```
 - [datum/2025/DONE/MDOS-7.md](datum/2025/DONE/MDOS-7.md)   ```# terminal : gvim cannot detect unix file path```
