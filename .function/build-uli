@@ -1,0 +1,8 @@
+
+UID=$(id -u)
+GID=$(id -g)
+docker build -f Dockerfile.uli -t uli \
+    --build-arg UID=$UID \
+    --build-arg GID=$GID \
+    --build-arg USER=$USERNAME \
+    . 
