@@ -26,12 +26,19 @@
 - [datum/2025/TODO/GGPU-1.md](datum/2025/TODO/GGPU-1.md)   ```# video : codecs```
 - [datum/2025/TODO/MDOS-20.md](datum/2025/TODO/MDOS-20.md)   ```# rsync : source rebuild```
 - [datum/2025/TODO/MDOS-27.md](datum/2025/TODO/MDOS-27.md)   ```# ISSUE :```
+- [datum/2025/TODO/MONO-7.md](datum/2025/TODO/MONO-7.md)   ```# ULI : Unified Linux Interface```
 
 ### 4 DONE
 
 - [datum/2025/DONE/APLE-1.md](datum/2025/DONE/APLE-1.md)   ```# apple-bit : application explorer```
 - [datum/2025/DONE/APLE-2.md](datum/2025/DONE/APLE-2.md)   ```# sync : macbook```
 - [datum/2025/DONE/APLE-3.md](datum/2025/DONE/APLE-3.md)   ```# Vim : Plug```
+- [datum/2025/DONE/archived.JBL-1.md](datum/2025/DONE/archived.JBL-1.md)   ```# ISSUE : JBL Charge 5```
+- [datum/2025/DONE/archived.KBG-1.md](datum/2025/DONE/archived.KBG-1.md)   ```# RELEASE : KANBORG```
+- [datum/2025/DONE/archived.KBG-2.md](datum/2025/DONE/archived.KBG-2.md)   ```# ISSUE : card not move when destination is empty```
+- [datum/2025/DONE/archived.KBG-3.md](datum/2025/DONE/archived.KBG-3.md)   ```# FIX: kanborg support for windows```
+- [datum/2025/DONE/archived.KBS-1.md](datum/2025/DONE/archived.KBS-1.md)   ```# CREDIT```
+- [datum/2025/DONE/archived.SPEC-0.md](datum/2025/DONE/archived.SPEC-0.md)   ```# FEATURE: yson format```
 - [datum/2025/DONE/ARTE-10.md](datum/2025/DONE/ARTE-10.md)   ```# windows : sops```
 - [datum/2025/DONE/ARTE-11.md](datum/2025/DONE/ARTE-11.md)   ```# windows : ripgrep```
 - [datum/2025/DONE/ARTE-3.md](datum/2025/DONE/ARTE-3.md)   ```# ISSUE : Fork repo from community to my github```
@@ -48,7 +55,6 @@
 - [datum/2025/DONE/GILB-1.md](datum/2025/DONE/GILB-1.md)   ```# ldap : authentication```
 - [datum/2025/DONE/HCL-2.md](datum/2025/DONE/HCL-2.md)   ```# COWAD : select principal node```
 - [datum/2025/DONE/KBG-8.md](datum/2025/DONE/KBG-8.md)   ```# reborn: nvim```
-- [datum/2025/DONE/KITE-1.md](datum/2025/DONE/KITE-1.md)   ```# Github : codespace/action```
 - [datum/2025/DONE/KITE-11.md](datum/2025/DONE/KITE-11.md)   ```# Constellation : android space```
 - [datum/2025/DONE/KITE-12.md](datum/2025/DONE/KITE-12.md)   ```# MongoDB : Atlas```
 - [datum/2025/DONE/KITE-13.md](datum/2025/DONE/KITE-13.md)   ```# sops : env```
@@ -58,6 +64,7 @@
 - [datum/2025/DONE/KITE-17.md](datum/2025/DONE/KITE-17.md)   ```# Phone : Android```
 - [datum/2025/DONE/KITE-18.md](datum/2025/DONE/KITE-18.md)   ```# adobe : creative cloud```
 - [datum/2025/DONE/KITE-19.md](datum/2025/DONE/KITE-19.md)   ```# blackbox : ai```
+- [datum/2025/DONE/KITE-1.md](datum/2025/DONE/KITE-1.md)   ```# Github : codespace/action```
 - [datum/2025/DONE/KITE-20.md](datum/2025/DONE/KITE-20.md)   ```# perplexity : ai```
 - [datum/2025/DONE/KITE-21.md](datum/2025/DONE/KITE-21.md)   ```# grok : x ai```
 - [datum/2025/DONE/KITE-22.md](datum/2025/DONE/KITE-22.md)   ```# cursor : ai```
@@ -71,8 +78,8 @@
 - [datum/2025/DONE/KROS-6.md](datum/2025/DONE/KROS-6.md)   ```# neovide : cannot display properly```
 - [datum/2025/DONE/KUBEX-6.md](datum/2025/DONE/KUBEX-6.md)   ```# minikube : driver=docker [8]```
 - [datum/2025/DONE/KUBEX-7.md](datum/2025/DONE/KUBEX-7.md)   ```# ingress : nginx controller```
-- [datum/2025/DONE/LEAF-11.md](datum/2025/DONE/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2025/DONE/LEAF-11g.md](datum/2025/DONE/LEAF-11g.md)   ```# GIT-CLONE: single commit```
+- [datum/2025/DONE/LEAF-11.md](datum/2025/DONE/LEAF-11.md)   ```# GROK: log transformer```
 - [datum/2025/DONE/LEAF-13.md](datum/2025/DONE/LEAF-13.md)   ```# Clipboard: internode```
 - [datum/2025/DONE/LEAF-14.md](datum/2025/DONE/LEAF-14.md)   ```# KAFKA : mono service```
 - [datum/2025/DONE/LEAF-15.md](datum/2025/DONE/LEAF-15.md)   ```# ETO : Emerging Technology Observatory```
@@ -90,12 +97,12 @@
 - [datum/2025/DONE/MDOS-17.md](datum/2025/DONE/MDOS-17.md)   ```# cli : uuidgen```
 - [datum/2025/DONE/MDOS-18.md](datum/2025/DONE/MDOS-18.md)   ```# env PATH : marktext```
 - [datum/2025/DONE/MDOS-19.md](datum/2025/DONE/MDOS-19.md)   ```# bash prompt : new stylish string```
-- [datum/2025/DONE/MDOS-2.md](datum/2025/DONE/MDOS-2.md)   ```# toolset : build/compile```
 - [datum/2025/DONE/MDOS-21.md](datum/2025/DONE/MDOS-21.md)   ```# lang runtime : go```
 - [datum/2025/DONE/MDOS-23.md](datum/2025/DONE/MDOS-23.md)   ```# lang runtime : node```
 - [datum/2025/DONE/MDOS-24.md](datum/2025/DONE/MDOS-24.md)   ```# lang runtime : python```
 - [datum/2025/DONE/MDOS-25.md](datum/2025/DONE/MDOS-25.md)   ```# vscodium : python ide```
 - [datum/2025/DONE/MDOS-26.md](datum/2025/DONE/MDOS-26.md)   ```# wili : windows linux interface```
+- [datum/2025/DONE/MDOS-2.md](datum/2025/DONE/MDOS-2.md)   ```# toolset : build/compile```
 - [datum/2025/DONE/MDOS-4.md](datum/2025/DONE/MDOS-4.md)   ```# PowerShell: utilities for missing function in gitbash```
 - [datum/2025/DONE/MDOS-5.md](datum/2025/DONE/MDOS-5.md)   ```# windows : application explorer```
 - [datum/2025/DONE/MDOS-7.md](datum/2025/DONE/MDOS-7.md)   ```# terminal : gvim cannot detect unix file path```
@@ -114,12 +121,6 @@
 - [datum/2025/DONE/VIM-18.md](datum/2025/DONE/VIM-18.md)   ```# yson : line view```
 - [datum/2025/DONE/VIM-19.md](datum/2025/DONE/VIM-19.md)   ```# gui : neovide```
 - [datum/2025/DONE/VIM-2.md](datum/2025/DONE/VIM-2.md)   ```# container : as native shell```
-- [datum/2025/DONE/archived.JBL-1.md](datum/2025/DONE/archived.JBL-1.md)   ```# ISSUE : JBL Charge 5```
-- [datum/2025/DONE/archived.KBG-1.md](datum/2025/DONE/archived.KBG-1.md)   ```# RELEASE : KANBORG```
-- [datum/2025/DONE/archived.KBG-2.md](datum/2025/DONE/archived.KBG-2.md)   ```# ISSUE : card not move when destination is empty```
-- [datum/2025/DONE/archived.KBG-3.md](datum/2025/DONE/archived.KBG-3.md)   ```# FIX: kanborg support for windows```
-- [datum/2025/DONE/archived.KBS-1.md](datum/2025/DONE/archived.KBS-1.md)   ```# CREDIT```
-- [datum/2025/DONE/archived.SPEC-0.md](datum/2025/DONE/archived.SPEC-0.md)   ```# FEATURE: yson format```
 
 ### 5 BACKLOG
 
