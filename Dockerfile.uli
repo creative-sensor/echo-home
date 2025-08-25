@@ -1,0 +1,11 @@
+from ubuntu:latest
+
+arg UID
+arg GID
+arg HOMEDIR
+arg USER
+
+RUN groupadd -g $GID $USER &&  useradd  -o -u $UID -g $GID  -d "/c/Users/$USER" $USER
+RUN apt update -y && \
+    apt install -y git gettext jq
+
