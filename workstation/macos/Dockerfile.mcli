@@ -1,0 +1,18 @@
+from ubuntu:latest
+
+ARG UID
+ARG GID
+ARG USERNAME
+ARG HOMEDIR
+
+RUN apt update -y && \
+    apt install -y git gettext jq
+
+RUN userdel games && \
+    userdel ubuntu && \
+    groupdel dialout && \
+    groupdel staff && \
+    groupadd -g $GID staff && \
+    useradd  -o -u $UID -g $GID  -d $HOMEDIR $USERNAME
+
+

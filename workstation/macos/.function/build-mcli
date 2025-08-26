@@ -1,0 +1,12 @@
+set -x
+UID=$(id -u)
+GID=$(id -g)
+USERNAME=$(whoami)
+HOMEDIR=$HOME
+
+docker build -f Dockerfile.mcli -t mcli \
+    --build-arg UID=$UID \
+    --build-arg GID=$GID \
+    --build-arg USERNAME=$USERNAME \
+    --build-arg HOMEDIR=$HOMEDIR \
+    . 
