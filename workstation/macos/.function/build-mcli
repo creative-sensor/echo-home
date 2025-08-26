@@ -9,5 +9,4 @@ docker build -f Dockerfile.mcli -t mcli \
     --build-arg GID=$GID \
     --build-arg USERNAME=$USERNAME \
     --build-arg HOMEDIR=$HOMEDIR \
-    --no-cache \
     . 

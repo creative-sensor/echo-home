@@ -12,7 +12,7 @@ RUN userdel games && \
     userdel ubuntu && \
     groupdel dialout && \
     groupdel staff && \
-    groupadd -g 20 staff && \
+    groupadd -g $GID staff && \
     useradd  -o -u $UID -g $GID  -d $HOMEDIR $USERNAME
 
 
