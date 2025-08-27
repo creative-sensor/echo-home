@@ -5,8 +5,23 @@ ARG GID
 ARG USERNAME
 ARG HOMEDIR
 
+
+
 RUN apt update -y && \
-    apt install -y git gettext jq
+    apt install -y \
+        git \
+        gettext \
+        curl \
+        python3-full 
+
+RUN YQ_VERSION=4.47.1 && \
+    curl -L -o /usr/bin/yq "https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_arm64" && \
+    chmod 0755 /usr/bin/yq
+
+RUN JQ_VERSION=1.8.1 && \
+    curl -L -o /usr/bin/jq "https://github.com/jqlang/jq/releases/download/jq-${JQ_VERSION}/jq-linux-arm64" && \
+    chmod 0755 /usr/bin/jq
+
 
 RUN userdel games && \
     userdel ubuntu && \
