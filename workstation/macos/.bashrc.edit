@@ -3,6 +3,7 @@ alias ll='ls -la'
 alias sed='gsed'
 alias vimtf='vim -u ~/.vim/rc/hcl'
 alias nvide='neovide --fork &'
+alias pip='python3 -m pip'
 PATH=$PATH:~/.docker/bin:~/bin
 
 COLOR_BG='\[\033[48;5;198m\]'
