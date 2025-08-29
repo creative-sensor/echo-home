@@ -1,0 +1,10 @@
+declare -A path_dict
+
+path_dict["rtfunction"]="$HOME/echo-home/.function"
+path_dict["fedora"]="$HOME/echo-home/workstation/fedora/.function"
+
+for key in "${!path_dict[@]}"; do
+  PATH+=":${path_dict[$key]}"
+done
+
+unset path_dict
