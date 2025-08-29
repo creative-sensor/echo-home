@@ -1,0 +1,13 @@
+#!/bin/bash -e
+
+
+
+
+RELEASE=$(cat /etc/redhat-release  | grep -o '[0-9]\+')
+ARTEFACT_DIR=artefacts/$RELEASE/plus	
+CHECKSUM=.properd/artefact.sha256sum.RPMS.iso.$RELEASE.plus
+
+
+RPMS_PLUS=$(cat $CHECKSUM  |  awk -F ' ' '{print $2}')
+#sudo dnf install -y --newpackage --allowerasing   --skip-broken  $RPMS_PLUS
+sudo rpm -U  --nodeps --verbose $RPMS_PLUS

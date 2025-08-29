@@ -1,0 +1,7 @@
+#!/bin/bash -e
+
+
+# disable zram
+sudo touch /etc/systemd/zram-generator.conf
+
+

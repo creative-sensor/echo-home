@@ -1,6 +1,7 @@
 #!/bin/bash -x
 
 # ---- install ----
+mkdir -p ~/.local/bin
 install -m 0644 .vimrc $HOME
 install -m 0644 .gitconfig $HOME
 install -m 0644 .bashrc $HOME

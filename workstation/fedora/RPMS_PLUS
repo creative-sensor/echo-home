@@ -5,8 +5,6 @@ ffmpeg
 ffmpeg-devel
 gnome-tweaks
 inkscape
-jq
-kubernetes-client
 libheif
 libvirt-client
 nginx
@@ -25,5 +23,4 @@ vim-powerline
 vim-X11
 virt-manager
 vlc
-warzone2100
 cascadia-mono-fonts.noarch

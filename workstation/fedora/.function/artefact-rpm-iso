@@ -1,0 +1,19 @@
+RELEASE=$(cat /etc/redhat-release  | grep -o '[0-9]\+')
+ARTEFACT_DIR=artefacts/$RELEASE	
+CHECKSUM=.properd/artefact.sha256sum.RPMS.iso.$RELEASE
+mkdir -p $ARTEFACT_DIR
+
+
+# ---- RETRIEVE ----
+RPMS=$(rpm -qa)
+test -z "$(ls $ARTEFACT_DIR)" && dnf download --destdir=$ARTEFACT_DIR $RPMS
+SUBPATH=$(ls ${ARTEFACT_DIR}/*.rpm)
+
+
+# ---- CHECKSUM ----
+if test -s $CHECKSUM ;  then
+    sha256sum --check $CHECKSUM
+else
+    sha256sum $SUBPATH > $CHECKSUM
+    echo "$CHECKSUM created"
+fi
