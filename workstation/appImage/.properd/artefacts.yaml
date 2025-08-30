@@ -1,4 +1,4 @@
-nvim: [ 0.10.4 , "https://github.com/neovim/neovim/releases/download/v0.10.4/nvim-linux-x86_64.appimage" , {"suffix":"appImage"} ]
+nvim: [ 0.11.3 , "https://github.com/neovim/neovim/releases/download/v0.11.3/nvim-linux-x86_64.appimage" , {"suffix":"appImage"} ]
 neovide: [ 0.15.0 , "https://github.com/neovide/neovide/releases/download/0.15.0/neovide.AppImage" , {"suffix":"appImage"} ]
 marktext: [ 0.17.1 , "https://github.com/marktext/marktext/releases/download/v0.17.1/marktext-x86_64.AppImage", {"suffix":"appImage"} ]
 drawio: [ 26.1.1 , "https://github.com/jgraph/drawio-desktop/releases/download/v26.1.1/drawio-x86_64-26.1.1.AppImage", {"suffix":"appImage"} ]
