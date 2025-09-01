@@ -75,7 +75,9 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'shaunsingh/solarized.nvim'
-Plug 'ellisonleao/gruvbox.nvim'
+if exists('g:neovide')
+  Plug 'ellisonleao/gruvbox.nvim'
+endif
 call plug#end()
 
 
@@ -288,6 +290,10 @@ vnoremap --    "+y : vsplit <C-R>+ <CR>
 nnoremap <F5><F5> : edit<CR>
 
 "-------- [POST-INIT] --------
-"colorscheme solarized8_high
-"colorscheme solarized
-colorscheme gruvbox
+if exists('g:neovide')
+"  colorscheme solarized
+  colorscheme gruvbox
+else
+  colorscheme solarized8_high
+endif
+
