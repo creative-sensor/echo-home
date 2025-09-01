@@ -23,6 +23,7 @@
 - [datum/2025/TODO/CORTA-3.md](datum/2025/TODO/CORTA-3.md)   ```# lmstudio : cli```
 - [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
 - [datum/2025/TODO/GGPU-1.md](datum/2025/TODO/GGPU-1.md)   ```# video : codecs```
+- [datum/2025/TODO/GGPU-3.md](datum/2025/TODO/GGPU-3.md)   ```# EXO : M2p2```
 - [datum/2025/TODO/MDOS-20.md](datum/2025/TODO/MDOS-20.md)   ```# rsync : source rebuild```
 - [datum/2025/TODO/MDOS-27.md](datum/2025/TODO/MDOS-27.md)   ```# ISSUE :```
 - [datum/2025/TODO/MONO-7.md](datum/2025/TODO/MONO-7.md)   ```# ULI : Unified Linux Interface```
