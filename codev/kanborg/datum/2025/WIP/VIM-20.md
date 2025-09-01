@@ -15,6 +15,10 @@
 
 ### 4 JOURNAL
 
+###### 4.0
+
+- can narrow down scope by list of existing shortcut keys 
+
 --------------------------------
 
 ```json
