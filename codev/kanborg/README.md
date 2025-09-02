@@ -5,6 +5,7 @@
 
 ### 1 WORK IN PROGRESS
 
+- [datum/2025/WIP/ARTE-13.md](datum/2025/WIP/ARTE-13.md)   ```# LLM : models```
 - [datum/2025/WIP/ASML-2.md](datum/2025/WIP/ASML-2.md)   ```# MLOps : high-level [6]```
 - [datum/2025/WIP/DROID-3.md](datum/2025/WIP/DROID-3.md)   ```# android : studio```
 - [datum/2025/WIP/KUBEX-3.md](datum/2025/WIP/KUBEX-3.md)   ```# ISSUE : log query dashboard```
