@@ -23,3 +23,6 @@ if [[ "$NAME" =~ "all" ]] ; then
 	exit
 fi
 download $NAME
+
+
+lms get llama-3.1-8b@q4_k_m
