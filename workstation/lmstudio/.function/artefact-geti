@@ -1,0 +1,16 @@
+#!/bin/bash
+
+MODELKEY=$1
+ARTIFACT_YSON=.properd/artefacts.models.yaml
+test -z "$MODELKEY" && cat $ARTIFACT_YSON  | yq  keys[] && read -p "MODELKEY ?= " MODELKEY
+
+if [[ "$MODELKEY" =~ "all" ]] ; then
+  mlkey=$(cat .properd/artefacts.models.yaml | yq .[].modelKey)
+  for i in $mlkey ; do
+    echo -e "\n---- $i ----"
+    ~/.lmstudio/bin/lms.exe get  --yes $i
+  done 
+else
+  mlkey=$(cat .properd/artefacts.models.yaml | yq .$MODELKEY.modelKey)
+  ~/.lmstudio/bin/lms.exe get  --yes $mlkey
+fi

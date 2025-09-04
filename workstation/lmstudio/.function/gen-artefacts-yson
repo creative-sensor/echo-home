@@ -1,0 +1,4 @@
+#!/bin/bash
+
+~/.lmstudio/bin/lms.exe  ls --json  | jq -c -r   '.[] | "\(.modelKey|gsub("[/-]";"")|gsub("\\.";"")): \(.)"'   | yq $@ .
+
