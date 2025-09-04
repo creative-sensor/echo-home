@@ -27,7 +27,7 @@ ACLS : {"description":"Access Control Level System","last_id":2,"related":""}
 KITE : {"description":"The Paper Kites","last_id":23,"related":""}
 KROS : {"description":"Chromium","last_id":6,"related":""}
 CTNR : {"description":"Containerization","last_id":0,"related":""}
-APLE : {"description":"Apple bit","last_id":4,"related":""}
+APLE : {"description":"Apple bit","last_id":5,"related":""}
 AIVE : {"description":"AI Vertex Eyes","last_id":0,"related":""}
 ADOBE : {"description":"Adobe house","last_id":1,"related":""}
 WGI : {"description":"Web Graphic Interface","last_id":0,"related":""}

@@ -20,6 +20,7 @@
 
 ### 3 TO DO
 
+- [datum/2025/TODO/APLE-5.md](datum/2025/TODO/APLE-5.md)   ```# macos : real bash```
 - [datum/2025/TODO/CORTA-3.md](datum/2025/TODO/CORTA-3.md)   ```# lmstudio : cli```
 - [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
 - [datum/2025/TODO/GGPU-1.md](datum/2025/TODO/GGPU-1.md)   ```# video : codecs```
@@ -133,7 +134,6 @@
 - [datum/2025/BACKLOG/ADOBE-1.md](datum/2025/BACKLOG/ADOBE-1.md)   ```# colorhunt.co : preset download```
 - [datum/2025/BACKLOG/AIVE-0.md](datum/2025/BACKLOG/AIVE-0.md)   ```# AI : Vertex Eyes```
 - [datum/2025/BACKLOG/APLE-0.md](datum/2025/BACKLOG/APLE-0.md)   ```# Apple : bit```
-- [datum/2025/BACKLOG/APLE-5.md](datum/2025/BACKLOG/APLE-5.md)   ```# macos : init```
 - [datum/2025/BACKLOG/ARTE-0.md](datum/2025/BACKLOG/ARTE-0.md)   ```# Artefacts: The Art of Civilization```
 - [datum/2025/BACKLOG/ARTE-7.md](datum/2025/BACKLOG/ARTE-7.md)   ```# WSL : distro image```
 - [datum/2025/BACKLOG/ASML-0.md](datum/2025/BACKLOG/ASML-0.md)   ```# Assembly : Mission```
