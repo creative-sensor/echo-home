@@ -5,7 +5,6 @@
 
 ### 1 WORK IN PROGRESS
 
-- [datum/2025/WIP/ARTE-13.md](datum/2025/WIP/ARTE-13.md)   ```# LLM : models```
 - [datum/2025/WIP/ASML-2.md](datum/2025/WIP/ASML-2.md)   ```# MLOps : high-level [6]```
 - [datum/2025/WIP/DROID-3.md](datum/2025/WIP/DROID-3.md)   ```# android : studio```
 - [datum/2025/WIP/KUBEX-3.md](datum/2025/WIP/KUBEX-3.md)   ```# ISSUE : log query dashboard```
@@ -38,6 +37,7 @@
 - [datum/2025/DONE/ARTE-10.md](datum/2025/DONE/ARTE-10.md)   ```# windows : sops```
 - [datum/2025/DONE/ARTE-11.md](datum/2025/DONE/ARTE-11.md)   ```# windows : ripgrep```
 - [datum/2025/DONE/ARTE-12.md](datum/2025/DONE/ARTE-12.md)   ```# fedora  : rpms pin```
+- [datum/2025/DONE/ARTE-13.md](datum/2025/DONE/ARTE-13.md)   ```# LLM : models```
 - [datum/2025/DONE/ARTE-3.md](datum/2025/DONE/ARTE-3.md)   ```# ISSUE : Fork repo from community to my github```
 - [datum/2025/DONE/ARTE-9.md](datum/2025/DONE/ARTE-9.md)   ```# windows : artefact-geti```
 - [datum/2025/DONE/CMW-1.md](datum/2025/DONE/CMW-1.md)   ```# process : background daemon management```
