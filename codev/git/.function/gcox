@@ -1,0 +1,8 @@
+#!/bin/bash -x
+
+BRANCH=${1:-main}
+
+if [[ "$BRANCH" =~ "main\|master"
+git checkout $BRANCH || git checkout master
+
+git checkout $BRANCH || git fetch && git checkout $BRANCH 
