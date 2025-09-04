@@ -1,0 +1,6 @@
+#!/bin/bash -x
+
+BRANCH=${1:-main}
+
+git checkout $BRANCH || git checkout master
+

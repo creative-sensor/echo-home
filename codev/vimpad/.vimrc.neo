@@ -1,0 +1,137 @@
+"-------- [MISC] --------
+syntax on
+highlight CursorLine cterm=NONE ctermbg=251
+    "highlight CursorLine cterm=NONE ctermbg=24
+filetype on
+
+
+
+"-------- [VARSET] --------
+set laststatus=2
+set ruler
+set cursorline
+set hlsearch
+set nowrap
+set expandtab
+set tabstop=4
+set guicursor=a:blinkon100
+set splitright
+set paste
+set title titlestring=VIM\ \|\ %{fnamemodify(getcwd(),\ ':t')} titlelen=32
+    "output:  VIM | current_dirname
+set background=dark
+set shellslash
+"set shellredir=>
+set backspace=indent,eol,start
+set ffs=unix
+set foldlevelstart=10
+let g:yaml_revealer_separator='➤'
+    "<C-v>u27a4
+
+"-------- [GUI / NEOVIDE] --------
+if exists('g:neovide')
+  let g:neovide_cursor_animation_length = 0
+  let g:neovide_cursor_vfx_mode = ""
+  let g:neovide_scroll_animation_length = 0.001
+  set guifont=Cascadia\ Mono:h35
+endif
+
+"-------- [PLUGIN / VUNDLE] --------
+set nocompatible              " be iMproved, required
+filetype off                  " required
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+Plugin 'lifepillar/vim-solarized8'
+        "Colorscheme
+call vundle#end()            " required
+filetype plugin indent on    " required
+
+"-------- [PLUGIN / VIM-PLUG] --------
+source ~/.vim/vim-plug/plug.vim
+call plug#begin()
+" List your plugins here
+Plug 'nvim-tree/nvim-web-devicons'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-lualine/lualine.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'shaunsingh/solarized.nvim'
+Plug 'ellisonleao/gruvbox.nvim'
+call plug#end()
+
+
+"-------- [LUA-INIT] --------
+set rtp+=~/.vim/lua
+"lua require("neo-init")
+
+
+"-------- [FUNCTIONS] --------
+
+
+"-------- [AUTOCMD] --------
+
+
+
+
+"-------- [KEYMAP] --------
+map ys : call YsonLine() <CR>
+map T : tabnew . <CR>
+    "New tab
+map C : s/^/#/<CR>
+    "Comment
+map uc : s/^#//<CR>
+    "Uncomment
+map Bp : bp<CR>
+    "Buffer back
+map Bn : bn<CR>
+    "Buffer next
+map aC : :%!column -t<CR>
+    "Format as columns
+map WW : wa<CR>
+    "Save all
+map QQ : wqa<CR>
+    "Save and quit all
+map q0 : qa!<CR>
+    "Quit all
+map q1 : q!<CR>
+    "Quit current
+
+map tty : highlight Terminal ctermbg=23 ctermfg=15 guibg=#073042 guifg=#7ec1de \| below terminal <CR>
+
+map e3 : vsplit \| call FgXp(".",3)<CR>
+map e6 : vsplit \| call FgXp(".",6)<CR>
+map e9 : vsplit \| call FgXp(".",9)<CR>
+    "List file at maxdepth=X
+
+map f5 : edit <CR>
+map e. : edit . <CR>
+map t. : tabnew . <CR>
+map s. : split . <CR>
+map v. : vsplit . <CR>
+map dfe : diffoff! <CR>
+map dff : windo diffthis<CR>
+map dfg : diffget<CR>
+map b64 : call Base64e()<CR>
+map dex : Git <CR>tty<CR><C-w>L<C-w>=
+map hls : set hls!<CR>
+vmap b64    \atob<Esc>
+vmap b94    \btoa<Esc>
+
+nnoremap cup : Git commit -m "up"<CR>
+
+vnoremap ccp    "+y
+vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
+    "LOOK UP KEYWORD
+    ":copy selected text into register '+'
+    ":vertical split window
+    ":and call function Grin which take
+    "content of '+' as argument
+
+vnoremap --    "+y : vsplit <C-R>+ <CR>
+    "JUMP TO PATH
+
+nnoremap <F5><F5> : edit<CR>
+
+"-------- [POST-INIT] --------
+"colorscheme solarized8_high
+"colorscheme solarized
+colorscheme gruvbox

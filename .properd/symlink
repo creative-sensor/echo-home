@@ -9,6 +9,7 @@ codev/git/.function/gfch
 codev/git/.function/gbrx
 codev/git/.function/gsquash
 codev/git/.function/greba
+codev/git/.function/gcox
 codev/rev-chain/.function/rev-chain-touch
 container/.function/runbox
 .vim/.function/vim-artillery
