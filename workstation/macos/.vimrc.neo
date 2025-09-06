@@ -20,7 +20,7 @@ set paste
 set title titlestring=VIM\ \|\ %{fnamemodify(getcwd(),\ ':t')} titlelen=32
     "output:  VIM | current_dirname
 set background=light
-set shell=bash
+set shell=~/.local/bin/bash
 set shellcmdflag=-c
 set shellxquote=" "
 set shellslash
