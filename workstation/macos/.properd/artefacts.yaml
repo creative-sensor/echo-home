@@ -1,3 +1,4 @@
+bash: [ 5.3 , "https://mirrors.ocf.berkeley.edu/gnu/bash/bash-5.3.tar.gz" , {"suffix":"tar.gz"} ]
 helm: [ 3.18.6 , "https://get.helm.sh/helm-v3.18.6-darwin-arm64.tar.gz" , {"suffix":"tar.gz"} ]
 nvim: [ 0.11.3 , "https://github.com/neovim/neovim/releases/download/v0.11.3/nvim-macos-arm64.tar.gz" , {"suffix":"tar.gz"} ]
 neovide: [ 0.15.1 , "https://github.com/neovide/neovide/releases/download/0.15.1/Neovide-aarch64-apple-darwin.dmg" ]

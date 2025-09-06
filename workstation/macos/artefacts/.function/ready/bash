@@ -1,0 +1,12 @@
+set -x
+rm -rf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION
+
+tar xzf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.tar.gz -C $ARTIFACT_DIR
+
+
+cd $ARTIFACT_DIR/$name-$ARTIFACT_VERSION
+./configure && make
+cp bash ~/.local/bin/
+
+
+rm -rf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION
