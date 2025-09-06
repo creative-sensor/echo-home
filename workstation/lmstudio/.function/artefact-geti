@@ -12,5 +12,5 @@ if [[ "$MODELKEY" =~ "all" ]] ; then
   done 
 else
   mlkey=$(cat .properd/artefacts.models.yaml | yq .$MODELKEY.modelKey)
-  ~/.lmstudio/bin/lms.exe get  --yes $mlkey
+  ~/.lmstudio/bin/lms get  --yes $mlkey
 fi
