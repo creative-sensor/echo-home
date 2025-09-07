@@ -6,6 +6,7 @@
 ### 1 WORK IN PROGRESS
 
 - [datum/2025/WIP/ASML-2.md](datum/2025/WIP/ASML-2.md)   ```# MLOps : high-level [6]```
+- [datum/2025/WIP/CORTA-3.md](datum/2025/WIP/CORTA-3.md)   ```# lmstudio : cli```
 - [datum/2025/WIP/DROID-3.md](datum/2025/WIP/DROID-3.md)   ```# android : studio```
 - [datum/2025/WIP/KUBEX-3.md](datum/2025/WIP/KUBEX-3.md)   ```# ISSUE : log query dashboard```
 - [datum/2025/WIP/LEAF-30.md](datum/2025/WIP/LEAF-30.md)   ```# Jupyter :```
@@ -20,7 +21,6 @@
 
 ### 3 TO DO
 
-- [datum/2025/TODO/CORTA-3.md](datum/2025/TODO/CORTA-3.md)   ```# lmstudio : cli```
 - [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
 - [datum/2025/TODO/GGPU-1.md](datum/2025/TODO/GGPU-1.md)   ```# video : codecs```
 - [datum/2025/TODO/GGPU-3.md](datum/2025/TODO/GGPU-3.md)   ```# EXO : M2p2```
