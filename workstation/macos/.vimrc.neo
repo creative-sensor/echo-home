@@ -257,6 +257,7 @@ map q1 : q!<CR>
     "Quit current
 
 map tty : highlight Terminal ctermbg=23 ctermfg=15 guibg=#073042 guifg=#7ec1de \| below terminal <CR>
+map tth : below term cd %:p:h; $LOCAL_BIN/bash <CR>
 
 map e3 : vsplit \| call FgXp(".",3)<CR>
 map e6 : vsplit \| call FgXp(".",6)<CR>
