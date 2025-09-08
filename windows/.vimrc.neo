@@ -255,6 +255,8 @@ autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#dadeaf | highlight
 
 
 "-------- [KEYMAP] --------
+map tff : Telescope find_files <CR>
+map tgr : Telescope grep_string <CR>
 map ys : call YsonLine() <CR>
 map T : tabnew . <CR>
     "New tab
@@ -278,6 +280,7 @@ map q1 : q!<CR>
     "Quit current
 
 map tty : highlight Terminal ctermbg=23 ctermfg=15 guibg=#073042 guifg=#7ec1de \| below terminal <CR>
+map tth : below term cd %:p:h; bash <CR>
 map wsl : call ShellWSL() <CR>
 
 map e3 : vsplit \| call FgXp(".",3)<CR>
