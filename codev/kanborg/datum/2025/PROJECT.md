@@ -31,5 +31,5 @@ APLE : {"description":"Apple bit","last_id":5,"related":""}
 AIVE : {"description":"AI Vertex Eyes","last_id":0,"related":""}
 ADOBE : {"description":"Adobe house","last_id":1,"related":""}
 WGI : {"description":"Web Graphic Interface","last_id":0,"related":""}
-GGPU : {"description":"Graphics Processing and Gaming","last_id":3,"related":""}
+GGPU : {"description":"Graphics Processing and Gaming","last_id":4,"related":""}
 ```

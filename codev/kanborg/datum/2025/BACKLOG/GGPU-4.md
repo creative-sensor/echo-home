@@ -1,6 +1,8 @@
-# ISSUE :
+# gpustack : distributed inference
 --------------------------------
 ### 0 DESCRIPTION
+
+https://github.com/gpustack/gpustack?tab=readme-ov-file
 
 
 ### 1 SOLUTION
@@ -18,5 +20,5 @@
 
 --------------------------------
 ```json
-{ "project_code": "HTMD" , "links": "" , "location": "" , "fpoint": "" }
+{ "project_code": "GGPU" , "links": "" , "location": "" , "fpoint": "" }
 ```
