@@ -1,4 +1,14 @@
 #!/bin/bash
 
-~/.lmstudio/bin/lms  ls --json  | jq -c -r   '.[] | "\(.format)__\(.modelKey|gsub("[/-]";"")|gsub("\\.";"")): \(.)"'   | yq $@ .
+YSON_MODEL=$1
 
+if test -r "$YSON_MODEL" ;then
+  ~/.lmstudio/bin/lms  ls --json  | jq -c -r   '.[] | "\(.format)__\(.modelKey|gsub("[/-]";"")|gsub("\\.";"")): \(.)"'   | yq  .  > tmp.yaml
+  ysmg $YSON_MODEL tmp.yaml
+  rm tmp.yaml
+  cat $YSON_MODEL | yq .
+  exit 0
+fi
+
+
+~/.lmstudio/bin/lms  ls --json | jq . 

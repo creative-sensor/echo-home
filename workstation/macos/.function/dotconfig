@@ -10,3 +10,5 @@ source ~/.bashrc
 test -z "$(yq -V | grep -o mikefarah)" \
 	&& curl -L -o $LOCAL_BIN/yq "https://github.com/mikefarah/yq/releases/download/v4.47.1/yq_darwin_arm64" \
 	&& chmod 0755 $LOCAL_BIN/yq
+
+ln -sf $(which python3) $LOCAL_BIN/python
