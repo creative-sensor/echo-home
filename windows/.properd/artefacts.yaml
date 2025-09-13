@@ -25,4 +25,4 @@ vs_BuildTools: [ 4.39.0 , "https://download.visualstudio.microsoft.com/download/
 sops: [ 3.10.2 , "https://github.com/getsops/sops/releases/download/v3.10.2/sops-v3.10.2.amd64.exe" ]
 ripgrep: [ 14.1.1 , "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-pc-windows-msvc.zip", {"suffix":"zip"} ]
 go: [ 1.24.4 , "https://go.dev/dl/go1.24.4.windows-amd64.msi", {"suffix":"msi"} ]
-lmstudio: [ 0.3.20  , "https://installers.lmstudio.ai/win32/x64/0.3.20-4/LM-Studio-0.3.20-4-x64.exe" ]
+lmstudio: [ 0.3.25  , "https://installers.lmstudio.ai/win32/x64/0.3.25-2/LM-Studio-0.3.25-2-x64.exe" ]
