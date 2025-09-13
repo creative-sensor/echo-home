@@ -1,3 +1,4 @@
+#!/bin/bash
 
 ARTEFACT_DIR=~/.lmstudio/models
 CHECKSUM=$(readlink -f .properd/models.sha256sum)
@@ -6,4 +7,4 @@ cd $ARTEFACT_DIR
 if ! test -f $CHECKSUM ;then
     find . -type f |  xargs -I {} sha256sum {} > $CHECKSUM
 fi
-sha256sum --check --quiet --ignore-missing $CHECKSUM
+sha256sum --check --ignore-missing $CHECKSUM
