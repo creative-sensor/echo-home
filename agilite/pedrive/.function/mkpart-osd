@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -x
+
+BLK=$1
+BLK_SIZE=$(parted $BLK -s 'print' | grep "Disk $BLK:" | awk '{print $3}')
+parted $BLK \
+  -s 'mktable gpt' \
+  -s 'mkpart "" ext2 1M 1024M' \
+  -s 'mkpart "" ext2 1024M 2048M' \
+  -s 'mkpart "" ext2 2048M 64000M' \
+  -s "mkpart '' ext2 64000M $BLK_SIZE" \
+  -s "print"
