@@ -1,0 +1,14 @@
+#!/bin/bash 
+
+source .properd/extents
+PEDRIVE_MOUNT=/run/$USER/media
+WSL=$(printenv | grep -o --color  'WSL.\+=.\+')
+
+for i in $LIST_EXTENTS ; do
+    PEDRIVE_MOUNT=$PEDRIVE_MOUNT/$i
+    test -n "$WSL" && PEDRIVE_MOUNT=/mnt/$i
+    if test -r $PEDRIVE_MOUNT/.pedrive ; then
+      echo "Reading EXTENT[$i]"
+      find $PEDRIVE_MOUNT > $META_DIR/$i
+    fi
+done

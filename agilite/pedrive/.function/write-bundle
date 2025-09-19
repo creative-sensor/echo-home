@@ -1,0 +1,31 @@
+#!/bin/bash
+
+source .properd/extents
+
+SUB_PATH=$1
+SUB_PATH_BUNDLE=$(  echo ${SUB_PATH}| sed s,/$,,  ).tar.xz
+pedrive_bundle=$(cat $VOLUME_CACHE/$SUB_PATH/.properd/pedrive.yaml | yq '.bundle')
+pedrive_encrypt_id=$(cat $VOLUME_CACHE/$SUB_PATH/.properd/pedrive.yaml | yq -r '.encrypt')
+[[ $pedrive_bundle != "true" ]] && abort "FAILED AS BUNDLE MODE DISABLED [ $SUB_PATH/.properd/pedrive.yaml ]"
+
+echo "Writing in bundle mode"
+echo "$(date -u '+%Y-%m-%dT%H-%M-%SZ')  $HOSTNAME" >> $VOLUME_CACHE/$SUB_PATH/.properd/changelog
+cd $VOLUME_CACHE/$(dirname $SUB_PATH)
+tar cJf   $(basename $SUB_PATH_BUNDLE)   $(basename $SUB_PATH)
+if [[ "$pedrive_encrypt_id"  =~  [A-Z0-9]+ ]] ; then
+    echo "Encrypting with key $pedrive_encrypt_id"
+    gpg2  --encrypt --recipient ${pedrive_encrypt_id}  --trust-model always --yes  $(basename $SUB_PATH_BUNDLE) || exit 1
+    SUB_PATH_BUNDLE=${SUB_PATH_BUNDLE}.gpg
+fi
+cd -
+
+EXTENT=$(basename $(grep -l  $SUB_PATH_BUNDLE $META_DIR/*  | head -1)  2>/dev/null)
+test -z "$EXTENT" && EXTENT=$(.function/pick-random-extent.py)
+
+mkdir -p $(dirname $VOLUME_CACHE/$SUB_PATH_BUNDLE)
+cp  $VOLUME_CACHE/$SUB_PATH_BUNDLE  ${EXTENT}"$(dirname $SUB_PATH_BUNDLE)"
+#rclone ls $EXTENT > $META_DIR/$EXTENT
+
+echo "SUBPATH UPATED <<" 
+echo $SUB_PATH_BUNDLE
+rm $VOLUME_CACHE/$SUB_PATH_BUNDLE
