@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-source .properd/extents
+source .function/extents
 PEDRIVE_MOUNT=/run/$USER/media
 
 if test -d $PEDRIVE_MOUNT; then
