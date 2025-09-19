@@ -276,6 +276,7 @@ map e6 : vsplit \| call FgXp(".",6)<CR>
 map e9 : vsplit \| call FgXp(".",9)<CR>
     "List file at maxdepth=X
 
+map i0 : echo expand('%:p') <CR>
 map f5 : edit <CR>
 map e/ : edit . <CR>
 map e. : edit %:p:h <CR>
