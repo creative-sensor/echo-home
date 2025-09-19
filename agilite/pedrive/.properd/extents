@@ -7,14 +7,9 @@ mkdir -p $VOLUME_CACHE_SHORT
 export META_DIR=$(readlink -f $META_DIR_SHORT)
 VOLUME_CACHE=$(readlink -f $VOLUME_CACHE_SHORT)
 export LIST_EXTENTS='
-  DATUM_WS12
-  DATUM_NJ4I
-  DATUM_XB3F
-  DATUM_P5VQ
-  c
-  d
-  wsl
+  DATUM_A001
+  DATUM_B002
+  DATUM_C003
 '
 
-
-
+powershell 'Get-Volume | Where-Object FileSystem -eq 'NTFS' | Select-Object DriveLetter, FileSystemLabel' | grep  'DATUM_[A-Z0-9]\{4\}'
