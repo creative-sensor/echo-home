@@ -30,10 +30,12 @@ set shellslash
 set backspace=indent,eol,start
 set ffs=unix
 set foldlevelstart=10
+
+"-------- [GLOBAL] --------
 let g:yaml_revealer_separator='➤'
     "<C-v>u27a4
 let g:font_name = "Consolas"
-let g:font_size = 12
+let g:font_size = 11
 
 
 

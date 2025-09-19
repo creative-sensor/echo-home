@@ -3,6 +3,8 @@
 source .function/extents
 PEDRIVE_MOUNT=/run/$USER/media
 
+rm -r $META_DIR_SHORT/DATUM_*
+
 if test -d $PEDRIVE_MOUNT; then
   for i in $LIST_EXTENTS ; do
       PEDRIVE_MOUNT=$PEDRIVE_MOUNT/$i
