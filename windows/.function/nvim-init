@@ -2,5 +2,5 @@
 test -s ~/.vim/vim-plug/plug.vim || git clone https://github.com/junegunn/vim-plug.git ~/.vim/vim-plug
 cp -b .vimrc.neo ~/
 cp -rb AppData/Local/nvim ~/AppData/Local/
-mkdir -p ~/.vim/lua && cp -b .vim/lua/*.lua ~/.vim/lua/
+mkdir -p ~/.vim/lua && cp -rb .vim/lua ~/.vim/
 nvim -c "PlugInstall" -c "qall"
