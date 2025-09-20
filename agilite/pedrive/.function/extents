@@ -6,15 +6,4 @@ mkdir -p $META_DIR_SHORT
 mkdir -p $VOLUME_CACHE_SHORT
 export META_DIR=$(readlink -f $META_DIR_SHORT)
 VOLUME_CACHE=$(readlink -f $VOLUME_CACHE_SHORT)
-export LIST_EXTENTS='
-  DATUM_WS12
-  DATUM_NJ4I
-  DATUM_XB3F
-  DATUM_P5VQ
-  c
-  d
-  wsl
-'
-
-
-
+export LIST_EXTENTS=$(cat .properd/extents.yaml | awk -F":" '{print $1}')

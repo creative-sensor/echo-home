@@ -30,8 +30,13 @@ set shellslash
 set backspace=indent,eol,start
 set ffs=unix
 set foldlevelstart=10
+
+"-------- [GLOBAL] --------
 let g:yaml_revealer_separator='➤'
     "<C-v>u27a4
+let g:font_name = "Consolas"
+let g:font_size = 11
+
 
 
 "-------- [GUI / NEOVIDE] --------
@@ -89,6 +94,11 @@ lua require("neo-init")
 
 
 "-------- [FUNCTIONS] --------
+function! AdjustFontSize(delta)
+  let g:font_size += a:delta
+  execute "set guifont=" . g:font_name . ":h" . g:font_size
+endfunction
+
 
 fun! FindJsonPath()
   " FIND JSON PATH
@@ -288,9 +298,10 @@ map e6 : vsplit \| call FgXp(".",6)<CR>
 map e9 : vsplit \| call FgXp(".",9)<CR>
     "List file at maxdepth=X
 
+map i0 : echo expand('%:p') <CR>
 map f5 : edit <CR>
 map e/ : edit . <CR>
-map e. : vsplit %:p:h <CR>
+map e. : edit %:p:h <CR>
 map t/ : tabnew . <CR>
 map t. : tabnew %:p:h <CR>
 map s/ : split . <CR>
@@ -321,6 +332,10 @@ vnoremap --    "+y : vsplit <C-R>+ <CR>
 
 nnoremap <F5><F5> : edit<CR>
 
+
+" Map keys to increase/decrease font size
+nnoremap <C-0> :call AdjustFontSize(1)<CR>
+nnoremap <C-9> :call AdjustFontSize(-1)<CR>
 
 "-------- [POST-INIT] --------
 "colorscheme solarized8_high

@@ -1,14 +1,32 @@
 #!/bin/bash 
 
-source .properd/extents
+source .function/extents
 PEDRIVE_MOUNT=/run/$USER/media
-WSL=$(printenv | grep -o --color  'WSL.\+=.\+')
 
-for i in $LIST_EXTENTS ; do
-    PEDRIVE_MOUNT=$PEDRIVE_MOUNT/$i
-    test -n "$WSL" && PEDRIVE_MOUNT=/mnt/$i
-    if test -r $PEDRIVE_MOUNT/.pedrive ; then
+rm -r $META_DIR_SHORT/DATUM_*
+
+if test -d $PEDRIVE_MOUNT; then
+  for i in $LIST_EXTENTS ; do
+      PEDRIVE_MOUNT=$PEDRIVE_MOUNT/$i
+      if test -r $PEDRIVE_MOUNT/.pedrive ; then
+        echo "Reading EXTENT[$i]"
+        find $PEDRIVE_MOUNT > $META_DIR/$i
+      fi
+  done
+fi
+
+if [[ "$OS" =~ "Windows_NT" ]]; then
+  powershell 'Get-Volume | Where-Object FileSystem -eq 'NTFS' | Select-Object  FileSystemLabel, DriveLetter' \
+      | grep  'DATUM_[A-Z0-9]\{4\}' | sed 's/ \+/=/g' > .properd/ntfs
+  source .properd/ntfs
+  for i in $LIST_EXTENTS ; do
+    PEDRIVE_MOUNT=${!i}
+    if test -r /$PEDRIVE_MOUNT/.pedrive ; then
       echo "Reading EXTENT[$i]"
-      find $PEDRIVE_MOUNT > $META_DIR/$i
+      find /$PEDRIVE_MOUNT > $META_DIR/$i
     fi
-done
+  done
+fi
+
+
+
