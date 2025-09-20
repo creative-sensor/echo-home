@@ -27,6 +27,7 @@
 - [datum/2025/TODO/MDOS-20.md](datum/2025/TODO/MDOS-20.md)   ```# rsync : source rebuild```
 - [datum/2025/TODO/MDOS-27.md](datum/2025/TODO/MDOS-27.md)   ```# wsli : WSL Windows interface```
 - [datum/2025/TODO/MONO-7.md](datum/2025/TODO/MONO-7.md)   ```# ULI : Unified Linux Interface```
+- [datum/2025/TODO/VIM-21.md](datum/2025/TODO/VIM-21.md)   ```# tab : group of windows```
 
 ### 4 DONE
 
