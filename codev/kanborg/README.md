@@ -7,6 +7,7 @@
 
 - [datum/2025/WIP/ASML-2.md](datum/2025/WIP/ASML-2.md)   ```# MLOps : high-level [6]```
 - [datum/2025/WIP/DROID-3.md](datum/2025/WIP/DROID-3.md)   ```# android : studio```
+- [datum/2025/WIP/KROS-7.md](datum/2025/WIP/KROS-7.md)   ```# font : cascadia mono```
 - [datum/2025/WIP/LEAF-30.md](datum/2025/WIP/LEAF-30.md)   ```# Jupyter :```
 - [datum/2025/WIP/VIM-20.md](datum/2025/WIP/VIM-20.md)   ```# vim : pad [2]```
 
