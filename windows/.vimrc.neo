@@ -89,9 +89,6 @@ Plug 'nanozuki/tabby.nvim'
 call plug#end()
 
 
-"-------- [LUA-INIT] --------
-set rtp+=~/.vim/lua
-lua require("neo-init")
 
 
 "-------- [FUNCTIONS] --------
@@ -337,6 +334,12 @@ nnoremap <F5><F5> : edit<CR>
 " Map keys to increase/decrease font size
 nnoremap <C-0> :call AdjustFontSize(1)<CR>
 nnoremap <C-9> :call AdjustFontSize(-1)<CR>
+
+
+"-------- [LUA-INIT] --------
+set rtp+=~/.vim/lua
+lua require("neo-init")
+
 
 "-------- [POST-INIT] --------
 "colorscheme solarized8_high
