@@ -1,0 +1,10 @@
+
+ARTEFACT_DIR=artefacts
+CHECKSUM=.properd/artefact.sha256sum
+
+mkdir -p $ARTEFACT_DIR
+cd $ARTEFACT_DIR
+if ! test -f ../$CHECKSUM ;then
+    find . -type f | grep -v '\.function' |  xargs -I {} sha256sum {} > ../$CHECKSUM
+fi
+sha256sum --check --quiet --ignore-missing ../$CHECKSUM
