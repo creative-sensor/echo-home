@@ -20,7 +20,6 @@ set paste
 set title titlestring=VIM\ \|\ %{fnamemodify(getcwd(),\ ':t')} titlelen=32
     "output:  VIM | current_dirname
 set background=light
-"set guifont=Consolas:h11
 set shellcmdflag=-c
 set shellxquote=" "
 set shellslash
@@ -28,15 +27,21 @@ set shellslash
 set backspace=indent,eol,start
 set ffs=unix
 set foldlevelstart=10
+
+"-------- [GLOBAL] --------
 let g:yaml_revealer_separator='➤'
     "<C-v>u27a4
+let g:font_name = "Cascadia\\ Mono:h12"
+let g:font_size = 12
+
+
 
 "-------- [GUI / NEOVIDE] --------
 if exists('g:neovide')
   let g:neovide_cursor_animation_length = 0
   let g:neovide_cursor_vfx_mode = ""
   let g:neovide_scroll_animation_length = 0.001
-"  set guifont=Cascadia\ Mono:h12
+  set guifont=Cascadia\ Mono:h12
 endif
 
 "-------- [PLUGIN / VUNDLE] --------
@@ -86,6 +91,11 @@ lua require("neo-init")
 
 
 "-------- [FUNCTIONS] --------
+function! AdjustFontSize(delta)
+  let g:font_size += a:delta
+  execute "set guifont=" . g:font_name . ":h" . g:font_size
+endfunction
+
 
 fun! FindJsonPath()
   " FIND JSON PATH
@@ -226,6 +236,9 @@ autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#dadeaf | highlight
 
 
 "-------- [KEYMAP] --------
+map tff : Telescope find_files <CR>
+map tgr : Telescope grep_string <CR>
+map ys : call YsonLine() <CR>
 map T : tabnew . <CR>
     "New tab
 map C : s/^/#/<CR>
@@ -248,17 +261,23 @@ map q1 : q!<CR>
     "Quit current
 
 map tty : highlight Terminal ctermbg=23 ctermfg=15 guibg=#073042 guifg=#7ec1de \| below terminal <CR>
+map tth : below term cd %:p:h; bash <CR>
 
 map e3 : vsplit \| call FgXp(".",3)<CR>
 map e6 : vsplit \| call FgXp(".",6)<CR>
 map e9 : vsplit \| call FgXp(".",9)<CR>
     "List file at maxdepth=X
 
+map i0 : echo expand('%:p') <CR>
 map f5 : edit <CR>
-map e. : edit . <CR>
-map t. : tabnew . <CR>
-map s. : split . <CR>
-map v. : vsplit . <CR>
+map e/ : edit . <CR>
+map e. : edit %:p:h <CR>
+map t/ : tabnew . <CR>
+map t. : tabnew %:p:h <CR>
+map s/ : split . <CR>
+map s. : split %:p:h <CR>
+map v/ : vsplit . <CR>
+map v. : vsplit %:p:h <CR>
 map dfe : diffoff! <CR>
 map dff : windo diffthis<CR>
 map dfg : diffget<CR>
@@ -283,6 +302,11 @@ vnoremap --    "+y : vsplit <C-R>+ <CR>
     "JUMP TO PATH
 
 nnoremap <F5><F5> : edit<CR>
+
+
+" Map keys to increase/decrease font size
+nnoremap <C-0> :call AdjustFontSize(1)<CR>
+nnoremap <C-9> :call AdjustFontSize(-1)<CR>
 
 "-------- [POST-INIT] --------
 colorscheme gruvbox
