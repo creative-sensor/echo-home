@@ -28,7 +28,8 @@ require('tabby').setup(
           return {
             line.sep('', hl, theme.fill),
             tab.is_current(),
-            tab.name():gsub('%s*%[.+%]', ''),
+--            tab.name():gsub('%s*%[.+%]', ''),
+            tab.number(),
 --            tab.close_btn(''),
             line.sep('', hl, theme.fill),
             hl = hl,

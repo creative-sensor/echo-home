@@ -266,6 +266,7 @@ autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#dadeaf | highlight
 map tff : Telescope find_files <CR>
 map tgr : Telescope grep_string <CR>
 map ys : call YsonLine() <CR>
+map tsm : tabs <CR>
 map T : tabnew . <CR>
     "New tab
 map C : s/^/#/<CR>
