@@ -85,12 +85,9 @@ Plug 'shaunsingh/solarized.nvim'
 if exists('g:neovide')
   Plug 'ellisonleao/gruvbox.nvim'
 endif
+Plug 'nanozuki/tabby.nvim'
 call plug#end()
 
-
-"-------- [LUA-INIT] --------
-set rtp+=~/.vim/lua
-lua require("neo-init")
 
 
 "-------- [FUNCTIONS] --------
@@ -247,6 +244,7 @@ autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#CED320  | highligh
 map tff : Telescope find_files <CR>
 map tgr : Telescope grep_string <CR>
 map ys : call YsonLine() <CR>
+map tsm : tabs <CR>
 map T : tabnew . <CR>
     "New tab
 map C : s/^/#/<CR>
@@ -314,6 +312,12 @@ nnoremap <F5><F5> : edit<CR>
 " Map keys to increase/decrease font size
 nnoremap <C-0> :call AdjustFontSize(1)<CR>
 nnoremap <C-9> :call AdjustFontSize(-1)<CR>
+
+
+"-------- [LUA-INIT] --------
+set rtp+=~/.vim/lua
+lua require("neo-init")
+
 
 "-------- [POST-INIT] --------
 if exists('g:neovide')
