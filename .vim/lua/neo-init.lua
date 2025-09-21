@@ -9,8 +9,8 @@ require('lualine').setup(
 local theme = {
   fill = 'TabLineFill',
   -- Also you can do this: fill = { fg='#f2e9de', bg='#907aa9', style='italic' }
-  head = { fg='#ffffff', bg='#000000', style='italic' },
-  current_tab = { fg='#ffffff', bg='#4116db', style='italic' },
+  head = { fg='#ffffff', bg='#324B37', style='italic' },
+  current_tab = { fg='#F5A700', bg='#4B4332', style='italic' },
   tab = 'TabLine',
   win = 'TabLine',
   tail = 'TabLine',
@@ -20,18 +20,18 @@ require('tabby').setup(
     line = function(line)
       return {
         {
-          { ' ❰⋐V❯ ', hl = theme.head },
-          line.sep('◣', theme.head, theme.fill),
+          { ' ⋐ ', hl = theme.head },
+          line.sep(' ', theme.head, theme.fill),
         },
         line.tabs().foreach(function(tab)
           local hl = tab.is_current() and theme.current_tab or theme.tab
           return {
-            line.sep('◥', hl, theme.fill),
+            line.sep(' ', hl, theme.fill),
             tab.is_current(),
 --            tab.name():gsub('%s*%[.+%]', ''),
             tab.number(),
 --            tab.close_btn(''),
-            line.sep('◣', hl, theme.fill),
+            line.sep(' ', hl, theme.fill),
             hl = hl,
             margin = ' ',
           }
