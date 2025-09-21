@@ -7,4 +7,4 @@ cd $ARTEFACT_DIR
 if ! test -f ../$CHECKSUM ;then
     find . -type f | grep -v '\.function' |  xargs -I {} sha256sum {} > ../$CHECKSUM
 fi
-sha256sum --check --quiet --ignore-missing ../$CHECKSUM
+sha256sum --check  --ignore-missing ../$CHECKSUM
