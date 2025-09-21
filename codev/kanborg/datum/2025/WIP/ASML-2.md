@@ -12,6 +12,20 @@
 
 ### 4 JOURNAL
 
+###### 4.7 tensor
+
+- [How AI Discovered a Faster Matrix Multiplication Algorithm - YouTube](https://www.youtube.com/watch?v=fDAPJ7rvcUw)
+
+- [Tensors for Neural Networks, Clearly Explained!!! - YouTube](https://www.youtube.com/watch?v=L35fFDpwIM4)
+
+- [What are Tensor Cores? - YouTube](https://www.youtube.com/watch?v=Cak8ASX7NOk)
+
+- [I never intuitively understood Tensors...until now! - YouTube](https://www.youtube.com/watch?v=k2FP-T6S1x0)
+
+- [Analysis of a Tensor Core - YouTube](https://www.youtube.com/watch?v=xjjN9q2ym6s)
+
+- [GitHub - microsoft/AI-For-Beginners: 12 Weeks, 24 Lessons, AI for All!](https://github.com/microsoft/AI-For-Beginners)
+
 ###### 4.6 mlflows
 
 - https://mlflow.org/
