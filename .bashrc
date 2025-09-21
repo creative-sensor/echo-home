@@ -42,6 +42,7 @@ export -f ffunction
 # ---- ALIAS ----
 alias vim='vimx'
 alias vim-py='vimx -u ~/.vim/rc/python'
+alias nvide='neovide'
 alias git-glog='git log --all --decorate --oneline --graph'
 alias gitroot='cd $(git rev-parse --show-toplevel)'
 alias grin='grep -rin '

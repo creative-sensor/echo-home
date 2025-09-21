@@ -27,8 +27,14 @@ set shellslash
 set backspace=indent,eol,start
 set ffs=unix
 set foldlevelstart=10
+
+"-------- [GLOBAL] --------
 let g:yaml_revealer_separator='➤'
     "<C-v>u27a4
+let g:font_name = "Cascadia\\ Mono:h12"
+let g:font_size = 12
+
+
 
 "-------- [GUI / NEOVIDE] --------
 if exists('g:neovide')
@@ -76,15 +82,17 @@ Plug 'nvim-lualine/lualine.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'shaunsingh/solarized.nvim'
 Plug 'ellisonleao/gruvbox.nvim'
+Plug 'nanozuki/tabby.nvim'
 call plug#end()
 
 
-"-------- [LUA-INIT] --------
-set rtp+=~/.vim/lua
-lua require("neo-init")
-
 
 "-------- [FUNCTIONS] --------
+function! AdjustFontSize(delta)
+  let g:font_size += a:delta
+  execute "set guifont=" . g:font_name . ":h" . g:font_size
+endfunction
+
 
 fun! FindJsonPath()
   " FIND JSON PATH
@@ -242,6 +250,8 @@ autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#f3f9a9 | highlight
 
 
 "-------- [KEYMAP] --------
+map tff : Telescope find_files <CR>
+map tgr : Telescope grep_string <CR>
 map ys : call YsonLine() <CR>
 map T : tabnew . <CR>
     "New tab
@@ -271,11 +281,16 @@ map e6 : vsplit \| call FgXp(".",6)<CR>
 map e9 : vsplit \| call FgXp(".",9)<CR>
     "List file at maxdepth=X
 
+map i0 : echo expand('%:p') <CR>
 map f5 : edit <CR>
-map e. : edit . <CR>
-map t. : tabnew . <CR>
-map s. : split . <CR>
-map v. : vsplit . <CR>
+map e/ : edit . <CR>
+map e. : edit %:p:h <CR>
+map t/ : tabnew . <CR>
+map t. : tabnew %:p:h <CR>
+map s/ : split . <CR>
+map s. : split %:p:h <CR>
+map v/ : vsplit . <CR>
+map v. : vsplit %:p:h <CR>
 map dfe : diffoff! <CR>
 map dff : windo diffthis<CR>
 map dfg : diffget<CR>
@@ -299,6 +314,17 @@ vnoremap --    "+y : vsplit <C-R>+ <CR>
     "JUMP TO PATH
 
 nnoremap <F5><F5> : edit<CR>
+
+
+" Map keys to increase/decrease font size
+nnoremap <C-0> :call AdjustFontSize(1)<CR>
+nnoremap <C-9> :call AdjustFontSize(-1)<CR>
+
+
+"-------- [LUA-INIT] --------
+set rtp+=~/.vim/lua
+lua require("neo-init")
+
 
 "-------- [POST-INIT] --------
 "colorscheme solarized8_high
