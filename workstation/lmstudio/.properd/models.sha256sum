@@ -24,3 +24,5 @@ a3d0966c1331a2ad48f7c8fe2ffdb1c2b39116f69dc0f2e38f4a1ea01c74874b *./lmstudio-com
 b25d35b00fe699ef52bf399fa579f2c56664897c013aeba2686965fdb6265f0f *./lmstudio-community/gemma-3-1B-it-QAT-GGUF/gemma-3-1B-it-QAT-Q4_0.gguf
 be49949e48422e4547b00af14179a193d3777eea7fbbd7d6e1b0861304628a01 *./lmstudio-community/gemma-3-4b-it-GGUF/gemma-3-4b-it-Q4_K_M.gguf
 c24a7f5fcfc68286f0a217023b6738e73bea4f11787a43e8238d4bb1b8604cde *./lmstudio-community/Qwen2.5-VL-7B-Instruct-GGUF/mmproj-model-f16.gguf
+01d8a3bc7efdaa331112e8a0a42ec9046fcee2a1dce910452aafaccb996759f3 *./lmstudio-community/gpt-oss-120b-GGUF/gpt-oss-120b-MXFP4-00001-of-00002.gguf
+b7bf9fba295115d0e32951ce54911b3020dd92459b88a3908ad58479be6f7676 *./lmstudio-community/gpt-oss-120b-GGUF/gpt-oss-120b-MXFP4-00002-of-00002.gguf
