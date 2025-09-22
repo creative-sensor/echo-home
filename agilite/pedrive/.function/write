@@ -13,15 +13,17 @@ if ! test -f $VOLUME_CACHE/$SUB_PATH; then
     exit 1
 fi
 
-EXTENT=$(basename $(grep -l  $SUB_PATH $META_DIR/*  | head -1)  2>/dev/null)
+#EXTENT=$(grep -l  $SUB_PATH $META_DIR/*  | awk -F '/' '{print $NF}'  2>/dev/null)
+EXTENT=$(ls $META_DIR/*  | awk -F '/' '{print $NF}'  2>/dev/null)
 test -z "$EXTENT" && EXTENT=$(.function/pick-random-extent.py)
-EXTENT_MOUNT=${!EXTENT}
-
-mkdir -p $(dirname $VOLUME_CACHE/$SUB_PATH)
-mkdir -p ${EXTENT_MOUNT}/"$(dirname $SUB_PATH_BUNDLE)"
-cp $VOLUME_CACHE/$SUB_PATH   ${EXTENT_MOUNT}/"$(dirname $SUB_PATH)"
-cd $EXTENT_MOUNT && find  > $META_DIR/$EXTENT && cd -
-
+for ext in $EXTENT; do
+  EXTENT_MOUNT=${!ext}
+  mkdir -p $(dirname $VOLUME_CACHE/$SUB_PATH)
+  mkdir -p ${EXTENT_MOUNT}/"$(dirname $SUB_PATH)"
+  cp $VOLUME_CACHE/$SUB_PATH   ${EXTENT_MOUNT}/"$(dirname $SUB_PATH)"
+  cd $EXTENT_MOUNT && find 2>/dev/null > $META_DIR/$ext && cd -
+  echo "[$ext] write"
+done
 
 echo "SUBPATH UPATED <<" 
 echo $SUB_PATH

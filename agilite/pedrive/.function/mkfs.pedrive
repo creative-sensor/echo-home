@@ -10,7 +10,7 @@ if test -d $PEDRIVE_MOUNT; then
       PEDRIVE_MOUNT=$PEDRIVE_MOUNT/$i
       if test -r $PEDRIVE_MOUNT/.pedrive ; then
         echo "Reading EXTENT[$i]"
-        cd $EXTENT_MOUNT && find  > $META_DIR/$i && cd -
+        cd $EXTENT_MOUNT && find 2>/dev/null > $META_DIR/$i && cd -
       fi
   done
 fi
@@ -23,7 +23,7 @@ if [[ "$OS" =~ "Windows_NT" ]]; then
     EXTENT_MOUNT=${!i}
     if test -r $EXTENT_MOUNT/.pedrive ; then
       echo "Reading EXTENT[$i]"
-      cd $EXTENT_MOUNT && find  > $META_DIR/$i && cd -
+      cd $EXTENT_MOUNT && find 2>/dev/null > $META_DIR/$i && cd -
     fi
   done
 fi
