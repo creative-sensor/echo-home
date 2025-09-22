@@ -22,7 +22,7 @@
 ### 3 TO DO
 
 - [datum/2025/TODO/DROID-4.md](datum/2025/TODO/DROID-4.md)   ```# APK : pgp tools```
-- [datum/2025/TODO/DTUM-2.md](datum/2025/TODO/DTUM-2.md)   ```# pedrive : physical extended drives```
+- [datum/2025/TODO/DTUM-7.md](datum/2025/TODO/DTUM-7.md)   ```# pedrive : revision tracking```
 - [datum/2025/TODO/GGPU-1.md](datum/2025/TODO/GGPU-1.md)   ```# video : codecs```
 - [datum/2025/TODO/GGPU-3.md](datum/2025/TODO/GGPU-3.md)   ```# EXO : M2p2```
 - [datum/2025/TODO/MDOS-20.md](datum/2025/TODO/MDOS-20.md)   ```# rsync : source rebuild```
@@ -48,6 +48,7 @@
 - [datum/2025/DONE/CORTA-3.md](datum/2025/DONE/CORTA-3.md)   ```# lmstudio : cli```
 - [datum/2025/DONE/DROID-1.md](datum/2025/DONE/DROID-1.md)   ```# FEATURE : Fork GitJournal```
 - [datum/2025/DONE/DROID-2.md](datum/2025/DONE/DROID-2.md)   ```# droidvim: vim for android```
+- [datum/2025/DONE/DTUM-2.md](datum/2025/DONE/DTUM-2.md)   ```# pedrive : physical extended drives```
 - [datum/2025/DONE/DTUM-3.md](datum/2025/DONE/DTUM-3.md)   ```# distum : space-h256```
 - [datum/2025/DONE/DTUM-4.md](datum/2025/DONE/DTUM-4.md)   ```# distum : usage amount```
 - [datum/2025/DONE/DTUM-5.md](datum/2025/DONE/DTUM-5.md)   ```# distum : linux```
