@@ -10,20 +10,20 @@ if test -d $PEDRIVE_MOUNT; then
       PEDRIVE_MOUNT=$PEDRIVE_MOUNT/$i
       if test -r $PEDRIVE_MOUNT/.pedrive ; then
         echo "Reading EXTENT[$i]"
-        find $PEDRIVE_MOUNT > $META_DIR/$i
+        cd $EXTENT_MOUNT && find 2>/dev/null > $META_DIR/$i && cd -
       fi
   done
 fi
 
 if [[ "$OS" =~ "Windows_NT" ]]; then
   powershell 'Get-Volume | Where-Object FileSystem -eq 'NTFS' | Select-Object  FileSystemLabel, DriveLetter' \
-      | grep  'DATUM_[A-Z0-9]\{4\}' | sed 's/ \+/=/g' > .properd/ntfs
+      | grep  'DATUM_[A-Z0-9]\{4\}' | sed 's/ \+/=\//' > .properd/ntfs
   source .properd/ntfs
   for i in $LIST_EXTENTS ; do
-    PEDRIVE_MOUNT=${!i}
-    if test -r /$PEDRIVE_MOUNT/.pedrive ; then
+    EXTENT_MOUNT=${!i}
+    if test -r $EXTENT_MOUNT/.pedrive ; then
       echo "Reading EXTENT[$i]"
-      find /$PEDRIVE_MOUNT > $META_DIR/$i
+      cd $EXTENT_MOUNT && find 2>/dev/null > $META_DIR/$i && cd -
     fi
   done
 fi

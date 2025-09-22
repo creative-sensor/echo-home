@@ -1,13 +1,15 @@
 #!/bin/bash -e
 
-source .properd/extents
+source .function/extents
+source .properd/ntfs
 
 SUB_FILE_PATH=$1
 
 EXTENT=$(basename $(grep -l  "${SUB_FILE_PATH}$" $META_DIR/*  | head -1))
+EXTENT_MOUNT=${!EXTENT}
 
 mkdir -p $(dirname $VOLUME_CACHE/$SUB_FILE_PATH)
-cp ${EXTENT}${SUB_FILE_PATH}  $VOLUME_CACHE/$SUB_FILE_PATH
+cp ${EXTENT_MOUNT}/${SUB_FILE_PATH}  $VOLUME_CACHE/$SUB_FILE_PATH
 
 echo "FILE READY >>" 
 echo $(readlink -f $VOLUME_CACHE/$SUB_FILE_PATH)
@@ -16,6 +18,7 @@ if [[ $SUB_FILE_PATH =~ gpg$ ]] ; then
     SUB_FILE_PATH=${SUB_FILE_PATH/%.gpg/}
     echo "Decrypting |-|=|-|"
     gpg2 --decrypt $VOLUME_CACHE/${SUB_FILE_PATH}.gpg > $VOLUME_CACHE/${SUB_FILE_PATH}
+    rm $VOLUME_CACHE/${SUB_FILE_PATH}.gpg
 fi
 
 if tar tvf $VOLUME_CACHE/$SUB_FILE_PATH 2>/dev/null | grep -q .properd/pedrive.yaml ; then

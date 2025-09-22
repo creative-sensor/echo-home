@@ -1,0 +1,18 @@
+#!/bin/bash 
+
+
+mkdir -p extent_mount/{A,B,C} 
+echo "
+DATUM_A001=$(readlink -f extent_mount/A)
+DATUM_B002=$(readlink -f extent_mount/B)
+DATUM_C003=$(readlink -f extent_mount/C)
+" > .properd/ntfs
+mkdir -p .cache/volume/Pictures/testbundle/.properd
+mkdir -p .cache/meta
+touch .cache/meta/{DATUM_A001,DATUM_B002,DATUM_C003}
+
+echo "
+bundle: true
+category: music
+" > .cache/volume/Pictures/testbundle/.properd/pedrive.yaml
+
