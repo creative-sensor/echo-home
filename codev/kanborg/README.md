@@ -6,21 +6,24 @@
 ### 1 WORK IN PROGRESS
 
 - [datum/2025/WIP/ASML-2.md](datum/2025/WIP/ASML-2.md)   ```# MLOps : high-level [6]```
-- [datum/2025/WIP/DROID-3.md](datum/2025/WIP/DROID-3.md)   ```# android : studio```
-- [datum/2025/WIP/KROS-7.md](datum/2025/WIP/KROS-7.md)   ```# font : cascadia mono```
-- [datum/2025/WIP/LEAF-30.md](datum/2025/WIP/LEAF-30.md)   ```# Jupyter :```
-- [datum/2025/WIP/VIM-20.md](datum/2025/WIP/VIM-20.md)   ```# vim : pad [2]```
+- [datum/2025/WIP/LEAF-30.md](datum/2025/WIP/LEAF-30.md)   ```# Jupyter :```
 
 ### 2 ON HOLD
 
+- [datum/2025/HOLD/DROID-3.md](datum/2025/HOLD/DROID-3.md)   ```# android : studio```
 - [datum/2025/HOLD/KUBEX-3.md](datum/2025/HOLD/KUBEX-3.md)   ```# ISSUE : log query dashboard```
 - [datum/2025/HOLD/KUBEX-5.md](datum/2025/HOLD/KUBEX-5.md)   ```# jaeger : tracing system```
 - [datum/2025/HOLD/MDOS-22.md](datum/2025/HOLD/MDOS-22.md)   ```# lang runtime : lua```
 - [datum/2025/HOLD/NJS-2.md](datum/2025/HOLD/NJS-2.md)   ```# GLORIA: run objectory```
+- [datum/2025/HOLD/VIM-20.md](datum/2025/HOLD/VIM-20.md)   ```# vim : pad [2]```
 - [datum/2025/HOLD/VIM-4.md](datum/2025/HOLD/VIM-4.md)   ```# rc : container x-ray```
 
 ### 3 TO DO
 
+- [datum/2025/TODO/APLE-6.md](datum/2025/TODO/APLE-6.md)   ```# cluster : dual```
+- [datum/2025/TODO/CORTA-4.md](datum/2025/TODO/CORTA-4.md)   ```# pytorch : start```
+- [datum/2025/TODO/CORTA-5.md](datum/2025/TODO/CORTA-5.md)   ```# tensorflow : start```
+- [datum/2025/TODO/CORTA-6.md](datum/2025/TODO/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
 - [datum/2025/TODO/DROID-4.md](datum/2025/TODO/DROID-4.md)   ```# APK : pgp tools```
 - [datum/2025/TODO/DTUM-7.md](datum/2025/TODO/DTUM-7.md)   ```# pedrive : revision tracking```
 - [datum/2025/TODO/GGPU-1.md](datum/2025/TODO/GGPU-1.md)   ```# video : codecs```
@@ -77,6 +80,7 @@
 - [datum/2025/DONE/KROS-4.md](datum/2025/DONE/KROS-4.md)   ```# nvim : init```
 - [datum/2025/DONE/KROS-5.md](datum/2025/DONE/KROS-5.md)   ```# nvim : copy menu```
 - [datum/2025/DONE/KROS-6.md](datum/2025/DONE/KROS-6.md)   ```# neovide : cannot display properly```
+- [datum/2025/DONE/KROS-7.md](datum/2025/DONE/KROS-7.md)   ```# font : cascadia mono```
 - [datum/2025/DONE/KUBEX-6.md](datum/2025/DONE/KUBEX-6.md)   ```# minikube : driver=docker [8]```
 - [datum/2025/DONE/KUBEX-7.md](datum/2025/DONE/KUBEX-7.md)   ```# ingress : nginx controller```
 - [datum/2025/DONE/LEAF-11.md](datum/2025/DONE/LEAF-11.md)   ```# GROK: log transformer```
@@ -145,8 +149,6 @@
 - [datum/2025/BACKLOG/CMW-0.md](datum/2025/BACKLOG/CMW-0.md)   ```# Common : Wealth```
 - [datum/2025/BACKLOG/CMW-2.md](datum/2025/BACKLOG/CMW-2.md)   ```# commonwealth : vault function```
 - [datum/2025/BACKLOG/CORTA-0.md](datum/2025/BACKLOG/CORTA-0.md)   ```# Cortana : Chief```
-- [datum/2025/BACKLOG/CORTA-4.md](datum/2025/BACKLOG/CORTA-4.md)   ```# pytorch : start```
-- [datum/2025/BACKLOG/CORTA-5.md](datum/2025/BACKLOG/CORTA-5.md)   ```# tensorflow : start```
 - [datum/2025/BACKLOG/CTNR-0.md](datum/2025/BACKLOG/CTNR-0.md)   ```# public : encrypted```
 - [datum/2025/BACKLOG/DBMS-0.md](datum/2025/BACKLOG/DBMS-0.md)   ```# Database : Meta System```
 - [datum/2025/BACKLOG/DBMS-1.md](datum/2025/BACKLOG/DBMS-1.md)   ```# Vector : Search```

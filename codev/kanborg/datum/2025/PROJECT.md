@@ -5,7 +5,7 @@ LEAF : {"description":"Short-lived | Narrow Scope | Low Priority | Uncategorized
 NCEPT : {"description":"Concept","last_id":2,"related":""}
 ARTE : {"description":"Artefacts Exware","last_id":13,"related":""}
 MDOS : {"description":"Microsoft Windows","last_id":27,"related":""}
-CORTA : {"description":"Cortana and Chief","last_id":5,"related":""}
+CORTA : {"description":"Cortana and Chief","last_id":6,"related":""}
 E419 : {"description":"Echo 419","last_id":0,"related":""}
 HCL : {"description":"Nomad","last_id":2,"related":""}
 DROID : {"description":"Android","last_id":4,"related":""}
@@ -27,7 +27,7 @@ ACLS : {"description":"Access Control Level System","last_id":2,"related":""}
 KITE : {"description":"The Paper Kites","last_id":23,"related":""}
 KROS : {"description":"Chromium","last_id":7,"related":""}
 CTNR : {"description":"Containerization","last_id":0,"related":""}
-APLE : {"description":"Apple bit","last_id":5,"related":""}
+APLE : {"description":"Apple bit","last_id":6,"related":""}
 AIVE : {"description":"AI Vertex Eyes","last_id":0,"related":""}
 ADOBE : {"description":"Adobe house","last_id":1,"related":""}
 WGI : {"description":"Web Graphic Interface","last_id":0,"related":""}
