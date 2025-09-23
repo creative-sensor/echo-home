@@ -16,6 +16,8 @@ function terminame {
     echo -ne "\033]0;${1}\007"
 }
 
+function qawk {   awk -F "$1" "{print \$${2}}"; }
+
 function cdx {
     # teleport to directory
     local DEST=$1
