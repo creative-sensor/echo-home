@@ -25,6 +25,7 @@ EXTENT=$(ls $META_DIR/*  | awk -F '/' '{print $NF}'  2>/dev/null)
 test -z "$EXTENT" && EXTENT=$(.function/pick-random-extent.py)
 for ext in $EXTENT; do
   EXTENT_MOUNT=${!ext}
+  test -r $EXTENT_MOUNT/.pedrive || continue
   mkdir -p $(dirname $VOLUME_CACHE/$SUB_PATH_BUNDLE)
   mkdir -p ${EXTENT_MOUNT}/"$(dirname $SUB_PATH_BUNDLE)"
   cp  $VOLUME_CACHE/$SUB_PATH_BUNDLE  ${EXTENT_MOUNT}/"$(dirname $SUB_PATH_BUNDLE)"

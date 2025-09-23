@@ -1,14 +1,16 @@
 #!/bin/bash 
 
 source .function/extents
-PEDRIVE_MOUNT=/run/$USER/media
+PEDRIVE_BASEDIR=/run/media/$USER
 
-rm -r $META_DIR_SHORT/DATUM_*
+rm -r $META_DIR_SHORT/DATUM_*  .properd/ntfs
 
-if test -d $PEDRIVE_MOUNT; then
+if test -d $PEDRIVE_BASEDIR; then
+  source .properd/ntfs
   for i in $LIST_EXTENTS ; do
-      PEDRIVE_MOUNT=$PEDRIVE_MOUNT/$i
-      if test -r $PEDRIVE_MOUNT/.pedrive ; then
+      EXTENT_MOUNT=$PEDRIVE_BASEDIR/$i
+      echo "$i=$EXTENT_MOUNT" >> .properd/ntfs
+      if test -r $EXTENT_MOUNT/.pedrive ; then
         echo "Reading EXTENT[$i]"
         cd $EXTENT_MOUNT && find 2>/dev/null > $META_DIR/$i && cd -
       fi
