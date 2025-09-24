@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -x
+
+BLK=$1
+BLK_SIZE=$(parted $BLK -s 'unit s' -s 'print' | grep "Disk $BLK:" | grep -o  '[0-9]\+')
+parted $BLK \
+  -s 'unit s' \
+  -s 'mktable gpt' \
+  -s 'mkpart "" ext2 65535s 2097120s' \
+  -s 'mkpart "" ext2 2162655s 4194240s' \
+  -s 'mkpart "" ext2 4259775s 134215680s' \
+  -s "mkpart '' ext2 134281215s $((BLK_SIZE-65535))s" \
+  -s "print" \
+  -s "unit MB" \
+  -s "print"
+
+#65535s x 32 = 1G
+#65535s x 64 = 2G
+#65535s x 2048 = 64G
