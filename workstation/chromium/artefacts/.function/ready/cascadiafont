@@ -1,0 +1,10 @@
+set -x
+mkdir -p tmp
+cd tmp
+unzip -q ../$ARTIFACT_DIR/$name-$ARTIFACT_VERSION.$ARTIFACT_SUFFIX
+
+sudo mkdir -p /usr/share/fonts/truetype/CascadiaCode/
+sudo cp ttf/Cascadia* /usr/share/fonts/truetype/CascadiaCode/
+
+cd -
+rm -rf tmp
