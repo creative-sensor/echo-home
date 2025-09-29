@@ -3,7 +3,7 @@
 # ---- |EXT ----
 USER_NAME=$1
 USER_EMAIL=$2
-VARSET_EXT=$2
+VARSET_EXT=$3
 # ---- |DEFAULT ----
 USER_NAME=${USER_NAME:-github-user}
 USER_EMAIL=${USER_EMAIL:-github-user@github.com}
