@@ -9,6 +9,7 @@ EXTENT=$(basename $(grep -l  "${SUB_FILE_PATH}$" $META_DIR/*  | head -1))
 EXTENT_MOUNT=${!EXTENT}
 
 mkdir -p $(dirname $VOLUME_CACHE/$SUB_FILE_PATH)
+
 cp ${EXTENT_MOUNT}/${SUB_FILE_PATH}  $VOLUME_CACHE/$SUB_FILE_PATH
 
 echo "FILE READY >>" 
@@ -26,3 +27,14 @@ if tar tvf $VOLUME_CACHE/$SUB_FILE_PATH 2>/dev/null | grep -q .properd/pedrive.y
     tar xf $VOLUME_CACHE/$SUB_FILE_PATH  &&  rm $VOLUME_CACHE/${SUB_FILE_PATH}
     echo "Extracted"
 fi
+
+cd -
+#echo "$(sha256sum	${EXTENT_MOUNT}/${SUB_FILE_PATH}.gpg)    $(cat .properd/ntfs | grep -m 1 $(basename $EXTENT_MOUNT))" \
+#    >> $VOLUME_CACHE/${SUB_FILE_PATH%.tar.xz}/.properd/FETCH
+CHECKSUM=$(sha256sum	${EXTENT_MOUNT}/${SUB_FILE_PATH}.gpg | awk '{print $1}')
+PFI_BASE=$(cat .properd/ntfs | grep -m 1 $(basename $EXTENT_MOUNT) | awk -F "=" '{print $1}')
+echo "$CHECKSUM: {\"pfi\":[\"$PFI_BASE/$SUB_FILE_PATH.gpg\"]}" \
+    >> $VOLUME_CACHE/${SUB_FILE_PATH%.tar.xz}/.properd/FETCH
+tail -1 $VOLUME_CACHE/${SUB_FILE_PATH%.tar.xz}/.properd/FETCH | yq
+
+

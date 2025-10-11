@@ -3,6 +3,7 @@
 source .function/extents
 source .properd/ntfs
 
+PEDRIVE_BASEDIR=$(readlink -f .)
 SUB_PATH=$1
 SUB_PATH_BUNDLE=$(  echo ${SUB_PATH}| sed s,/$,,  ).tar.xz
 pedrive_bundle=$(cat $VOLUME_CACHE/$SUB_PATH/.properd/pedrive.yaml | yq '.bundle')
@@ -30,9 +31,17 @@ for ext in $EXTENT; do
   mkdir -p ${EXTENT_MOUNT}/"$(dirname $SUB_PATH_BUNDLE)"
   cp  $VOLUME_CACHE/$SUB_PATH_BUNDLE  ${EXTENT_MOUNT}/"$(dirname $SUB_PATH_BUNDLE)"
   cd $EXTENT_MOUNT && find 2>/dev/null > $META_DIR/$ext && cd -
-  echo "[$ext] write"
+  # PFI logging
+  CHECKSUM=$(sha256sum	$VOLUME_CACHE/$SUB_PATH_BUNDLE | awk '{print $1}')
+  PFI_BASE=$(cat $PEDRIVE_BASEDIR/.properd/ntfs | grep -m 1 $(basename $EXTENT_MOUNT) | awk -F "=" '{print $1}')
+  echo "$CHECKSUM: {\"pfi\":[\"$PFI_BASE/$SUB_PATH_BUNDLE\"]}" \
+      >> tmp.pfi
+  $PEDRIVE_BASEDIR/.function/merge.py $PEDRIVE_BASEDIR/pfi.yson.yaml tmp.pfi
+  yq < tmp.pfi
+  rm tmp.pfi
 done
 
 echo "SUBPATH UPATED <<" 
 echo $SUB_PATH_BUNDLE
+
 rm $VOLUME_CACHE/$SUB_PATH_BUNDLE

@@ -1,12 +1,12 @@
 #!/bin/bash -e
 META_DIR_SHORT=.cache/meta
-VOLUME_CACHE_SHORT=.cache/volume
-test -n "$PEDRIVE_VOLUME" && VOLUME_CACHE_SHORT=$PEDRIVE_VOLUME
+VOLUME_CACHE_SHORT=${PEDRIVE_VOLUME:-.cache/volume}
+PEDRIVE_EXTENTS=${PEDRIVE_EXTENTS:-.properd/extents.yaml}
 mkdir -p $META_DIR_SHORT
 mkdir -p $VOLUME_CACHE_SHORT
 export META_DIR=$(readlink -f $META_DIR_SHORT)
 VOLUME_CACHE=$(readlink -f $VOLUME_CACHE_SHORT)
-export LIST_EXTENTS=$(cat .properd/extents.yaml | awk -F":" '{print $1}')
+export LIST_EXTENTS=$(cat $PEDRIVE_EXTENTS | awk -F":" '{print $1}')
 
 
 function abort(){
