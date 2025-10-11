@@ -1,0 +1,6 @@
+#!/bin/bash 
+source .function/extents
+source .properd/ntfs
+
+PATTERN=$1
+cat $META_DIR/* | sort -u | grep -i "$PATTERN" | sed 's,^\.\/,,'
