@@ -6,11 +6,12 @@ PEDRIVE_BASEDIR=/run/media/$USER
 rm -r $META_DIR_SHORT/DATUM_*  .properd/ntfs
 
 if test -d $PEDRIVE_BASEDIR; then
-  source .properd/ntfs
+#  find  $PEDRIVE_BASEDIR -maxdepth 1 -type d | grep -o 'DATUM_[A-Z0-9]\{4\}$' | awk  '{print $1"='$PEDRIVE_BASEDIR'/"$1}' \
+#    > .properd/ntfs
   for i in $LIST_EXTENTS ; do
       EXTENT_MOUNT=$PEDRIVE_BASEDIR/$i
-      echo "$i=$EXTENT_MOUNT" >> .properd/ntfs
       if test -r $EXTENT_MOUNT/.pedrive ; then
+        echo "$i=$EXTENT_MOUNT" >> .properd/ntfs
         echo "Reading EXTENT[$i]"
         cd $EXTENT_MOUNT && find -type f 2>/dev/null > $META_DIR/$i && cd -
       fi

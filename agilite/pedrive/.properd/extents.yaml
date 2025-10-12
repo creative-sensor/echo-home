@@ -1,8 +1,15 @@
-DATUM_ARC1: {}
-DATUM_BOLT: {}
-DATUM_D4KV: {}
-DATUM_GAUD: {}
-DATUM_GRXX: {}
-DATUM_NTFS: {}
-DATUM_XESS: {}
-DATUM_E7DN: {}
+DATUM_ARC1: {"touched": "", free_GB: "1", used_GB: "0"}
+DATUM_BOLT: {"touched": "", free_GB: "1", used_GB: "0"}
+DATUM_D4KV: {"touched": "", free_GB: "1", used_GB: "0"}
+DATUM_GAUD: {"touched": "", free_GB: "1", used_GB: "0"}
+DATUM_GRXX: {"touched": "1760242939", free_GB: "872", used_GB: "1"}
+DATUM_NTFS: {"touched": "", free_GB: "1", used_GB: "0"}
+DATUM_XESS: {"touched": "", free_GB: "1", used_GB: "0"}
+DATUM_P2DQ: {"touched": "1760244371", free_GB: "289", used_GB: "99"}
+DATUM_K9FX: {"touched": "1760244192", free_GB: "162", used_GB: "3"}
+DATUM_YZN1: {"touched": "1760244001", free_GB: "310", used_GB: "563"}
+DATUM_SYSV: {"touched": "1760242939", free_GB: "340", used_GB: "1465"}
+DATUM_E7DN: {"touched": "1760243106", free_GB: "74", used_GB: "106"}
+DATUM_CVHS: {"touched": "1760242702", free_GB: "120", used_GB: "1685"}
+DATUM_CNFM: {"touched": "1760242702", free_GB: "112", used_GB: "761"}
+DATUM_RHMS: {"touched": "1760241880", free_GB: "1804", used_GB: "1"}

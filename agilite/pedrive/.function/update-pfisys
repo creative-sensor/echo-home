@@ -1,0 +1,23 @@
+#!/bin/bash 
+
+source .function/extents
+source .properd/ntfs
+
+
+PFI_INVENTORY=${1:-.properd/extents.yaml}
+for PFI_ID in $LIST_EXTENTS; do
+    EXTENT_MOUNT=${!PFI_ID}
+    test -z "$EXTENT_MOUNT" && continue 
+    usedgb=$(df --block-size=G $EXTENT_MOUNT | tail -1 | awk '{sub("G","",$3);print $3}')
+    freegb=$(df --block-size=G $EXTENT_MOUNT | tail -1 | awk '{sub("G","",$4);print $4}')
+    
+    
+    yq -i "
+        .$PFI_ID.touched = \"$(date +%s)\" |
+        .$PFI_ID.free_GB = \"$freegb\" |
+        .$PFI_ID.used_GB = \"$usedgb\"
+        "  $PFI_INVENTORY
+    
+    echo "$PFI_ID: "$(yq ".$PFI_ID" $PFI_INVENTORY) | yq .
+done
+

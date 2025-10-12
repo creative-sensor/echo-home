@@ -1,0 +1,10 @@
+#!/bin/bash
+
+MOUNT_POINT=$1
+
+if ! echo "$MOUNT_POINT" | grep -q  "DATUM_[A-Z0-9]\{4\}/*$" ; then
+  echo "Not a pedrive extent name"
+  exit 1
+fi
+
+touch $MOUNT_POINT/.pedrive
