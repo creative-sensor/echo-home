@@ -34,7 +34,7 @@ for ext in $EXTENT; do
   cd $EXTENT_MOUNT && find 2>/dev/null > $META_DIR/$ext && cd -
   # PFI logging
   CHECKSUM=$(sha256sum	$VOLUME_CACHE/$SUB_PATH_BUNDLE | awk '{print $1}')
-  PFI_BASE=$(cat $PEDRIVE_BASEDIR/.properd/ntfs | grep -m 1 $(basename $EXTENT_MOUNT) | awk -F "=" '{print $1}')
+  PFI_BASE=$ext
   echo "$CHECKSUM: {\"pfi\":[\"$PFI_BASE/$SUB_PATH_BUNDLE\"], \"date\":\"$(date +%s)\" }" \
       >> tmp.pfi
   $PEDRIVE_BASEDIR/.function/merge.py $PEDRIVE_BASEDIR/pfi.yson.yaml tmp.pfi
