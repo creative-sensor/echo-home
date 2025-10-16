@@ -4,27 +4,11 @@ source .function/extents
 source .properd/ntfs
 
 SUB_PATH=$1
-if test -d $VOLUME_CACHE/$SUB_PATH ; then
-    .function/write-bundle $SUB_PATH
-    exit $?
-fi
-if ! test -f $VOLUME_CACHE/$SUB_PATH; then
-    echo "Subpath must be file!"
+
+if ! test -d $VOLUME_CACHE/$SUB_PATH; then
+    echo "Subpath must be directory!"
     exit 1
 fi
 
-#EXTENT=$(grep -l  $SUB_PATH $META_DIR/*  | awk -F '/' '{print $NF}'  2>/dev/null)
-EXTENT=$(ls $META_DIR/*  | awk -F '/' '{print $NF}'  2>/dev/null)
-test -z "$EXTENT" && EXTENT=$(.function/pick-random-extent.py)
-for ext in $EXTENT; do
-  EXTENT_MOUNT=${!ext}
-  test -r $EXTENT_MOUNT/.pedrive || continue
-  mkdir -p $(dirname $VOLUME_CACHE/$SUB_PATH)
-  mkdir -p ${EXTENT_MOUNT}/"$(dirname $SUB_PATH)"
-  cp $VOLUME_CACHE/$SUB_PATH   ${EXTENT_MOUNT}/"$(dirname $SUB_PATH)"
-  cd $EXTENT_MOUNT && find 2>/dev/null > $META_DIR/$ext && cd -
-  echo "[$ext] write"
-done
+.function/write-bundle $SUB_PATH || .function/write-manifest $SUB_PATH
 
-echo "SUBPATH UPATED <<" 
-echo $SUB_PATH
