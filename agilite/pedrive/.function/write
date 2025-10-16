@@ -5,10 +5,10 @@ source .properd/ntfs
 
 SUB_PATH=$1
 
-if test -d $VOLUME_CACHE/$SUB_PATH; then
+if ! test -d $VOLUME_CACHE/$SUB_PATH; then
     echo "Subpath must be directory!"
     exit 1
 fi
 
-.function/write-bundle || .function/write-manifest
+.function/write-bundle $SUB_PATH || .function/write-manifest $SUB_PATH
 
