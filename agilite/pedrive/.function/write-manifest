@@ -1,0 +1,35 @@
+#!/bin/bash
+
+source .function/extents
+source .properd/ntfs
+
+PEDRIVE_BASEDIR=$(readlink -f .)
+SUBPATH=$1
+pedrive_manifest=$(cat $VOLUME_CACHE/$SUBPATH/.properd/pedrive.yaml | yq '.manifest')
+[[ $pedrive_manifest != "true" ]] && abort "FAILED AS MANIFEST MODE DISABLED [ $SUBPATH/.properd/pedrive.yaml ]"
+
+echo "Writing in manifest mode"
+echo "$(date -u '+%Y-%m-%dT%H-%M-%SZ')  $HOSTNAME" >> $VOLUME_CACHE/$SUBPATH/.properd/changelog
+
+touch $PEDRIVE_BASEDIR/pfi.yson.yaml
+.function/pfi-manifest  $VOLUME_CACHE $SUBPATH
+
+EXTENT=$(ls $META_DIR/*  | awk -F '/' '{print $NF}'  2>/dev/null)
+test -z "$EXTENT" && EXTENT=$(.function/pick-random-extent.py)
+for ext in $EXTENT; do
+  EXTENT_MOUNT=${!ext}
+  test -r $EXTENT_MOUNT/.pedrive || continue
+  mkdir -p $(dirname $VOLUME_CACHE/$SUBPATH)
+  mkdir -p ${EXTENT_MOUNT}/"$(dirname $SUBPATH)"
+  cp  -rf $VOLUME_CACHE/$SUBPATH  ${EXTENT_MOUNT}/"$(dirname $SUBPATH)"
+  sed -i "s/PFI_ID__/$ext/g" ${EXTENT_MOUNT}/$SUBPATH/.properd/manifest.yaml
+  .function/merge.py pfi.yson.yaml $EXTENT_MOUNT/$SUBPATH/.properd/manifest.yaml
+  cd $EXTENT_MOUNT && find 2>/dev/null > $META_DIR/$ext
+  cd -
+done
+
+echo "SUBPATH UPATED <<" 
+echo $SUBPATH
+
+
+.function/update-pfisys
