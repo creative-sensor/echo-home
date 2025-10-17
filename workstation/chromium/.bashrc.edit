@@ -3,6 +3,9 @@ alias vim='vim -c "set ttymouse=sgr" '
 alias nvide='WAYLAND_DISPLAY="" neovide --no-multigrid --fork &'
 export TTY_FG_COLOR=253
 export TTY_BG_COLOR=23
+export GPG_TTY=$(tty)
+export GEDRIVE_VOLUME=/mnt/chromeos/MyFiles/DATUM
+export PEDRIVE_VOLUME=/mnt/chromeos/MyFiles/DATUM
 
 COLOR_BG='\[\033[48;5;112m\]'
 COLOR_BG2='\[\033[48;5;234m\]'
