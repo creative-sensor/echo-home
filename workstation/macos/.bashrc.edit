@@ -14,3 +14,8 @@ STOP='\[\033[0m\]'
 
 PS1="${COLOR_BG}${COLOR_FG} \h ${STOP}${COLOR_BG2}${COLOR_FG2} \W ${STOP} ${COLOR_FG2}▰${STOP}  "
 
+export GEDRIVE_VOLUME=~/DATUM
+export PEDRIVE_VOLUME=~/DATUM
+
+gpg-agent --pinentry-program=$LOCAL_BIN/pinentry/bin/pinentry --daemon &>/dev/null
+

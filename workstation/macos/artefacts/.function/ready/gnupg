@@ -111,3 +111,5 @@ cd -
 
 cp -r  INSTALL/gnupg ~/.local/bin/
 ln -sf ~/.local/bin/gnupg/bin/gpg ~/.local/bin/gnupg/bin/gpg2
+
+cp -r INSTALL/pinentry ~/.local/bin/
