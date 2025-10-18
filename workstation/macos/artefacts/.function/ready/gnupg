@@ -107,3 +107,7 @@ cd gnupg-${ARTIFACT_VERSION}
     --prefix=$(readlink -f ../INSTALL/gnupg)
 make install
 cd -
+
+
+cp -r  INSTALL/gnupg ~/.local/bin/
+ln -sf ~/.local/bin/gnupg/bin/gpg ~/.local/bin/gnupg/bin/gpg2
