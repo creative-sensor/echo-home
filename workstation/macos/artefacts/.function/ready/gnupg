@@ -42,6 +42,25 @@ tar xf ntbtls
 ./configure \
     --with-libgpg-error-prefix=$(readlink -f ../install/libgpg-error) \
     --with-libgcrypt-prefix=$(readlink -f ../install/libgcrypt) \
-    --with-libkbsa-prefix=$(readlink -f ../install/libksba) \
+    --with-kbsa-prefix=$(readlink -f ../install/libksba) \
     --with-libassuan-prefix=$(readlink -f ../install/libassuan) \
     --prefix=$(readlink -f ../install/ntbtls)
+
+tar xf pinentry
+./configure \
+    --with-libgpg-error-prefix=$(readlink -f ../install/libgpg-error) \
+    --with-libassuan-prefix=$(readlink -f ../install/libassuan) \
+    --prefix=$(readlink -f ../install/pinentry)
+
+tar xf npth
+./configure  --prefix=$(readlink -f ../install/npth) --enable-install-npth-config
+
+
+tar xf gnupg
+./configure \
+    --with-libgpg-error-prefix=$(readlink -f ../install/libgpg-error) \
+    --with-libgcrypt-prefix=$(readlink -f ../install/libgcrypt) \
+    --with-ksba-prefix=$(readlink -f ../install/libksba) \
+    --with-libassuan-prefix=$(readlink -f ../install/libassuan) \
+    --with-npth-prefix=$(readlink -f ../install/npth) \
+    --prefix=$(readlink -f ../install/gnupg)
