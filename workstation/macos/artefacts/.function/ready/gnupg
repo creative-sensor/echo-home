@@ -1,0 +1,47 @@
+set -x
+
+ARTIFACT_DIR=$ARTIFACT_DIR/gnupg
+mkdir -p $ARTIFACT_DIR
+curl -s -L -o $ARTIFACT_DIR/gnupg-${ARTIFACT_VERSION}.tar.bz2   https://www.gnupg.org/ftp/gcrypt/gnupg/gnupg-${ARTIFACT_VERSION}.tar.bz2
+curl -s -L -o $ARTIFACT_DIR/libgpg-error-1.56.tar.bz2   https://www.gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-1.56.tar.bz2
+curl -s -L -o $ARTIFACT_DIR/libgcrypt-1.11.2.tar.bz2   https://www.gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-1.11.2.tar.bz2
+curl -s -L -o $ARTIFACT_DIR/libksba-1.6.7.tar.bz2   https://www.gnupg.org/ftp/gcrypt/libksba/libksba-1.6.7.tar.bz2
+curl -s -L -o $ARTIFACT_DIR/libassuan-3.0.2.tar.bz2   https://www.gnupg.org/ftp/gcrypt/libassuan/libassuan-3.0.2.tar.bz2
+curl -s -L -o $ARTIFACT_DIR/ntbtls-0.3.2.tar.bz2   https://www.gnupg.org/ftp/gcrypt/ntbtls/ntbtls-0.3.2.tar.bz2
+curl -s -L -o $ARTIFACT_DIR/npth-1.8.tar.bz2   https://www.gnupg.org/ftp/gcrypt/npth/npth-1.8.tar.bz2
+curl -s -L -o $ARTIFACT_DIR/pinentry-1.3.2.tar.bz2   https://www.gnupg.org/ftp/gcrypt/pinentry/pinentry-1.3.2.tar.bz2
+
+
+cd $ARTIFACT_DIR
+mkdir -p install/libgpg-error
+mkdir -p install/libgcrypt
+mkdir -p install/libksba
+mkdir -p install/libassuan
+mkdir -p install/ntbtls
+mkdir -p install/npth
+mkdir -p install/pinentry
+
+tar xf libgpg-error-1.56.tar.bz2
+cd libgpg-error-1.56
+./configure --prefix=$(readlink -f ../install/libgpg-error) --enable-install-gpg-error-config
+cd -
+
+tar xf libgcrypt-
+cd libgcrypt
+./configure --with-libgpg-error-prefix=$(readlink -f ../install/libgpg-error) --prefix=$(readlink -f ../install/libgcrypt)
+make install
+cd -
+
+
+tar xf libksba
+./configure \
+    --with-libgpg-error-prefix=$(readlink -f ../install/libgpg-error) \
+    --prefix=$(readlink -f ../install/libksba)
+
+tar xf ntbtls
+./configure \
+    --with-libgpg-error-prefix=$(readlink -f ../install/libgpg-error) \
+    --with-libgcrypt-prefix=$(readlink -f ../install/libgcrypt) \
+    --with-libkbsa-prefix=$(readlink -f ../install/libksba) \
+    --with-libassuan-prefix=$(readlink -f ../install/libassuan) \
+    --prefix=$(readlink -f ../install/ntbtls)
