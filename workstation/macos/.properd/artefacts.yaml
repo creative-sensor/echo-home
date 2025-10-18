@@ -5,7 +5,7 @@ neovide: [ 0.15.1 , "https://github.com/neovide/neovide/releases/download/0.15.1
 p7zip: [ 2201 , "" ]
 python: [ 3.13.7 , "https://www.python.org/ftp/python/3.13.7/python-3.13.7-macos11.pkg", {"suffix":"pkg"} ]
 kubectl: [ 1.32.0 , "" ]
-rclone: [ 1.69.1 , "" , {"suffix":"zip"}]
+rclone: [ 1.71.1 , "https://downloads.rclone.org/v1.71.1/rclone-v1.71.1-osx-arm64.zip" , {"suffix":"zip"}]
 node: [ 22.14.0 , "" , {"suffix":"zip"}]
 openLens: [ 6.5.2 , "https://github.com/MuhammedKalkan/OpenLens/releases/download/v6.5.2-366/OpenLens-6.5.2-366-arm64.dmg"]
 minikube: [ 1.36.0 , "https://github.com/kubernetes/minikube/releases/download/v1.36.0/minikube-darwin-arm64", {"suffix":"bin"}]

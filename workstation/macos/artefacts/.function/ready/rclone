@@ -1,0 +1,4 @@
+unzip $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.zip
+cp rclone-v1.71.1-osx-arm64/rclone  $LOCAL_BIN/$name
+chmod +x $LOCAL_BIN/$name
+rm -rf rclone-v1.71.1-osx-arm64
