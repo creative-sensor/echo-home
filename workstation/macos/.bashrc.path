@@ -2,6 +2,7 @@ path_dict=("mcfunction" "$HOME/echo-home/workstation/macos/.function")
 
 path_dict["rtfunction"]="$HOME/echo-home/.function"
 path_dict["yson"]="$HOME/echo-home/codev/yson/.function"
+path_dict["gnupg"]="$HOME/.local/bin/gnupg/bin:$HOME/.local/bin/pinentry/bin"
 
 for key in "${!path_dict[@]}"; do
   PATH+=":${path_dict[$key]}"
