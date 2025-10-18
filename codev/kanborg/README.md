@@ -23,7 +23,6 @@
 ### 3 TO DO
 
 - [datum/2025/TODO/APLE-6.md](datum/2025/TODO/APLE-6.md)   ```# cluster : dual```
-- [datum/2025/TODO/APLE-7.md](datum/2025/TODO/APLE-7.md)   ```# srb : gnupg```
 - [datum/2025/TODO/CORTA-4.md](datum/2025/TODO/CORTA-4.md)   ```# pytorch : start```
 - [datum/2025/TODO/CORTA-5.md](datum/2025/TODO/CORTA-5.md)   ```# tensorflow : start```
 - [datum/2025/TODO/CORTA-6.md](datum/2025/TODO/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
@@ -42,6 +41,7 @@
 - [datum/2025/DONE/APLE-3.md](datum/2025/DONE/APLE-3.md)   ```# Vim : Plug```
 - [datum/2025/DONE/APLE-4.md](datum/2025/DONE/APLE-4.md)   ```# mcli : mac linux interface```
 - [datum/2025/DONE/APLE-5.md](datum/2025/DONE/APLE-5.md)   ```# macos : real bash```
+- [datum/2025/DONE/APLE-7.md](datum/2025/DONE/APLE-7.md)   ```# srb : gnupg```
 - [datum/2025/DONE/ARTE-10.md](datum/2025/DONE/ARTE-10.md)   ```# windows : sops```
 - [datum/2025/DONE/ARTE-11.md](datum/2025/DONE/ARTE-11.md)   ```# windows : ripgrep```
 - [datum/2025/DONE/ARTE-12.md](datum/2025/DONE/ARTE-12.md)   ```# fedora  : rpms pin```
