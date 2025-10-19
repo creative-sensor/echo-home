@@ -7,14 +7,18 @@ PFI_ID=${3:-PFI_ID__}
 echo "Building manifest H256"
 cd $VOLUME_CACHE
 mkdir -p $SUBPATH/.properd
-find  $SUBPATH -type f | xargs.exe -I {} sha256sum {} > $SUBPATH/.properd/manifest.yaml
+find  $SUBPATH -type f | xargs -I {} sha256sum {} > $SUBPATH/.properd/manifest.yaml
 
-#sed -i \
-#    -e "s/  /: {\"pfi\":[\"$PFI_ID\//" \
-#    -e 's/$/"]}/' \
-#    .properd/manifest
-sed -i \
+if [[ "$OS" =~ "Windows_NT" ]] ; then
+  sed -i \
     -e "s/ \*/: {\"pfi\":[\"$PFI_ID\//" \
     -e 's/$/"]}/' \
     $SUBPATH/.properd/manifest.yaml
+else
+  sed -i \
+    -e "s/  /: {\"pfi\":[\"$PFI_ID\//" \
+    -e 's/$/"]}/' \
+    $SUBPATH/.properd/manifest.yaml
+fi
+
 cd -
