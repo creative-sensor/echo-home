@@ -14,3 +14,8 @@ function abort(){
     echo $msg
     exit 1
 }
+
+function list_extents () {
+  cat .properd/ntfs | awk -F "=" '{print $1}'
+  return
+}

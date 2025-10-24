@@ -22,7 +22,7 @@ if [[ "$OS" =~ "Windows_NT" ]]; then
   powershell 'Get-Volume | Where-Object FileSystem -eq 'NTFS' | Select-Object  FileSystemLabel, DriveLetter' \
       | grep  'DATUM_[A-Z0-9]\{4\}' | sed 's/ \+/=\//' > .properd/ntfs
   source .properd/ntfs
-  for i in $LIST_EXTENTS ; do
+  for i in $(list_extents) ; do
     EXTENT_MOUNT=${!i}
     if test -r $EXTENT_MOUNT/.pedrive ; then
       echo "Reading EXTENT[$i]"

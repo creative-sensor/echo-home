@@ -5,7 +5,7 @@ source .properd/ntfs
 
 
 PFI_INVENTORY=${1:-.properd/extents.yaml}
-for PFI_ID in $LIST_EXTENTS; do
+for PFI_ID in $(list_extents); do
     EXTENT_MOUNT=${!PFI_ID}
     test -z "$EXTENT_MOUNT" && continue 
     usedgb=$(df --block-size=G $EXTENT_MOUNT | tail -1 | awk '{sub("G","",$3);print $3}')

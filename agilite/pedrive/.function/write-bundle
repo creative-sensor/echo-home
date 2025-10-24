@@ -22,10 +22,7 @@ fi
 cd -
 
 touch $PEDRIVE_BASEDIR/pfi.yson.yaml
-#EXTENT=$(grep -l  $SUB_PATH_BUNDLE $META_DIR/*  | awk -F '/' '{print $NF}'  2>/dev/null)
-EXTENT=$(ls $META_DIR/*  | awk -F '/' '{print $NF}'  2>/dev/null)
-test -z "$EXTENT" && EXTENT=$(.function/pick-random-extent.py)
-for ext in $EXTENT; do
+for ext in $(list_extents); do
   EXTENT_MOUNT=${!ext}
   test -r $EXTENT_MOUNT/.pedrive || continue
   mkdir -p $(dirname $VOLUME_CACHE/$SUB_PATH_BUNDLE)
