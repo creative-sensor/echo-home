@@ -1,0 +1,4 @@
+unzip $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.zip
+cp rclone-v${ARTIFACT_VERSION}-windows-amd64/rclone.exe  $LOCAL_BIN/$name
+chmod +x $LOCAL_BIN/$name
+rm -rf rclone-v${ARTIFACT_VERSION}-windows-amd64
