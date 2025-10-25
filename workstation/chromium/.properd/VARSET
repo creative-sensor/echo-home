@@ -17,4 +17,5 @@ APT_LIST='
     gnupg2
     gettext-base
     docker.io
+    rclone
 '
