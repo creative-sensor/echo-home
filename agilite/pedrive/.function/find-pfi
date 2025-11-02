@@ -1,0 +1,27 @@
+#!/bin/bash 
+source .function/extents
+source .properd/ntfs
+
+PATTERN=$1
+PFI_YSON=${2:-pfi.yson.yaml}
+PD_TMP=/tmp/pedrive.find-pfi
+PD_TMP_PICK=$PD_TMP.pick
+PD_TMP_PICK_LINE=$PD_TMP_PICK.line
+PD_TMP_PICK_LINE_H256=$PD_TMP_PICK_LINE.h256
+
+rm /tmp/pedrive.*
+#yq eval '.. | select(tag == "!!str" and test("'$PATTERN'")) | {(path | join(".")): .}' pfi.yson.yaml \
+#    | grep -n --color '^[a-f0-9]\+'
+
+yq eval '.. | select(tag == "!!str" and test("'$PATTERN'")) | {(path | join(".")): .}' $PFI_YSON > $PD_TMP
+
+while IFS= read -r LINE; do
+  h256=$(echo $LINE | awk -F "." '{print $1}')
+  echo $(yq ".${h256}.date" $PFI_YSON) $LINE
+done < $PD_TMP | sort -r | tee $PD_TMP_PICK | grep -n --color '^[0-9]\+'  
+
+read -p 'PICK LINE?= ' PICK_LINE 
+
+sed -n "${PICK_LINE}p" $PD_TMP_PICK \
+  | tee $PD_TMP_PICK_LINE \
+  | awk -F "[ .]" '{print $2}' > $PD_TMP_PICK_LINE_H256

@@ -1,0 +1,11 @@
+#!/bin/bash -e
+
+source .function/extents
+source .properd/ntfs
+
+H256=${1}
+PD_TMP_PICK_LINE_H256=/tmp/pedrive.find-pfi.pick.line.h256
+
+test -z "$H256" && .function/find-pfi && H256=$(<$PD_TMP_PICK_LINE_H256)
+
+echo $H256
