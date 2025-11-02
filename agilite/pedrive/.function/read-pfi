@@ -3,9 +3,17 @@
 source .function/extents
 source .properd/ntfs
 
-H256=${1}
-PD_TMP_PICK_LINE_H256=/tmp/pedrive.find-pfi.pick.line.h256
+PATTERN=${1}
+PD_TMP_PICK_LINE=/tmp/pedrive.find-pfi.pick.line
 
-test -z "$H256" && .function/find-pfi && H256=$(<$PD_TMP_PICK_LINE_H256)
+.function/find-pfi $PATTERN
 
-echo $H256
+EXTENT=$(cat $PD_TMP_PICK_LINE | grep -o "DATUM_[A-Z0-9]\{4\}")
+SUBPATH=$( cat $PD_TMP_PICK_LINE  | awk -F "$EXTENT/" '{print $2}' | sed 's/"//')
+EXTENT_MOUNT=${!EXTENT}
+
+if test -r $EXTENT_MOUNT/$SUBPATH ; then
+  .function/read $SUBPATH
+else
+  echo "[$EXTENT] $SUBPATH ---- unavailable"
+fi
