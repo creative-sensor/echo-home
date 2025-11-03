@@ -22,7 +22,7 @@ for ext in $(list_extents); do
   cp  -rf $VOLUME_CACHE/$SUBPATH  ${EXTENT_MOUNT}/"$(dirname $SUBPATH)"
   sed -i "s/PFI_ID__/$ext/g" ${EXTENT_MOUNT}/$SUBPATH/.properd/manifest.yaml
   .function/merge.py pfi.yson.yaml $EXTENT_MOUNT/$SUBPATH/.properd/manifest.yaml
-  cd $EXTENT_MOUNT && find 2>/dev/null > $META_DIR/$ext
+#  cd $EXTENT_MOUNT && find 2>/dev/null > $META_DIR/$ext
   cd -
 done
 

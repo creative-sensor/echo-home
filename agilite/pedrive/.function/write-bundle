@@ -28,7 +28,7 @@ for ext in $(list_extents); do
   mkdir -p $(dirname $VOLUME_CACHE/$SUB_PATH_BUNDLE)
   mkdir -p ${EXTENT_MOUNT}/"$(dirname $SUB_PATH_BUNDLE)"
   cp  $VOLUME_CACHE/$SUB_PATH_BUNDLE  ${EXTENT_MOUNT}/"$(dirname $SUB_PATH_BUNDLE)"
-  cd $EXTENT_MOUNT && find 2>/dev/null > $META_DIR/$ext && cd -
+#  cd $EXTENT_MOUNT && find 2>/dev/null > $META_DIR/$ext && cd -
   # PFI logging
   CHECKSUM=$(sha256sum	$VOLUME_CACHE/$SUB_PATH_BUNDLE | awk '{print $1}')
   PFI_BASE=$ext
