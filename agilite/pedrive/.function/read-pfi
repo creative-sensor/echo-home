@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+source .function/extents
+source .properd/ntfs
+
+PATTERN=${1}
+PD_TMP_PICK_LINE=/tmp/pedrive.find-pfi.pick.line
+
+.function/find-pfi $PATTERN
+
+EXTENT=$(cat $PD_TMP_PICK_LINE | grep -o "DATUM_[A-Z0-9]\{4\}")
+SUBPATH=$( cat $PD_TMP_PICK_LINE  | awk -F "$EXTENT/" '{print $2}' | sed 's/"//')
+EXTENT_MOUNT=${!EXTENT}
+
+if test -r $EXTENT_MOUNT/$SUBPATH ; then
+  .function/read $SUBPATH
+else
+  echo "[$EXTENT] $SUBPATH ---- unavailable"
+fi
