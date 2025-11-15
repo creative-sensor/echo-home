@@ -6,5 +6,4 @@ ARTEFACT_DIR=artefacts/$RELEASE/$SET
 CHECKSUM=.properd/artefact.sha256sum/$RELEASE/$SET
 
 RPM_SET=$(cat $CHECKSUM  |  awk -F ' ' '{print $2}')
-#sudo dnf install -y --newpackage --allowerasing   --skip-broken  $RPMS_PLUS
-sudo rpm -U  --nodeps --verbose $RPM_SET
+sudo dnf install $RPMS_
