@@ -1,4 +1,4 @@
-SET=${1:-PLUS}
+SET=${1}
 RELEASE=$(cat /etc/redhat-release  | grep -o '[0-9]\+')
 ARTEFACT_DIR=artefacts/$RELEASE/$SET	
 CHECKSUM=.properd/artefact.sha256sum/$RELEASE/$SET
@@ -6,9 +6,8 @@ mkdir -p $ARTEFACT_DIR $(dirname $CHECKSUM)
 
 
 # ---- RETRIEVE ----
-RPM_SET=$(cat $CHECKSUM  |  awk -F ' ' '{print $4}')
-RPM_SET=${RPM_SET:-$(<RPMS_${SET})}
-test -z "$(ls $ARTEFACT_DIR)" && dnf download --resolve --arch=x86_64 --destdir=$ARTEFACT_DIR $RPM_SET
+RPM_SET=$(rpm -qa)
+test -z "$(ls $ARTEFACT_DIR)" && dnf download --resolve --skip-unavailable --alldeps --destdir=$ARTEFACT_DIR $RPM_SET
 SUBPATH=$(ls ${ARTEFACT_DIR}/*.rpm)
 
 

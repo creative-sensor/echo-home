@@ -1,10 +1,9 @@
 #!/bin/bash -e
 
-SET=${1:-PLUS}
+SET=${1:-base}
 RELEASE=$(cat /etc/redhat-release  | grep -o '[0-9]\+')
 ARTEFACT_DIR=artefacts/$RELEASE/$SET
 CHECKSUM=.properd/artefact.sha256sum/$RELEASE/$SET
 
-RPM_SET=$(cat $CHECKSUM  |  awk -F ' ' '{print $2}')
-#sudo dnf install -y --newpackage --allowerasing   --skip-broken  $RPMS_PLUS
-sudo rpm -U  --nodeps --verbose $RPM_SET
+cd $ARTEFACT_DIR
+sudo dnf install --allowerasing --skip-broken *.rpm

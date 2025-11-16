@@ -1,6 +1,7 @@
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 cd $(git root)
 cp -b .vimrc  ~/
-vim -c "PluginInstall" -c "qall"
+vi -c "PluginInstall" -c "qall" \
+    || vim -c "PluginInstall" -c "qall"
 echo "Vundle: PluginInstalled"
 
