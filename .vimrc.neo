@@ -244,7 +244,7 @@ autocmd VimEnter * silent call SessionMgmt()
 "autocmd TerminalOpen * set termwinsize=0*0
     "termwinsize: auto-adjustable
 autocmd InsertEnter * highlight CursorLine ctermbg=190 guibg=#D5EE16 | highlight StatusLine ctermbg=190 guibg=#CCFF00
-autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#f3f9a9 | highlight StatusLine ctermbg=254 guibg=#eee8d5
+autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#dadeaf | highlight StatusLine ctermbg=254 guibg=#eee8d5
 
 
 
@@ -275,6 +275,7 @@ map q1 : q!<CR>
     "Quit current
 
 map tty : highlight Terminal ctermbg=23 ctermfg=15 guibg=#073042 guifg=#7ec1de \| below terminal <CR>
+map tth : below term cd %:p:h; bash <CR>
 
 map e3 : vsplit \| call FgXp(".",3)<CR>
 map e6 : vsplit \| call FgXp(".",6)<CR>
