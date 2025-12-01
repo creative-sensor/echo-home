@@ -2,6 +2,7 @@
 
 source .function/extents
 PEDRIVE_BASEDIR=/run/media/$USER
+test -d $PEDRIVE_BASEDIR || PEDRIVE_BASEDIR=/mnt/chromeos/removable
 
 rm -r $META_DIR_SHORT/DATUM_*  .properd/ntfs
 
@@ -13,7 +14,7 @@ if test -d $PEDRIVE_BASEDIR; then
       if test -r $EXTENT_MOUNT/.pedrive ; then
         echo "$i=$EXTENT_MOUNT" >> .properd/ntfs
         echo "Reading EXTENT[$i]"
-        cd $EXTENT_MOUNT && find -type f 2>/dev/null > $META_DIR/$i && cd -
+        cd $EXTENT_MOUNT ; find -type f 2>/dev/null > $META_DIR/$i ; cd -
       fi
   done
 fi
