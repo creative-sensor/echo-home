@@ -40,7 +40,6 @@ function ffunction {
 export -f ffunction
 
 # ---- ALIAS ----
-alias vim='vi'
 alias vim-py='vimx -u ~/.vim/rc/python'
 alias nvide='neovide'
 alias git-glog='git log --all --decorate --oneline --graph'
