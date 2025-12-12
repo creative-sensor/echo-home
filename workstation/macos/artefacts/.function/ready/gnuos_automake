@@ -1,0 +1,25 @@
+#!/bin/bash -e
+
+ARTIFACT_DIR=$ARTIFACT_DIR/gnuos
+mkdir -p $ARTIFACT_DIR
+
+
+VERSION_automake=1.18
+curl -s -L -o $ARTIFACT_DIR/automake-${VERSION_automake}.tar.xz https://ftp.gnu.org/gnu/automake/automake-1.18.tar.xz
+
+
+cd $ARTIFACT_DIR
+rm -rf INSTALL/automake
+mkdir -p INSTALL/automake
+
+## ----:
+tar xzf automake-${VERSION_automake}.tar.xz
+cd automake-${VERSION_automake}
+./configure --prefix=$(readlink -f ../INSTALL/automake) 
+make install
+cd -
+pwd
+cp -f INSTALL/automake/bin/aclocal ~/.local/bin
+cp -f INSTALL/automake/bin/automake ~/.local/bin
+
+

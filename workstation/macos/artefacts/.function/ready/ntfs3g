@@ -1,0 +1,54 @@
+#!/bin/bash -e
+
+ARTIFACT_DIR=$ARTIFACT_DIR/ntfs3g
+mkdir -p $ARTIFACT_DIR
+
+
+VERSION_ntfs3g=2022.10.3
+curl -s -L -o $ARTIFACT_DIR/ntfs-3g_ntfsprogs-$VERSION_ntfs3g.tar.gz  https://github.com/tuxera/ntfs-3g/archive/refs/tags/${VERSION_ntfs3g}.tar.gz
+
+cd $ARTIFACT_DIR
+rm -rf INSTALL
+mkdir -p INSTALL/ntfs-3g_ntfsprogs
+
+
+
+
+tar xf ntfs-3g_ntfsprogs-${VERSION_ntfs3g}.tar.gz
+cd ntfs-3g-$VERSION_ntfs3g
+autoreconf -i
+./configure --prefix=$(readlink -f ../INSTALL/ntfs-3g_ntfsprogs) --disable-ntfsprogs --enable-posix-acls --enable-xattr-mappings
+make drivers
+#make install
+cd -
+
+
+#brew install libgcrypt fuse autoconf automake libtool gettext pkg-config > /dev/null 2>&1
+
+#
+## Configure, compile, and install NTFS-3G
+#echo "Configuring NTFS-3G..."
+#./configure --with-fuse --enable-encryption --enable-write-support
+#
+#if [ $? -ne 0 ]; then
+#  echo "Configuration failed. Check the error messages above."
+#  exit 1
+#fi
+#
+#echo "Compiling NTFS-3G..."
+#make
+#
+#if [ $? -ne 0 ]; then
+#  echo "Compilation failed. Check the error messages above."
+#  exit 1
+#fi
+#
+#
+## Optional:  Suggest testing (commented out by default)
+#echo "NTFS-3G installation complete!"
+## echo "To test, connect an NTFS volume and try mounting it using:"
+## echo "sudo mkdir /Volumes/NTFS_Volume"
+## echo "sudo ntfs-3g /dev/diskX /Volumes/NTFS_Volume (replace diskX with the correct disk identifier)"
+#
+#echo "Remember to back up your data before mounting NTFS volumes."
+

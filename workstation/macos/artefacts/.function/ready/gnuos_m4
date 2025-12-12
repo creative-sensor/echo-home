@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+ARTIFACT_DIR=$ARTIFACT_DIR/gnuos
+mkdir -p $ARTIFACT_DIR
+
+
+VERSION_m4=1.4.20
+curl -s -L -o $ARTIFACT_DIR/m4-${VERSION_m4}.tar.xz https://ftp.gnu.org/gnu/m4/m4-${VERSION_m4}.tar.xz
+
+cd $ARTIFACT_DIR
+rm -rf INSTALL/m4
+mkdir -p INSTALL/m4
+
+## ----
+tar xzf m4-${VERSION_m4}.tar.xz
+cd m4-${VERSION_m4}
+./configure --prefix=$(readlink -f ../INSTALL/m4) 
+make install
+cd -
+
+cp -f INSTALL/m4/bin/m4 ~/.local/bin
+
+

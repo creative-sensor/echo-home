@@ -1,0 +1,25 @@
+#!/bin/bash -e
+
+ARTIFACT_DIR=$ARTIFACT_DIR/gnuos
+mkdir -p $ARTIFACT_DIR
+
+
+VERSION_autoconf=2.72
+curl -s -L -o $ARTIFACT_DIR/autoconf-${VERSION_autoconf}.tar.xz https://ftp.gnu.org/gnu/autoconf/autoconf-${VERSION_autoconf}.tar.xz
+
+
+cd $ARTIFACT_DIR
+rm -rf INSTALL/autoconf
+mkdir -p INSTALL/autoconf
+
+## ----:
+tar xzf autoconf-${VERSION_autoconf}.tar.xz
+cd autoconf-${VERSION_autoconf}
+./configure --prefix=$(readlink -f ../INSTALL/autoconf) 
+make install
+cd -
+
+cp -f INSTALL/autoconf/bin/autoreconf ~/.local/bin
+cp -f INSTALL/autoconf/bin/autoconf ~/.local/bin
+
+
