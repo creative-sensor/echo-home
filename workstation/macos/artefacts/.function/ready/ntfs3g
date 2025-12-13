@@ -5,7 +5,7 @@ mkdir -p $ARTIFACT_DIR
 
 
 VERSION_ntfs3g=2022.10.3
-curl -s -L -o $ARTIFACT_DIR/ntfs-3g_ntfsprogs-$VERSION_ntfs3g.tar.gz  https://github.com/tuxera/ntfs-3g/archive/refs/tags/${VERSION_ntfs3g}.tar.gz
+#curl -s -L -o $ARTIFACT_DIR/ntfs-3g_ntfsprogs-$VERSION_ntfs3g.tar.gz  https://github.com/tuxera/ntfs-3g/archive/refs/tags/${VERSION_ntfs3g}.tar.gz
 
 cd $ARTIFACT_DIR
 rm -rf INSTALL
@@ -17,7 +17,8 @@ mkdir -p INSTALL/ntfs-3g_ntfsprogs
 tar xf ntfs-3g_ntfsprogs-${VERSION_ntfs3g}.tar.gz
 cd ntfs-3g-$VERSION_ntfs3g
 autoreconf -i
-./configure --prefix=$(readlink -f ../INSTALL/ntfs-3g_ntfsprogs) --disable-ntfsprogs --enable-posix-acls --enable-xattr-mappings
+#libtoolize
+./configure --program-prefix=$(readlink -f ../INSTALL/ntfs-3g_ntfsprogs) --disable-ntfsprogs --enable-posix-acls --enable-xattr-mappings
 make drivers
 #make install
 cd -

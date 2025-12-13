@@ -1,0 +1,25 @@
+#!/bin/bash -e
+
+ARTIFACT_DIR=$ARTIFACT_DIR/gnome
+mkdir -p $ARTIFACT_DIR
+
+
+VERSION_glib=${ARTIFACT_VERSION}
+curl -s -L -o $ARTIFACT_DIR/glib-${VERSION_glib}.tar.xz https://download.gnome.org/sources/glib/2.87/glib-2.87.0.tar.xz
+
+
+cd $ARTIFACT_DIR
+rm -rf INSTALL/glib
+mkdir -p INSTALL/glib
+
+## ----:
+tar xzf glib-${VERSION_glib}.tar.xz
+cd glib-${VERSION_glib}
+./configure --prefix=$(readlink -f ../INSTALL/glib) 
+make install
+cd -
+
+cp -f INSTALL/glib/bin/glib ~/.local/bin
+cp -f INSTALL/glib/bin/glibize ~/.local/bin
+
+

@@ -20,6 +20,7 @@ gnuos_m4: [ 1.4.20 , "" ]
 gnuos_autoconf: [ 2.72 , "" ]
 gnuos_automake: [ 1.18 , "" ]
 gnuos_libtool: [ 2.5.4 , "" ]
+gnome_glib: [ 2.87.0 , "" ]
 
 pkgconfig: [ 0.29.2 , "" ]
 marktext: [ 0.17.1 , "https://github.com/marktext/marktext/releases/download/v0.17.1/marktext-arm64.dmg" ]

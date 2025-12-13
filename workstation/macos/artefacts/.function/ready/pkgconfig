@@ -1,0 +1,24 @@
+#!/bin/bash -e
+
+ARTIFACT_DIR=$ARTIFACT_DIR/pkgconfig
+mkdir -p $ARTIFACT_DIR
+
+
+VERSION_pkgconfig=${ARTIFACT_VERSION}
+curl -s -L -o $ARTIFACT_DIR/pkgconfig-$VERSION_pkgconfig.tar.gz  https://pkgconfig.freedesktop.org/releases/pkg-config-${VERSION_pkgconfig}.tar.gz
+cd $ARTIFACT_DIR
+rm -rf INSTALL
+mkdir -p INSTALL/pkgconfig
+
+
+
+
+tar xf pkgconfig-${VERSION_pkgconfig}.tar.gz
+cd pkg-config-$VERSION_pkgconfig
+#libtoolize
+./configure --program-prefix=$(readlink -f ../INSTALL/pkgconfig)
+#make install
+cd -
+
+
+
