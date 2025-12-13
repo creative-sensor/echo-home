@@ -12,14 +12,15 @@ cd $ARTIFACT_DIR
 rm -rf INSTALL/glib
 mkdir -p INSTALL/glib
 
-## ----:
-tar xzf glib-${VERSION_glib}.tar.xz
+tar xf glib-${VERSION_glib}.tar.xz
 cd glib-${VERSION_glib}
-./configure --prefix=$(readlink -f ../INSTALL/glib) 
-make install
+meson setup tmp_meson --prefix=$(readlink -f ../INSTALL/glib) 
+meson compile -C tmp_meson
+meson install -C tmp_meson
 cd -
 
-cp -f INSTALL/glib/bin/glib ~/.local/bin
-cp -f INSTALL/glib/bin/glibize ~/.local/bin
+mkdir -p ~/.local/lib/gnome-glib
+cp -rf INSTALL/glib/lib/* ~/.local/lib/gnome-glib/
+
 
 
