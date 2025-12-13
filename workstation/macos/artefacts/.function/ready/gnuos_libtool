@@ -1,0 +1,25 @@
+#!/bin/bash -e
+
+ARTIFACT_DIR=$ARTIFACT_DIR/gnuos
+mkdir -p $ARTIFACT_DIR
+
+
+VERSION_libtool=${ARTIFACT_VERSION}
+curl -s -L -o $ARTIFACT_DIR/libtool-${VERSION_libtool}.tar.xz https://ftpmirror.gnu.org/libtool/libtool-2.5.4.tar.gz
+
+
+cd $ARTIFACT_DIR
+rm -rf INSTALL/libtool
+mkdir -p INSTALL/libtool
+
+## ----:
+tar xzf libtool-${VERSION_libtool}.tar.xz
+cd libtool-${VERSION_libtool}
+./configure --prefix=$(readlink -f ../INSTALL/libtool) 
+make install
+cd -
+
+cp -f INSTALL/libtool/bin/libtool ~/.local/bin
+cp -f INSTALL/libtool/bin/libtoolize ~/.local/bin
+
+
