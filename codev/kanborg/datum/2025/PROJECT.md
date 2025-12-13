@@ -3,7 +3,7 @@ KBG : {"description":"Kanborg code development","last_id":8,"related":""}
 SPEC : {"description":"Spec of new concepts","last_id":2,"related":""}
 LEAF : {"description":"Short-lived | Narrow Scope | Low Priority | Uncategorized","last_id":32,"related":""}
 NCEPT : {"description":"Concept","last_id":2,"related":""}
-ARTE : {"description":"Artefacts Exware","last_id":13,"related":""}
+ARTE : {"description":"Artefacts Exware","last_id":14,"related":""}
 MDOS : {"description":"Microsoft Windows","last_id":27,"related":""}
 CORTA : {"description":"Cortana and Chief","last_id":6,"related":""}
 E419 : {"description":"Echo 419","last_id":0,"related":""}
