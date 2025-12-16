@@ -15,7 +15,9 @@ mkdir -p INSTALL/pkgconfig
 
 tar xf pkgconfig-${VERSION_pkgconfig}.tar.gz
 cd pkg-config-$VERSION_pkgconfig
-./configure --prefix=$(readlink -f ../INSTALL/pkgconfig) --with-internal-glib ~/.local/lib/gnome-glib/x86-64_linux-gnu/
+export CFLAGS="-Wno-int-conversion"
+export CXXFLAGS="-Wno-int-conversion"
+LDFLAGS="-framework CoreFoundation -framework Carbon" ./configure --prefix=$(readlink -f ../INSTALL/pkgconfig) --with-internal-glib ~/.local/lib/gnome-glib/x86-64_linux-gnu/
 make install install-exec-hook=
 cd -
 
