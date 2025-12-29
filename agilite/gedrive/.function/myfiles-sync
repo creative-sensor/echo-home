@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+SUB_FILE_PATH=$1
+MYFILES=/mnt/chromeos/MyFiles/DATUM
+GEDRIVE_VOLUME=${GEDRIVE_VOLUME:-~/DATUM}
+
+if ! test -d $GEDRIVE_VOLUME/$SUB_FILE_PATH; then
+  echo "$SUB_FILE_PATH" must be existing directory
+  exit 1
+fi 
+
+mkdir -p $MYFILES/$SUB_FILE_PATH
+TARGET_DIR=$MYFILES
+test -n "$SUB_FILE_PATH" && TARGET_DIR=$(dirname $MYFILES/$SUB_FILE_PATH)
+rsync -avrP $GEDRIVE_VOLUME/$SUB_FILE_PATH  $TARGET_DIR 
