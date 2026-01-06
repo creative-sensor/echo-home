@@ -1,0 +1,12 @@
+#!/bin/bash
+
+source .properd/VARSET
+
+mkdir -p $LOCAL_BIN/gmlama
+mkdir -p $LOCAL_BIN/gmlama-vulcan
+mkdir -p $LOCAL_BIN/gmlama-cuda
+
+test "$OS" == "Windows_NT" && 
+    unzip -o artefacts/llama-${VERSION}-bin-win-cpu-x64.zip -d $LOCAL_BIN/gmlama/ &&
+    unzip -o artefacts/llama-${VERSION}-bin-win-vulkan-x64.zip -d $LOCAL_BIN/gmlama-vulcan/ 
+    
