@@ -7,6 +7,7 @@ path_dict["wfunction"]="$HOME/echo-home/windows/.function"
 path_dict["yson"]="$HOME/echo-home/codev/yson/.function"
 path_dict["go"]="$PROGRAMFILES/Go/bin"
 path_dict["node"]=$LOCAL_BIN/node-v18.13.0-win-x64
+path_dict["gmlama"]=$LOCAL_BIN/gmlama
 path_dict["nvim"]='/c/Program Files/Neovim/bin'
 path_dict["neovide"]='/c/Program Files/Neovide'
 path_dict["docker_desktop"]='/c/Program Files/Docker/Docker/resources/bin:/c/ProgramData/DockerDesktop/version-bin'

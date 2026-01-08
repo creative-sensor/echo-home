@@ -1,0 +1,21 @@
+#!/bin/bash
+
+source .properd/VARSET
+
+mkdir -p artefacts
+
+
+SUITE="
+https://github.com/ggml-org/llama.cpp/releases/download/${VERSION}/llama-${VERSION}-bin-macos-arm64.tar.gz
+https://github.com/ggml-org/llama.cpp/releases/download/${VERSION}/llama-${VERSION}-bin-ubuntu-x64.tar.gz
+https://github.com/ggml-org/llama.cpp/releases/download/${VERSION}/llama-${VERSION}-bin-ubuntu-vulkan-x64.tar.gz
+https://github.com/ggml-org/llama.cpp/releases/download/${VERSION}/llama-${VERSION}-bin-win-cpu-x64.zip
+https://github.com/ggml-org/llama.cpp/releases/download/${VERSION}/llama-${VERSION}-bin-win-vulkan-x64.zip
+https://github.com/ggml-org/llama.cpp/releases/download/${VERSION}/llama-${VERSION}-bin-win-cuda-13.1-x64.zip
+"
+cd artefacts
+set -x
+for i in $SUITE ; do
+  curl -sLO $i
+done
+
