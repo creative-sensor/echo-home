@@ -10,11 +10,12 @@ test "$OS" == "Windows_NT" &&
     unzip -o artefacts/llama-${VERSION}-bin-win-cpu-x64.zip -d $LOCAL_BIN/gmlama/ &&
     unzip -o artefacts/llama-${VERSION}-bin-win-vulkan-x64.zip -d $LOCAL_BIN/gmlama-vulkan/ 
    
-test -d /boot/efi &&
+test -d /boot/efi || test -d /mnt/chromeos &&
     tar -xzf artefacts/llama-${VERSION}-bin-ubuntu-x64.tar.gz -C $LOCAL_BIN/ &&
     mv $LOCAL_BIN/llama-$VERSION/* $LOCAL_BIN/gmlama/ && rm -r $LOCAL_BIN/llama-$VERSION
     tar -xzf artefacts/llama-${VERSION}-bin-ubuntu-vulkan-x64.tar.gz -C $LOCAL_BIN/ && 
     mv $LOCAL_BIN/llama-$VERSION/* $LOCAL_BIN/gmlama-vulkan/
+
 
 test -d /System/Volumes/Data/Applications &&
     tar -xzf artefacts/llama-${VERSION}-bin-macos-arm64.tar.gz -C $LOCAL_BIN/ &&
