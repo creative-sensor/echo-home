@@ -15,3 +15,8 @@ test -d /boot/efi &&
     mv $LOCAL_BIN/llama-$VERSION/* $LOCAL_BIN/gmlama/ && rm -r $LOCAL_BIN/llama-$VERSION
     tar -xzf artefacts/llama-${VERSION}-bin-ubuntu-vulkan-x64.tar.gz -C $LOCAL_BIN/ && 
     mv $LOCAL_BIN/llama-$VERSION/* $LOCAL_BIN/gmlama-vulkan/
+
+test -d /System/Volumes/Data/Applications &&
+    tar -xzf artefacts/llama-${VERSION}-bin-macos-arm64.tar.gz -C $LOCAL_BIN/ &&
+    mv $LOCAL_BIN/llama-$VERSION/* $LOCAL_BIN/gmlama/ && rm -r $LOCAL_BIN/llama-$VERSION
+    
