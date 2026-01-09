@@ -1,0 +1,10 @@
+#!/bin/bash
+
+SELECTOR=$1
+GMLBASE=${GMLBASE:-~/.lmstudio/models}
+PROPERD=~/echo-home/workstation/lmstudio/gmlama/.properd
+MODELS=$(< $PROPERD/$(basename $0))
+test -z "$SELECTOR" && echo -n "$MODELS" && echo -e "\nWhich model?" && exit 1
+
+llm=$(echo -n "$MODELS" | grep -i -m 1 $SELECTOR)
+llama-cli -m $GMLBASE/$llm

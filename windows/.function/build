@@ -2,6 +2,7 @@
 source .properd/VARSET
 
 # ---- install ----
+mkdir -p ~/.local/bin
 install .vimrc ~/
 install .gvimrc ~/
 cp -r .vim ~/
