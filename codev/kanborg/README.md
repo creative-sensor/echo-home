@@ -5,10 +5,10 @@
 
 ### 1 WORK IN PROGRESS
 
+- [datum/2026/WIP/APLE-6.md](datum/2026/WIP/APLE-6.md)   ```# geminide : communication bus```
 - [datum/2026/WIP/APLE-8.md](datum/2026/WIP/APLE-8.md)   ```# macos: ntfs-3g```
+- [datum/2026/WIP/ARTE-14.md](datum/2026/WIP/ARTE-14.md)   ```# python : wheel modules```
 - [datum/2026/WIP/ASML-2.md](datum/2026/WIP/ASML-2.md)   ```# MLOps : high-level [6]```
-- [datum/2026/WIP/CORTA-3.md](datum/2026/WIP/CORTA-3.md)   ```# lmstudio : cli```
-- [datum/2026/WIP/DTUM-8.md](datum/2026/WIP/DTUM-8.md)   ```# pedrive : revision picker```
 - [datum/2026/WIP/LEAF-30.md](datum/2026/WIP/LEAF-30.md)   ```# Jupyter :```
 
 ### 2 ON HOLD
@@ -23,12 +23,9 @@
 
 ### 3 TO DO
 
-- [datum/2026/TODO/APLE-6.md](datum/2026/TODO/APLE-6.md)   ```# cluster : dual```
-- [datum/2026/TODO/ARTE-14.md](datum/2026/TODO/ARTE-14.md)   ```# python : wheel modules```
 - [datum/2026/TODO/CORTA-4.md](datum/2026/TODO/CORTA-4.md)   ```# pytorch : start```
 - [datum/2026/TODO/CORTA-5.md](datum/2026/TODO/CORTA-5.md)   ```# tensorflow : start```
 - [datum/2026/TODO/CORTA-6.md](datum/2026/TODO/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
-- [datum/2026/TODO/CORTA-7.md](datum/2026/TODO/CORTA-7.md)   ```# gmlama```
 - [datum/2026/TODO/DROID-4.md](datum/2026/TODO/DROID-4.md)   ```# APK : pgp tools```
 - [datum/2026/TODO/GGPU-1.md](datum/2026/TODO/GGPU-1.md)   ```# video : codecs```
 - [datum/2026/TODO/GGPU-3.md](datum/2026/TODO/GGPU-3.md)   ```# EXO : M2p2```
@@ -39,7 +36,12 @@
 
 ### 4 DONE
 
-- [datum/2026/DONE/DTUM-7.md](datum/2026/DONE/DTUM-7.md)   ```# pedrive : revision tracking```
+- [datum/2026/DONE/CORTA-3.md](datum/2026/DONE/CORTA-3.md)   ```# lmstudio : cli```
+- [datum/2026/DONE/CORTA-7.md](datum/2026/DONE/CORTA-7.md)   ```# gmlama```
+- [datum/2026/DONE/CORTA-8.md](datum/2026/DONE/CORTA-8.md)   ```# llama.cpp : aka gmlala```
+- [datum/2026/DONE/DTUM-7.md](datum/2026/DONE/DTUM-7.md)   ```# pedrive : revision tracking```
+- [datum/2026/DONE/DTUM-8.md](datum/2026/DONE/DTUM-8.md)   ```# pedrive : revision picker```
+- [datum/2026/DONE/KROS-8.md](datum/2026/DONE/KROS-8.md)   ```# gmlama : gpu acceleration```
 
 ### 5 BACKLOG
 

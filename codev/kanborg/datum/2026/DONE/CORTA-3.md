@@ -6,6 +6,7 @@ https://github.com/lmstudio-ai/lms
 
 ### 1 SOLUTION
 
+https://github.com/creative-sensor/echo-home/commit/4051e0f155b8e45b2918952df88d4601609e90bc
 
 ### 2 NOTES
 
