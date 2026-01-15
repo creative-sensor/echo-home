@@ -9,6 +9,7 @@
 - [datum/2026/WIP/APLE-8.md](datum/2026/WIP/APLE-8.md)   ```# macos: ntfs-3g```
 - [datum/2026/WIP/ARTE-14.md](datum/2026/WIP/ARTE-14.md)   ```# python : wheel modules```
 - [datum/2026/WIP/ASML-2.md](datum/2026/WIP/ASML-2.md)   ```# MLOps : high-level [6]```
+- [datum/2026/WIP/CORTA-9.md](datum/2026/WIP/CORTA-9.md)   ```# LLM : type FP```
 - [datum/2026/WIP/LEAF-30.md](datum/2026/WIP/LEAF-30.md)   ```# Jupyter :```
 
 ### 2 ON HOLD
