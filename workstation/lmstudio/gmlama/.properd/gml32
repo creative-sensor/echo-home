@@ -1,4 +1,4 @@
-lmstudio-community/NVIDIA-Nemotron-3-Nano-30B-A3B-GGUF/NVIDIA-Nemotron-3-Nano-30B-A3B-Q4_K_M.gguf
-lmstudio-community/gpt-oss-20b-GGUF/gpt-oss-20b-MXFP4.gguf
-lmstudio-community/gemma-3-27B-it-qat-GGUF/gemma-3-27B-it-QAT-Q4_0.gguf
+ibm-granite/granite-4.0-h-tiny-GGUF/granite-4.0-h-tiny-f16.gguf
 lmstudio-community/Devstral-Small-2-24B-Instruct-2512-GGUF/Devstral-Small-2-24B-Instruct-2512-Q4_K_M.gguf
+lmstudio-community/gemma-3-12b-it-GGUF/gemma-3-12b-it-Q4_K_M.gguf
+lmstudio-community/gpt-oss-20b-GGUF/gpt-oss-20b-MXFP4.gguf
