@@ -5,6 +5,7 @@ GMLBASE=${GMLBASE:-~/.lmstudio/models}
 PROPERD=~/echo-home/workstation/lmstudio/gmlama/.properd
 test -r "$PROPERD/$(basename $0)" && MODELS=$(< $PROPERD/$(basename $0))
 test -r "$PROPERD/$(basename $0)" || MODELS=$(< $PROPERD/$(basename ${0/vk}))
+test -r $PROPERD/gml.$HOSTNAME && MODELS=$(< $PROPERD/gml.$HOSTNAME)
 test -z "$SELECTOR" && echo -n "$MODELS" && echo -e "\nWhich model?" && exit 1
 
 llm=$(echo -n "$MODELS" | grep -i -m 1 $SELECTOR)

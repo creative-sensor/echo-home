@@ -6,3 +6,6 @@ lmstudio-community/granite-3.2-8b-instruct-GGUF/granite-3.2-8b-instruct-Q4_K_M.g
 lmstudio-community/granite-4.0-h-micro-GGUF/granite-4.0-h-micro-Q4_K_M.gguf
 lmstudio-community/granite-4.0-h-tiny-GGUF/granite-4.0-h-tiny-Q4_K_M.gguf
 lmstudio-community/phi-4-GGUF/phi-4-Q4_K_M.gguf
+lmstudio-community/granite-4.0-h-tiny-GGUF/granite-4.0-h-tiny-Q4_K_M.gguf
+lmstudio-community/granite-4.0-h-tiny-GGUF/granite-4.0-h-tiny-Q8_0.gguf
+
