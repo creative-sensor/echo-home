@@ -7,7 +7,7 @@ LLMDIR=~/.lmstudio/models
 if test -d "$GMLBASE" ;  then
   for i in $(<$GML_FILE); do
     TARGET=$LLMDIR/$(dirname $i) && mkdir -p $TARGET
-    cp $GMLBASE/$i $TARGET/ && echo "$i imported"
+    cp -i $GMLBASE/$i $TARGET/ && echo "$i imported"
   done
 else
   echo "\$GMLBASE not found"
