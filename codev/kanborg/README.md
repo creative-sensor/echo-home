@@ -28,7 +28,6 @@
 - [datum/2026/TODO/CORTA-6.md](datum/2026/TODO/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
 - [datum/2026/TODO/DROID-4.md](datum/2026/TODO/DROID-4.md)   ```# APK : pgp tools```
 - [datum/2026/TODO/GGPU-1.md](datum/2026/TODO/GGPU-1.md)   ```# video : codecs```
-- [datum/2026/TODO/GGPU-3.md](datum/2026/TODO/GGPU-3.md)   ```# EXO : M2p2```
 - [datum/2026/TODO/GGPU-5.md](datum/2026/TODO/GGPU-5.md)   ```# Geminide : Left and Right```
 - [datum/2026/TODO/MDOS-20.md](datum/2026/TODO/MDOS-20.md)   ```# rsync : source rebuild```
 - [datum/2026/TODO/MDOS-27.md](datum/2026/TODO/MDOS-27.md)   ```# wsli : WSL Windows interface```
@@ -43,6 +42,7 @@
 - [datum/2026/DONE/CORTA-9.md](datum/2026/DONE/CORTA-9.md)   ```# LLM : type FP```
 - [datum/2026/DONE/DTUM-7.md](datum/2026/DONE/DTUM-7.md)   ```# pedrive : revision tracking```
 - [datum/2026/DONE/DTUM-8.md](datum/2026/DONE/DTUM-8.md)   ```# pedrive : revision picker```
+- [datum/2026/DONE/GGPU-3.md](datum/2026/DONE/GGPU-3.md)   ```# EXO : M2p2```
 - [datum/2026/DONE/KROS-8.md](datum/2026/DONE/KROS-8.md)   ```# gmlama : gpu acceleration```
 - [datum/2026/DONE/VIM-4.md](datum/2026/DONE/VIM-4.md)   ```# rc : container x-ray```
 
