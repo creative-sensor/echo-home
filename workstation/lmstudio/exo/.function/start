@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+/Applications/EXO.app/Contents/Resources/exo/exo $@
