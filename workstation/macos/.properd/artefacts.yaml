@@ -22,6 +22,7 @@ uv: [ 0.9.27  , "https://github.com/astral-sh/uv/releases/download/0.9.27/uv-aar
 inkscape: [ 1.3.2 , "" ]
 vlc: [ 3.0.21 , "" ]
 docker: [ latest , "https://desktop.docker.com/mac/main/arm64/Docker.dmg" ]
+exo: [ 1.0.67 , "https://github.com/exo-explore/exo/releases/download/v1.0.67/EXO-1.0.67.dmg" ]
 sops: [ 3.10.2 , "" ]
 ripgrep: [ 14.1.1 , "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-apple-darwin.tar.gz", {"suffix":"tar.gz"} ]
 go: [ 1.25.0 , "https://dl.google.com/go/go1.25.0.darwin-arm64.pkg", {"suffix":"pkg"}]
