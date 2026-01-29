@@ -1,0 +1,6 @@
+
+
+tar xzf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.tar.gz -C $ARTIFACT_DIR
+mkdir -p $LOCAL_BIN/node
+cp $ARTIFACT_DIR/node-v${ARTIFACT_VERSION}-darwin-arm64/bin/* $LOCAL_BIN/node/
+rm -rf $ARTIFACT_DIR/node-v${ARTIFACT_VERSION}-darwin-arm64

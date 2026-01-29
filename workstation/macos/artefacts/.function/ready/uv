@@ -1,0 +1,5 @@
+
+
+tar4 xzf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.tar.gz -C $ARTIFACT_DIR
+cp $ARTIFACT_DIR/uv-aarch64-apple-darwin/uv $LOCAL_BIN
+rm -rf $ARTIFACT_DIR/uv-aarch64-apple-darwin

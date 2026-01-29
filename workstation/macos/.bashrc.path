@@ -1,4 +1,5 @@
 path_dict=("mcfunction" "$HOME/echo-home/workstation/macos/.function"
+           "node" $LOCAL_BIN/node
            "yson" $HOME/echo-home/codev/yson/.function )
 
 path_dict["rtfunction"]="$HOME/echo-home/.function"
