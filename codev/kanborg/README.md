@@ -11,6 +11,7 @@
 - [datum/2026/WIP/ARTE-14.md](datum/2026/WIP/ARTE-14.md)   ```# python : wheel modules```
 - [datum/2026/WIP/ASML-2.md](datum/2026/WIP/ASML-2.md)   ```# MLOps : high-level [6]```
 - [datum/2026/WIP/LEAF-30.md](datum/2026/WIP/LEAF-30.md)   ```# Jupyter :```
+- [datum/2026/WIP/VIM-22.md](datum/2026/WIP/VIM-22.md)   ```# sort : range buffer```
 
 ### 2 ON HOLD
 
