@@ -313,6 +313,8 @@ map dfg : diffget<CR>
 map b64 : call Base64e()<CR>
 map dex : Git <CR>tty<CR><C-w>L<C-w>=
 map hls : set hls!<CR>
+map sua : %sort u<CR>
+map .ys : .!yq -P -I 4<CR>
 vmap b64    \atob<Esc>
 vmap b94    \btoa<Esc>
 
