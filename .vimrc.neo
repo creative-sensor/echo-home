@@ -299,6 +299,8 @@ map b64 : call Base64e()<CR>
 map dex : Git <CR>tty<CR><C-w>L<C-w>=
 map hls : set hls!<CR>
 map sua : %sort u<CR>
+map \date :execute "normal! i" . substitute(system('date -u "+%Y-%m-%dT%H-%M-%SZ"'), '\n$', '', '')<CR>
+map \uuid :execute "normal! i" . substitute(system('uuidgen'), '\n$', '', '')<CR>
 vmap b64    \atob<Esc>
 vmap b94    \btoa<Esc>
 
