@@ -1,0 +1,6 @@
+pandoc
+texlive-latex-11:svn65161-94.fc43.noarch 
+texlive-texlive-scripts-11:svn66584-94.fc43.noarch
+texlive-scheme-full
+texlive-ec.noarch
+texlive-collection-latexextra.noarch
