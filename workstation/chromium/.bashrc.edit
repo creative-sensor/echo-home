@@ -16,3 +16,5 @@ STOP='\[\033[0m\]'
 
 PS1="${COLOR_BG}${COLOR_FG} \h ${STOP}${COLOR_BG2}${COLOR_FG2} \W ${STOP} ${COLOR_FG2}▰${STOP}  "
 
+export GML_MODEL=
+export GML_PROMPT=~/.gml.prompt

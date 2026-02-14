@@ -305,6 +305,11 @@ vmap b64    \atob<Esc>
 vmap b94    \btoa<Esc>
 vmap YY    y<Esc>:call CopyWL()<CR>
 
+map afc : .w! $GML_PROMPT <CR>:vsplit <CR>:term  llama-cli  -m $GML_MODEL  -st -f $GML_PROMPT  2>/dev/null<CR>:set ft=markdown<CR>
+map afg : .w! $GML_PROMPT <CR>:vsplit <CR>:term  cd $LOCAL_BIN/gmlama-vulkan && ./llama-cli -m $GML_MODEL  -st -f $GML_PROMPT  --split-mode none -dev Vulkan0 2>/dev/null<CR>:set ft=markdown<CR>
+map src : source ~/.vimrc.neo<CR>
+
+
 nnoremap cup : Git commit -m "up"<CR>
 
 vnoremap ccp    "+y
