@@ -1,3 +1,10 @@
+"-------- [GLOBAL] --------
+let g:yaml_revealer_separator='➤'
+    "<C-v>u27a4
+let g:font_name = "Consolas"
+let g:font_size = 11
+let g:GML_PROMPT = empty(getenv('GML_PROMPT')) ? getenv('GML_PROMPT') : '~/.gml.prompt'
+
 "-------- [MISC] --------
 syntax on
 highlight CursorLine cterm=NONE ctermbg=251
@@ -31,11 +38,7 @@ set backspace=indent,eol,start
 set ffs=unix
 set foldlevelstart=10
 
-"-------- [GLOBAL] --------
-let g:yaml_revealer_separator='➤'
-    "<C-v>u27a4
-let g:font_name = "Consolas"
-let g:font_size = 11
+
 
 
 
@@ -92,6 +95,21 @@ call plug#end()
 
 
 "-------- [FUNCTIONS] --------
+
+function! AttentionFlash_ModelList()
+    let GMLBASE = ""
+    return '~/.lmstudio/models/LiquidAI/LFM2.5-1.2B-Instruct-GGUF/LFM2.5-1.2B-Instruct-F16.gguf'
+endfunction
+
+function! AttentionFlashGPU()
+    let GML_PROMPT = empty(getenv('GML_PROMPT')) ? getenv('GML_PROMPT') : '~/.gml.prompt'
+    let GML_MODEL = empty(getenv('GML_MODEL')) ? AttentionFlash_ModelList() : getenv('GML_MODEL')
+    let GML_DEV = empty(getenv('GML_DEV')) ? 'Vulkan1' : getenv('GML_DEV')
+    exec 'vsplit'
+    exec 'term set -x; cd $LOCAL_BIN/gmlama-vulkan && ./llama-cli -st --split-mode none -m '.GML_MODEL.' -f '.GML_PROMPT.' -dev '.GML_DEV.' 2>/dev/null | tail +22'
+    exec 'set ft=markdown'
+endfunction
+
 function! AdjustFontSize(delta)
   let g:font_size += a:delta
   execute "set guifont=" . g:font_name . ":h" . g:font_size
@@ -318,8 +336,9 @@ map .ys : .!yq -P -I 4<CR>
 vmap b64    \atob<Esc>
 vmap b94    \btoa<Esc>
 
-map afc : .w! $GML_PROMPT <CR>:vsplit <CR>:term  llama-cli  -m $GML_MODEL  -st -f $GML_PROMPT  2>/dev/null<CR>:set ft=markdown<CR>
-map afg : .w! $GML_PROMPT <CR>:vsplit <CR>:term  cd $LOCAL_BIN/gmlama-vulkan && ./llama-cli -m $GML_MODEL  -st -f $GML_PROMPT  --split-mode none -dev $GML_DEV 2>/dev/null<CR>:set ft=markdown<CR>
+map afc : .w! $GML_PROMPT <CR>  :vsplit <CR>:term  llama-cli  -m $GML_MODEL  -st -f $GML_PROMPT  2>/dev/null<CR>:set ft=markdown<CR>
+map afg : .w! $GML_PROMPT<CR>:call AttentionFlashGPU()<CR>
+
 map src : source ~/.vimrc.neo<CR>
 
 
