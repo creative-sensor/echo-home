@@ -3,8 +3,7 @@ let g:yaml_revealer_separator='➤'
     "<C-v>u27a4
 let g:font_name = "Consolas"
 let g:font_size = 11
-let g:GML_PROMPT = empty(getenv('GML_PROMPT')) ? getenv('GML_PROMPT') : '~/.gml.prompt'
-
+let g:GML_PROMPT = empty(getenv('GML_PROMPT')) ?  '~/.gml.prompt' : getenv('GML_PROMPT')
 "-------- [MISC] --------
 syntax on
 highlight CursorLine cterm=NONE ctermbg=251
@@ -102,7 +101,7 @@ function! AttentionFlash_ModelList()
 endfunction
 
 function! AttentionFlashGPU()
-    let GML_PROMPT = empty(getenv('GML_PROMPT')) ? getenv('GML_PROMPT') : '~/.gml.prompt'
+    let GML_PROMPT = empty(getenv('GML_PROMPT')) ? '~/.gml.prompt' : getenv('GML_PROMPT')
     let GML_MODEL = empty(getenv('GML_MODEL')) ? AttentionFlash_ModelList() : getenv('GML_MODEL')
     let GML_DEV = empty(getenv('GML_DEV')) ? 'Vulkan1' : getenv('GML_DEV')
     exec 'vsplit'
@@ -337,8 +336,8 @@ vmap b64    \atob<Esc>
 vmap b94    \btoa<Esc>
 
 map afc : .w! $GML_PROMPT <CR>  :vsplit <CR>:term  llama-cli  -m $GML_MODEL  -st -f $GML_PROMPT  2>/dev/null<CR>:set ft=markdown<CR>
-map afg : .w! $GML_PROMPT<CR>:call AttentionFlashGPU()<CR>
-map afdd :%w! $GML_PROMPT<CR>:call AttentionFlashGPU()<CR>
+noremap afg : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU()<CR>
+map afdd :%w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU()<CR>
 
 map src : source ~/.vimrc.neo<CR>
 
