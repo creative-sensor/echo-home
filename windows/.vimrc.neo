@@ -338,6 +338,7 @@ vmap b94    \btoa<Esc>
 
 map afc : .w! $GML_PROMPT <CR>  :vsplit <CR>:term  llama-cli  -m $GML_MODEL  -st -f $GML_PROMPT  2>/dev/null<CR>:set ft=markdown<CR>
 map afg : .w! $GML_PROMPT<CR>:call AttentionFlashGPU()<CR>
+map afdd :%w! $GML_PROMPT<CR>:call AttentionFlashGPU()<CR>
 
 map src : source ~/.vimrc.neo<CR>
 
