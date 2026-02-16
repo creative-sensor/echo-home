@@ -100,10 +100,18 @@ function! AttentionFlash_ModelList()
     return '~/.lmstudio/models/LiquidAI/LFM2.5-1.2B-Instruct-GGUF/LFM2.5-1.2B-Instruct-F16.gguf'
 endfunction
 
-function! AttentionFlashGPU()
+function! AttentionFlashGPU(edit=false)
     let GML_PROMPT = empty(getenv('GML_PROMPT')) ? '~/.gml.prompt' : getenv('GML_PROMPT')
     let GML_MODEL = empty(getenv('GML_MODEL')) ? AttentionFlash_ModelList() : getenv('GML_MODEL')
-    let GML_DEV = empty(getenv('GML_DEV')) ? 'Vulkan1' : getenv('GML_DEV')
+    let GML_DEV = empty(getenv('GML_DEV')) ? 'Vulkan0' : getenv('GML_DEV')
+    if a:edit
+      exec "vsplit ".GML_PROMPT
+      normal G
+      let pnote = input("Prompt note: ")
+      put =pnote
+      write
+      bd
+    endif
     exec 'vsplit'
     exec 'term set -x; cd $LOCAL_BIN/gmlama-vulkan && ./llama-cli -st --split-mode none -m '.GML_MODEL.' -f '.GML_PROMPT.' -dev '.GML_DEV.' 2>/dev/null | tail +22'
     exec 'set ft=markdown'
@@ -337,7 +345,9 @@ vmap b94    \btoa<Esc>
 
 map afc : .w! $GML_PROMPT <CR>  :vsplit <CR>:term  llama-cli  -m $GML_MODEL  -st -f $GML_PROMPT  2>/dev/null<CR>:set ft=markdown<CR>
 map afg : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU()<CR>
+map afge : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU(1)<CR>
 map afdd : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU()<CR>
+map afde : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU(1)<CR>
 
 map src : source ~/.vimrc.neo<CR>
 
