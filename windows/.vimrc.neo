@@ -97,7 +97,9 @@ call plug#end()
 
 function! AttentionFlash_ModelList()
     let GMLBASE = ""
-    return '~/.lmstudio/models/LiquidAI/LFM2.5-1.2B-Instruct-GGUF/LFM2.5-1.2B-Instruct-F16.gguf'
+    "return '~/.lmstudio/models/LiquidAI/LFM2.5-1.2B-Instruct-GGUF/LFM2.5-1.2B-Instruct-F16.gguf'
+    "return '~/.lmstudio/models/ibm-granite/granite-4.0-h-tiny-GGUF/granite-4.0-h-tiny-f16.gguf'
+    return '~/.lmstudio/models/lmstudio-community/gpt-oss-20b-GGUF/gpt-oss-20b-MXFP4.gguf'
 endfunction
 
 function! AttentionFlashGPU(edit=0)
@@ -113,7 +115,7 @@ function! AttentionFlashGPU(edit=0)
       bd
     endif
     exec 'vsplit'
-    exec 'term set -x; cd $LOCAL_BIN/gmlama-vulkan && ./llama-cli -st --split-mode none -m '.GML_MODEL.' -f '.GML_PROMPT.' -dev '.GML_DEV.' 2>/dev/null | tail +22'
+    exec 'term cd $LOCAL_BIN/gmlama-vulkan && ./llama-cli -st --split-mode none -m '.GML_MODEL.' -f '.GML_PROMPT.' -dev '.GML_DEV
     exec 'set ft=markdown'
 endfunction
 
