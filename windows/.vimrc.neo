@@ -4,6 +4,8 @@ let g:yaml_revealer_separator='➤'
 let g:font_name = "Consolas"
 let g:font_size = 11
 let g:GML_PROMPT = empty(getenv('GML_PROMPT')) ?  '~/.gml.prompt' : getenv('GML_PROMPT')
+let g:GML_MODEL = ""
+let g:GMLBASE = empty(getenv('GMLBASE')) ? '~/.lmstudio/models' : getenv('GMLBASE')
 "-------- [MISC] --------
 syntax on
 highlight CursorLine cterm=NONE ctermbg=251
@@ -95,16 +97,13 @@ call plug#end()
 
 "-------- [FUNCTIONS] --------
 
-function! AttentionFlash_ModelList()
-    let GMLBASE = ""
-    "return '~/.lmstudio/models/LiquidAI/LFM2.5-1.2B-Instruct-GGUF/LFM2.5-1.2B-Instruct-F16.gguf'
-    "return '~/.lmstudio/models/ibm-granite/granite-4.0-h-tiny-GGUF/granite-4.0-h-tiny-f16.gguf'
-    return '~/.lmstudio/models/lmstudio-community/gpt-oss-20b-GGUF/gpt-oss-20b-MXFP4.gguf'
+function! GML_ModelEngage()
+    exec 'vsplit | enew | r!cd '.g:GMLBASE.';find -type f'
 endfunction
 
 function! AttentionFlashGPU(edit=0)
     let GML_PROMPT = empty(getenv('GML_PROMPT')) ? '~/.gml.prompt' : getenv('GML_PROMPT')
-    let GML_MODEL = empty(getenv('GML_MODEL')) ? AttentionFlash_ModelList() : getenv('GML_MODEL')
+    let GML_MODEL = empty(getenv('GML_MODEL')) ? g:GML_MODEL : getenv('GML_MODEL')
     let GML_DEV = empty(getenv('GML_DEV')) ? 'Vulkan0' : getenv('GML_DEV')
     if a:edit
       silent exec "vsplit ".GML_PROMPT
@@ -345,11 +344,7 @@ map .ys : .!yq -P -I 4<CR>
 vmap b64    \atob<Esc>
 vmap b94    \btoa<Esc>
 
-map afc : .w! $GML_PROMPT <CR>  :vsplit <CR>:term  llama-cli  -m $GML_MODEL  -st -f $GML_PROMPT  2>/dev/null<CR>:set ft=markdown<CR>
-map afg : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU()<CR>
-map afge : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU(1)<CR>
-map afdd : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU()<CR>
-map afdde : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU(1)<CR>
+
 
 map src : source ~/.vimrc.neo<CR>
 
@@ -374,6 +369,14 @@ nnoremap <F5><F5> : edit<CR>
 nnoremap <C-0> :call AdjustFontSize(1)<CR>
 nnoremap <C-9> :call AdjustFontSize(-1)<CR>
 
+"-------- [KEYMAP] -------- GML
+map afc : .w! $GML_PROMPT <CR>  :vsplit <CR>:term  llama-cli  -m $GML_MODEL  -st -f $GML_PROMPT  2>/dev/null<CR>:set ft=markdown<CR>
+map afg : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU()<CR>
+map afge : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU(1)<CR>
+map afdd : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU()<CR>
+map afdde : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU(1)<CR>
+map gme : call GML_ModelEngage()<CR>
+map gmex : let g:GML_MODEL = g:GMLBASE."/".getline('.')<CR>
 
 "-------- [LUA-INIT] --------
 set rtp+=~/.vim/lua
