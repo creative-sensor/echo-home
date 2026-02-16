@@ -1,3 +1,11 @@
+"-------- [GLOBAL] --------
+let g:yaml_revealer_separator='➤'
+    "<C-v>u27a4
+let g:font_name = "Cascadia\\ Mono:h12"
+let g:font_size = 12
+let g:GML_PROMPT = empty(getenv('GML_PROMPT')) ?  '~/.gml.prompt' : getenv('GML_PROMPT')
+let g:GML_MODEL = ""
+let g:GMLBASE = empty(getenv('GMLBASE')) ? '~/.lmstudio/models' : getenv('GMLBASE')
 "-------- [MISC] --------
 syntax on
 highlight CursorLine cterm=NONE ctermbg=251
@@ -28,11 +36,7 @@ set backspace=indent,eol,start
 set ffs=unix
 set foldlevelstart=10
 
-"-------- [GLOBAL] --------
-let g:yaml_revealer_separator='➤'
-    "<C-v>u27a4
-let g:font_name = "Cascadia\\ Mono:h12"
-let g:font_size = 12
+
 
 
 
@@ -87,7 +91,29 @@ call plug#end()
 
 
 
+
 "-------- [FUNCTIONS] --------
+
+function! GML_ModelEngage()
+    exec 'vsplit | enew | r!cd '.g:GMLBASE.';find -type f'
+endfunction
+
+function! AttentionFlash(edit=0)
+    let GML_PROMPT = empty(getenv('GML_PROMPT')) ? '~/.gml.prompt' : getenv('GML_PROMPT')
+    let GML_MODEL = empty(getenv('GML_MODEL')) ? g:GML_MODEL : getenv('GML_MODEL')
+    if a:edit
+      silent exec "vsplit ".GML_PROMPT
+      normal G
+      let pnote = input("Prompt note: ")
+      put =pnote
+      write
+      bd
+    endif
+    exec 'vsplit'
+    exec 'term set -x ; llama-cli -st  -m '.GML_MODEL.' -f '.GML_PROMPT
+    exec 'set ft=markdown'
+endfunction
+
 function! AdjustFontSize(delta)
   let g:font_size += a:delta
   execute "set guifont=" . g:font_name . ":h" . g:font_size
@@ -305,8 +331,6 @@ vmap b64    \atob<Esc>
 vmap b94    \btoa<Esc>
 vmap YY    y<Esc>:call CopyWL()<CR>
 
-map afc : .w! $GML_PROMPT <CR>:vsplit <CR>:term  llama-cli  -m $GML_MODEL  -st -f $GML_PROMPT  2>/dev/null<CR>:set ft=markdown<CR>
-map afg : .w! $GML_PROMPT <CR>:vsplit <CR>:term  cd $LOCAL_BIN/gmlama-vulkan && ./llama-cli -m $GML_MODEL  -st -f $GML_PROMPT  --split-mode none -dev Vulkan0 2>/dev/null<CR>:set ft=markdown<CR>
 map src : source ~/.vimrc.neo<CR>
 
 
@@ -330,6 +354,13 @@ nnoremap <F5><F5> : edit<CR>
 nnoremap <C-0> :call AdjustFontSize(1)<CR>
 nnoremap <C-9> :call AdjustFontSize(-1)<CR>
 
+"-------- [KEYMAP] -------- GML
+map afc : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash()<CR>
+map afce : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash(1)<CR>
+map afdd : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash()<CR>
+map afdde : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash(1)<CR>
+map gme : call GML_ModelEngage()<CR>
+map gmex : let g:GML_MODEL = g:GMLBASE . getline('.')<CR>
 
 "-------- [LUA-INIT] --------
 set rtp+=~/.vim/lua
