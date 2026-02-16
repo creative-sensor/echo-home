@@ -100,12 +100,12 @@ function! AttentionFlash_ModelList()
     return '~/.lmstudio/models/LiquidAI/LFM2.5-1.2B-Instruct-GGUF/LFM2.5-1.2B-Instruct-F16.gguf'
 endfunction
 
-function! AttentionFlashGPU(edit=false)
+function! AttentionFlashGPU(edit=0)
     let GML_PROMPT = empty(getenv('GML_PROMPT')) ? '~/.gml.prompt' : getenv('GML_PROMPT')
     let GML_MODEL = empty(getenv('GML_MODEL')) ? AttentionFlash_ModelList() : getenv('GML_MODEL')
     let GML_DEV = empty(getenv('GML_DEV')) ? 'Vulkan0' : getenv('GML_DEV')
     if a:edit
-      exec "vsplit ".GML_PROMPT
+      silent exec "vsplit ".GML_PROMPT
       normal G
       let pnote = input("Prompt note: ")
       put =pnote
