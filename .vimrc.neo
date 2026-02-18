@@ -1,3 +1,11 @@
+"-------- [GLOBAL] --------
+"-------- [GLOBAL] -------- GML
+let g:GML_PROMPT = empty(getenv('GML_PROMPT')) ?  '~/.gml.prompt' : getenv('GML_PROMPT')
+let g:GML_MODEL = ""
+let g:GMLBASE = empty(getenv('GMLBASE')) ? '~/.lmstudio/models' : getenv('GMLBASE')
+"-------- [GLOBAL] -------- SSH
+let g:SSH_ALIAS = empty(getenv('SSH_ALIAS')) ? 'localhost' : getenv('SSH_ALIAS')
+
 "-------- [MISC] --------
 syntax on
 highlight CursorLine cterm=NONE ctermbg=251
@@ -88,6 +96,64 @@ call plug#end()
 
 
 "-------- [FUNCTIONS] --------
+
+function! GML_ModelEngage()
+    exec 'vsplit | enew| r!cd '.g:GMLBASE.';find -type f'
+    exec "0put ='### LLM-MODELS'"
+    exec "1put ='--------'"
+    exec "$put ='' | $put ='--------'"
+    exec 'set ft=markdown'
+endfunction
+
+function! AttentionFlash(edit=0)
+    let GML_PROMPT = empty(getenv('GML_PROMPT')) ? '~/.gml.prompt' : getenv('GML_PROMPT')
+    let GML_MODEL = empty(getenv('GML_MODEL')) ? g:GML_MODEL : getenv('GML_MODEL')
+    if a:edit
+      silent exec "vsplit ".GML_PROMPT
+      normal G
+      let pnote = input("Prompt note: ")
+      put =pnote
+      write
+      bd
+    endif
+    exec 'vsplit'
+    exec 'term llama-cli -st  --n-gpu-layers 0 --no-kv-offload  -m '.GML_MODEL.' -f '.GML_PROMPT
+    exec 'set ft=markdown'
+endfunction
+
+function! AttentionFlashSSH(edit=0)
+    let GML_MODEL = empty(getenv('GML_MODEL')) ? g:GML_MODEL : getenv('GML_MODEL')
+    if a:edit
+      silent exec "vsplit ".g:GML_PROMPT
+      normal G
+      let pnote = input("Prompt note: ")
+      put =pnote
+      write
+      bd
+    endif
+    exec '!cat '.g:GML_PROMPT.'| ssh '.g:SSH_ALIAS.' "cat > '.g:GML_PROMPT.'"'
+    exec 'vsplit'
+    exec 'term ssh '.g:SSH_ALIAS.' "llama-cli -st  --n-gpu-layers 0 --no-kv-offload  -m '.GML_MODEL.' -f '.g:GML_PROMPT.'"'
+    exec 'set ft=markdown'
+endfunction
+
+function! AttentionFlashGPU(edit=0)
+    let GML_PROMPT = empty(getenv('GML_PROMPT')) ? '~/.gml.prompt' : getenv('GML_PROMPT')
+    let GML_MODEL = empty(getenv('GML_MODEL')) ? g:GML_MODEL : getenv('GML_MODEL')
+    let GML_DEV = empty(getenv('GML_DEV')) ? 'Vulkan0' : getenv('GML_DEV')
+    if a:edit
+      silent exec "vsplit ".GML_PROMPT
+      normal G
+      let pnote = input("Prompt note: ")
+      put =pnote
+      write
+      bd
+    endif
+    exec 'vsplit'
+    exec 'term cd $LOCAL_BIN/gmlama-vulkan && ./llama-cli -st --split-mode none -m '.GML_MODEL.' -f '.GML_PROMPT.' -dev '.GML_DEV
+    exec 'set ft=markdown'
+endfunction
+
 function! AdjustFontSize(delta)
   let g:font_size += a:delta
   execute "set guifont=" . g:font_name . ":h" . g:font_size
@@ -304,6 +370,11 @@ map \uuid :execute "normal! i" . substitute(system('uuidgen'), '\n$', '', '')<CR
 vmap b64    \atob<Esc>
 vmap b94    \btoa<Esc>
 
+
+
+map src : source ~/.vimrc.neo<CR>
+
+
 nnoremap cup : Git commit -m "up"<CR>
 
 vnoremap ccp    "+y
@@ -324,6 +395,16 @@ nnoremap <F5><F5> : edit<CR>
 nnoremap <C-0> :call AdjustFontSize(1)<CR>
 nnoremap <C-9> :call AdjustFontSize(-1)<CR>
 
+"-------- [KEYMAP] -------- GML
+map afc : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash()<CR>
+map afcs : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashSSH()<CR>
+map afce : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash(1)<CR>
+map afg : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU()<CR>
+map afge : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU(1)<CR>
+map afdd : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU()<CR>
+map afdde : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU(1)<CR>
+map gme : call GML_ModelEngage()<CR>
+map gmex : let g:GML_MODEL = g:GMLBASE."/".getline('.')<CR>:$put ='```Engaged``` '.g:GML_MODEL<CR>
 
 "-------- [LUA-INIT] --------
 set rtp+=~/.vim/lua
