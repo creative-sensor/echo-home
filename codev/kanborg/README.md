@@ -11,7 +11,7 @@
 - [datum/2026/WIP/ASML-2.md](datum/2026/WIP/ASML-2.md)   ```# MLOps : high-level [6]```
 - [datum/2026/WIP/CORTA-6.md](datum/2026/WIP/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
 - [datum/2026/WIP/LEAF-30.md](datum/2026/WIP/LEAF-30.md)   ```# Jupyter :```
-- [datum/2026/WIP/LEAF-33.md](datum/2026/WIP/LEAF-33.md)   ```# pandoc : md-html```
+- [datum/2026/WIP/VIM-24.md](datum/2026/WIP/VIM-24.md)   ```# ssh : attention flash```
 
 ### 2 ON HOLD
 
@@ -31,8 +31,7 @@
 - [datum/2026/TODO/GGPU-5.md](datum/2026/TODO/GGPU-5.md)   ```# Geminide : Left and Right```
 - [datum/2026/TODO/MDOS-20.md](datum/2026/TODO/MDOS-20.md)   ```# rsync : source rebuild```
 - [datum/2026/TODO/MDOS-27.md](datum/2026/TODO/MDOS-27.md)   ```# wsli : WSL Windows interface```
-- [datum/2026/TODO/MONO-7.md](datum/2026/TODO/MONO-7.md)   ```# ULI : Unified Linux Interface```
-- [datum/2026/TODO/VIM-23.md](datum/2026/TODO/VIM-23.md)   ```# ai flash : inference```
+- [datum/2026/TODO/MONO-7.md](datum/2026/TODO/MONO-7.md)   ```# ULI : Unified Linux Interface```
 
 ### 4 DONE
 
@@ -46,7 +45,9 @@
 - [datum/2026/DONE/DTUM-8.md](datum/2026/DONE/DTUM-8.md)   ```# pedrive : revision picker```
 - [datum/2026/DONE/GGPU-3.md](datum/2026/DONE/GGPU-3.md)   ```# EXO : M2p2```
 - [datum/2026/DONE/KROS-8.md](datum/2026/DONE/KROS-8.md)   ```# gmlama : gpu acceleration```
+- [datum/2026/DONE/LEAF-33.md](datum/2026/DONE/LEAF-33.md)   ```# pandoc : md-html```
 - [datum/2026/DONE/VIM-22.md](datum/2026/DONE/VIM-22.md)   ```# sort : range buffer```
+- [datum/2026/DONE/VIM-23.md](datum/2026/DONE/VIM-23.md)   ```# ai flash : inference```
 - [datum/2026/DONE/VIM-4.md](datum/2026/DONE/VIM-4.md)   ```# rc : container x-ray```
 
 ### 5 BACKLOG
