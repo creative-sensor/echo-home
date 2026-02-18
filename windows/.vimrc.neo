@@ -3,9 +3,13 @@ let g:yaml_revealer_separator='➤'
     "<C-v>u27a4
 let g:font_name = "Consolas"
 let g:font_size = 11
+"-------- [GLOBAL] -------- GML
 let g:GML_PROMPT = empty(getenv('GML_PROMPT')) ?  '~/.gml.prompt' : getenv('GML_PROMPT')
 let g:GML_MODEL = ""
 let g:GMLBASE = empty(getenv('GMLBASE')) ? '~/.lmstudio/models' : getenv('GMLBASE')
+"-------- [GLOBAL] -------- SSH
+let g:SSH_ALIAS = empty(getenv('SSH_ALIAS')) ? 'localhost' : getenv('SSH_ALIAS')
+
 "-------- [MISC] --------
 syntax on
 highlight CursorLine cterm=NONE ctermbg=251
@@ -121,6 +125,21 @@ function! AttentionFlash(edit=0)
     exec 'set ft=markdown'
 endfunction
 
+function! AttentionFlashSSH(edit=0)
+    let GML_MODEL = empty(getenv('GML_MODEL')) ? g:GML_MODEL : getenv('GML_MODEL')
+    if a:edit
+      silent exec "vsplit ".g:GML_PROMPT
+      normal G
+      let pnote = input("Prompt note: ")
+      put =pnote
+      write
+      bd
+    endif
+    exec '!cat '.g:GML_PROMPT.'| ssh '.g:SSH_ALIAS.' "cat > '.g:GML_PROMPT.'"'
+    exec 'vsplit'
+    exec 'term ssh '.g:SSH_ALIAS.' "llama-cli -st  --n-gpu-layers 0 --no-kv-offload  -m '.GML_MODEL.' -f '.g:GML_PROMPT.'"'
+    exec 'set ft=markdown'
+endfunction
 
 function! AttentionFlashGPU(edit=0)
     let GML_PROMPT = empty(getenv('GML_PROMPT')) ? '~/.gml.prompt' : getenv('GML_PROMPT')
@@ -392,6 +411,7 @@ nnoremap <C-9> :call AdjustFontSize(-1)<CR>
 
 "-------- [KEYMAP] -------- GML
 map afc : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash()<CR>
+map afcs : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashSSH()<CR>
 map afce : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash(1)<CR>
 map afg : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU()<CR>
 map afge : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU(1)<CR>
