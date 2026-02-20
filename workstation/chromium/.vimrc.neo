@@ -378,6 +378,7 @@ nnoremap <C-9> :call AdjustFontSize(-1)<CR>
 
 "-------- [KEYMAP] -------- GML
 map afc : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash()<CR>
+map afcs : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashSSH()<CR>
 map afce : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash(1)<CR>
 map afdd : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash()<CR>
 map afdde : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash(1)<CR>
