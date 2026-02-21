@@ -247,6 +247,14 @@ endfunction
 
 
 "-------- [FUNCTIONS] -------- AttentionFlash
+
+function! SecureShellConfig()
+    let SSH_ALIAS = empty($SSH_ALIAS) ? g:SSH_ALIAS : $SSH_ALIAS
+
+endfunction
+
+
+"-------- [FUNCTIONS] -------- AttentionFlash
 function! GML_ModelEngage()
     exec 'vsplit | enew| r!cd '.g:GMLBASE.';find -type f'
     exec "0put ='### LLM-MODELS'"
@@ -394,10 +402,15 @@ nnoremap <F5><F5> : edit<CR>
 nnoremap <C-0> :call AdjustFontSize(1)<CR>
 nnoremap <C-9> :call AdjustFontSize(-1)<CR>
 
+"-------- [KEYMAP] -------- SSH
+map sshc : vsplit<CR> <CR>
+map sshcx : vsplit<CR><CR>
+map ssh : vsplit<CR>:exec "term ssh ".g:SSH_ALIAS<CR>
 "-------- [KEYMAP] -------- GML
 map afc : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash()<CR>
-map afcs : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashSSH()<CR>
 map afce : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash(1)<CR>
+map afcs : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashSSH()<CR>
+map afces : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashSSH(1)<CR>
 map afg : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU()<CR>
 map afge : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU(1)<CR>
 map afdd : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU()<CR>
