@@ -4,11 +4,12 @@ let g:yaml_revealer_separator='➤'
 let g:font_name = "Consolas"
 let g:font_size = 11
 "-------- [GLOBAL] -------- GML
-let g:GML_PROMPT = empty(getenv('GML_PROMPT')) ?  '~/.gml.prompt' : getenv('GML_PROMPT')
+let g:GML_PROMPT = empty($GML_PROMPT) ?  '~/.gml.prompt' : $GML_PROMPT
 let g:GML_MODEL = ""
-let g:GMLBASE = empty(getenv('GMLBASE')) ? '~/.lmstudio/models' : getenv('GMLBASE')
+let g:GMLBASE = empty($GMLBASE) ? '~/.lmstudio/models' : $GMLBASE
+let g:GML_DEV = empty($GML_DEV) ? 'Vulkan0' : $GML_DEV
 "-------- [GLOBAL] -------- SSH
-let g:SSH_ALIAS = empty(getenv('SSH_ALIAS')) ? 'localhost' : getenv('SSH_ALIAS')
+let g:SSH_ALIAS = empty($SSH_ALIAS) ? "" : $SSH_ALIAS
 
 "-------- [MISC] --------
 syntax on
@@ -101,62 +102,6 @@ call plug#end()
 
 "-------- [FUNCTIONS] --------
 
-function! GML_ModelEngage()
-    exec 'vsplit | enew| r!cd '.g:GMLBASE.';find -type f'
-    exec "0put ='### LLM-MODELS'"
-    exec "1put ='--------'"
-    exec "$put ='' | $put ='--------'"
-    exec 'set ft=markdown'
-endfunction
-
-function! AttentionFlash(edit=0)
-    let GML_PROMPT = empty(getenv('GML_PROMPT')) ? '~/.gml.prompt' : getenv('GML_PROMPT')
-    let GML_MODEL = empty(getenv('GML_MODEL')) ? g:GML_MODEL : getenv('GML_MODEL')
-    if a:edit
-      silent exec "vsplit ".GML_PROMPT
-      normal G
-      let pnote = input("Prompt note: ")
-      put =pnote
-      write
-      bd
-    endif
-    exec 'vsplit'
-    exec 'term llama-cli -st  --n-gpu-layers 0 --no-kv-offload  -m '.GML_MODEL.' -f '.GML_PROMPT
-    exec 'set ft=markdown'
-endfunction
-
-function! AttentionFlashSSH(edit=0)
-    let GML_MODEL = empty(getenv('GML_MODEL')) ? g:GML_MODEL : getenv('GML_MODEL')
-    if a:edit
-      silent exec "vsplit ".g:GML_PROMPT
-      normal G
-      let pnote = input("Prompt note: ")
-      put =pnote
-      write
-      bd
-    endif
-    exec '!cat '.g:GML_PROMPT.'| ssh '.g:SSH_ALIAS.' "cat > '.g:GML_PROMPT.'"'
-    exec 'vsplit'
-    exec 'term ssh '.g:SSH_ALIAS.' "llama-cli -st  --n-gpu-layers 0 --no-kv-offload  -m '.GML_MODEL.' -f '.g:GML_PROMPT.'"'
-    exec 'set ft=markdown'
-endfunction
-
-function! AttentionFlashGPU(edit=0)
-    let GML_PROMPT = empty(getenv('GML_PROMPT')) ? '~/.gml.prompt' : getenv('GML_PROMPT')
-    let GML_MODEL = empty(getenv('GML_MODEL')) ? g:GML_MODEL : getenv('GML_MODEL')
-    let GML_DEV = empty(getenv('GML_DEV')) ? 'Vulkan0' : getenv('GML_DEV')
-    if a:edit
-      silent exec "vsplit ".GML_PROMPT
-      normal G
-      let pnote = input("Prompt note: ")
-      put =pnote
-      write
-      bd
-    endif
-    exec 'vsplit'
-    exec 'term cd $LOCAL_BIN/gmlama-vulkan && ./llama-cli -st --split-mode none -m '.GML_MODEL.' -f '.GML_PROMPT.' -dev '.GML_DEV
-    exec 'set ft=markdown'
-endfunction
 
 function! AdjustFontSize(delta)
   let g:font_size += a:delta
@@ -315,6 +260,69 @@ function YsonLine()
 endfunction
 
 
+"-------- [FUNCTIONS] -------- AttentionFlash
+
+function! SecureShellConfig()
+    let SSH_ALIAS = empty($SSH_ALIAS) ? g:SSH_ALIAS : $SSH_ALIAS
+
+endfunction
+
+
+"-------- [FUNCTIONS] -------- AttentionFlash
+function! GML_ModelEngage()
+    exec 'vsplit | enew | r!cd '.g:GMLBASE.';find  -type f'
+    exec "0put ='### LLM-MODELS'"
+    exec "1put ='--------'"
+    exec "$put ='' | $put ='--------'"
+    exec 'set ft=markdown'
+endfunction
+
+function! AttentionFlash(edit=0)
+    let GML_MODEL = empty($GML_MODEL) ? g:GML_MODEL : $GML_MODEL
+    if a:edit
+      silent exec "vsplit ".g:GML_PROMPT
+      normal G
+      let pnote = input("Prompt note: ")
+      put =pnote
+      write
+      bd
+    endif
+    exec 'vsplit'
+    exec 'term llama-cli -st  --n-gpu-layers 0 --no-kv-offload  -m '.GML_MODEL.' -f '.g:GML_PROMPT
+    exec 'set ft=markdown'
+endfunction
+
+function! AttentionFlashSSH(edit=0)
+    let GML_MODEL = empty($GML_MODEL) ? g:GML_MODEL : $GML_MODEL
+    if a:edit
+      silent exec "vsplit ".g:GML_PROMPT
+      normal G
+      let pnote = input("Prompt note: ")
+      put =pnote
+      write
+      bd
+    endif
+    exec '!cat '.g:GML_PROMPT.'| ssh '.g:SSH_ALIAS.' "cat > '.g:GML_PROMPT.'"'
+    exec 'vsplit'
+    exec 'term ssh '.g:SSH_ALIAS.' "llama-cli -st  --n-gpu-layers 0 --no-kv-offload  -m '.GML_MODEL.' -f '.g:GML_PROMPT.'"'
+    exec 'set ft=markdown'
+endfunction
+
+function! AttentionFlashGPU(edit=0)
+    let GML_MODEL = empty($GML_MODEL) ? g:GML_MODEL : $GML_MODEL
+    if a:edit
+      silent exec "vsplit ".g:GML_PROMPT
+      normal G
+      let pnote = input("Prompt note: ")
+      put =pnote
+      write
+      bd
+    endif
+    exec 'vsplit'
+    exec 'term cd $LOCAL_BIN/gmlama-vulkan && ./llama-cli -st --split-mode none -m '.GML_MODEL.' -f '.g:GML_PROMPT.' -dev '.g:GML_DEV
+    exec 'set ft=markdown'
+endfunction
+
 "-------- [AUTOCMD] --------
 autocmd FileType yaml  : set tabstop=2
 "autocmd VimEnter * above terminal ++rows=7
@@ -409,10 +417,15 @@ nnoremap <F5><F5> : edit<CR>
 nnoremap <C-0> :call AdjustFontSize(1)<CR>
 nnoremap <C-9> :call AdjustFontSize(-1)<CR>
 
+"-------- [KEYMAP] -------- SSH
+map sshc : tabnew ~/.ssh/config<CR>
+map sshcx : let g:SSH_ALIAS = substitute(getline('.'), '^Host \+', '', 'g')<CR>
+map ssh : exec "below term ssh ".g:SSH_ALIAS<CR>
 "-------- [KEYMAP] -------- GML
 map afc : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash()<CR>
-map afcs : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashSSH()<CR>
 map afce : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash(1)<CR>
+map afcs : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashSSH()<CR>
+map afces : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashSSH(1)<CR>
 map afg : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU()<CR>
 map afge : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU(1)<CR>
 map afdd : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU()<CR>
