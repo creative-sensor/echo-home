@@ -1,5 +1,5 @@
 helm: [ 3.14.0 , "https://get.helm.sh/helm-v3.14.0-windows-amd64.zip" , {"suffix":"zip"} ]
-nvim: [ 0.11.0 , "https://github.com/neovim/neovim/releases/download/v0.11.0/nvim-win64.msi" , {"suffix":"msi"} ]
+nvim: [ 0.11.6 , "https://github.com/neovim/neovim/releases/download/v0.11.6/nvim-win64.msi" , {"suffix":"msi"} ]
 neovide: [ 0.14.0 , "https://github.com/neovide/neovide/releases/download/0.14.0/neovide.msi" , {"suffix":"msi"} ]
 p7zip: [ 2201 , "https://www.7-zip.org/a/7z2201-x64.exe" ]
 python: [ 3.13.2 , "https://www.python.org/ftp/python/3.13.2/python-3.13.2-amd64.exe" ]

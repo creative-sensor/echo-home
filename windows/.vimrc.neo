@@ -1,4 +1,5 @@
 "-------- [GLOBAL] --------
+set shada-=!
 let g:yaml_revealer_separator='➤'
     "<C-v>u27a4
 let g:font_name = "Consolas"
@@ -7,6 +8,7 @@ let g:font_size = 11
 let g:GML_PROMPT = empty($GML_PROMPT) ?  '~/.gml.prompt' : $GML_PROMPT
 let g:GML_MODEL = ""
 let g:GMLBASE = empty($GMLBASE) ? '~/.lmstudio/models' : $GMLBASE
+let g:GMLBASE_SSH = empty($GMLBASE_SSH) ? '~/.lmstudio/models' : $GMLBASE_SSH
 let g:GML_DEV = empty($GML_DEV) ? 'Vulkan0' : $GML_DEV
 "-------- [GLOBAL] -------- SSH
 let g:SSH_ALIAS = empty($SSH_ALIAS) ? "" : $SSH_ALIAS
@@ -271,10 +273,17 @@ endfunction
 "-------- [FUNCTIONS] -------- AttentionFlash
 function! GML_ModelEngage()
     exec 'vsplit | enew | r!cd '.g:GMLBASE.';find  -type f'
-    exec "0put ='### LLM-MODELS'"
+    exec "0put ='### LLM-MODELS KM[gmex]'"
     exec "1put ='--------'"
     exec "$put ='' | $put ='--------'"
     exec 'set ft=markdown'
+    if !empty(g:SSH_ALIAS)
+      exec 'split | enew | r!ssh '.g:SSH_ALIAS.' "cd '.g:GMLBASE_SSH.';find  -type f"'
+      exec "0put ='### LLM-MODELS KM[gmes]  SSH[".g:SSH_ALIAS."]'  "
+      exec "1put ='--------'"
+      exec "$put ='' | $put ='--------'"
+      exec 'set ft=markdown'
+    endif
 endfunction
 
 function! AttentionFlash(edit=0)
@@ -432,6 +441,7 @@ map afdd : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU()<CR>
 map afdde : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU(1)<CR>
 map gme : call GML_ModelEngage()<CR>
 map gmex : let g:GML_MODEL = g:GMLBASE."/".getline('.')<CR>:$put ='```Engaged``` '.g:GML_MODEL<CR>
+map gmes : let g:GML_MODEL = g:GMLBASE_SSH."/".getline('.')<CR>:$put ='```Engaged[ssh]``` '.g:GML_MODEL<CR>
 
 "-------- [LUA-INIT] --------
 set rtp+=~/.vim/lua
