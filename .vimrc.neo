@@ -403,9 +403,9 @@ nnoremap <C-0> :call AdjustFontSize(1)<CR>
 nnoremap <C-9> :call AdjustFontSize(-1)<CR>
 
 "-------- [KEYMAP] -------- SSH
-map sshc : vsplit<CR> <CR>
-map sshcx : vsplit<CR><CR>
-map ssh : vsplit<CR>:exec "term ssh ".g:SSH_ALIAS<CR>
+map sshc : tabnew ~/.ssh/config<CR>
+map sshcx : let g:SSH_ALIAS = substitute(getline('.'), '^Host \+', '', 'g')<CR>
+map ssh : exec "below term ssh ".g:SSH_ALIAS<CR>
 "-------- [KEYMAP] -------- GML
 map afc : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash()<CR>
 map afce : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash(1)<CR>
