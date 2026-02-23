@@ -298,7 +298,7 @@ autocmd VimEnter * silent call SessionMgmt()
     "termwinsize: auto-adjustable
 autocmd InsertEnter * highlight CursorLine ctermbg=190 guibg=#D5EE16 | highlight StatusLine ctermbg=190 guibg=#CCFF00
 "autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#D32075  | highlight StatusLine ctermbg=254 guibg=#eee8d5
-autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#CED320  | highlight StatusLine ctermbg=254 guibg=#eee8d5
+autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#dadeaf  | highlight StatusLine ctermbg=254 guibg=#eee8d5
 
 
 
