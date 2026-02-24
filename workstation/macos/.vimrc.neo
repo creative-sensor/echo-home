@@ -15,6 +15,8 @@ let g:GMLBASE_SSH = empty($GMLBASE_SSH) ? '~/.lmstudio/models' : $GMLBASE_SSH
 let g:GML_DEV = empty($GML_DEV) ? 'Vulkan0' : $GML_DEV
 "-------- [GLOBAL] -------- SSH
 let g:SSH_ALIAS = empty($SSH_ALIAS) ? "" : $SSH_ALIAS
+"-------- [GLOBAL] -------- MIMD
+let g:MIMD_BASE = empty($MIMD_BASE) ? '~/.vim/mimd' : $MIMD_BASE
 
 "-------- [MISC] --------
 syntax on
@@ -241,6 +243,16 @@ endfunction
 
 
 
+"-------- [FUNCTIONS] -------- MIMD
+function! VimPage_mimd()
+    exec 'vsplit | enew | r!cd ~/.vim/mimd; find . -type f'
+    exec "0put ='### Mini Modules KM[mimds]'"
+    exec "1put ='--------'"
+    exec "$put ='' | $put ='--------'"
+    exec 'set ft=markdown'
+endfunction
+
+
 "-------- [FUNCTIONS] -------- AttentionFlash
 function! GML_ModelEngage()
     exec 'vsplit | enew | r!cd '.g:GMLBASE.';find . -type f'
@@ -380,6 +392,10 @@ nnoremap <F5><F5> : edit<CR>
 " Map keys to increase/decrease font size
 nnoremap <C-0> :call AdjustFontSize(1)<CR>
 nnoremap <C-9> :call AdjustFontSize(-1)<CR>
+
+"-------- [KEYMAP] -------- MIMD
+map mimd : call VimPage_mimd()<CR>
+map mimds : let g_line = getline('.')<CR>:exec 'source '.g:MIMD_BASE."/".g_line<CR>:$put ='LOADED: '.g_line<CR>
 
 "-------- [KEYMAP] -------- SSH
 map sshc : tabnew ~/.ssh/config<CR>
