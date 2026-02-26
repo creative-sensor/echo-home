@@ -14,7 +14,7 @@ let g:GML_DEV = empty($GML_DEV) ? 'Vulkan0' : $GML_DEV
 "-------- [GLOBAL] -------- SSH
 let g:SSH_ALIAS = empty($SSH_ALIAS) ? "" : $SSH_ALIAS
 "-------- [GLOBAL] -------- MIMD
-let g:MIMD_BASE = empty($MIMD_BASE) ? '~/.vim/mimd' : $MIMD_BASE
+let g:MIMD_BASE = empty($MIMD_BASE) ? '~/echo-home/.vim/mimd' : $MIMD_BASE
 
 "-------- [MISC] --------
 syntax on
