@@ -279,7 +279,7 @@ endfunction
 "-------- [FUNCTIONS] -------- AttentionFlash
 function! GML_ModelEngage()
     exec 'vsplit | enew | r!cd '.g:GMLBASE.';find  -type f'
-    exec "0put ='### LLM-MODELS KM[gmex]'"
+    exec "0put ='### LLM-MODELS KM[gmex,gmes,gmep]'"
     exec "1put ='--------'"
     exec "$put ='' | $put ='--------'"
     exec 'set ft=markdown'
@@ -450,6 +450,7 @@ map afge : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU(1)<CR>
 map afdd : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU()<CR>
 map afdde : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashGPU(1)<CR>
 map gme : call GML_ModelEngage()<CR>
+map gmep : let GML_xPrompt = tempname()<CR>:exec 'split '.GML_xPrompt.'{xPrompt}'<CR>
 map gmex : let g:GML_MODEL = g:GMLBASE."/".getline('.')<CR>:$put ='```Engaged``` '.g:GML_MODEL<CR>
 map gmes : let g:GML_MODEL_SSH = g:GMLBASE_SSH."/".getline('.')<CR>:$put ='```Engaged[ssh]``` '.g:GML_MODEL_SSH<CR>
 
