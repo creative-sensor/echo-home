@@ -1,0 +1,4 @@
+
+let g:CPTX = "Cockpit Dashboard"
+
+echo g:CPTX
