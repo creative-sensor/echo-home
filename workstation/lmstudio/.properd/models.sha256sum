@@ -1,16 +1,11 @@
-003e48ed892850b80994fcddca2bd6b833b092a4ef2db2853c33a3144245e06c *./lmstudio-community/Codestral-22B-v0.1-GGUF/Codestral-22B-v0.1-Q4_K_M.gguf
 0751a36ec6a77c14f7cdb0f88d8747d45ca56adad5db13c3e67c5d20dc04536b *./lmstudio-community/granite-3.2-8b-instruct-GGUF/granite-3.2-8b-instruct-Q4_K_M.gguf
 0d9ec100a0f33048168d1d5b9fb6403f4836adcbbe9c3f2ab7794c96ffee3c3b *./LiquidAI/LFM2-1.2B-GGUF/LFM2-1.2B-Q8_0.gguf
 26d297468d625586bffbff964842478fd36470b7545c70a24e0765768695ca19 *./lmstudio-community/Llama-3.3-70B-Instruct-GGUF/Llama-3.3-70B-Instruct-Q4_K_M.gguf
-27d3a4fac7e07153c58defa1fa23a30ddea849a893caa28c335dd41c1d09612d *./lmstudio-community/Magistral-Small-2506-GGUF/Magistral-Small-2506-Q4_K_M.gguf
-2e5f3ad8632bd9e26f51eddd3d2620458630837b4521ded9a7bbb790d6abe634 *./lmstudio-community/Devstral-Small-2507-GGUF/Devstral-Small-2507-Q4_K_M.gguf
 30c02d056410848227001830866e0a269fcc28aaf8ca971bded494003de9f5a5 *./lmstudio-community/gemma-3-12b-it-GGUF/mmproj-model-f16.gguf
 363beac6b0fa95c5bcdac8ae161f5790c977f12cf6de5b6dca43ed4e00296934 *./lmstudio-community/Mistral-Nemo-Instruct-2407-GGUF/Mistral-Nemo-Instruct-2407-Q4_K_M.gguf
 3975c803d96defa211432d49a07145bb79e17335907fa05aa79179dcacd8bd02 *./lmstudio-community/gemma-3-27B-it-qat-GGUF/gemma-3-27B-it-QAT-Q4_0.gguf
 54cb61c842fe49ac3c89bc1a614a2778163eb49f3dec2b90ff688b4c0392cb48 *./lmstudio-community/gemma-3-27B-it-qat-GGUF/mmproj-model-f16.gguf
 5a0c4017599b3f2e78e607ea0716bed557bb238eb4ea1a19b583eae9bb81aa10 *./lmstudio-community/phi-4-GGUF/phi-4-Q4_K_M.gguf
-5ddc4bc8914f1fd0d1b72b33507c0689fdfc89c6c5cbce5aa89312a5135505c9 *./lmstudio-community/Seed-OSS-36B-Instruct-GGUF/Seed-OSS-36B-Instruct-Q4_K_M.gguf
-61a30a38d942e652cb08f84e54294d2c6438d606a2f24534e3e4bff516a7941a *./lmstudio-community/Hermes-4-70B-GGUF/Hermes-4-70B-Q4_K_M.gguf
 65d06d31a3977d553cb3af137b5c26b5f1e9297a6aaa29ae7caa98788cde53ab *./lmstudio-community/gpt-oss-20b-GGUF/gpt-oss-20b-MXFP4.gguf
 6f10ded0197863aa0641e2451688ac8025c95ff7c948e23f1089d173e6834768 *./lmstudio-community/Phi-4-reasoning-plus-GGUF/Phi-4-reasoning-plus-Q4_K_M.gguf
 71d205af3019b8e722273b79f518e86099a4771ca01f60ca12f1aa7d42ae773e *./lmstudio-community/granite-3.1-8b-instruct-GGUF/granite-3.1-8b-instruct-Q4_K_M.gguf
@@ -18,8 +13,6 @@
 8c0fb064b019a6972856aaae2c7e4792858af3ca4561be2dbf649123ba6c40cb *./lmstudio-community/gemma-3-4b-it-GGUF/mmproj-model-f16.gguf
 8e923405207ebf1ae1d8bb8ce9452ba8a446321cee42028bf0ceab52b372ed41 *./lmstudio-community/Phi-4-mini-reasoning-GGUF/Phi-4-mini-reasoning-Q4_K_M.gguf
 9610e3e07375303f6cd89086b496bcc1ab581177f52042eff536475a29283ba2 *./lmstudio-community/gemma-3-12b-it-GGUF/gemma-3-12b-it-Q4_K_M.gguf
-9829cc54f2105c79499b783e81fbb476b610e91ee9373cc68334c267e49f6bbc *./lmstudio-community/Mistral-Small-3.2-24B-Instruct-2506-GGUF/Mistral-Small-3.2-24B-Instruct-2506-Q4_K_M.gguf
-a3d0966c1331a2ad48f7c8fe2ffdb1c2b39116f69dc0f2e38f4a1ea01c74874b *./lmstudio-community/Mistral-Small-3.2-24B-Instruct-2506-GGUF/mmproj-Mistral-Small-3.2-24B-Instruct-2506-F16.gguf
 b25d35b00fe699ef52bf399fa579f2c56664897c013aeba2686965fdb6265f0f *./lmstudio-community/gemma-3-1B-it-QAT-GGUF/gemma-3-1B-it-QAT-Q4_0.gguf
 be49949e48422e4547b00af14179a193d3777eea7fbbd7d6e1b0861304628a01 *./lmstudio-community/gemma-3-4b-it-GGUF/gemma-3-4b-it-Q4_K_M.gguf
 01d8a3bc7efdaa331112e8a0a42ec9046fcee2a1dce910452aafaccb996759f3 *./lmstudio-community/gpt-oss-120b-GGUF/gpt-oss-120b-MXFP4-00001-of-00002.gguf
@@ -33,3 +26,9 @@ cc956df8e27a38c5985869a7aaa9663ba3ec6a3d2bf360a061483a8e8e6fa344 *./lmstudio-com
 56a1289dd56a15f3adb5ebefccc254e2118a36f323cc0a4bec33e6d8323e5fb1 *./lmstudio-community/Llama-4-Scout-17B-16E-Instruct-GGUF/Llama-4-Scout-17B-16E-Instruct-Q8_0-00002-of-00003.gguf
 836e9b162abbfbf8bc924167343162780141ffe31c13f54ec5bf1c2d2724bfd2 *./lmstudio-community/Llama-4-Scout-17B-16E-Instruct-GGUF/Llama-4-Scout-17B-16E-Instruct-Q8_0-00003-of-00003.gguf
 bd0ca58473b64618df4d08c1410cc25c910ca84e647833ebaf099e0fc0523b45 *./mistralai/Ministral-3-8B-Instruct-2512-GGUF/Ministral-3-8B-Instruct-2512-Q8_0.gguf
+ca357e4f1ff91238ee297ae6e6182b0b6b62f0dd630fca33fd7be2be037ebcb9 *./LiquidAI/LFM2-24B-A2B-GGUF/LFM2-24B-A2B-F16.gguf
+e33e2424ce30e54955b70284841a3f463dd589ce11bd1eef7564c2a8d5b271c5 *./LiquidAI/LFM2-24B-A2B-GGUF/LFM2-24B-A2B-Q4_0.gguf
+d73bdefc2180b34eb5fec15c9ffa8cec0c2f61d5bc501e2f5de2f3b2e7664293 *./LiquidAI/LFM2-24B-A2B-GGUF/LFM2-24B-A2B-Q8_0.gguf
+29a9ca7269b37dd83ce6244d11f2f90a17a432a29ce096b51c4049fe0ca9adf4 *./lmstudio-community/Ministral-3-3B-Instruct-2512-GGUF/Ministral-3-3B-Instruct-2512-Q8_0.gguf
+5747d2a94d70587632bfb1de0ae857bf66ca45485f2c8323707ed6193037f177 *./lmstudio-community/Devstral-2-123B-Instruct-2512-GGUF/Devstral-2-123B-Instruct-2512-Q4_K_M-00001-of-00002.gguf
+20295d5270ca80bea8f21e3e4d50a28daf3d5389f272421cceb150d3ac945fd6 *./lmstudio-community/Devstral-2-123B-Instruct-2512-GGUF/Devstral-2-123B-Instruct-2512-Q4_K_M-00002-of-00002.gguf
