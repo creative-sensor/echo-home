@@ -268,7 +268,7 @@ endfunction
 
 "-------- [FUNCTIONS] -------- MIMD
 function! VimPage_mimd()
-    exec 'vsplit | enew | r!cd ~/.vim/mimd; find . -type f'
+    exec 'vsplit | enew | r!cd ~/echo-home/.vim/mimd; find . -type f'
     exec "0put ='### Mini Modules KM[mimds]'"
     exec "1put ='--------'"
     exec "$put ='' | $put ='--------'"
