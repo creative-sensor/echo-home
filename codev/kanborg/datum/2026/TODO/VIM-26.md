@@ -1,12 +1,8 @@
-# General : GPU
+# LLM: text completion
 --------------------------------
 ### 0 DESCRIPTION
 
-- Gaming
-- Imaging
-- Graphics Processing
-- Parallel Processing 
-- GPU Chip
+https://github.com/ggml-org/llama.vim
 
 ### 1 SOLUTION
 
@@ -23,5 +19,5 @@
 
 --------------------------------
 ```json
-{ "project_code": "GGPU" , "links": "" , "location": "" , "fpoint": "" }
+{ "project_code": "VIM" , "links": "" , "location": "" , "fpoint": "" }
 ```
