@@ -14,6 +14,8 @@ let g:GMLBASE_SSH = empty($GMLBASE_SSH) ? '~/.lmstudio/models' : $GMLBASE_SSH
 let g:GML_DEV = empty($GML_DEV) ? 'Vulkan0' : $GML_DEV
 "-------- [GLOBAL] -------- SSH
 let g:SSH_ALIAS = empty($SSH_ALIAS) ? "" : $SSH_ALIAS
+"-------- [GLOBAL] -------- MIMD
+let g:MIMD_BASE = empty($MIMD_BASE) ? '~/echo-home/.vim/mimd' : $MIMD_BASE
 
 "-------- [MISC] --------
 syntax on
@@ -256,16 +258,26 @@ endfunction
 
 
 
+"-------- [FUNCTIONS] -------- MIMD
+function! VimPage_mimd()
+    exec 'vsplit | enew | r!cd ~/echo-home/.vim/mimd; find . -type f'
+    exec "0put ='### Mini Modules KM[mimds]'"
+    exec "1put ='--------'"
+    exec "$put ='' | $put ='--------'"
+    exec 'set ft=markdown'
+endfunction
+
+
 "-------- [FUNCTIONS] -------- AttentionFlash
 function! GML_ModelEngage()
-    exec 'vsplit | enew | r!cd '.g:GMLBASE.';find . -type f '
-    exec "0put ='### LLM-MODELS KM[gmex]'"
+    exec 'vsplit | enew | r!cd '.g:GMLBASE.';find  -type f'
+    exec "0put ='### LLM-MODELS KM[gmex,gmep]'"
     exec "1put ='--------'"
     exec "$put ='' | $put ='--------'"
     exec 'set ft=markdown'
     if !empty(g:SSH_ALIAS)
       exec 'split | enew | r!ssh '.g:SSH_ALIAS.' "cd '.g:GMLBASE_SSH.';find . -type f"'
-      exec "0put ='### LLM-MODELS KM[gmes]  SSH[".g:SSH_ALIAS."]'  "
+      exec "0put ='### LLM-MODELS KM[gmes,gmep]  SSH[".g:SSH_ALIAS."]'  "
       exec "1put ='--------'"
       exec "$put ='' | $put ='--------'"
       exec 'set ft=markdown'
@@ -306,7 +318,7 @@ endfunction
 function! AttentionFlashGPU(edit=0)
     let GML_MODEL = empty($GML_MODEL) ? g:GML_MODEL : $GML_MODEL
     if a:edit
-      silent exec "vsplit ".GML_PROMPT
+      silent exec "vsplit ".g:GML_PROMPT
       normal G
       let pnote = input("Prompt note: ")
       put =pnote
@@ -382,6 +394,7 @@ map b64 : call Base64e()<CR>
 map dex : Git <CR>tty<CR><C-w>L<C-w>=
 map hls : set hls!<CR>
 map sua : %sort u<CR>
+map .ys : .!yq -P -I 4<CR>
 vmap b64    \atob<Esc>
 vmap b94    \btoa<Esc>
 vmap YY    y<Esc>:call CopyWL()<CR>
@@ -409,6 +422,10 @@ nnoremap <F5><F5> : edit<CR>
 nnoremap <C-0> :call AdjustFontSize(1)<CR>
 nnoremap <C-9> :call AdjustFontSize(-1)<CR>
 
+"-------- [KEYMAP] -------- MIMD
+map mimd : call VimPage_mimd()<CR>
+map mimds : let g_line = getline('.')<CR>:exec 'source '.g:MIMD_BASE."/".g_line<CR>:$put ='LOADED: '.g_line<CR>
+
 "-------- [KEYMAP] -------- SSH
 map sshc : tabnew ~/.ssh/config<CR>
 map sshcx : let g:SSH_ALIAS = substitute(getline('.'), '^Host \+', '', 'g')<CR>
@@ -418,9 +435,8 @@ map afc : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash()<CR>
 map afce : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash(1)<CR>
 map afcs : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashSSH()<CR>
 map afces : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashSSH(1)<CR>
-map afdd : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash()<CR>
-map afdde : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash(1)<CR>
 map gme : call GML_ModelEngage()<CR>
+map gmep : let GML_xPrompt = tempname()<CR>:exec 'split '.GML_xPrompt.'{xPrompt}'<CR>:set wrap<CR>
 map gmex : let g:GML_MODEL = g:GMLBASE."/".getline('.')<CR>:$put ='```Engaged``` '.g:GML_MODEL<CR>
 map gmes : let g:GML_MODEL_SSH = g:GMLBASE_SSH."/".getline('.')<CR>:$put ='```Engaged[ssh]``` '.g:GML_MODEL_SSH<CR>
 
