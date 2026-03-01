@@ -6,6 +6,7 @@ let g:font_name = "Consolas"
 let g:font_size = 11
 "-------- [GLOBAL] -------- GML
 let g:GML_PROMPT = empty($GML_PROMPT) ?  '~/.gml.prompt' : $GML_PROMPT
+let g:GML_PROMPT_SSH = empty($GML_PROMPT_SSH) ?  '~/.gml.prompt' : $GML_PROMPT_SSH
 let g:GML_MODEL = ""
 let g:GML_MODEL_SSH = ""
 let g:GMLBASE = empty($GMLBASE) ? '~/.lmstudio/models' : $GMLBASE
@@ -279,13 +280,13 @@ endfunction
 "-------- [FUNCTIONS] -------- AttentionFlash
 function! GML_ModelEngage()
     exec 'vsplit | enew | r!cd '.g:GMLBASE.';find  -type f'
-    exec "0put ='### LLM-MODELS KM[gmex,gmes,gmep]'"
+    exec "0put ='### LLM-MODELS KM[gmex,gmep]'"
     exec "1put ='--------'"
     exec "$put ='' | $put ='--------'"
     exec 'set ft=markdown'
     if !empty(g:SSH_ALIAS)
-      exec 'split | enew | r!ssh '.g:SSH_ALIAS.' "cd '.g:GMLBASE_SSH.';find  -type f"'
-      exec "0put ='### LLM-MODELS KM[gmes]  SSH[".g:SSH_ALIAS."]'  "
+      exec 'split | enew | r!ssh '.g:SSH_ALIAS.' "cd '.g:GMLBASE_SSH.';find . -type f"'
+      exec "0put ='### LLM-MODELS KM[gmes,gmep]  SSH[".g:SSH_ALIAS."]'  "
       exec "1put ='--------'"
       exec "$put ='' | $put ='--------'"
       exec 'set ft=markdown'

@@ -2,12 +2,11 @@
 set shada-=!
 let g:yaml_revealer_separator='➤'
     "<C-v>u27a4
-let g:font_name = "SF\\ Mono"
-let g:font_size = 13
-let g:yaml_revealer_separator='➤'
-    "<C-v>u27a4
+let g:font_name = "Consolas"
+let g:font_size = 11
 "-------- [GLOBAL] -------- GML
 let g:GML_PROMPT = empty($GML_PROMPT) ?  '~/.gml.prompt' : $GML_PROMPT
+let g:GML_PROMPT_SSH = empty($GML_PROMPT_SSH) ?  '~/.gml.prompt' : $GML_PROMPT_SSH
 let g:GML_MODEL = ""
 let g:GML_MODEL_SSH = ""
 let g:GMLBASE = empty($GMLBASE) ? '~/.lmstudio/models' : $GMLBASE
@@ -16,7 +15,7 @@ let g:GML_DEV = empty($GML_DEV) ? 'Vulkan0' : $GML_DEV
 "-------- [GLOBAL] -------- SSH
 let g:SSH_ALIAS = empty($SSH_ALIAS) ? "" : $SSH_ALIAS
 "-------- [GLOBAL] -------- MIMD
-let g:MIMD_BASE = empty($MIMD_BASE) ? '~/.vim/mimd' : $MIMD_BASE
+let g:MIMD_BASE = empty($MIMD_BASE) ? '~/echo-home/.vim/mimd' : $MIMD_BASE
 
 "-------- [MISC] --------
 syntax on
@@ -245,7 +244,7 @@ endfunction
 
 "-------- [FUNCTIONS] -------- MIMD
 function! VimPage_mimd()
-    exec 'vsplit | enew | r!cd ~/.vim/mimd; find . -type f'
+    exec 'vsplit | enew | r!cd ~/echo-home/.vim/mimd; find . -type f'
     exec "0put ='### Mini Modules KM[mimds]'"
     exec "1put ='--------'"
     exec "$put ='' | $put ='--------'"
@@ -255,14 +254,14 @@ endfunction
 
 "-------- [FUNCTIONS] -------- AttentionFlash
 function! GML_ModelEngage()
-    exec 'vsplit | enew | r!cd '.g:GMLBASE.';find . -type f'
-    exec "0put ='### LLM-MODELS KM[gmex]'"
+    exec 'vsplit | enew | r!cd '.g:GMLBASE.';find  -type f'
+    exec "0put ='### LLM-MODELS KM[gmex,gmep]'"
     exec "1put ='--------'"
     exec "$put ='' | $put ='--------'"
     exec 'set ft=markdown'
     if !empty(g:SSH_ALIAS)
-      exec 'split | enew | r!ssh '.g:SSH_ALIAS.' "cd '.g:GMLBASE_SSH.';find  -type f"'
-      exec "0put ='### LLM-MODELS KM[gmes]  SSH[".g:SSH_ALIAS."]'  "
+      exec 'split | enew | r!ssh '.g:SSH_ALIAS.' "cd '.g:GMLBASE_SSH.';find . -type f"'
+      exec "0put ='### LLM-MODELS KM[gmes,gmep]  SSH[".g:SSH_ALIAS."]'  "
       exec "1put ='--------'"
       exec "$put ='' | $put ='--------'"
       exec 'set ft=markdown'
@@ -365,6 +364,9 @@ map b64 : call Base64e()<CR>
 map dex : Git <CR>tty<CR><C-w>L<C-w>=
 map hls : set hls!<CR>
 map sua : %sort u<CR>
+map \date :execute "normal! i" . substitute(system('date -u "+%Y-%m-%dT%H-%M-%SZ"'), '\n$', '', '')<CR>
+map \uuid :execute "normal! i" . substitute(system('uuidgen'), '\n$', '', '')<CR>
+map .ys : .!yq -P -I 4<CR>
 vmap b64    \atob<Esc>
 vmap b94    \btoa<Esc>
 
@@ -409,6 +411,7 @@ map afces : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashSSH(1)<CR>
 map afdd : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashUMA()<CR>
 map afdde : %w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashUMA(1)<CR>
 map gme : call GML_ModelEngage()<CR>
+map gmep : let GML_xPrompt = tempname()<CR>:exec 'split '.GML_xPrompt.'{xPrompt}'<CR>:set wrap<CR>
 map gmex : let g:GML_MODEL = g:GMLBASE."/".getline('.')<CR>:$put ='```Engaged``` '.g:GML_MODEL<CR>
 map gmes : let g:GML_MODEL_SSH = g:GMLBASE_SSH."/".getline('.')<CR>:$put ='```Engaged[ssh]``` '.g:GML_MODEL_SSH<CR>
 
