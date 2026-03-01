@@ -17,14 +17,14 @@ CMW : {"description":"Common Wealth","last_id":4,"related":""}
 DOCS : {"description":"Documentation","last_id":1,"related":""}
 GRTH : {"description":"Graph Theory","last_id":0,"related":""}
 TSQA : {"description":"Test and Quality","last_id":0,"related":""}
-VIM : {"description":"VIM Editor","last_id":26,"related":""}
+VIM : {"description":"VIM Editor","last_id":27,"related":""}
 MONO : {"description":"Standalone docker container","last_id":7,"related":""}
 ASML : {"description":"System Assembly","last_id":2,"related":""}
 OBSR : {"description":"Observability","last_id":4,"related":""}
 DBMS : {"description":"Database management system","last_id":1,"related":""}
 DTUM : {"description":"Datum","last_id":8,"related":""}
 ACLS : {"description":"Access Control Level System","last_id":2,"related":""}
-KITE : {"description":"The Paper Kites","last_id":23,"related":""}
+KITE : {"description":"The Paper Kites","last_id":24,"related":""}
 KROS : {"description":"Chromium","last_id":8,"related":""}
 CTNR : {"description":"Containerization","last_id":0,"related":""}
 APLE : {"description":"Apple bit","last_id":10,"related":""}
