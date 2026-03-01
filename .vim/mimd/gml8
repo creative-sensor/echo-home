@@ -1,0 +1,3 @@
+
+map gml8s : vsplit<CR>:exec 'term ssh '.g:SSH_ALIAS<CR>:set ft=markdown<CR>
+map gml8 : vsplit<CR>:term<CR>:set ft=markdown<CR>

@@ -442,6 +442,8 @@ map sshc : tabnew ~/.ssh/config<CR>
 map sshcx : let g:SSH_ALIAS = substitute(getline('.'), '^Host \+', '', 'g')<CR>
 map ssh : exec "below term ssh ".g:SSH_ALIAS<CR>
 "-------- [KEYMAP] -------- GML
+map gml8s : vsplit<CR>:exec 'term ssh '.g:SSH_ALIAS<CR>:set ft=markdown<CR>
+map gml8 : vsplit<CR>:term<CR>:set ft=markdown<CR>
 map afc : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash()<CR>
 map afce : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash(1)<CR>
 map afcs : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashSSH()<CR>
