@@ -2,8 +2,9 @@
 set shada-=!
 let g:yaml_revealer_separator='➤'
     "<C-v>u27a4
-let g:font_name = "Consolas"
-let g:font_size = 11
+let g:font_name = "SF\\ Mono"
+let g:font_size = 13
+-    "<C-v>u27a4
 "-------- [GLOBAL] -------- GML
 let g:GML_PROMPT = empty($GML_PROMPT) ?  '~/.gml.prompt' : $GML_PROMPT
 let g:GML_PROMPT_SSH = empty($GML_PROMPT_SSH) ?  '~/.gml.prompt' : $GML_PROMPT_SSH
@@ -254,7 +255,7 @@ endfunction
 
 "-------- [FUNCTIONS] -------- AttentionFlash
 function! GML_ModelEngage()
-    exec 'vsplit | enew | r!cd '.g:GMLBASE.';find  -type f'
+    exec 'vsplit | enew | r!cd '.g:GMLBASE.';find . -type f'
     exec "0put ='### LLM-MODELS KM[gmex,gmep]'"
     exec "1put ='--------'"
     exec "$put ='' | $put ='--------'"
