@@ -34,6 +34,7 @@
 - [datum/2026/TODO/MDOS-20.md](datum/2026/TODO/MDOS-20.md)   ```# rsync : source rebuild```
 - [datum/2026/TODO/MDOS-27.md](datum/2026/TODO/MDOS-27.md)   ```# wsli : WSL Windows interface```
 - [datum/2026/TODO/MDOS-28.md](datum/2026/TODO/MDOS-28.md)   ```# OpenSSH : Server```
+- [datum/2026/TODO/MDOS-29.md](datum/2026/TODO/MDOS-29.md)   ```# uv : package manager```
 - [datum/2026/TODO/MONO-7.md](datum/2026/TODO/MONO-7.md)   ```# ULI : Unified Linux Interface```
 - [datum/2026/TODO/VIM-26.md](datum/2026/TODO/VIM-26.md)   ```# LLM: text completion```
 
