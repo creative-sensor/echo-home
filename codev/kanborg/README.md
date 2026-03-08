@@ -31,6 +31,7 @@
 - [datum/2026/TODO/GGPU-1.md](datum/2026/TODO/GGPU-1.md)   ```# video : codecs```
 - [datum/2026/TODO/GGPU-5.md](datum/2026/TODO/GGPU-5.md)   ```# Geminide : Left and Right```
 - [datum/2026/TODO/KITE-24.md](datum/2026/TODO/KITE-24.md)   ```# AttentionFlash: HF```
+- [datum/2026/TODO/KITE-25.md](datum/2026/TODO/KITE-25.md)   ```# cli : mistral-vibe```
 - [datum/2026/TODO/MDOS-20.md](datum/2026/TODO/MDOS-20.md)   ```# rsync : source rebuild```
 - [datum/2026/TODO/MDOS-27.md](datum/2026/TODO/MDOS-27.md)   ```# wsli : WSL Windows interface```
 - [datum/2026/TODO/MDOS-28.md](datum/2026/TODO/MDOS-28.md)   ```# OpenSSH : Server```
