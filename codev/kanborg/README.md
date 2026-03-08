@@ -11,6 +11,8 @@
 - [datum/2026/WIP/ASML-2.md](datum/2026/WIP/ASML-2.md)   ```# MLOps : high-level [6]```
 - [datum/2026/WIP/CORTA-6.md](datum/2026/WIP/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
 - [datum/2026/WIP/LEAF-30.md](datum/2026/WIP/LEAF-30.md)   ```# Jupyter :```
+- [datum/2026/WIP/MDOS-29.md](datum/2026/WIP/MDOS-29.md)   ```# uv : package manager```
+- [datum/2026/WIP/MDOS-30.md](datum/2026/WIP/MDOS-30.md)   ```# node : fix path```
 - [datum/2026/WIP/VIM-25.md](datum/2026/WIP/VIM-25.md)   ```# MIMD : module loading```
 
 ### 2 ON HOLD
@@ -32,11 +34,10 @@
 - [datum/2026/TODO/GGPU-5.md](datum/2026/TODO/GGPU-5.md)   ```# Geminide : Left and Right```
 - [datum/2026/TODO/KITE-24.md](datum/2026/TODO/KITE-24.md)   ```# AttentionFlash: HF```
 - [datum/2026/TODO/KITE-25.md](datum/2026/TODO/KITE-25.md)   ```# cli : mistral-vibe```
+- [datum/2026/TODO/KITE-26.md](datum/2026/TODO/KITE-26.md)   ```# cli : gemini```
 - [datum/2026/TODO/MDOS-20.md](datum/2026/TODO/MDOS-20.md)   ```# rsync : source rebuild```
 - [datum/2026/TODO/MDOS-27.md](datum/2026/TODO/MDOS-27.md)   ```# wsli : WSL Windows interface```
 - [datum/2026/TODO/MDOS-28.md](datum/2026/TODO/MDOS-28.md)   ```# OpenSSH : Server```
-- [datum/2026/TODO/MDOS-29.md](datum/2026/TODO/MDOS-29.md)   ```# uv : package manager```
-- [datum/2026/TODO/MDOS-30.md](datum/2026/TODO/MDOS-30.md)   ```# node : fix path```
 - [datum/2026/TODO/MONO-7.md](datum/2026/TODO/MONO-7.md)   ```# ULI : Unified Linux Interface```
 - [datum/2026/TODO/VIM-26.md](datum/2026/TODO/VIM-26.md)   ```# LLM: text completion```
 
