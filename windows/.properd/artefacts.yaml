@@ -26,3 +26,4 @@ sops: [ 3.10.2 , "https://github.com/getsops/sops/releases/download/v3.10.2/sops
 ripgrep: [ 14.1.1 , "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-pc-windows-msvc.zip", {"suffix":"zip"} ]
 go: [ 1.24.4 , "https://go.dev/dl/go1.24.4.windows-amd64.msi", {"suffix":"msi"} ]
 lmstudio: [ 0.3.25  , "https://installers.lmstudio.ai/win32/x64/0.3.25-2/LM-Studio-0.3.25-2-x64.exe" ]
+uv: [ 0.10.8 , "https://github.com/astral-sh/uv/releases/download/0.10.8/uv-x86_64-pc-windows-msvc.zip", {"suffix":"zip"} ]
