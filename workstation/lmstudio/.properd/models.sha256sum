@@ -28,3 +28,6 @@ d73bdefc2180b34eb5fec15c9ffa8cec0c2f61d5bc501e2f5de2f3b2e7664293 *./LiquidAI/LFM
 626160995e52f26502f1d852b5ec8e83484ca0d4e9207d240ee2c72f42c38510 *./lmstudio-community/Devstral-2-123B-Instruct-2512-GGUF/Devstral-2-123B-Instruct-2512-Q8_0-00002-of-00004.gguf
 5e28d8da4da54e88c59d53a2df0f4ba32e416cb6176568ade01b76949f7f640b *./lmstudio-community/Devstral-2-123B-Instruct-2512-GGUF/Devstral-2-123B-Instruct-2512-Q8_0-00003-of-00004.gguf
 482c624d34a0269735047de1a3c199ce46f446c0210a5216e948873658ec1509 *./lmstudio-community/Devstral-2-123B-Instruct-2512-GGUF/Devstral-2-123B-Instruct-2512-Q8_0-00004-of-00004.gguf
+0fb3edf649e9e268700467c02d11513a7e401e7c2ff95d4e1420dfe96da73990 *./ggml-org/gemma-3-12b-it-GGUF/gemma-3-12b-it-Q8_0.gguf
+ca357e4f1ff91238ee297ae6e6182b0b6b62f0dd630fca33fd7be2be037ebcb9 *./LiquidAI/LFM2-24B-A2B-GGUF/LFM2-24B-A2B-F16.gguf
+8122acc8df446039d41dd9650dabb024d3c6b8dae6eff336d28ac2bddd3bbc13 *./mistralai/Ministral-3-14B-Instruct-2512-GGUF/Ministral-3-14B-Instruct-2512-Q8_0.gguf
