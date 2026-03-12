@@ -1,0 +1,2 @@
+cp -f $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.exe -d $LOCAL_BIN/jq
+
