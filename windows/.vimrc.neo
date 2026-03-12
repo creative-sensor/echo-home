@@ -411,6 +411,7 @@ vmap b94    \btoa<Esc>
 
 
 map src : source ~/.vimrc.neo<CR>
+map sr0 : %s/\r//<CR>
 
 
 nnoremap cup : Git commit -m "up"<CR>
