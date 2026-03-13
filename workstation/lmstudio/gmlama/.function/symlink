@@ -1,7 +1,8 @@
 #!/bin/bash -x
 
+ln -sf $(readlink -f .function/gml8)  $LOCAL_BIN/gmlama/gml8
+
 LIST="
-gml8
 gml16
 gml32
 gml64
