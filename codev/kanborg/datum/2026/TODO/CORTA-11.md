@@ -1,0 +1,22 @@
+# gml8 : custom params
+--------------------------------
+### 0 DESCRIPTION
+
+
+### 1 SOLUTION
+
+
+### 2 NOTES
+
+
+### 3 TEST/VERIFICATION
+
+
+### 4 JOURNAL
+
+
+
+--------------------------------
+```json
+{ "project_code": "CORTA" , "links": "" , "location": "" , "fpoint": "" }
+```
