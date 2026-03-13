@@ -11,7 +11,7 @@ gml_model=$(echo $gml_line | yq keys[])
 
 if echo $gml_describe | grep -q '^GPU/' ; then
     set -x
-    cd $LOCAL_BIN/gmlama-vulkan ; ./llama-cli -m $GMLBASE/$gml_model "$gml_params"
+    cd $LOCAL_BIN/gmlama-vulkan ; ./llama-cli -m $GMLBASE/$gml_model $gml_params
     exit 1   
 fi
 set -x
