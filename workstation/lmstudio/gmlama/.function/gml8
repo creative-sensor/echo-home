@@ -15,4 +15,4 @@ if echo $gml_describe | grep -q '^GPU/' ; then
     exit 1   
 fi
 set -x
-llama-cli -m $GMLBASE/$gml_model "$gml_params"
+llama-cli -m $GMLBASE/$gml_model $gml_params
