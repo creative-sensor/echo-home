@@ -11,6 +11,7 @@
 - [datum/2026/WIP/ASML-2.md](datum/2026/WIP/ASML-2.md)   ```# MLOps : high-level [6]```
 - [datum/2026/WIP/CORTA-11.md](datum/2026/WIP/CORTA-11.md)   ```# gml8 : custom params```
 - [datum/2026/WIP/CORTA-6.md](datum/2026/WIP/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
+- [datum/2026/WIP/GGPU-6.md](datum/2026/WIP/GGPU-6.md)   ```# ssh config : by dhcp```
 - [datum/2026/WIP/KITE-26.md](datum/2026/WIP/KITE-26.md)   ```# cli : gemini```
 - [datum/2026/WIP/LEAF-30.md](datum/2026/WIP/LEAF-30.md)   ```# Jupyter :```
 
