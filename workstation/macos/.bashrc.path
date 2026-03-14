@@ -1,9 +1,9 @@
 path_dict=("mcfunction" "$HOME/echo-home/workstation/macos/.function"
            "node" $LOCAL_BIN/node
-           "yson" $HOME/echo-home/codev/yson/.function )
+           "yson" $HOME/echo-home/codev/yson/.function
+           "gnupg" $HOME/.local/bin/gnupg/bin:$HOME/.local/bin/pinentry/bin)
 
 path_dict["rtfunction"]="$HOME/echo-home/.function"
-path_dict["gnupg"]="$HOME/.local/bin/gnupg/bin:$HOME/.local/bin/pinentry/bin"
 path_dict["gmlama"]=$LOCAL_BIN/gmlama
 
 for key in "${!path_dict[@]}"; do
