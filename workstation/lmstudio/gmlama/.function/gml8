@@ -1,10 +1,14 @@
 #!/bin/bash
-
+MODEL_ID=$1
 GMLBASE=${GMLBASE:-~/.lmstudio/models}
 PROPERD=~/echo-home/workstation/lmstudio/gmlama/.properd
 GML_YSON=$PROPERD/gml.${HOSTNAME}.yson
-cat $GML_YSON | grep --color -n '^.*:' && read -p "Model ID ?= " model_id
-gml_line=$(sed -n ${model_id}p < $GML_YSON)
+
+if test -z "$MODEL_ID" ; then
+  cat $GML_YSON | grep --color -n '^.*:' && read -p "MODEL_ID ?= " MODEL_ID
+fi
+
+gml_line=$(sed -n ${MODEL_ID}p < $GML_YSON)
 gml_describe=$(echo "$gml_line" | yq 'to_entries  | .[0].value[0]')
 gml_params=$(echo "$gml_line" | yq 'to_entries  | .[0].value[1]')
 gml_model=$(echo $gml_line | yq keys[])

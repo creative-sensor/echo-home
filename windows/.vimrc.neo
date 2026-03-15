@@ -12,6 +12,7 @@ let g:GML_MODEL_SSH = ""
 let g:GMLBASE = empty($GMLBASE) ? '~/.lmstudio/models' : $GMLBASE
 let g:GMLBASE_SSH = empty($GMLBASE_SSH) ? '~/.lmstudio/models' : $GMLBASE_SSH
 let g:GML_DEV = empty($GML_DEV) ? 'Vulkan0' : $GML_DEV
+let g:GML_PROFILE = "~/echo-home/workstation/lmstudio/gmlama/.properd/gml.".$HOSTNAME.".yson"
 "-------- [GLOBAL] -------- SSH
 let g:SSH_ALIAS = empty($SSH_ALIAS) ? "" : $SSH_ALIAS
 "-------- [GLOBAL] -------- MIMD
@@ -443,8 +444,8 @@ map sshc : tabnew ~/.ssh/config<CR>
 map sshcx : let g:SSH_ALIAS = substitute(getline('.'), '^Host \+', '', 'g')<CR>
 map ssh : exec "below term ssh ".g:SSH_ALIAS<CR>
 "-------- [KEYMAP] -------- GML
-map gml8s : vsplit<CR>:exec 'term ssh '.g:SSH_ALIAS<CR>:set ft=markdown<CR>
-map gml8 : vsplit<CR>:term<CR>:set ft=markdown<CR>
+map gml8s : vsplit<CR>:exec 'term ssh '.g:SSH_ALIAS gml8<CR>:set ft=markdown<CR>
+map gml8 : vsplit <C-R>=g:GML_PROFILE<CR><CR>:below term gml8<CR>:set ft=markdown<CR>
 map afc : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash()<CR>
 map afce : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash(1)<CR>
 map afcs : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashSSH()<CR>

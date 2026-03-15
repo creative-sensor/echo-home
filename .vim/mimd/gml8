@@ -1,3 +1,4 @@
+let g:GML_PROFILE = "~/echo-home/workstation/lmstudio/gmlama/.properd/gml.".$HOSTNAME.".yson"
 
 map gml8s : vsplit<CR>:exec 'term ssh '.g:SSH_ALIAS gml8<CR>:set ft=markdown<CR>
-map gml8 : vsplit<CR>:term gml8<CR>:set ft=markdown<CR>
+map gml8 : vsplit <C-R>=g:GML_PROFILE<CR><CR>:below term gml8<CR>:set ft=markdown<CR>
