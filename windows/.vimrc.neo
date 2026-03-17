@@ -4,6 +4,7 @@ let g:yaml_revealer_separator='➤'
     "<C-v>u27a4
 let g:font_name = "Consolas"
 let g:font_size = 11
+let g:hostname = substitute(system('hostname'), '\n$', '', '')
 "-------- [GLOBAL] -------- GML
 let g:GML_PROMPT = empty($GML_PROMPT) ?  '~/.gml.prompt' : $GML_PROMPT
 let g:GML_PROMPT_SSH = empty($GML_PROMPT_SSH) ?  '~/.gml.prompt' : $GML_PROMPT_SSH
@@ -12,7 +13,7 @@ let g:GML_MODEL_SSH = ""
 let g:GMLBASE = empty($GMLBASE) ? '~/.lmstudio/models' : $GMLBASE
 let g:GMLBASE_SSH = empty($GMLBASE_SSH) ? '~/.lmstudio/models' : $GMLBASE_SSH
 let g:GML_DEV = empty($GML_DEV) ? 'Vulkan0' : $GML_DEV
-let g:GML_PROFILE = "~/echo-home/workstation/lmstudio/gmlama/.properd/gml.".$HOSTNAME.".yson"
+let g:GML_PROFILE = "~/echo-home/workstation/lmstudio/gmlama/.properd/gml.".g:hostname.".yson"
 "-------- [GLOBAL] -------- SSH
 let g:SSH_ALIAS = empty($SSH_ALIAS) ? "" : $SSH_ALIAS
 "-------- [GLOBAL] -------- MIMD
@@ -445,7 +446,9 @@ map sshcx : let g:SSH_ALIAS = substitute(getline('.'), '^Host \+', '', 'g')<CR>
 map ssh : exec "below term ssh ".g:SSH_ALIAS<CR>
 "-------- [KEYMAP] -------- GML
 map gml8s : vsplit<CR>:exec 'term ssh '.g:SSH_ALIAS gml8<CR>:set ft=markdown<CR>
-map gml8 : vsplit <C-R>=g:GML_PROFILE<CR><CR>:below term gml8<CR>:set ft=markdown<CR>
+map gml8e : tabnew <C-R>=g:GML_PROFILE<CR><CR>:set ft=yaml<CR>
+map gml8x : exec 'below term gml8 '.line('.')<CR>:set ft=markdown<CR>
+map gml8 : vsplit<CR>:term gml8<CR>:set ft=markdown<CR>
 map afc : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash()<CR>
 map afce : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlash(1)<CR>
 map afcs : .w! <C-R>=g:GML_PROMPT<CR><CR>:call AttentionFlashSSH()<CR>
