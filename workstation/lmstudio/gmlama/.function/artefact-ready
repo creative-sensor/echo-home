@@ -6,6 +6,7 @@ mkdir -p $LOCAL_BIN/gmlama
 mkdir -p $LOCAL_BIN/gmlama-vulkan
 mkdir -p $LOCAL_BIN/gmlama-cuda
 mkdir -p ~/.lmstudio/models
+mkdir -p ~/.lmstudio/gml-logi
 
 test "$OS" == "Windows_NT" && 
     unzip -o artefacts/llama-${VERSION}-bin-win-cpu-x64.zip -d $LOCAL_BIN/gmlama/ &&
