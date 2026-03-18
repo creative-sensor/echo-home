@@ -1,0 +1,14 @@
+"-------- [GLOBAL] --------
+set wrap
+"-------- [GLOBAL] -------- GML
+let g:GML_LOGI = empty($GML_LOGI) ? '~/.lmstudio/gml-logi' : $GML_LOGI
+
+"-------- [KEYMAP] -------- GML
+map gme : call GML_ModelEngage()<CR>
+map gmep : let GML_xPrompt = tempname()<CR>:exec 'split '.GML_xPrompt.'{xPrompt}'<CR>
+map gmex : let g:GML_MODEL = g:GMLBASE."/".getline('.')<CR>:$put ='```Engaged``` '.g:GML_MODEL<CR>
+map gmes : let g:GML_MODEL_SSH = g:GMLBASE_SSH."/".getline('.')<CR>:$put ='```Engaged[ssh]``` '.g:GML_MODEL_SSH<CR>
+map gmel : let pnote = substitute(getline('.'),'[^a-zA-Z0-9]\+','-','g')<CR>:exec 'write '.g:GML_LOGI.'/'.strftime("%Y-%m-%d").'--'.pnote.'.md'<CR>
+
+
+
