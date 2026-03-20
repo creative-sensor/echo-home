@@ -1,25 +1,26 @@
 #!/bin/bash
-
+PINNED_VERSION=$1
 source .properd/VARSET
 
-mkdir -p $LOCAL_BIN/gmlama
-mkdir -p $LOCAL_BIN/gmlama-vulkan
-mkdir -p $LOCAL_BIN/gmlama-cuda
+test -n "$PINNED_VERSION" && VERSION=$PINNED_VERSION
+mkdir -p $LOCAL_BIN/gmlama/$PINNED_VERSION
+mkdir -p $LOCAL_BIN/gmlama-vulkan/$PINNED_VERSION
+mkdir -p $LOCAL_BIN/gmlama-cuda/$PINNED_VERSION
 mkdir -p ~/.lmstudio/models
 mkdir -p ~/.lmstudio/gml-logi
 
 test "$OS" == "Windows_NT" && 
-    unzip -o artefacts/llama-${VERSION}-bin-win-cpu-x64.zip -d $LOCAL_BIN/gmlama/ &&
-    unzip -o artefacts/llama-${VERSION}-bin-win-vulkan-x64.zip -d $LOCAL_BIN/gmlama-vulkan/ 
+    unzip -o artefacts/llama-${VERSION}-bin-win-cpu-x64.zip -d $LOCAL_BIN/gmlama/$PINNED_VERSION &&
+    unzip -o artefacts/llama-${VERSION}-bin-win-vulkan-x64.zip -d $LOCAL_BIN/gmlama-vulkan/$PINNED_VERSION 
    
 if test -d /boot/efi || test -d /mnt/chromeos ; then
     tar -xzf artefacts/llama-${VERSION}-bin-ubuntu-x64.tar.gz -C $LOCAL_BIN/ &&
-    mv $LOCAL_BIN/llama-$VERSION/* $LOCAL_BIN/gmlama/ && rm -r $LOCAL_BIN/llama-$VERSION
+    mv $LOCAL_BIN/llama-$VERSION/* $LOCAL_BIN/gmlama/$PINNED_VERSION && rm -r $LOCAL_BIN/llama-$VERSION
     tar -xzf artefacts/llama-${VERSION}-bin-ubuntu-vulkan-x64.tar.gz -C $LOCAL_BIN/ && 
-    mv $LOCAL_BIN/llama-$VERSION/* $LOCAL_BIN/gmlama-vulkan/
+    mv $LOCAL_BIN/llama-$VERSION/* $LOCAL_BIN/gmlama-vulkan/$PINNED_VERSION
 fi
 
 test -d /System/Volumes/Data/Applications &&
     tar -xzf artefacts/llama-${VERSION}-bin-macos-arm64.tar.gz -C $LOCAL_BIN/ &&
-    mv $LOCAL_BIN/llama-$VERSION/* $LOCAL_BIN/gmlama/ && rm -r $LOCAL_BIN/llama-$VERSION
+    mv $LOCAL_BIN/llama-$VERSION/* $LOCAL_BIN/gmlama/$PINNED_VERSION && rm -r $LOCAL_BIN/llama-$VERSION
     

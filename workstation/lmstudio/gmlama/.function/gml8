@@ -11,12 +11,14 @@ fi
 gml_line=$(sed -n ${MODEL_ID}p < $GML_YSON)
 gml_describe=$(echo "$gml_line" | yq 'to_entries  | .[0].value[0]')
 gml_params=$(echo "$gml_line" | yq 'to_entries  | .[0].value[1]')
+llamacpp_version=$(echo "$gml_line" | yq 'to_entries  | .[0].value[2]')
 gml_model=$(echo $gml_line | yq keys[])
 
+[[ "$llamacpp_version" =~ 'null' ]] && unset llamacpp_version
 if echo $gml_describe | grep -q '^GPU/' ; then
     set -x
-    cd $LOCAL_BIN/gmlama-vulkan ; ./llama-cli -m $GMLBASE/$gml_model $gml_params
+    cd $LOCAL_BIN/gmlama-vulkan/${llamacpp_version} ; ./llama-cli -m $GMLBASE/$gml_model $gml_params
     exit 1   
 fi
 set -x
-llama-cli -m $GMLBASE/$gml_model $gml_params
+cd $LOCAL_BIN/gmlama/${llamacpp_version} ; ./llama-cli -m $GMLBASE/$gml_model $gml_params

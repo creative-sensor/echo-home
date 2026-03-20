@@ -1,7 +1,8 @@
 #!/bin/bash
-
+PINNED_VERSION=$1
 source .properd/VARSET
 
+test -n "$PINNED_VERSION" && VERSION=$PINNED_VERSION
 mkdir -p artefacts
 
 
