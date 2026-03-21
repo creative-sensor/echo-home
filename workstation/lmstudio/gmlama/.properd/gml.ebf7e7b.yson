@@ -1,0 +1,7 @@
+LiquidAI/LFM2.5-1.2B-Instruct-GGUF/LFM2.5-1.2B-Instruct-F16.gguf: ["Fact8" , ""]
+ggml-org/gemma-3-1b-it-GGUF/gemma-3-1b-it-Q4_K_M.gguf: ["Fast4" , ""]
+ggml-org/gemma-3-1b-it-GGUF/gemma-3-1b-it-Q8_0.gguf: ["Deep16/Fast4" , ""]
+ggml-org/gemma-3-1b-it-GGUF/gemma-3-1b-it-f16.gguf: ["Deep8",""]
+ggml-org/gemma-3n-E2B-it-GGUF/gemma-3n-E2B-it-Q8_0.gguf: ["Deep8",""]
+lmstudio-community/NVIDIA-Nemotron-3-Nano-30B-A3B-GGUF/NVIDIA-Nemotron-3-Nano-30B-A3B-Q4_K_M.gguf: ["Wise4" , ""]
+lmstudio-community/gpt-oss-20b-GGUF/gpt-oss-20b-MXFP4.gguf: ["Wise4",""]

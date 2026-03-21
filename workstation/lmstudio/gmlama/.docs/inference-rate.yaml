@@ -22,3 +22,18 @@ Fact8:
 Fact16:
   TPS: 16
   Quantize: F16
+
+Wise4:
+  TPS: 8
+  Quantize: 4
+  ParamB: 8
+
+Wise8:
+  TPS: 8
+  Quantize: 8
+  ParamB: 8
+
+Wise16:
+  TPS: 8
+  Quantize: 16
+  ParamB: 8
