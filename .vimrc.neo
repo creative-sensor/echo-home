@@ -372,3 +372,4 @@ colorscheme gruvbox
 
 "-------- [MIMD] --------
 exec 'source '.g:MIMD_BASE."/gme_xpro"
+exec 'source '.g:MIMD_BASE."/gml8"

@@ -1,0 +1,4 @@
+ggml-org/gemma-3-1b-it-GGUF/gemma-3-1b-it-Q8_0.gguf: ["Deep8", ""]
+ggml-org/gemma-3-1b-it-GGUF/gemma-3-1b-it-f16.gguf: ["Fact8", ""]
+lmstudio-community/granite-4.0-h-tiny-GGUF/granite-4.0-h-tiny-Q8_0.gguf: ["Deep8", ""]
+lmstudio-community/LFM2.5-1.2B-Instruct-GGUF/LFM2.5-1.2B-Instruct-Q8_0.gguf: ["Deep8", ""]
