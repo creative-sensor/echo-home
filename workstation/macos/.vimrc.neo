@@ -5,6 +5,7 @@ let g:yaml_revealer_separator='➤'
 let g:font_name = "SF\\ Mono"
 let g:font_size = 13
 -    "<C-v>u27a4
+let g:hostname = substitute(system('hostname'), '\n$', '', '')
 
 "-------- [GLOBAL] -------- SSH
 let g:SSH_ALIAS = empty($SSH_ALIAS) ? "" : $SSH_ALIAS
