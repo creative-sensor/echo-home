@@ -15,12 +15,20 @@ Deep16:
   TPS: 16
   Quantize: Q8
 
+Deep32:
+  TPS: 32
+  Quantize: Q8
+
 Fact8:
   TPS: 8
   Quantize: F16
 
 Fact16:
   TPS: 16
+  Quantize: F16
+
+Fact32:
+  TPS: 32
   Quantize: F16
 
 Wise4:
