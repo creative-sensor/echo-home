@@ -28,7 +28,7 @@ function! AttentionFlashUMA(edit=0)
     endif
     exec 'vsplit'
     exec 'term llama-cli -st  --no-kv-offload  -m '.GML_MODEL.' -f '.g:GML_PROMPT
-    exec 'set ft=markdown'
+    exec 'set ft=markdown | normal G'
 endfunction
 
 "-------- [KEYMAP] -------- GML
