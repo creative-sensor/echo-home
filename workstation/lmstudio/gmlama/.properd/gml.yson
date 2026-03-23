@@ -1,2 +1,3 @@
 ggml-org/gemma-3-1b-it-GGUF/gemma-3-1b-it-Q4_K_M.gguf: ["GgAI_1" , "-st"]
 ggml-org/gemma-3-1b-it-GGUF/gemma-3-1b-it-Q4_K_M.gguf: ["GgAI_8" , ""]
+ggml-org/Nemotron-3-Nano-4B-GGUF/Nemotron-3-Nano-4B-BF16.gguf: ["GPU/Intel-Arc-A770M/95%30tps"," --rope-scaling none -st -ngl all   -sm none  -ctk q4_0 -ctv q4_0   -fa on   -dev Vulkan1 -p check:tensor_size","b8477"]
