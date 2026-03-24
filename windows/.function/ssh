@@ -1,0 +1,2 @@
+HOST_ALIAS=$1
+ssh -t $HOST_ALIAS '"C:\Program Files\Git\bin\bash"'
