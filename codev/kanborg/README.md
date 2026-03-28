@@ -9,7 +9,6 @@
 - [datum/2026/WIP/APLE-8.md](datum/2026/WIP/APLE-8.md)   ```# macos: ntfs-3g```
 - [datum/2026/WIP/ARTE-14.md](datum/2026/WIP/ARTE-14.md)   ```# python : wheel modules```
 - [datum/2026/WIP/CORTA-6.md](datum/2026/WIP/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
-- [datum/2026/WIP/KITE-26.md](datum/2026/WIP/KITE-26.md)   ```# cli : gemini```
 - [datum/2026/WIP/LEAF-30.md](datum/2026/WIP/LEAF-30.md)   ```# Jupyter :```
 
 ### 2 ON HOLD
@@ -22,7 +21,6 @@
 
 ### 3 TO DO
 
-- [datum/2026/TODO/APLE-11.md](datum/2026/TODO/APLE-11.md)   ```# llama.cpp : metal build```
 - [datum/2026/TODO/ASML-2.md](datum/2026/TODO/ASML-2.md)   ```# MLOps : high-level [6]```
 - [datum/2026/TODO/ASML-3.md](datum/2026/TODO/ASML-3.md)   ```# Agentic : Workflows```
 - [datum/2026/TODO/CORTA-13.md](datum/2026/TODO/CORTA-13.md)   ```# tinygrad : pytorch distribute```
@@ -35,13 +33,13 @@
 - [datum/2026/TODO/KITE-27.md](datum/2026/TODO/KITE-27.md)   ```# langchain : agent development```
 - [datum/2026/TODO/MDOS-20.md](datum/2026/TODO/MDOS-20.md)   ```# rsync : source rebuild```
 - [datum/2026/TODO/MDOS-27.md](datum/2026/TODO/MDOS-27.md)   ```# wsli : WSL Windows interface```
-- [datum/2026/TODO/MDOS-28.md](datum/2026/TODO/MDOS-28.md)   ```# OpenSSH : Server```
 - [datum/2026/TODO/MONO-7.md](datum/2026/TODO/MONO-7.md)   ```# ULI : Unified Linux Interface```
 - [datum/2026/TODO/VIM-26.md](datum/2026/TODO/VIM-26.md)   ```# LLM: text completion```
 
 ### 4 DONE
 
 - [datum/2026/DONE/APLE-10.md](datum/2026/DONE/APLE-10.md)   ```# AttentionFlash : UMA```
+- [datum/2026/DONE/APLE-11.md](datum/2026/DONE/APLE-11.md)   ```# llama.cpp : metal build```
 - [datum/2026/DONE/APLE-9.md](datum/2026/DONE/APLE-9.md)   ```# macmon : monitor```
 - [datum/2026/DONE/CORTA-10.md](datum/2026/DONE/CORTA-10.md)   ```# gml : profile override by host```
 - [datum/2026/DONE/CORTA-11.md](datum/2026/DONE/CORTA-11.md)   ```# gml8 : custom params```
@@ -55,8 +53,10 @@
 - [datum/2026/DONE/GGPU-3.md](datum/2026/DONE/GGPU-3.md)   ```# EXO : M2p2```
 - [datum/2026/DONE/GGPU-6.md](datum/2026/DONE/GGPU-6.md)   ```# ssh config : by dhcp```
 - [datum/2026/DONE/KITE-25.md](datum/2026/DONE/KITE-25.md)   ```# cli : mistral-vibe```
+- [datum/2026/DONE/KITE-26.md](datum/2026/DONE/KITE-26.md)   ```# cli : gemini```
 - [datum/2026/DONE/KROS-8.md](datum/2026/DONE/KROS-8.md)   ```# gmlama : gpu acceleration```
 - [datum/2026/DONE/LEAF-33.md](datum/2026/DONE/LEAF-33.md)   ```# pandoc : md-html```
+- [datum/2026/DONE/MDOS-28.md](datum/2026/DONE/MDOS-28.md)   ```# OpenSSH : Server```
 - [datum/2026/DONE/MDOS-29.md](datum/2026/DONE/MDOS-29.md)   ```# uv : package manager```
 - [datum/2026/DONE/MDOS-30.md](datum/2026/DONE/MDOS-30.md)   ```# node : fix path```
 - [datum/2026/DONE/VIM-20.md](datum/2026/DONE/VIM-20.md)   ```# vim : pad [2]```
