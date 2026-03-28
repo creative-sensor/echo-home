@@ -22,6 +22,7 @@
 
 ### 3 TO DO
 
+- [datum/2026/TODO/APLE-11.md](datum/2026/TODO/APLE-11.md)   ```# llama.cpp : metal build```
 - [datum/2026/TODO/ASML-2.md](datum/2026/TODO/ASML-2.md)   ```# MLOps : high-level [6]```
 - [datum/2026/TODO/ASML-3.md](datum/2026/TODO/ASML-3.md)   ```# Agentic : Workflows```
 - [datum/2026/TODO/CORTA-13.md](datum/2026/TODO/CORTA-13.md)   ```# tinygrad : pytorch distribute```
