@@ -18,5 +18,6 @@ APT_LIST='
     gettext-base
     docker.io
     rclone
-		mesa-utils
+    mesa-utils
+    npm
 '
