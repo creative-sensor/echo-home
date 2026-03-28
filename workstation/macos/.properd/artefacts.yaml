@@ -29,5 +29,7 @@ go: [ 1.25.0 , "https://dl.google.com/go/go1.25.0.darwin-arm64.pkg", {"suffix":"
 lmstudio: [ 0.3.23  , "https://installers.lmstudio.ai/darwin/arm64/0.3.23-3/LM-Studio-0.3.23-3-arm64.dmg" ]
 sf_mono: [ 6d4a0b7 , "https://devimages-cdn.apple.com/design/resources/download/SF-Mono.dmg"]
 rust: [ 1.92.0 , "https://static.rust-lang.org/dist/rust-1.92.0-aarch64-apple-darwin.pkg", {"suffix":"pkg"}]
+llama_cpp: [ b8559 , "https://github.com/ggml-org/llama.cpp/archive/refs/tags/b8559.tar.gz", {"suffix":"tar.gz"}]
+cmake: [ 4.3.1 , "https://github.com/Kitware/CMake/releases/download/v4.3.1/cmake-4.3.1-macos-universal.tar.gz", {"suffix":"tar.gz"}]
 
 

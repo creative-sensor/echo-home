@@ -1,0 +1,5 @@
+tar -xf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.tar.gz
+mkdir -p $LOCAL_BIN/cmake
+cp -r  cmake-${ARTIFACT_VERSION}-macos-universal/CMake.app/Contents/* $LOCAL_BIN/cmake/
+  
+rm -r cmake-${ARTIFACT_VERSION}-macos-universal

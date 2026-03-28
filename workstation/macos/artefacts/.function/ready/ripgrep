@@ -1,0 +1,5 @@
+tar -xf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.tar.gz
+cp  ripgrep-${ARTIFACT_VERSION}-aarch64-apple-darwin/rg $LOCAL_BIN/
+  
+chmod +x $LOCAL_BIN/rg
+rm -r ripgrep-${ARTIFACT_VERSION}-aarch64-apple-darwin

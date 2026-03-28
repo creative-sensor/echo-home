@@ -1,0 +1,10 @@
+tar -xf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.tar.gz
+cd llama.cpp-${ARTIFACT_VERSION}
+mkdir -p build
+mkdir -p $LOCAL_BIN/gmlama/${ARTIFACT_VERSION}
+cmake -B build
+cmake --build build --config Release
+cd -
+cp -r  llama.cpp-${ARTIFACT_VERSION}/build/bin/* $LOCAL_BIN/gmlama/${ARTIFACT_VERSION}/
+  
+rm -r llama.cpp-${ARTIFACT_VERSION}
