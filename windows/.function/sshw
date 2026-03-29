@@ -1,2 +1,16 @@
+#!/bin/bash
+
 HOST_ALIAS=$1
-ssh -t $HOST_ALIAS '"C:\Program Files\Git\bin\bash"'
+shift
+ARGS=$@
+
+if test -n "$ARGS" ; then
+    if test -r "$1" ; then 
+        cat $1 | ssh $HOST_ALIAS '"C:\Program Files\Git\bin\bash"'
+    else
+        ssh $HOST_ALIAS '"C:\Program Files\Git\bin\bash"' << EOF 
+            $ARGS
+EOF
+    fi
+fi
+test -z "$ARGS" && ssh -t $HOST_ALIAS '"C:\Program Files\Git\bin\bash"'

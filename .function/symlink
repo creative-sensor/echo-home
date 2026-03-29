@@ -20,5 +20,6 @@ for path in $PATH_LIST ; do
 done
 
 ln -sf $(pwd)/codev/yson/.function/start.py  $LOCAL_BIN/yson
+ln -sf $(pwd)/windows/.function/sshw  $LOCAL_BIN/sshw
 
 ls -la --color $BINDIR
