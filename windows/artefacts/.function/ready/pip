@@ -1,0 +1,5 @@
+cp $ARTIFACT_DIR/pip-$ARTIFACT_VERSION.py $LOCAL_BIN/python/get-pip.py
+cd $LOCAL_BIN/python
+sed -i 's/#import site/import site/' python*._pth
+rm -rf Lib/site-packages/pip*
+python get-pip.py --force-reinstall --no-cache-dir

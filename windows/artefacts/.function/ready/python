@@ -1,0 +1,4 @@
+rm -rf $LOCAL_BIN/python
+mkdir -p $LOCAL_BIN/python
+unzip $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.zip -d $LOCAL_BIN/python
+
