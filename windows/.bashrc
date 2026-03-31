@@ -59,7 +59,6 @@ alias nvide='neovide --fork &'
 # ---- VARSET ----
 declare -A DICT
 export LOCAL_BIN=~/.local/bin
-export PYTHONPATH=~/AppData/Local/Programs/Python/Python310
 GITBASH_PATH=/mingw64/bin:/usr/local/bin:/usr/bin:/bin:/mingw64/bin:/usr/bin/vendor_perl:/usr/bin/core_perl:/c/Windows/system32:/c/Windows:/c/Windows/System32/Wbem:/c/Windows/System32/WindowsPowerShell/v1.0:/c/Windows/System32/OpenSSH
 PATH=$LOCAL_BIN:$PYTHONPATH:$GITBASH_PATH
 
