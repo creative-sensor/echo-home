@@ -1,0 +1,24 @@
+#!/bin/bash
+MODEL_ID=$1
+GMLBASE=${GMLBASE:-~/.lmstudio/models}
+PROPERD=~/echo-home/workstation/lmstudio/gmlama/.properd
+GML_YSON=$PROPERD/gml.${HOSTNAME}.yson
+
+if test -z "$MODEL_ID" ; then
+  cat $GML_YSON | grep --color -n '^.*:' && read -p "MODEL_ID ?= " MODEL_ID
+fi
+test -n "$GML_DEV" && GML_DEV="-dev $GML_DEV"
+gml_line=$(sed -n ${MODEL_ID}p < $GML_YSON)
+gml_describe=$(echo "$gml_line" | yq 'to_entries  | .[0].value[0]')
+gml_params=$(echo "$gml_line" | yq 'to_entries  | .[0].value[1]')
+llamacpp_version=$(echo "$gml_line" | yq 'to_entries  | .[0].value[2]')
+gml_model=$(echo $gml_line | yq keys[])
+
+[[ "$llamacpp_version" =~ 'null' ]] && unset llamacpp_version
+if echo $gml_describe | grep -q '^GPU/' ; then
+    set -x
+    cd $LOCAL_BIN/gmlama-vulkan/${llamacpp_version} ; ./llama-server -m $GMLBASE/$gml_model $gml_params $GML_DEV
+    exit 1   
+fi
+set -x
+cd $LOCAL_BIN/gmlama/${llamacpp_version} ; ./llama-server -m $GMLBASE/$gml_model $gml_params
