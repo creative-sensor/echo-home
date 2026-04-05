@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+VARSET_EXT=$1
+# ---- |DEFAULT ----
+
+# ---- |OVERRIDE ----
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+#export OPENAI_API_BASE="http://localhost:8000/v1"
+#export OPENAI_API_KEY="sk-dummy"
+#export AIDER_MODEL="llama-2-7b" # Or use the --model flag in the command
+
+aider --openai-api-base http://localhost:8000/v1 --openai-api-key sk-dummy
+
