@@ -31,6 +31,7 @@
 - [datum/2026/TODO/GGPU-5.md](datum/2026/TODO/GGPU-5.md)   ```# Geminide : Left and Right```
 - [datum/2026/TODO/KITE-24.md](datum/2026/TODO/KITE-24.md)   ```# AttentionFlash: HF```
 - [datum/2026/TODO/KITE-27.md](datum/2026/TODO/KITE-27.md)   ```# langchain : agent development```
+- [datum/2026/TODO/KITE-28.md](datum/2026/TODO/KITE-28.md)   ```# github : copilot cli```
 - [datum/2026/TODO/MDOS-20.md](datum/2026/TODO/MDOS-20.md)   ```# rsync : source rebuild```
 - [datum/2026/TODO/MDOS-27.md](datum/2026/TODO/MDOS-27.md)   ```# wsli : WSL Windows interface```
 - [datum/2026/TODO/MDOS-31.md](datum/2026/TODO/MDOS-31.md)   ```# python: standalone```
