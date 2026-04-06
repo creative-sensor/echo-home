@@ -3,29 +3,42 @@
 source .function/rcloner
 
 SUB_PATH=$1
-SUB_PATH_BUNDLE=$(  echo ${SUB_PATH}| sed s,/$,,  ).tar.xz
-gedrive_bundle=$(cat $VOLUME_CACHE/$SUB_PATH/.properd/gedrive.yaml | yq '.bundle')
-gedrive_encrypt_id=$(cat $VOLUME_CACHE/$SUB_PATH/.properd/gedrive.yaml | yq -r '.encrypt')
-[[ $gedrive_bundle != "true" ]] && abort "FAILED AS BUNDLE MODE DISABLED [ $SUB_PATH/.properd/gedrive.yaml ]"
+YAML_PATH="$VOLUME_CACHE/$SUB_PATH/.properd/gedrive.yaml"
+
+# Read YAML data once
+gedrive_bundle=$(yq '.bundle' "$YAML_PATH")
+gedrive_encrypt_id=$(yq -r '.encrypt' "$YAML_PATH")
+
+[[ "$gedrive_bundle" != "true" ]] && abort "FAILED AS BUNDLE MODE DISABLED [ $SUB_PATH/.properd/gedrive.yaml ]"
 
 echo "Writing in bundle mode"
-echo "$(date -u '+%Y-%m-%dT%H-%M-%SZ')  $HOSTNAME" >> $VOLUME_CACHE/$SUB_PATH/.properd/changelog
-cd $VOLUME_CACHE/$(dirname $SUB_PATH)
-tar cJf   $(basename $SUB_PATH_BUNDLE)   $(basename $SUB_PATH)
-if [[ "$gedrive_encrypt_id"  =~  [A-Z0-9]+ ]] ; then
+echo "$(date -u '+%Y-%m-%dT%H-%M-%SZ')  $HOSTNAME" >> "$VOLUME_CACHE/$SUB_PATH/.properd/changelog"
+
+# Determine the directory to work in
+WORK_DIR=$(dirname "$VOLUME_CACHE/$SUB_PATH")
+cd "$WORK_DIR" || abort "Failed to change directory to $WORK_DIR"
+
+# Create the bundle file name
+SUB_PATH_BUNDLE=$(echo "$SUB_PATH" | sed 's/,//g' | tr -d ',' ).tar.xz
+
+tar cJf "$SUB_PATH_BUNDLE" "$SUB_PATH"
+
+if [[ "$gedrive_encrypt_id" =~ ^[A-Z0-9]+$ ]]; then
     echo "Encrypting with key $gedrive_encrypt_id"
-    gpg2  --encrypt --recipient ${gedrive_encrypt_id}  --trust-model always --yes  $(basename $SUB_PATH_BUNDLE) || exit 1
-    SUB_PATH_BUNDLE=${SUB_PATH_BUNDLE}.gpg
+    gpg2 --encrypt --recipient "$gedrive_encrypt_id" --trust-model always --yes "$SUB_PATH_BUNDLE" || exit 1
+    SUB_PATH_BUNDLE="${SUB_PATH_BUNDLE}.gpg"
 fi
+
 cd -
 
-EXTENT=$(basename $(grep -l  $SUB_PATH_BUNDLE $META_DIR/*  | head -1)  2>/dev/null)
+# Find the extent file more efficiently
+EXTENT=$(grep -l "$SUB_PATH_BUNDLE" "$META_DIR"/* 2>/dev/null | head -1 | xargs -I {} basename {} )
 test -z "$EXTENT" && EXTENT=$(.function/pick-random-extent.py)
 
-mkdir -p $(dirname $VOLUME_CACHE/$SUB_PATH_BUNDLE)
-rclone copy  $VOLUME_CACHE/$SUB_PATH_BUNDLE  ${EXTENT}"$(dirname $SUB_PATH_BUNDLE)"
-rclone ls $EXTENT > $META_DIR/$EXTENT
+mkdir -p "$VOLUME_CACHE/$SUB_PATH_BUNDLE"
+rclone copy "$VOLUME_CACHE/$SUB_PATH_BUNDLE" "${EXTENT}"$(dirname "$SUB_PATH_BUNDLE")
+rclone ls "$EXTENT" > "$META_DIR/$EXTENT"
 
 echo "SUBPATH UPATED <<" 
-echo $SUB_PATH_BUNDLE
-rm $VOLUME_CACHE/$SUB_PATH_BUNDLE
+echo "$SUB_PATH_BUNDLE"
+rm "$VOLUME_CACHE/$SUB_PATH_BUNDLE"
