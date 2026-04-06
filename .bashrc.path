@@ -1,6 +1,7 @@
 declare -A path_dict
 
 path_dict["rtfunction"]="$HOME/echo-home/.function"
+path_dict["node"]=$LOCAL_BIN/node/bin
 path_dict["gmlama"]=$LOCAL_BIN/gmlama
 
 
