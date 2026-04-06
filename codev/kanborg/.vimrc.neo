@@ -179,6 +179,8 @@ autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#eee8d5 | highlight
 
 
 "-------- [KEYMAP] --------
+map sr0 : %s/\r//<CR>
+
 map T : tabnew . <CR>
     "New tab
 map C : s/^/#/<CR>
