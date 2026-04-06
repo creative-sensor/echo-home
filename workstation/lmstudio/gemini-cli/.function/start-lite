@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+which llmlite || pip install litellm[proxy]
+
+litellm --config lite.yaml --port 4000
+

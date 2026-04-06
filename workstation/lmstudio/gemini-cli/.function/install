@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+#pip install litellm[proxy]
+
+litellm --config lite.yaml --port 4000 --debug
+
