@@ -1,0 +1,4 @@
+rm -rf $LOCAL_BIN/node
+tar xf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.xz -C $LOCAL_BIN/
+mv $LOCAL_BIN/node-v${ARTIFACT_VERSION}-linux-x64 $LOCAL_BIN/node
+
