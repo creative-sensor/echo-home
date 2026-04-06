@@ -9,7 +9,6 @@ libheif
 libvirt-client
 nginx
 nginx-mod-stream
-nodejs
 openssl
 rclone
 remmina
