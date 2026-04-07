@@ -9,9 +9,9 @@ source .properd/VARSET
 test -n "$VARSET_EXT" && source $VARSET_EXT
 
 # ---- |MAIN ----
-#export OPENAI_API_BASE="http://localhost:8080/v1"
-#export OPENAI_API_KEY="sk-dummy"
-#export AIDER_MODEL="llama-2-7b" # Or use the --model flag in the command
+export OPENAI_API_BASE="http://localhost:8080/v1"
+export OPENAI_API_KEY="localm"
+export AIDER_MODEL=openai/$(curl -s http:/localhost:8080/models | jq .models[0].name)
 
-aider --openai-api-base http://localhost:8080/v1 --openai-api-key localm --model openai/gemma-4-e4b-q8
-
+#aider --openai-api-base http://localhost:8080/v1 --openai-api-key localm --model $(curl http:/localhost:8080/models | jq .models[0].name)
+aider 

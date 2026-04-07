@@ -1,12 +1,18 @@
-#!/bin/bash  
-LENGTH=$1
+#!/bin/sh
+LENGTH=${1:-4}
 
-test -z "$LENGTH" && LENGTH=4
+# Check if input is provided, otherwise use default length
+if [ -z "$1" ]; then
+    LENGTH=4
+fi
 
-RID=$(cat /dev/urandom | tr -dc '[:alnum:]' | fold -w ${1:-${LENGTH}} | head -n 1)
-RID_NOCASE=$(echo $RID | awk '{print tolower($0)}')
+# Note: cat /dev/urandom is Linux/Unix specific. This part may need adaptation for native Windows execution.
+RID=$(cat /dev/urandom 2>/dev/null | tr -dc '[:alnum:]' | fold -w "$LENGTH" | head -n 1)
+RID_NOCASE=$(echo "$RID" | awk '{print tolower($0)}')
 
-echo "uuid  $(uuidgen)"
+# Note: uuidgen is Linux/Unix specific. This may need replacement for native Windows execution.
+UUID=$(uuidgen)
+
+echo "uuid  $UUID"
 echo "rid-$RID    $RID"
 echo "rid-$RID_NOCASE    $RID_NOCASE"
-
