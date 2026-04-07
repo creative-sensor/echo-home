@@ -1,0 +1,8 @@
+LiquidAI/LFM2.5-1.2B-Instruct-GGUF/LFM2.5-1.2B-Instruct-F16.gguf: ["7tps","-fa on"]
+lmstudio-community/LFM2.5-1.2B-Instruct-GGUF/LFM2.5-1.2B-Instruct-Q8_0.gguf: ["14tps","-fa on"]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["9tps","-fa on"]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q6_K.gguf: ["7tps","-fa on"]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q8_0.gguf: ["6tps","-fa on"]
+lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf: ["5tps","-fa on"]
+lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q6_K.gguf: ["4tps","-fa on"]
+lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q8_0.gguf: ["3tps","-fa on"]
