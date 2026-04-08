@@ -1,0 +1,18 @@
+
+# 2026-04-08 22:19:21.330412
++n
+
+# 2026-04-08 22:19:45.811188
++/add .function/rid
+
+# 2026-04-08 22:20:07.742414
++concert this script to c and compile to binary
+
+# 2026-04-08 22:24:08.045493
++please compile to binary as well, architecture apple sillicon arm 64
+
+# 2026-04-08 22:27:48.250619
++so write another script to compile the c source code, something like make
+
+# 2026-04-08 22:30:06.287405
++access /dev/random instead of static charset as pseudo random source
