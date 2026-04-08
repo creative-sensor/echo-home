@@ -3,14 +3,43 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+#include <fcntl.h>
+#include <unistd.h>
 
-// Function to generate a random alphanumeric character
+// Global file descriptor for /dev/random
+static int random_fd = -1;
+
+// Function to initialize the random number source
+void init_random_source() {
+    if (random_fd == -1) {
+        random_fd = open("/dev/random", O_RDONLY);
+        if (random_fd < 0) {
+            perror("Error opening /dev/random. Falling back to time-based seeding.");
+            // If /dev/random fails (e.g., not on Unix-like system), we rely on rand()
+            srand(time(NULL));
+        }
+    }
+}
+
+// Function to generate a random alphanumeric character using /dev/random
 char random_char() {
-    // Use time(NULL) for seeding, though for production, /dev/urandom should be used.
-    // Since we are converting a shell script relying on /dev/urandom, we simulate randomness here.
     const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     int len = sizeof(charset) - 1;
-    return charset[rand() % len];
+    unsigned char random_byte;
+
+    if (random_fd >= 0) {
+        // Read one byte from /dev/random
+        ssize_t bytes_read = read(random_fd, &random_byte, 1);
+        if (bytes_read <= 0) {
+            // If reading fails, fall back to rand()
+            return charset[rand() % len];
+        }
+        // Use the byte value modulo the charset length to select a character
+        return charset[random_byte % len];
+    } else {
+        // Fallback if /dev/random failed to open
+        return charset[rand() % len];
+    }
 }
 
 // Function to generate the RID string
@@ -36,7 +65,10 @@ int main(int argc, char *argv[]) {
     char rid_no_case[100];
     char uuid[40];
 
-    // Seed the random number generator
+    // Initialize random source
+    init_random_source();
+
+    // Seed the random number generator (only used as a fallback)
     srand(time(NULL));
 
     // Handle input length
@@ -66,6 +98,11 @@ int main(int argc, char *argv[]) {
     printf("uuid  %s\n", uuid);
     printf("rid-%s    %s\n", rid, rid);
     printf("rid-%s_no_case    %s_no_case\n", rid, rid_no_case);
+
+    // Close the file descriptor
+    if (random_fd >= 0) {
+        close(random_fd);
+    }
 
     return 0;
 }
