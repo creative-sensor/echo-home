@@ -1,0 +1,6 @@
+#!/bin/bash -x 
+
+tar --sort=name \
+    --mtime="2026-01-01 00:00Z" \
+    --owner=0 --group=0 --numeric-owner \
+    -cf - [FOLDER_NAME] | gzip -n > archive.tar.gz
