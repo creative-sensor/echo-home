@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+HOSTS_FILE="/etc/hosts"
+MARKER="### MANAGED BY DNS SCRIPT ###"
+
+# ---- |FUNCTIONS ----
+# Add a DNS entry with label, tag, and comment
+add_entry() {
+    local ip=$1
+    local hostname=$2
+    local label=$3
+    local tag=$4
+    local comment=$5
+
+    # Check if entry already exists
+    if grep -q "$ip.*$hostname" "$HOSTS_FILE"; then
+        echo "Entry already exists: $ip $hostname"
+        return 1
+    fi
+
+    # Create the entry with metadata
+    local entry="$MARKER
+# Label: $label
+# Tag: $tag
+# Comment: $comment
+$ip $hostname
+"
+
+    # Append to hosts file
+    echo -e "$entry" >> "$HOSTS_FILE"
+    echo "Added entry: $ip $hostname"
+}
+
+# Remove a DNS entry by label
+remove_entry() {
+    local label=$1
+    local temp_file=$(mktemp)
+
+    # Process the file line by line
+    awk -v marker="$MARKER" -v label="$label" '
+    BEGIN { found=0 }
+    /^### MANAGED BY DNS SCRIPT ###$/ {
+        if (found) {
+            print
+            found=0
+        } else {
+            # Check if this is our entry
+            getline
+            if ($0 ~ /Label: 'label'/) {
+                found=1
+                print
+                # Skip until we find the IP line
+                while (getline > 0 && $0 !~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/) {}
+                print
+                next
+            } else {
+                print
+            }
+        }
+    }
+    !found { print }
+    ' "$HOSTS_FILE" > "$temp_file"
+
+    mv "$temp_file" "$HOSTS_FILE"
+    echo "Removed entry with label: $label"
+}
+
+# List all managed entries
+list_entries() {
+    echo "Managed DNS Entries:"
+    echo "-------------------"
+    awk -v marker="$MARKER" '
+    /^### MANAGED BY DNS SCRIPT ###$/ {
+        print
+        # Print until we find the IP line
+        while (getline > 0 && $0 !~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/) {
+            print
+        }
+        if ($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/) {
+            print
+        }
+        print "-------------------"
+    }
+    ' "$HOSTS_FILE"
+}
+
+# ---- |MAIN ----
+case "$1" in
+    add)
+        add_entry "$2" "$3" "$4" "$5" "$6"
+        ;;
+    remove)
+        remove_entry "$2"
+        ;;
+    list)
+        list_entries
+        ;;
+    *)
+        echo "Usage: $0 {add|remove|list}"
+        echo "  add <ip> <hostname> <label> [tag] [comment]"
+        echo "  remove <label>"
+        echo "  list"
+        exit 1
+        ;;
+esac
