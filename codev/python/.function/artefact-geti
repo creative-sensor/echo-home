@@ -22,7 +22,7 @@ function install (){
     if [[ "$IS_PIP" == "true" ]]; then
         echo "Installing pip package..."
         mkdir -p "$ARTIFACT_DIR/$name"
-        pip install --upgrade --target "$ARTIFACT_DIR/$name" $name
+        pip install --upgrade --target "$ARTIFACT_DIR/$name" $name==$ARTIFACT_VERSION
         return
     fi
 
