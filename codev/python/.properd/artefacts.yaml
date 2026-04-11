@@ -4,3 +4,9 @@ aider-chat:
 mistral-vibe:
   version: "2.4.0"
   pip: true
+requests:
+  version: "2.31.0"
+  pip: true
+beautifulsoup4:
+  version: "4.12.2"
+  pip: true
