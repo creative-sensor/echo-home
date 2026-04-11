@@ -5,8 +5,10 @@ ARTIFACT_YSON=.properd/artefacts.yaml
 
 function install (){
 	local name=$1
-	local ARTIFACT_VERSION=$(cat $ARTIFACT_YSON | yq -r ".${name}[0]")
-	local PYTHON_VERSION=$(cat $ARTIFACT_YSON | yq -r ".${name}[1].python")
+	local ARTIFACT_VERSION=$(cat $ARTIFACT_YSON | yq -r ".${name}.version")
+	local PYTHON_VERSION=$(cat $ARTIFACT_YSON | yq -r ".${name}.python")
+  local IS_PIP=$(cat $ARTIFACT_YSON | yq -r ".${name}.pip")
+
   export UV_TOOL_DIR="$ARTIFACT_DIR/$name/uv-tools"
   export UV_TOOL_BIN_DIR="$ARTIFACT_DIR/$name/bin"
   export UV_PYTHON_INSTALL_DIR="$ARTIFACT_DIR/$name/python"
@@ -18,10 +20,10 @@ function install (){
   fi
 
   # Check if it's a pip package
-  if [[ "$name" == "pip" ]]; then
+  if [[ "$IS_PIP" == "true" ]]; then
     echo "Installing pip package..."
     mkdir -p "$ARTIFACT_DIR/$name"
-    pip install --upgrade --target "$ARTIFACT_DIR/$name" pip
+    pip install --upgrade --target "$ARTIFACT_DIR/$name" $name
     return
   fi
 
