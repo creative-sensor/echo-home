@@ -20,7 +20,8 @@ function install (){
   # Check if it's a pip package
   if [[ "$name" == "pip" ]]; then
     echo "Installing pip package..."
-    pip install --upgrade pip
+    mkdir -p "$ARTIFACT_DIR/$name"
+    pip install --upgrade --target "$ARTIFACT_DIR/$name" pip
     return
   fi
 
