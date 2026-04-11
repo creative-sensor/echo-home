@@ -8,7 +8,9 @@ function install (){
 	local ARTIFACT_VERSION=$(cat $ARTIFACT_YSON | yq -r ".${name}[0]")
   export UV_TOOL_DIR="$ARTIFACT_DIR/$name/uv-tools"
   export UV_TOOL_BIN_DIR="$ARTIFACT_DIR/$name/bin"
-  uv tool install $name@v$ARTIFACT_VERSION
+  export UV_PYTHON_INSTALL_DIR="$ARTIFACT_DIR/$name/python"
+
+  uv tool install --python 3.12 $name@v$ARTIFACT_VERSION
 }
 
 mkdir -p $ARTIFACT_DIR
