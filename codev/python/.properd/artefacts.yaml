@@ -1,5 +1,5 @@
 aider-chat: [ "0.86.2" , { "python": "3.12" } ]
-mistral-vibe: [ "2.4.0" , { "pip": true } ]
+mistral-vibe: [ "2.4.0" ]
 requests: [ "2.31.0" , { "pip": true } ]
 beautifulsoup4: [ "4.12.2" , { "pip": true } ]
 transformers: [ "4.45.2" , { "pip": true } ]
