@@ -8,7 +8,8 @@ function ready (){
 	local ARTIFACT_VERSION=$(cat $ARTIFACT_YSON | yq -r ".${name}[0]")
   rm -rf $ARTIFACT_DIR/$name
   test -r $ARTIFACT_DIR/.function/ready/$name && source $ARTIFACT_DIR/.function/ready/$name && return
-  tar xf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.tar.gz -C $ARTIFACT_DIR
+  tar xf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION${OS}.tar.gz -C $ARTIFACT_DIR
+  ln -sf $(readlink -f $ARTIFACT_DIR/$name/bin/*) $LOCAL_BIN/$name
 
 }
 
