@@ -1,12 +1,4 @@
-aider-chat:
-  version: "0.86.2"
-  python: "3.12"
-mistral-vibe:
-  version: "2.4.0"
-  pip: true
-requests:
-  version: "2.31.0"
-  pip: true
-beautifulsoup4:
-  version: "4.12.2"
-  pip: true
+aider-chat: [ "0.86.2" , "3.12" ]
+mistral-vibe: [ "2.4.0" , true ]
+requests: [ "2.31.0" , true ]
+beautifulsoup4: [ "4.12.2" , true ]
