@@ -14,4 +14,4 @@ export OPENAI_API_KEY="localm"
 export AIDER_MODEL=openai/$(curl -s http:/localhost:8080/models | jq .models[0].name)
 
 #aider --openai-api-base http://localhost:8080/v1 --openai-api-key localm --model $(curl http:/localhost:8080/models | jq .models[0].name)
-aider 
+aider  --no-gitignore --no-show-model-warnings

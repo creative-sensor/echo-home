@@ -1,0 +1,30 @@
+#!/bin/bash -x 
+NAME=${1:-all}
+ARTIFACT_DIR=./artefacts
+ARTIFACT_YSON=.properd/artefacts.yaml
+
+function install (){
+	local name=$1
+	local ARTIFACT_VERSION=$(cat $ARTIFACT_YSON | yq -r ".${name}[0]")
+	local PYTHON_VERSION=$(cat $ARTIFACT_YSON | yq -r ".${name}[1].python")
+  export UV_TOOL_DIR="$ARTIFACT_DIR/$name/uv-tools"
+  export UV_TOOL_BIN_DIR="$ARTIFACT_DIR/$name/bin"
+  export UV_PYTHON_INSTALL_DIR="$ARTIFACT_DIR/$name/python"
+
+  if [[ "$PYTHON_VERSION" != "null" ]] ; then
+    PYTHON_VERSION="--python $PYTHON_VERSION"
+  else
+    PYTHON_VERSION=""
+  fi
+  uv tool install $PYTHON_VERSION $name@v$ARTIFACT_VERSION
+}
+
+mkdir -p $ARTIFACT_DIR
+if [[ "$NAME" =~ "all" ]] ; then
+	LIST=$(cat $ARTIFACT_YSON | yq 'keys' | awk -F ' ' '{print $2}')
+	for i in $LIST ; do
+		install $i
+	done
+	exit
+fi
+install $NAME
