@@ -33,6 +33,7 @@
 - [datum/2026/TODO/KITE-24.md](datum/2026/TODO/KITE-24.md)   ```# AttentionFlash: HF```
 - [datum/2026/TODO/KITE-27.md](datum/2026/TODO/KITE-27.md)   ```# langchain : agent development```
 - [datum/2026/TODO/KITE-29.md](datum/2026/TODO/KITE-29.md)   ```# openrouter.ai : remote llm```
+- [datum/2026/TODO/KITE-30.md](datum/2026/TODO/KITE-30.md)   ```# claude: code```
 - [datum/2026/TODO/MDOS-20.md](datum/2026/TODO/MDOS-20.md)   ```# rsync : source rebuild```
 - [datum/2026/TODO/MDOS-27.md](datum/2026/TODO/MDOS-27.md)   ```# wsli : WSL Windows interface```
 - [datum/2026/TODO/MONO-7.md](datum/2026/TODO/MONO-7.md)   ```# ULI : Unified Linux Interface```
