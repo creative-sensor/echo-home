@@ -7,7 +7,6 @@
 
 - [datum/2026/WIP/APLE-6.md](datum/2026/WIP/APLE-6.md)   ```# geminide : communication bus```
 - [datum/2026/WIP/APLE-8.md](datum/2026/WIP/APLE-8.md)   ```# macos: ntfs-3g```
-- [datum/2026/WIP/ARTE-14.md](datum/2026/WIP/ARTE-14.md)   ```# python : wheel modules```
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
 - [datum/2026/WIP/CORTA-6.md](datum/2026/WIP/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
 - [datum/2026/WIP/LEAF-30.md](datum/2026/WIP/LEAF-30.md)   ```# Jupyter :```
@@ -33,7 +32,6 @@
 - [datum/2026/TODO/GGPU-5.md](datum/2026/TODO/GGPU-5.md)   ```# Geminide : Left and Right```
 - [datum/2026/TODO/KITE-24.md](datum/2026/TODO/KITE-24.md)   ```# AttentionFlash: HF```
 - [datum/2026/TODO/KITE-27.md](datum/2026/TODO/KITE-27.md)   ```# langchain : agent development```
-- [datum/2026/TODO/KITE-28.md](datum/2026/TODO/KITE-28.md)   ```# github : copilot cli```
 - [datum/2026/TODO/KITE-29.md](datum/2026/TODO/KITE-29.md)   ```# openrouter.ai : remote llm```
 - [datum/2026/TODO/MDOS-20.md](datum/2026/TODO/MDOS-20.md)   ```# rsync : source rebuild```
 - [datum/2026/TODO/MDOS-27.md](datum/2026/TODO/MDOS-27.md)   ```# wsli : WSL Windows interface```
@@ -45,6 +43,7 @@
 - [datum/2026/DONE/APLE-10.md](datum/2026/DONE/APLE-10.md)   ```# AttentionFlash : UMA```
 - [datum/2026/DONE/APLE-11.md](datum/2026/DONE/APLE-11.md)   ```# llama.cpp : metal build```
 - [datum/2026/DONE/APLE-9.md](datum/2026/DONE/APLE-9.md)   ```# macmon : monitor```
+- [datum/2026/DONE/ARTE-14.md](datum/2026/DONE/ARTE-14.md)   ```# python : wheel modules```
 - [datum/2026/DONE/ARTE-15.md](datum/2026/DONE/ARTE-15.md)   ```# nodejs : standalone```
 - [datum/2026/DONE/CORTA-10.md](datum/2026/DONE/CORTA-10.md)   ```# gml : profile override by host```
 - [datum/2026/DONE/CORTA-11.md](datum/2026/DONE/CORTA-11.md)   ```# gml8 : custom params```
@@ -61,6 +60,7 @@
 - [datum/2026/DONE/GGPU-6.md](datum/2026/DONE/GGPU-6.md)   ```# ssh config : by dhcp```
 - [datum/2026/DONE/KITE-25.md](datum/2026/DONE/KITE-25.md)   ```# cli : mistral-vibe```
 - [datum/2026/DONE/KITE-26.md](datum/2026/DONE/KITE-26.md)   ```# cli : gemini```
+- [datum/2026/DONE/KITE-28.md](datum/2026/DONE/KITE-28.md)   ```# github : copilot cli```
 - [datum/2026/DONE/KROS-8.md](datum/2026/DONE/KROS-8.md)   ```# gmlama : gpu acceleration```
 - [datum/2026/DONE/LEAF-33.md](datum/2026/DONE/LEAF-33.md)   ```# pandoc : md-html```
 - [datum/2026/DONE/MDOS-28.md](datum/2026/DONE/MDOS-28.md)   ```# OpenSSH : Server```
