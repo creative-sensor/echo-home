@@ -24,6 +24,7 @@
 - [datum/2026/TODO/APLE-12.md](datum/2026/TODO/APLE-12.md)   ```# geminide : thunderbolt ip link```
 - [datum/2026/TODO/ASML-2.md](datum/2026/TODO/ASML-2.md)   ```# MLOps : high-level [6]```
 - [datum/2026/TODO/ASML-3.md](datum/2026/TODO/ASML-3.md)   ```# Agentic : Workflows```
+- [datum/2026/TODO/ASML-4.md](datum/2026/TODO/ASML-4.md)   ```# Foldable : DNS```
 - [datum/2026/TODO/CORTA-13.md](datum/2026/TODO/CORTA-13.md)   ```# tinygrad : pytorch distribute```
 - [datum/2026/TODO/CORTA-4.md](datum/2026/TODO/CORTA-4.md)   ```# pytorch : start```
 - [datum/2026/TODO/CORTA-5.md](datum/2026/TODO/CORTA-5.md)   ```# tensorflow : start```
