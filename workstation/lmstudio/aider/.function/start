@@ -5,7 +5,7 @@ VARSET_EXT=$1
 # ---- |DEFAULT ----
 
 # ---- |OVERRIDE ----
-source .properd/VARSET
+test -r .properd/VARSET && source .properd/VARSET
 test -n "$VARSET_EXT" && source $VARSET_EXT
 
 # ---- |MAIN ----
