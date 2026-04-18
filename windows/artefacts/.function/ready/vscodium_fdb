@@ -1,0 +1,5 @@
+rm -rf $LOCAL_BIN/vscodium
+mkdir -p $LOCAL_BIN/vscodium
+
+unzip $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.zip -d $LOCAL_BIN/vscodium
+
