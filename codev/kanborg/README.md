@@ -106,6 +106,7 @@
 - [datum/2026/BACKLOG/KBG-3.md](datum/2026/BACKLOG/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
 - [datum/2026/BACKLOG/KITE-0.md](datum/2026/BACKLOG/KITE-0.md)   ```# Paper : Kites```
 - [datum/2026/BACKLOG/KITE-2.md](datum/2026/BACKLOG/KITE-2.md)   ```# Gitlab :```
+- [datum/2026/BACKLOG/KITE-31.md](datum/2026/BACKLOG/KITE-31.md)   ```# kiro-cli : q```
 - [datum/2026/BACKLOG/KITE-4.md](datum/2026/BACKLOG/KITE-4.md)   ```# Facebook :```
 - [datum/2026/BACKLOG/KITE-5.md](datum/2026/BACKLOG/KITE-5.md)   ```# Sendgrid :```
 - [datum/2026/BACKLOG/KITE-6.md](datum/2026/BACKLOG/KITE-6.md)   ```# Sentry :```
