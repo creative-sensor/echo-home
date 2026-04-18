@@ -8,9 +8,16 @@
 
 ### 2 NOTES
 
+- chatbot
+- agentic application
+
 ### 3 TEST/VERIFICATION
 
 ### 4 JOURNAL
+
+###### 4.8 agentic
+
+- entering agentic era
 
 ###### 4.7 tensor
 
