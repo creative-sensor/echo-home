@@ -1,0 +1,7 @@
+#!/bin/bash
+
+sudo docker ps
+
+echo -n "Container ID to enter? = "
+read ID
+sudo docker exec -it $ID /bin/bash

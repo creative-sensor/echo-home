@@ -1,0 +1,7 @@
+#!/bin/bash
+
+sudo docker ps -a
+
+echo -n "Container ID to remove? = "
+read ID
+sudo docker rm -f $ID
