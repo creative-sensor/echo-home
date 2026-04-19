@@ -19,16 +19,31 @@ function download (){
 
 	# Verify checksum if the file exists in the checksum registry
 	if [ -f "$CHECKSUM_FILE" ]; then
-		# We need to adjust the path in the checksum file to match the local download path for verification
-		# The checksum file uses relative paths like ./node-24.14.1.xz
-		# We check if the downloaded file matches any entry in the checksum file
 		echo "Verifying checksum for $FILENAME..."
-		(cd "$ARTIFACT_DIR" && sha256sum --check --quiet --ignore-missing "../$CHECKSUM_FILE")
-		if [ $? -ne 0 ]; then
-			echo "ERROR: Checksum verification failed for $FILENAME"
-			return 1
-		else
+		
+		# We run sha256sum from the root. 
+		# Since the checksum file contains paths like './uv-0.11.3.tar.gz' 
+		# but the files are actually in './artefacts/uv-0.11.3.tar.gz',
+		# we use --check but we must ensure the paths match.
+		
+		# A more reliable way: check the specific file against the registry
+		# We extract the expected hash for this specific file from the checksum file
+		local EXPECTED_HASH=$(grep "$name-$ARTIFACT_VERSION.$ARTIFACT_SUFFIX" "$CHECKSUM_FILE" | awk '{print $1}')
+		
+		if [ -z "$EXPECTED_HASH" ]; then
+			echo "Warning: No checksum entry found for $FILENAME in $CHECKSUM_FILE"
+			return 0
+		fi
+
+		local ACTUAL_HASH=$(sha256sum "$FILENAME" | awk '{print $1}')
+
+		if [ "$EXPECTED_HASH" == "$ACTUAL_HASH" ]; then
 			echo "Checksum verified successfully."
+		else
+			echo "ERROR: Checksum verification failed for $FILENAME"
+			echo "Expected: $EXPECTED_HASH"
+			echo "Actual:   $ACTUAL_HASH"
+			return 1
 		fi
 	else
 		echo "Warning: No checksum file found at $CHECKSUM_FILE. Skipping verification."
