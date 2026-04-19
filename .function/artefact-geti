@@ -1,14 +1,18 @@
 #!/bin/bash 
+# Determine the project root (the parent directory of this script's directory)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
 NAME=${1:-all}
-ARTIFACT_DIR=./artefacts
-ARTIFACT_YSON=.properd/artefacts.yaml
-CHECKSUM_FILE=.properd/artefact.sha256sum
+ARTIFACT_DIR="$PROJECT_ROOT/artefacts"
+ARTIFACT_YSON="$PROJECT_ROOT/.properd/artefacts.yaml"
+CHECKSUM_FILE="$PROJECT_ROOT/.properd/artefact.sha256sum"
 
 function download (){
 	local name=$1
-	local ARTIFACT_VERSION=$(cat $ARTIFACT_YSON | yq -r ".${name}[0]")
-	local ARTIFACT_URL=$(cat $ARTIFACT_YSON | yq -r ".${name}[1]")
-	local ARTIFACT_SUFFIX=$(cat $ARTIFACT_YSON | yq -r ".${name}[2].suffix")
+	local ARTIFACT_VERSION=$(cat "$ARTIFACT_YSON" | yq -r ".${name}[0]")
+	local ARTIFACT_URL=$(cat "$ARTIFACT_YSON" | yq -r ".${name}[1]")
+	local ARTIFACT_SUFFIX=$(cat "$ARTIFACT_YSON" | yq -r ".${name}[2].suffix")
 	[[ "$ARTIFACT_SUFFIX" =~ "null" ]] && ARTIFACT_SUFFIX=dmg
 	
 	local FILENAME="$ARTIFACT_DIR/$name-$ARTIFACT_VERSION.$ARTIFACT_SUFFIX"
@@ -22,12 +26,8 @@ function download (){
 		echo "Verifying checksum for $FILENAME..."
 		
 		# We run sha256sum from the root. 
-		# Since the checksum file contains paths like './uv-0.11.3.tar.gz' 
-		# but the files are actually in './artefacts/uv-0.11.3.tar.gz',
-		# we use --check but we must ensure the paths match.
-		
-		# A more reliable way: check the specific file against the registry
 		# We extract the expected hash for this specific file from the checksum file
+		# We use grep on the filename part to find the correct line
 		local EXPECTED_HASH=$(grep "$name-$ARTIFACT_VERSION.$ARTIFACT_SUFFIX" "$CHECKSUM_FILE" | awk '{print $1}')
 		
 		if [ -z "$EXPECTED_HASH" ]; then
@@ -50,9 +50,9 @@ function download (){
 	fi
 }
 
-mkdir -p $ARTIFACT_DIR
+mkdir -p "$ARTIFACT_DIR"
 if [[ "$NAME" =~ "all" ]] ; then
-	LIST=$(cat $ARTIFACT_YSON | yq 'keys' | awk -F ' ' '{print $2}')
+	LIST=$(cat "$ARTIFACT_YSON" | yq 'keys' | awk -F ' ' '{print $2}')
 	for i in $LIST ; do
 		download $i
 	done
