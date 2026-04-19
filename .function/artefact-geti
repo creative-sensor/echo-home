@@ -2,6 +2,7 @@
 NAME=${1:-all}
 ARTIFACT_DIR=./artefacts
 ARTIFACT_YSON=.properd/artefacts.yaml
+CHECKSUM_FILE=.properd/artefact.sha256sum
 
 function download (){
 	local name=$1
@@ -9,9 +10,29 @@ function download (){
 	local ARTIFACT_URL=$(cat $ARTIFACT_YSON | yq -r ".${name}[1]")
 	local ARTIFACT_SUFFIX=$(cat $ARTIFACT_YSON | yq -r ".${name}[2].suffix")
 	[[ "$ARTIFACT_SUFFIX" =~ "null" ]] && ARTIFACT_SUFFIX=dmg
+	
+	local FILENAME="$ARTIFACT_DIR/$name-$ARTIFACT_VERSION.$ARTIFACT_SUFFIX"
+	
 	set -x
-	curl -s -L -o $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.$ARTIFACT_SUFFIX  $ARTIFACT_URL
+	curl -s -L -o "$FILENAME" "$ARTIFACT_URL"
 	set +x
+
+	# Verify checksum if the file exists in the checksum registry
+	if [ -f "$CHECKSUM_FILE" ]; then
+		# We need to adjust the path in the checksum file to match the local download path for verification
+		# The checksum file uses relative paths like ./node-24.14.1.xz
+		# We check if the downloaded file matches any entry in the checksum file
+		echo "Verifying checksum for $FILENAME..."
+		(cd "$ARTIFACT_DIR" && sha256sum --check --quiet --ignore-missing "../$CHECKSUM_FILE")
+		if [ $? -ne 0 ]; then
+			echo "ERROR: Checksum verification failed for $FILENAME"
+			return 1
+		else
+			echo "Checksum verified successfully."
+		fi
+	else
+		echo "Warning: No checksum file found at $CHECKSUM_FILE. Skipping verification."
+	fi
 }
 
 mkdir -p $ARTIFACT_DIR
