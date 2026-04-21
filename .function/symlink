@@ -21,5 +21,6 @@ done
 
 ln -sf $(pwd)/codev/yson/.function/start.py  $LOCAL_BIN/yson
 ln -sf $(pwd)/windows/.function/sshw  $LOCAL_BIN/sshw
+ln -sf $(pwd)/workstation/lmstudio/aider/.function/start  $LOCAL_BIN/aiderx
 
 ls -la --color $BINDIR
