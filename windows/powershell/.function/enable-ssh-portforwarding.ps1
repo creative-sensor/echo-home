@@ -30,15 +30,12 @@ function Update-SshdConfig {
     $content = Get-Content $SshdConfigPath
     $updatedContent = @()
     $directiveFound = $false
+    $directiveName = $Directive.Split(' ')[0]
 
     foreach ($line in $content) {
-        # Check if the line contains the directive (ignoring comments and whitespace)
-        if ($line -match "^\s*#?\s*$($Directive.Split(' ')[0])") {
+        # Check if the line starts with the directive name (ignoring comments and whitespace)
+        if ($line -match "^\s*#?\s*$directiveName") {
             # If found, replace it with the correct setting
-            $updatedContent += $Directive
-            $directiveFound = $true
-        } elseif ($line -match "^\s*#?\s*$($Directive.Split(' ')[0])\s+no") {
-            # If found but set to 'no', replace it
             $updatedContent += $Directive
             $directiveFound = $true
         } else {
@@ -72,5 +69,4 @@ try {
     Write-Error "Failed to restart SSH Server service. Ensure the service is installed and running. Error: $($_.Exception.Message)"
     exit 1
 }
-```
 ```
