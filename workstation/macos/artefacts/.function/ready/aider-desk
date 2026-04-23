@@ -1,0 +1,10 @@
+#unzip $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.zip -d $LOCAL_BIN/
+
+touch $LOCAL_BIN/$name
+cat > $LOCAL_BIN/$name << EOF
+cd $LOCAL_BIN/aider-desk.app/Contents/MacOS
+./aider-desk
+EOF
+
+chmod 0755 $LOCAL_BIN/$name
+
