@@ -9,6 +9,11 @@ function download (){
 	local ARTIFACT_URL=$(cat $ARTIFACT_YSON | yq -r ".${name}[1]")
 	local ARTIFACT_SUFFIX=$(cat $ARTIFACT_YSON | yq -r ".${name}[2].suffix")
 	[[ "$ARTIFACT_SUFFIX" =~ "null" ]] && ARTIFACT_SUFFIX=dmg
+    
+    # Check for custom script to get artifact item, mirroring artefact-readi
+	test -r $ARTIFACT_DIR/.function/ready/$name && source $ARTIFACT_DIR/.function/ready/$name && return
+    
+    # Fallback to download if no custom script is found
 	set -x
 	curl -s -L -o $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.$ARTIFACT_SUFFIX  $ARTIFACT_URL
 	set +x

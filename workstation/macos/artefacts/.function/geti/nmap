@@ -1,0 +1,9 @@
+set -x
+rm -rf nmap $ARTIFACT_DIR/nmap
+mkdir -p $ARTIFACT_DIR/nmap
+git clone $ARTIFACT_URL
+cd nmap
+git checkout $ARTIFACT_VERSION
+./configure  --prefix=$(readlink -f ../$ARTIFACT_DIR/nmap)
+make
+make install

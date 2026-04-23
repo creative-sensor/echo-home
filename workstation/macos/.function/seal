@@ -1,0 +1,6 @@
+#!/bin/bash -x
+source .properd/VARSET
+NAME=$1
+VERSION=$(yq -r ".${NAME}[0]" .properd/artefacts.yaml)
+cd "$ARTIFACT_DIR"
+tar  czvfm  "${NAME}-${VERSION}${OS}.tar.gz" $NAME

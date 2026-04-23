@@ -1,0 +1,3 @@
+
+tar -xf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.tar.gz
+cp nmap/bin/n* $LOCAL_BIN/
