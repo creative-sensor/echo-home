@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# --- 1. Discover the Wi-Fi interface name ---
+HARDWARE_OUTPUT=$(networksetup -listallhardwareports)
+
+# Find the interface name associated with "Wi-Fi"
+# We extract the device name (e.g., en1) from the specific line.
+WIFI_INTERFACE=$(echo "$HARDWARE_OUTPUT" | grep "Hardware Port: Wi-Fi" | awk -F': ' '{print $2}' | awk '{print $1}')
+
+
+# --- 2. Check for interface discovery errors ---
+if [ -z "$WIFI_INTERFACE" ]; then
+    echo "Error: Could not find the Wi-Fi interface name in the hardware list."
+    echo "Ensure networksetup -listaallhardwareports is running correctly."
+    exit 1
+fi
+
+echo "✅ Found Wi-Fi Interface: $WIFI_INTERFACE"
+
+
+# --- 3. Determine the desired state based on arguments ---
+TARGET_STATE="on" # Default state is ON
+
+if [ -z "$1" ]; then
+    # Case 1: No argument provided (Default behavior: ON)
+    echo "No argument provided. Defaulting to turn Wi-Fi ON."
+    TARGET_STATE="on"
+elif [ "$1" == "off" ]; then
+    # Case 2: Argument is "off"
+    echo "Requested state: OFF."
+    TARGET_STATE="off"
+else
+    # Case 3: Invalid argument provided
+    echo "Error: Invalid argument '$1'."
+    echo "Usage: $0 [on|off]"
+    exit 1
+fi
+
+
+# --- 4. Execute the power command ---
+echo "--- Executing command ---"
+networksetup -setairportpower "$WIFI_INTERFACE" "$TARGET_STATE"
+
+if [ $? -eq 0 ]; then
+    echo "✅ Successfully set Wi-Fi power to $TARGET_STATE."
+else
+    echo "❌ Failed to execute power command. Check permissions or system status."
+fi
