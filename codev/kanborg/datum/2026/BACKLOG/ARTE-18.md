@@ -1,4 +1,4 @@
-# claude: code
+# minikube : images
 --------------------------------
 ### 0 DESCRIPTION
 
@@ -18,5 +18,5 @@
 
 --------------------------------
 ```json
-{ "project_code": "KITE" , "links": "" , "location": "" , "fpoint": "" }
+{ "project_code": "ARTE" , "links": "" , "location": "" , "fpoint": "" }
 ```
