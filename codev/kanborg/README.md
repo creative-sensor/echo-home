@@ -38,6 +38,8 @@
 - [datum/2026/TODO/MDOS-20.md](datum/2026/TODO/MDOS-20.md)   ```# rsync : source rebuild```
 - [datum/2026/TODO/MDOS-27.md](datum/2026/TODO/MDOS-27.md)   ```# wsli : WSL Windows interface```
 - [datum/2026/TODO/MONO-7.md](datum/2026/TODO/MONO-7.md)   ```# ULI : Unified Linux Interface```
+- [datum/2026/TODO/SPEC-3.md](datum/2026/TODO/SPEC-3.md)   ```# Foldable : system ```
+- [datum/2026/TODO/SPEC-4.md](datum/2026/TODO/SPEC-4.md)   ```# objectory : re-define```
 - [datum/2026/TODO/VIM-26.md](datum/2026/TODO/VIM-26.md)   ```# LLM: text completion```
 
 ### 4 DONE
