@@ -17,6 +17,8 @@
 
 ### 4 JOURNAL
 
+###### 4.0
+- script to wifi on/off: https://github.com/creative-sensor/echo-home/commit/a725855cae523aac494b1c24a8879ff4fee81d04
 
 
 

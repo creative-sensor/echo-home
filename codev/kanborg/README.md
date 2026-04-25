@@ -7,7 +7,6 @@
 
 - [datum/2026/WIP/APLE-6.md](datum/2026/WIP/APLE-6.md)   ```# geminide : communication bus```
 - [datum/2026/WIP/APLE-8.md](datum/2026/WIP/APLE-8.md)   ```# macos: ntfs-3g```
-- [datum/2026/WIP/ARTE-17.md](datum/2026/WIP/ARTE-17.md)   ```# rust : cargo```
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
 - [datum/2026/WIP/LEAF-30.md](datum/2026/WIP/LEAF-30.md)   ```# Jupyter :```
 
@@ -48,6 +47,7 @@
 - [datum/2026/DONE/APLE-9.md](datum/2026/DONE/APLE-9.md)   ```# macmon : monitor```
 - [datum/2026/DONE/ARTE-14.md](datum/2026/DONE/ARTE-14.md)   ```# python : wheel modules```
 - [datum/2026/DONE/ARTE-15.md](datum/2026/DONE/ARTE-15.md)   ```# nodejs : standalone```
+- [datum/2026/DONE/ARTE-17.md](datum/2026/DONE/ARTE-17.md)   ```# llvm : rustc```
 - [datum/2026/DONE/CORTA-10.md](datum/2026/DONE/CORTA-10.md)   ```# gml : profile override by host```
 - [datum/2026/DONE/CORTA-11.md](datum/2026/DONE/CORTA-11.md)   ```# gml8 : custom params```
 - [datum/2026/DONE/CORTA-12.md](datum/2026/DONE/CORTA-12.md)   ```# llama.cpp : specific version```
