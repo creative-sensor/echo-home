@@ -1,0 +1,4 @@
+rm -rf $LOCAL_BIN/llvm-mingw
+unzip $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.zip -d $LOCAL_BIN/
+mv $LOCAL_BIN/llvm-mingw-${ARTIFACT_VERSION}-msvcrt-x86_64 $LOCAL_BIN/llvm-mingw
+

@@ -1,0 +1,4 @@
+rm -rf $LOCAL_BIN/rust
+tar xf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.$ARTIFACT_SUFFIX -C $LOCAL_BIN/
+mv $LOCAL_BIN/rust-${ARTIFACT_VERSION}-x86_64-pc-windows-gnu $LOCAL_BIN/rust
+

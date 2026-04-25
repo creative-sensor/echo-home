@@ -4,7 +4,9 @@ neovide: [ 0.14.0 , "https://github.com/neovide/neovide/releases/download/0.14.0
 p7zip: [ 2201 , "https://www.7-zip.org/a/7z2201-x64.exe" ]
 python: [ 3.13.12 , "https://www.python.org/ftp/python/3.13.12/python-3.13.12-embed-amd64.zip" , {"suffix":"zip"}]
 pip: [ 3.8 , "https://bootstrap.pypa.io/pip/3.8/get-pip.py" , {"suffix":"py"}]
-
+llvm-mingw: [ 20260421 , "https://github.com/mstorsjo/llvm-mingw/releases/download/20260421/llvm-mingw-20260421-msvcrt-x86_64.zip", {"suffix":"zip"}]
+rustc: [ 1.95.0 , "https://static.rust-lang.org/dist/rust-1.95.0-x86_64-pc-windows-gnullvm.tar.xz", {"suffix":"tar.gz"}]
+rust: [ 1.95.0 , "https://static.rust-lang.org/dist/rust-1.95.0-x86_64-pc-windows-gnu.tar.xz", {"suffix":"tar.gz"}]
 kubectl: [ 1.32.0 , "https://dl.k8s.io/release/v1.32.0/bin/windows/amd64/kubectl.exe" ]
 rclone: [ 1.69.1 , "https://downloads.rclone.org/v1.69.1/rclone-v1.69.1-windows-amd64.zip", {"suffix":"zip"}]
 node: [ 22.14.0 , "https://nodejs.org/dist/v22.14.0/node-v22.14.0-win-x64.zip" , {"suffix":"zip"}]
