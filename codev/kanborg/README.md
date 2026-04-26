@@ -8,6 +8,7 @@
 - [datum/2026/WIP/APLE-6.md](datum/2026/WIP/APLE-6.md)   ```# geminide : communication bus```
 - [datum/2026/WIP/APLE-8.md](datum/2026/WIP/APLE-8.md)   ```# macos: ntfs-3g```
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
+- [datum/2026/WIP/GGPU-5.md](datum/2026/WIP/GGPU-5.md)   ```# Geminide : Left and Right```
 - [datum/2026/WIP/LEAF-30.md](datum/2026/WIP/LEAF-30.md)   ```# Jupyter :```
 - [datum/2026/WIP/SPEC-3.md](datum/2026/WIP/SPEC-3.md)   ```# Foldable : system ```
 - [datum/2026/WIP/SPEC-5.md](datum/2026/WIP/SPEC-5.md)   ```# yson : re-define```
@@ -34,7 +35,6 @@
 - [datum/2026/TODO/CORTA-5.md](datum/2026/TODO/CORTA-5.md)   ```# tensorflow : start```
 - [datum/2026/TODO/DROID-4.md](datum/2026/TODO/DROID-4.md)   ```# APK : pgp tools```
 - [datum/2026/TODO/GGPU-1.md](datum/2026/TODO/GGPU-1.md)   ```# video : codecs```
-- [datum/2026/TODO/GGPU-5.md](datum/2026/TODO/GGPU-5.md)   ```# Geminide : Left and Right```
 - [datum/2026/TODO/KITE-24.md](datum/2026/TODO/KITE-24.md)   ```# AttentionFlash: HF```
 - [datum/2026/TODO/KITE-27.md](datum/2026/TODO/KITE-27.md)   ```# langchain : agent development```
 - [datum/2026/TODO/KITE-29.md](datum/2026/TODO/KITE-29.md)   ```# openrouter.ai : remote llm```
