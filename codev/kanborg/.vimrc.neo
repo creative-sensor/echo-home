@@ -203,7 +203,7 @@ inoremap <F8><F8>  <C-o>: r! date "+\%Y-\%m-\%d.\%s"<CR>
     "temporarily switch to normal from insert mode and run command
 
 map tty : below terminal<CR>
-map mtx :!marktext . &<CR><CR>
+map mtx :!marktext ./REAME.md &<CR><CR>
 
 
 vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
