@@ -1,0 +1,10 @@
+#!/bin/bash -x
+source .properd/VARSET
+CHECKSUM=.properd/artefacts.sha256sum
+
+mkdir -p $ARTIFACT_DIR
+cd $ARTIFACT_DIR
+if ! test -f ../$CHECKSUM ;then
+    find . -type f | xargs -I {} sha256sum {} > ../$CHECKSUM
+fi
+sha256sum --check --ignore-missing ../$CHECKSUM

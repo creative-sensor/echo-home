@@ -1,0 +1,5 @@
+rust-tool: [ "1.75.0" , { "type": "binary" } ]
+cargo-pkg: [ "1.0.0" ]
+rand: [ "0.10.1" ]
+serde: [ "1.0.193" ]
+bat: [ "0.12.0" ]

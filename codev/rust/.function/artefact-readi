@@ -1,0 +1,26 @@
+#!/bin/bash -x 
+NAME=${1:-all}
+ARTIFACT_DIR=./artefacts
+ARTIFACT_YSON=.properd/artefacts.yaml
+
+function ready (){
+	local name=$1
+	local ARTIFACT_VERSION=$(yq -r ".$name[0]" $ARTIFACT_YSON 2>/dev/null)
+	echo "DEBUG: Determined version for $name: $ARTIFACT_VERSION"
+	local ARTIFACT_SUFFIX=$(yq -r ".$name[2].suffix" $ARTIFACT_YSON 2>/dev/null)
+	rm -rf $ARTIFACT_DIR/$name
+	test -r $ARTIFACT_DIR/.function/ready/$name && source $ARTIFACT_DIR/.function/ready/$name && return
+	tar xf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.$ARTIFACT_SUFFIX -C $ARTIFACT_DIR
+	ln -sf $(readlink -f $ARTIFACT_DIR/$name/bin/*) $LOCAL_BIN/$name
+}
+
+mkdir -p $ARTIFACT_DIR
+if [[ "$NAME" =~ "all" ]] ; then
+	LIST=$(yq -r 'keys' $ARTIFACT_YSON)
+	for i in $LIST ; do
+		ready $i
+	done
+	exit
+fi
+ready $NAME
+```

@@ -1,0 +1,46 @@
+#!/bin/bash  
+NAME=${1:-all}
+ARTIFACT_DIR=./artefacts
+ARTIFACT_YSON=.properd/artefacts.yaml
+
+if ! command -v yq &> /dev/null
+then
+    echo "Error: yq command not found. Please install yq to run artefact-geti." >&2
+    exit 1
+fi
+
+function download (){
+	local name=$1
+	# Use yq eval directly on the file for robustness
+	local ARTIFACT_VERSION=$(yq -r ".$name[0]" $ARTIFACT_YSON 2>/dev/null)
+	local ARTIFACT_URL=$(yq -r ".$name[1]" $ARTIFACT_YSON 2>/dev/null)
+	local ARTIFACT_SUFFIX=$(yq -r ".$name[2].suffix" $ARTIFACT_YSON 2>/dev/null)
+	
+	if [[ -z "$ARTIFACT_URL" || "$ARTIFACT_URL" == "null" ]]; then
+		echo "Cargo package detected: $name. Installing via cargo..."
+		if [[ -z "$ARTIFACT_VERSION" ]]; then
+			echo "Error: Could not determine version for cargo package '$name' from $ARTIFACT_YSON. Check YAML structure." >&2
+			return 1
+		fi
+		echo "DEBUG: Determined version for $name: $ARTIFACT_VERSION"
+		cargo install $name --version $ARTIFACT_VERSION
+		return 0
+	fi
+
+	[[ "$ARTIFACT_SUFFIX" =~ "null" ]] && ARTIFACT_SUFFIX=tar.gz
+	set -x
+	curl -s -L -o $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.$ARTIFACT_SUFFIX  $ARTIFACT_URL
+	set +x
+}
+
+mkdir -p $ARTIFACT_DIR
+if [[ "$NAME" =~ "all" ]] ; then
+	# Correctly list all keys from the YAML file
+	LIST=$(yq -r 'keys' $ARTIFACT_YSON)
+	for i in $LIST ; do
+		download $i
+	done
+	exit
+fi
+download $NAME
+

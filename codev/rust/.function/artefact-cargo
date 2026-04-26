@@ -1,0 +1,5 @@
+#!/bin/bash -x 
+NAME=${1:-all}
+# Delegate artifact retrieval and installation logic to artefact-geti, 
+# which handles cargo installation based on artefacts.yaml
+./artefact-geti $NAME

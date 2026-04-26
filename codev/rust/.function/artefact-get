@@ -1,0 +1,7 @@
+PACKAGE=${1:-"rust-tool@v1.75.0"}
+PACKAGE_NAME=$(echo $PACKAGE | awk -F "@" '{print $1}')
+PACKAGE_VERSION=$(echo $PACKAGE | awk -F "@" '{print $2}')
+export CARGO_TOOL_DIR="./$PACKAGE_NAME/cargo-tools"
+export CARGO_TOOL_BIN_DIR="./$PACKAGE_NAME/bin"
+# Logic to download/install rust tool
+echo "Installing $PACKAGE..."
