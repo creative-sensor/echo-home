@@ -4,6 +4,8 @@ mkdir -p build
 mkdir -p $LOCAL_BIN/gmlama/${ARTIFACT_VERSION}
 
 cmake -B build \
+  -DGGML_METAL=ON \
+  -DGGML_RPC=ON \
   -DBUILD_SHARED_LIBS=ON \
   -DCMAKE_INSTALL_PREFIX=$LOCAL_BIN/gmlama/${ARTIFACT_VERSION} \
   -DCMAKE_INSTALL_BINDIR="." \
