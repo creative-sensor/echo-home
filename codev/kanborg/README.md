@@ -7,6 +7,7 @@
 
 - [datum/2026/WIP/APLE-6.md](datum/2026/WIP/APLE-6.md)   ```# geminide : communication bus```
 - [datum/2026/WIP/APLE-8.md](datum/2026/WIP/APLE-8.md)   ```# macos: ntfs-3g```
+- [datum/2026/WIP/ARTE-19.md](datum/2026/WIP/ARTE-19.md)   ```# rust : cargo```
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
 - [datum/2026/WIP/GGPU-5.md](datum/2026/WIP/GGPU-5.md)   ```# Geminide : Left and Right```
 - [datum/2026/WIP/LEAF-30.md](datum/2026/WIP/LEAF-30.md)   ```# Jupyter :```
