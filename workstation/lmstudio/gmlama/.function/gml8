@@ -10,7 +10,7 @@ fi
 test -n "$GML_DEV" && GML_DEV="-dev $GML_DEV"
 gml_line=$(sed -n ${MODEL_ID}p < $GML_YSON)
 gml_describe=$(echo "$gml_line" | yq 'to_entries  | .[0].value[0]')
-gml_params=$(echo "$gml_line" | yq 'to_entries  | .[0].value[1]')
+gml_params=$(echo "$gml_line" | yq 'to_entries  | .[0].value[1]' | envsubst)
 llamacpp_version=$(echo "$gml_line" | yq 'to_entries  | .[0].value[2]')
 gml_param64=$(echo "$gml_line" | yq 'to_entries  | .[0].value[3]')
 gml_model=$(echo $gml_line | yq keys[])
