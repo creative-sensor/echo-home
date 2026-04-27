@@ -17,13 +17,15 @@ function download (){
 	local ARTIFACT_SUFFIX=$(yq -r ".$name[2].suffix" $ARTIFACT_YSON 2>/dev/null)
 	
 	if [[ -z "$ARTIFACT_URL" || "$ARTIFACT_URL" == "null" ]]; then
-		echo "Cargo package detected: $name. Installing via cargo..."
+		echo "Cargo package detected: $name. Fetching for offline use..."
 		if [[ -z "$ARTIFACT_VERSION" ]]; then
 			echo "Error: Could not determine version for cargo package '$name' from $ARTIFACT_YSON. Check YAML structure." >&2
 			return 1
 		fi
 		echo "DEBUG: Determined version for $name: $ARTIFACT_VERSION"
-		cargo install $name --version $ARTIFACT_VERSION
+		# Use cargo fetch to download the package and its dependencies to the local cache
+		# This prepares the environment for offline installation later.
+		cargo fetch --locked
 		return 0
 	fi
 
@@ -43,4 +45,3 @@ if [[ "$NAME" =~ "all" ]] ; then
 	exit
 fi
 download $NAME
-
