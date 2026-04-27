@@ -17,15 +17,26 @@ function download (){
 	local ARTIFACT_SUFFIX=$(yq -r ".$name[2].suffix" $ARTIFACT_YSON 2>/dev/null)
 	
 	if [[ -z "$ARTIFACT_URL" || "$ARTIFACT_URL" == "null" ]]; then
-		echo "Cargo package detected: $name. Fetching for offline use..."
+		echo "Cargo package detected: $name. Downloading crate for offline use..."
 		if [[ -z "$ARTIFACT_VERSION" ]]; then
 			echo "Error: Could not determine version for cargo package '$name' from $ARTIFACT_YSON. Check YAML structure." >&2
 			return 1
 		fi
 		echo "DEBUG: Determined version for $name: $ARTIFACT_VERSION"
-		# Use cargo fetch to download the package and its dependencies to the local cache
-		# This prepares the environment for offline installation later.
-		cargo fetch --locked
+		
+		# Construct the crates.io static URL for the .crate file
+		# Format: https://static.crates.io/crates/<name>/<name>-<version>.crate
+		local CRATE_URL="https://static.crates.io/crates/$name/$name-$ARTIFACT_VERSION.crate"
+		local TARGET_FILE="$ARTIFACT_DIR/$name-$ARTIFACT_VERSION.crate"
+		
+		set -x
+		curl -s -L -o "$TARGET_FILE" "$CRATE_URL"
+		set +x
+		
+		if [[ $? -ne 0 ]]; then
+			echo "Error: Failed to download crate $name from $CRATE_URL" >&2
+			return 1
+		fi
 		return 0
 	fi
 
