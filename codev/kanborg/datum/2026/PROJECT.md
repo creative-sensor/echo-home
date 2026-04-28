@@ -1,6 +1,6 @@
 ```yaml
 KBG : {"description":"Kanborg code development","last_id":8,"related":""}
-SPEC : {"description":"Spec of new concepts","last_id":6,"related":""}
+SPEC : {"description":"Spec of new concepts","last_id":7,"related":""}
 LEAF : {"description":"Short-lived | Narrow Scope | Low Priority | Uncategorized","last_id":33,"related":""}
 NCEPT : {"description":"Concept","last_id":2,"related":""}
 ARTE : {"description":"Artefacts Exware","last_id":19,"related":""}
