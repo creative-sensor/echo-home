@@ -17,6 +17,7 @@ $content = Get-Content $SshdConfigPath -Raw
 $setting = "AllowTcpForwarding yes"
 $commentedSetting = "#AllowTcpForwarding yes"
 $modified = $false
+$actionTaken = ""
 
 # Check if the setting is already present and uncommented
 if ($content -match [regex]::Escape($setting)) {
@@ -32,20 +33,20 @@ elseif ($content -match [regex]::Escape($commentedSetting)) {
     
     # Write back to the file
     $newContent | Set-Content $SshdConfigPath -Force
-    Write-Host "Successfully updated $SshdConfigPath."
+    $actionTaken = "Successfully updated $SshdConfigPath."
     $modified = $true
 }
-# If neither is found, append it (though usually it's commented out)
+# If neither is found, append it
 else {
     Write-Warning "Could not find 'AllowTcpForwarding' setting. Appending it to the end of the file."
     $newContent = $content + "`n`n# --- Custom Configuration ---`n$setting"
     $newContent | Set-Content $SshdConfigPath -Force
-    Write-Host "Successfully appended configuration to $SshdConfigPath."
+    $actionTaken = "Successfully appended configuration to $SshdConfigPath."
     $modified = $true
 }
 
 if ($modified) {
-    Write-Host "`nConfiguration updated successfully."
+    Write-Host "`n$actionTaken"
     Write-Host "Please remember to restart the SSH service for changes to take effect."
     Write-Host "You can run: Restart-Service sshd"
 }
