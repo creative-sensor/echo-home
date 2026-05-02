@@ -11,8 +11,7 @@
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
 - [datum/2026/WIP/CORTA-18.md](datum/2026/WIP/CORTA-18.md)   ```# tool-calling : bash```
 - [datum/2026/WIP/LEAF-30.md](datum/2026/WIP/LEAF-30.md)   ```# Jupyter :```
-- [datum/2026/WIP/MDOS-32.md](datum/2026/WIP/MDOS-32.md)   ```# openssh-server : opterator function```
-- [datum/2026/WIP/SPEC-7.md](datum/2026/WIP/SPEC-7.md)   ```# foldable : desktop```
+- [datum/2026/WIP/MDOS-32.md](datum/2026/WIP/MDOS-32.md)   ```# openssh-server : opterator function```
 
 ### 2 ON HOLD
 
@@ -42,8 +41,6 @@
 - [datum/2026/TODO/MDOS-20.md](datum/2026/TODO/MDOS-20.md)   ```# rsync : source rebuild```
 - [datum/2026/TODO/MDOS-27.md](datum/2026/TODO/MDOS-27.md)   ```# wsli : WSL Windows interface```
 - [datum/2026/TODO/MONO-7.md](datum/2026/TODO/MONO-7.md)   ```# ULI : Unified Linux Interface```
-- [datum/2026/TODO/SPEC-4.md](datum/2026/TODO/SPEC-4.md)   ```# objectory : re-define```
-- [datum/2026/TODO/SPEC-8.md](datum/2026/TODO/SPEC-8.md)   ```# Context: Overrider```
 - [datum/2026/TODO/VIM-26.md](datum/2026/TODO/VIM-26.md)   ```# LLM: text completion```
 
 ### 4 DONE
@@ -80,8 +77,11 @@
 - [datum/2026/DONE/MDOS-30.md](datum/2026/DONE/MDOS-30.md)   ```# node : fix path```
 - [datum/2026/DONE/MDOS-31.md](datum/2026/DONE/MDOS-31.md)   ```# python: standalone```
 - [datum/2026/DONE/SPEC-3.md](datum/2026/DONE/SPEC-3.md)   ```# Foldable : system ```
+- [datum/2026/DONE/SPEC-4.md](datum/2026/DONE/SPEC-4.md)   ```# objectory : re-define```
 - [datum/2026/DONE/SPEC-5.md](datum/2026/DONE/SPEC-5.md)   ```# yson : re-define```
 - [datum/2026/DONE/SPEC-6.md](datum/2026/DONE/SPEC-6.md)   ```# artefact : get-ready```
+- [datum/2026/DONE/SPEC-7.md](datum/2026/DONE/SPEC-7.md)   ```# foldable : desktop```
+- [datum/2026/DONE/SPEC-8.md](datum/2026/DONE/SPEC-8.md)   ```# Context: Overrider```
 - [datum/2026/DONE/VIM-20.md](datum/2026/DONE/VIM-20.md)   ```# vim : pad [2]```
 - [datum/2026/DONE/VIM-22.md](datum/2026/DONE/VIM-22.md)   ```# sort : range buffer```
 - [datum/2026/DONE/VIM-23.md](datum/2026/DONE/VIM-23.md)   ```# ai flash : inference```

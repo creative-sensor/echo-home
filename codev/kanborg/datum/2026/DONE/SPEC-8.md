@@ -6,6 +6,7 @@ Overriding Behavior through Local Discovery
 
 ### 1 SOLUTION
 
+https://github.com/creative-sensor/echo-home/commit/468138eafdd6588a3feb22213df709dc7ec70eab
 
 ### 2 NOTES
 
