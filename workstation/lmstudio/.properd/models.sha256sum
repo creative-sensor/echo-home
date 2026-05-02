@@ -40,9 +40,12 @@ b205840c5dcef55078e37d344677869a714ffd42a4ae448c48dcfb52e4bb10d5 *./ggml-org/gem
 d510a9a0deb28845a8de2424ca4383ccf8b3a14f71d92c158b315d77ac62a1ac *./ggml-org/gemma-3-27b-it-GGUF/gemma-3-27b-it-f16-00002-of-00002.gguf
 23c6997912cb7fa36147fe05877de73ddbb2a80ff69b18ff171b354dccf2b5b5 *./ggml-org/gemma-4-26B-A4B-it-GGUF/gemma-4-26B-A4B-it-Q4_K_M.gguf
 ccb98dcfefa88e6499b299e71e0e2aa0c7547914995d440c39079897837d2757 *./ggml-org/gemma-4-26B-A4B-it-GGUF/gemma-4-26B-A4B-it-Q8_0.gguf
+25fa60b7e0d725c1fbb6b11e79b79bc75ab013ed353045ebe70d7c7083bb3663 *./ggml-org/gemma-4-26B-A4B-it-GGUF/gemma-4-26B-A4B-it-f16.gguf
 a20deaf2f8fc27c501f32fadfd538f8f31a76f10f47d5d3eb895f3d1112d752c *./ggml-org/gemma-4-31B-it-GGUF/gemma-4-31B-it-Q4_K_M.gguf
 12d878964d21f1779dea15abeee048855151b27089fe98b32c628f85740933f3 *./ggml-org/gemma-4-E2B-it-GGUF/gemma-4-e2b-it-Q8_0.gguf
 9bf79be3d552f6272f66adb7d20425d78f7053372707763313eab05f93b5a217 *./ggml-org/gemma-4-E2B-it-GGUF/gemma-4-e2b-it-f16.gguf
 dff4e4ca848e33e678a63b5b7d1f8bfa4a17e764415d0c0aaaad07c84f4d8fad *./ggml-org/gemma-4-E4B-it-GGUF/gemma-4-e4b-it-Q4_K_M.gguf
 704c66a0ba0711c7afaa12cc03860a1a289ae5efc7c4e6b046ef1307c57d63ba *./ggml-org/gemma-4-E4B-it-GGUF/gemma-4-e4b-it-Q8_0.gguf
 d0fdc60b643f14f9332e26c8779c062db8daacbb28a9bdc830851aa71bfddb5a *./ggml-org/gemma-4-E4B-it-GGUF/gemma-4-e4b-it-f16.gguf
+c9d25a7fff4c61d98948c6420a27ebee4acbc04c7bf26e54b844aa66a4bce182 *./lmstudio-community/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-GGUF/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-Q8_0.gguf
+
