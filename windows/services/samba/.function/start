@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# ---- |EXT ----
+VARSET_EXT=$1
+# ---- |DEFAULT ----
+
+# ---- |OVERRIDE ----
+# Assuming VARSET might contain specific Samba config paths or service names
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+# In Windows, Samba functionality is primarily provided by the 'LanmanServer' service
+# or managed via specific configuration files. 
+# This script attempts to start the Server service.
+
+echo "Starting Samba (Server) service..."
+powershell.exe -Command "Start-Service LanmanServer"
+
+if [ $? -eq 0 ]; then
+    echo "Samba service started successfully."
+else
+    echo "Failed to start Samba service."
+    exit 1
+fi

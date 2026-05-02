@@ -1,0 +1,13 @@
+# This is a PowerShell script to check the status of the Samba (LanmanServer) service
+# Following the pattern of windows\.function\get-service.ps1
+
+$ServiceName = "LanmanServer"
+
+try {
+    $service = Get-Service -Name $ServiceName -ErrorAction Stop
+    Write-Host "Service: $($service.Name)"
+    Write-Host "Status:  $($service.Status)"
+} catch {
+    Write-Error "Failed to retrieve status for service '$ServiceName': $($_.Exception.Message)"
+    exit 1
+}
