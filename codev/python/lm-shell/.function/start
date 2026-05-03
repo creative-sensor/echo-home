@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+import os
 import requests
 import subprocess
 import argparse
@@ -16,6 +17,9 @@ def get_command_from_llm(prompt, server_url):
         "Just the command."
     )
 
+    # Use environment variable if set, otherwise fall back to the provided server_url
+    effective_url = os.getenv('LLM_URL', server_url)
+
     payload = {
         "messages": [
             {"role": "system", "content": system_prompt},
@@ -25,7 +29,7 @@ def get_command_from_llm(prompt, server_url):
     }
 
     try:
-        response = requests.post(f"{server_url}/chat/completions", json=payload)
+        response = requests.post(f"{effective_url}/chat/completions", json=payload)
         response.raise_for_status()
         result = response.json()
         command = result['choices'][0]['message']['content'].strip()
