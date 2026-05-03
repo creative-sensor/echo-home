@@ -7,11 +7,8 @@
 
 - [datum/2026/WIP/APLE-6.md](datum/2026/WIP/APLE-6.md)   ```# geminide : communication bus```
 - [datum/2026/WIP/APLE-8.md](datum/2026/WIP/APLE-8.md)   ```# macos: ntfs-3g```
-- [datum/2026/WIP/ARTE-19.md](datum/2026/WIP/ARTE-19.md)   ```# rust : cargo```
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
-- [datum/2026/WIP/CORTA-18.md](datum/2026/WIP/CORTA-18.md)   ```# tool-calling : bash```
-- [datum/2026/WIP/LEAF-30.md](datum/2026/WIP/LEAF-30.md)   ```# Jupyter :```
-- [datum/2026/WIP/MDOS-32.md](datum/2026/WIP/MDOS-32.md)   ```# openssh-server : opterator function```
+- [datum/2026/WIP/LEAF-30.md](datum/2026/WIP/LEAF-30.md)   ```# Jupyter :```
 
 ### 2 ON HOLD
 
@@ -24,8 +21,6 @@
 ### 3 TO DO
 
 - [datum/2026/TODO/APLE-12.md](datum/2026/TODO/APLE-12.md)   ```# geminide : thunderbolt ip link```
-- [datum/2026/TODO/APLE-13.md](datum/2026/TODO/APLE-13.md)   ```# aider-desk : agentic sillicon```
-- [datum/2026/TODO/ARTE-16.md](datum/2026/TODO/ARTE-16.md)   ```# nmap : geti```
 - [datum/2026/TODO/ASML-2.md](datum/2026/TODO/ASML-2.md)   ```# MLOps : high-level [6]```
 - [datum/2026/TODO/ASML-3.md](datum/2026/TODO/ASML-3.md)   ```# Agentic : Workflows```
 - [datum/2026/TODO/ASML-4.md](datum/2026/TODO/ASML-4.md)   ```# Foldable : DNS```
@@ -47,15 +42,19 @@
 
 - [datum/2026/DONE/APLE-10.md](datum/2026/DONE/APLE-10.md)   ```# AttentionFlash : UMA```
 - [datum/2026/DONE/APLE-11.md](datum/2026/DONE/APLE-11.md)   ```# llama.cpp : metal build```
+- [datum/2026/DONE/APLE-13.md](datum/2026/DONE/APLE-13.md)   ```# aider-desk : agentic sillicon```
 - [datum/2026/DONE/APLE-9.md](datum/2026/DONE/APLE-9.md)   ```# macmon : monitor```
 - [datum/2026/DONE/ARTE-14.md](datum/2026/DONE/ARTE-14.md)   ```# python : wheel modules```
 - [datum/2026/DONE/ARTE-15.md](datum/2026/DONE/ARTE-15.md)   ```# nodejs : standalone```
+- [datum/2026/DONE/ARTE-16.md](datum/2026/DONE/ARTE-16.md)   ```# nmap : geti```
 - [datum/2026/DONE/ARTE-17.md](datum/2026/DONE/ARTE-17.md)   ```# llvm : rustc```
+- [datum/2026/DONE/ARTE-19.md](datum/2026/DONE/ARTE-19.md)   ```# rust : cargo```
 - [datum/2026/DONE/CORTA-10.md](datum/2026/DONE/CORTA-10.md)   ```# gml : profile override by host```
 - [datum/2026/DONE/CORTA-11.md](datum/2026/DONE/CORTA-11.md)   ```# gml8 : custom params```
 - [datum/2026/DONE/CORTA-12.md](datum/2026/DONE/CORTA-12.md)   ```# llama.cpp : specific version```
 - [datum/2026/DONE/CORTA-14.md](datum/2026/DONE/CORTA-14.md)   ```# aider.ai : agentic framework```
 - [datum/2026/DONE/CORTA-15.md](datum/2026/DONE/CORTA-15.md)   ```# llama.cpp : server mode```
+- [datum/2026/DONE/CORTA-18.md](datum/2026/DONE/CORTA-18.md)   ```# tool-calling : bash```
 - [datum/2026/DONE/CORTA-3.md](datum/2026/DONE/CORTA-3.md)   ```# lmstudio : cli```
 - [datum/2026/DONE/CORTA-6.md](datum/2026/DONE/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
 - [datum/2026/DONE/CORTA-7.md](datum/2026/DONE/CORTA-7.md)   ```# gmlama```
@@ -76,6 +75,7 @@
 - [datum/2026/DONE/MDOS-29.md](datum/2026/DONE/MDOS-29.md)   ```# uv : package manager```
 - [datum/2026/DONE/MDOS-30.md](datum/2026/DONE/MDOS-30.md)   ```# node : fix path```
 - [datum/2026/DONE/MDOS-31.md](datum/2026/DONE/MDOS-31.md)   ```# python: standalone```
+- [datum/2026/DONE/MDOS-32.md](datum/2026/DONE/MDOS-32.md)   ```# openssh-server : opterator function```
 - [datum/2026/DONE/SPEC-3.md](datum/2026/DONE/SPEC-3.md)   ```# Foldable : system ```
 - [datum/2026/DONE/SPEC-4.md](datum/2026/DONE/SPEC-4.md)   ```# objectory : re-define```
 - [datum/2026/DONE/SPEC-5.md](datum/2026/DONE/SPEC-5.md)   ```# yson : re-define```

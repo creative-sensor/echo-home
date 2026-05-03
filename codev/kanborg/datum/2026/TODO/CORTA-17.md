@@ -8,6 +8,7 @@
 
 ### 2 NOTES
 
+- bash: lm-shell
 
 ### 3 TEST/VERIFICATION
 
