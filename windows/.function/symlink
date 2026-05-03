@@ -6,3 +6,4 @@ ln -sf $GITROOT/codev/yson/.function/start.py  $LOCAL_BIN/yson
 ln -sf $GITROOT/windows/.vim/.function/gvim-artillery  $LOCAL_BIN/gvim-artillery
 ln -sf $GITROOT/codev/awk/.function/kev  $LOCAL_BIN/kev
 ln -sf $GITROOT/workstation/lmstudio/aider/.function/start  $LOCAL_BIN/aiderx
+ln -sf $GITROOT/codev/python/lm-shell/.function/start  $LOCAL_BIN/lmsh

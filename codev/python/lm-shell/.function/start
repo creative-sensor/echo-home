@@ -1,0 +1,81 @@
+#!/usr/bin/env python
+import sys
+import requests
+import subprocess
+import argparse
+
+def get_command_from_llm(prompt, server_url):
+    """
+    Sends the prompt to the llama.cpp server and expects a shell command in return.
+    """
+    system_prompt = (
+        "You are a shell command generator. "
+        "The user will provide a natural language request. "
+        "You must respond ONLY with the single shell command that fulfills the request. "
+        "Do not include explanations, markdown code blocks, or any other text. "
+        "Just the command."
+    )
+
+    payload = {
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": prompt}
+        ],
+        "temperature": 0.0  # Keep it deterministic
+    }
+
+    try:
+        response = requests.post(f"{server_url}/chat/completions", json=payload)
+        response.raise_for_status()
+        result = response.json()
+        command = result['choices'][0]['message']['content'].strip()
+        
+        # Clean up potential markdown formatting if the LLM ignores instructions
+        if command.startswith("```"):
+            lines = command.splitlines()
+            if len(lines) > 2:
+                # Remove first line (```bash or ```) and last line (```)
+                command = "\n".join(lines[1:-1]).strip()
+            else:
+                command = command.replace("```", "").strip()
+        
+        return command
+    except Exception as e:
+        print(f"Error communicating with LLM server: {e}")
+        sys.exit(1)
+
+def execute_command(command):
+    """
+    Executes the command in the local shell after user confirmation.
+    """
+    if not command:
+        print("No command received.")
+        return
+
+    print(f"\n[PROPOSED COMMAND]: {command}")
+    confirm = input("Execute this command? (y/N): ").lower()
+
+    if confirm == 'y':
+        try:
+            # shell=True is used to allow pipes, redirects, etc.
+            result = subprocess.run(command, shell=True, check=True)
+            print(f"\nCommand exited with code {result.returncode}")
+        except subprocess.CalledProcessError as e:
+            print(f"\nCommand failed with error: {e}")
+        except Exception as e:
+            print(f"\nAn unexpected error occurred: {e}")
+    else:
+        print("Execution cancelled.")
+
+def main():
+    parser = argparse.ArgumentParser(description="Submit prompt to llama.cpp and execute the resulting command.")
+    parser.add_argument("prompt", type=str, help="The natural language request for the LLM.")
+    parser.add_argument("--url", type=str, default="http://localhost:8080/v1", help="The base URL of the llama.cpp server (default: http://localhost:8080/v1)")
+
+    args = parser.parse_args()
+
+    command = get_command_from_llm(args.prompt, args.url)
+    execute_command(command)
+
+if __name__ == "__main__":
+    main()
