@@ -4,6 +4,7 @@ import os
 import requests
 import subprocess
 import argparse
+import json
 
 def get_command_from_llm(prompt, server_url):
     """
@@ -59,51 +60,78 @@ def run_command(command):
     except Exception as e:
         return -1, "", str(e)
 
-def execute_command(command, prompt):
+def execute_command(command, prompt, url, interactive=True):
     """
-    Executes the command in the local shell after user confirmation.
-    If the command fails, retries by getting a new command from the LLM.
+    Executes the command in the local shell.
+    If interactive=True, asks the user for confirmation and retries once on failure.
+    If interactive=False, retries once automatically without user prompts.
     """
     if not command:
         print("No command received.")
         return
 
-    print(f"\n[PROPOSED COMMAND]: {command}")
-    confirm = input("Execute this command? (y/N): ").lower()
+    if interactive:
+        print(f"\n[PROPOSED COMMAND]: {command}")
+        confirm = input("Execute this command? (y/N): ").lower()
 
-    if confirm == 'y':
-        rc, out, err = run_command(command)
-        if rc == 0:
-            print(out)
-        else:
-            print(f"Command failed with exit code {rc}.")
-            print(f"Error output: {err}")
-            print("Getting a new command from the LLM...")
-            new_command = get_command_from_llm(prompt, args.url)
-            print(f"\n[NEW PROPOSED COMMAND]: {new_command}")
-            confirm2 = input("Execute this new command? (y/N): ").lower()
-            if confirm2 == 'y':
-                rc2, out2, err2 = run_command(new_command)
-                if rc2 == 0:
-                    print(out2)
-                else:
-                    print(f"New command also failed with exit code {rc2}.")
-                    print(f"Error output: {err2}")
-                    sys.exit(rc2)
+        if confirm == 'y':
+            rc, out, err = run_command(command)
+            if rc == 0:
+                print(out)
             else:
-                print("Execution cancelled.")
+                print(f"Command failed with exit code {rc}.")
+                print(f"Error output: {err}")
+                print("Getting a new command from the LLM...")
+                new_command = get_command_from_llm(prompt, url)
+                print(f"\n[NEW PROPOSED COMMAND]: {new_command}")
+                confirm2 = input("Execute this new command? (y/N): ").lower()
+                if confirm2 == 'y':
+                    rc2, out2, err2 = run_command(new_command)
+                    if rc2 == 0:
+                        print(out2)
+                    else:
+                        print(f"New command also failed with exit code {rc2}.")
+                        print(f"Error output: {err2}")
+                        sys.exit(rc2)
+                else:
+                    print("Execution cancelled.")
+        else:
+            print("Execution cancelled.")
     else:
-        print("Execution cancelled.")
+        # Non-interactive mode: retry once on failure
+        for attempt in range(2):
+            rc, out, err = run_command(command)
+            if rc == 0:
+                print(out)
+                return
+            if attempt == 0:
+                print("Command failed, retrying once...")
+                new_command = get_command_from_llm(prompt, url)
+                command = new_command
+            else:
+                break
+        # If we get here, both attempts failed
+        print(f"Command failed after retries. Exit code {rc}.")
+        print(f"Error output: {err}")
 
 def main():
     parser = argparse.ArgumentParser(description="Submit prompt to llama.cpp and execute the resulting command.")
     parser.add_argument("prompt", type=str, help="The natural language request for the LLM.")
     parser.add_argument("--url", type=str, default="http://localhost:8080/v1", help="The base URL of the llama.cpp server (default: http://localhost:8080/v1)")
+    parser.add_argument("--json", action='store_true', help="Generate JSON output instead of interactive execution")
 
     args = parser.parse_args()
 
     command = get_command_from_llm(args.prompt, args.url)
-    execute_command(command, args.prompt)
+
+    if args.json:
+        # Non-interactive mode with automatic retry
+        final_command, output = execute_command(command, args.prompt, args.url, interactive=False)
+        result = {"command": final_command, "execution_output": output}
+        print(json.dumps(result))
+    else:
+        # Interactive mode (original behavior)
+        execute_command(command, args.prompt, args.url, interactive=True)
 
 if __name__ == "__main__":
     main()
