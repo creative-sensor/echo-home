@@ -63,8 +63,9 @@ def run_command(command):
 def execute_command(command, prompt, url, interactive=True):
     """
     Executes the command in the local shell.
-    If interactive=True, asks the user for confirmation and retries once on failure.
-    If interactive=False, retries once automatically without user prompts.
+    If interactive=True, asks the user for confirmation and runs the command once.
+    If the command fails, it does NOT retry by getting a new command from the LLM.
+    If interactive=False, runs the command once without user interaction.
     """
     if not command:
         print("No command received.")
@@ -81,38 +82,18 @@ def execute_command(command, prompt, url, interactive=True):
             else:
                 print(f"Command failed with exit code {rc}.")
                 print(f"Error output: {err}")
-                print("Getting a new command from the LLM...")
-                new_command = get_command_from_llm(prompt, url)
-                print(f"\n[NEW PROPOSED COMMAND]: {new_command}")
-                confirm2 = input("Execute this new command? (y/N): ").lower()
-                if confirm2 == 'y':
-                    rc2, out2, err2 = run_command(new_command)
-                    if rc2 == 0:
-                        print(out2)
-                    else:
-                        print(f"New command also failed with exit code {rc2}.")
-                        print(f"Error output: {err2}")
-                        sys.exit(rc2)
-                else:
-                    print("Execution cancelled.")
+                # Do not attempt to get a new command; exit with error
+                sys.exit(rc)
         else:
             print("Execution cancelled.")
     else:
-        # Non-interactive mode: retry once on failure
-        for attempt in range(2):
-            rc, out, err = run_command(command)
-            if rc == 0:
-                print(out)
-                return
-            if attempt == 0:
-                print("Command failed, retrying once...")
-                new_command = get_command_from_llm(prompt, url)
-                command = new_command
-            else:
-                break
-        # If we get here, both attempts failed
-        print(f"Command failed after retries. Exit code {rc}.")
-        print(f"Error output: {err}")
+        # Non-interactive mode: run the command once
+        rc, out, err = run_command(command)
+        if rc != 0:
+            print(f"Command failed with exit code {rc}.")
+            print(f"Error output: {err}")
+            sys.exit(rc)
+        print(out)
 
 def main():
     parser = argparse.ArgumentParser(description="Submit prompt to llama.cpp and execute the resulting command.")
@@ -125,9 +106,16 @@ def main():
     command = get_command_from_llm(args.prompt, args.url)
 
     if args.json:
-        # Non-interactive mode with automatic retry
-        final_command, output = execute_command(command, args.prompt, args.url, interactive=False)
-        result = {"command": final_command, "execution_output": output}
+        # Non-interactive mode: run command once, capture output, then output JSON
+        rc, out, err = run_command(command)
+        result = {
+            "command": command,
+            "execution_output": {
+                "stdout": out,
+                "stderr": err,
+                "returncode": rc
+            }
+        }
         print(json.dumps(result))
     else:
         # Interactive mode (original behavior)
