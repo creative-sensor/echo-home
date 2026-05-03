@@ -48,9 +48,21 @@ def get_command_from_llm(prompt, server_url):
         print(f"Error communicating with LLM server: {e}")
         sys.exit(1)
 
-def execute_command(command):
+def run_command(command):
+    """
+    Executes the command in the local shell and captures output.
+    Returns (returncode, stdout, stderr).
+    """
+    try:
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+        return result.returncode, result.stdout, result.stderr
+    except Exception as e:
+        return -1, "", str(e)
+
+def execute_command(command, prompt):
     """
     Executes the command in the local shell after user confirmation.
+    If the command fails, retries by getting a new command from the LLM.
     """
     if not command:
         print("No command received.")
@@ -60,14 +72,26 @@ def execute_command(command):
     confirm = input("Execute this command? (y/N): ").lower()
 
     if confirm == 'y':
-        try:
-            # shell=True is used to allow pipes, redirects, etc.
-            result = subprocess.run(command, shell=True, check=True)
-            print(f"\nCommand exited with code {result.returncode}")
-        except subprocess.CalledProcessError as e:
-            print(f"\nCommand failed with error: {e}")
-        except Exception as e:
-            print(f"\nAn unexpected error occurred: {e}")
+        rc, out, err = run_command(command)
+        if rc == 0:
+            print(out)
+        else:
+            print(f"Command failed with exit code {rc}.")
+            print(f"Error output: {err}")
+            print("Getting a new command from the LLM...")
+            new_command = get_command_from_llm(prompt, args.url)
+            print(f"\n[NEW PROPOSED COMMAND]: {new_command}")
+            confirm2 = input("Execute this new command? (y/N): ").lower()
+            if confirm2 == 'y':
+                rc2, out2, err2 = run_command(new_command)
+                if rc2 == 0:
+                    print(out2)
+                else:
+                    print(f"New command also failed with exit code {rc2}.")
+                    print(f"Error output: {err2}")
+                    sys.exit(rc2)
+            else:
+                print("Execution cancelled.")
     else:
         print("Execution cancelled.")
 
@@ -79,7 +103,7 @@ def main():
     args = parser.parse_args()
 
     command = get_command_from_llm(args.prompt, args.url)
-    execute_command(command)
+    execute_command(command, args.prompt)
 
 if __name__ == "__main__":
     main()
