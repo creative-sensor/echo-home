@@ -1,4 +1,7 @@
 #!/bin/bash -x 
+
+source context_overrider
+
 NAME=${1:-all}
 ARTIFACT_DIR=./artefacts
 ARTIFACT_YSON=.properd/artefacts.yaml

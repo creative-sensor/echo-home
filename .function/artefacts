@@ -1,4 +1,6 @@
 
+source context_overrider
+
 ARTEFACT_DIR=artefacts
 CHECKSUM=.properd/artefact.sha256sum
 

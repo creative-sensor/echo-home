@@ -1,0 +1,9 @@
+TOP_name=$(basename $0)
+if test -x .function/$TOP_name ; then
+    TOP_path=$(which $TOP_name)
+    context_path=$(readlink -f .function/$TOP_name)
+    if [[ "$TOP_path" != "$context_path" ]]; then
+       echo "context overriding: $(pwd) / .function/$TOP_name"
+       exec $context_path $@
+    fi
+fi
