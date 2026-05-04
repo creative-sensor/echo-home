@@ -1,0 +1,4 @@
+rm -rf $LOCAL_BIN/terminal
+unzip $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.zip -d $LOCAL_BIN/
+mv $LOCAL_BIN/terminal-${ARTIFACT_VERSION}.* $LOCAL_BIN/terminal
+cp .terminal.settings.json "$LOCALAPPDATA/Microsoft/Windows Terminal/settings.json"

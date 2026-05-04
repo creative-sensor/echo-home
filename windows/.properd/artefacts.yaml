@@ -10,7 +10,7 @@ rust: [ 1.95.0 , "https://static.rust-lang.org/dist/rust-1.95.0-x86_64-pc-window
 kubectl: [ 1.32.0 , "https://dl.k8s.io/release/v1.32.0/bin/windows/amd64/kubectl.exe" ]
 rclone: [ 1.69.1 , "https://downloads.rclone.org/v1.69.1/rclone-v1.69.1-windows-amd64.zip", {"suffix":"zip"}]
 node: [ 22.14.0 , "https://nodejs.org/dist/v22.14.0/node-v22.14.0-win-x64.zip" , {"suffix":"zip"}]
-windowsTerminal: [ 1.22 , "https://github.com/microsoft/terminal/releases/download/v1.22.10352.0/Microsoft.WindowsTerminal_1.22.10352.0_x64.zip", {"suffix":"zip"}]
+windowsTerminal: [ 1.24 , "https://github.com/microsoft/terminal/releases/download/v1.24.10921.0/Microsoft.WindowsTerminal_1.24.10921.0_x64.zip", {"suffix":"zip"}]
 openLens: [ 6.5.2 , "https://github.com/MuhammedKalkan/OpenLens/releases/download/v6.5.2-366/OpenLens.6.5.2-366.msi" , {"suffix":"msi"}]
 minikube: [ 1.36.0 , "https://github.com/kubernetes/minikube/releases/download/v1.36.0/minikube-windows-amd64.exe"]
 vscodium: [ 1.112.01907 , "https://github.com/VSCodium/vscodium/releases/download/1.112.01907/VSCodium-x64-updates-disabled-1.112.01907.msi" , {"suffix":"msi"}]
