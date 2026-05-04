@@ -1,6 +1,5 @@
 #!/bin/bash -x 
-
-source context_overrider
+source $(dirname $0)/context_overrider
 
 NAME=${1:-all}
 ARTIFACT_DIR=./artefacts

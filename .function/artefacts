@@ -1,5 +1,4 @@
-
-source context_overrider
+source $(dirname $0)/context_overrider
 
 ARTEFACT_DIR=artefacts
 CHECKSUM=.properd/artefact.sha256sum
