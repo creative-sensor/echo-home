@@ -1,0 +1,39 @@
+" Function to extract data from the current line in the table and invoke port-remote
+function! PortRemoteFromTable()
+    " Get the current line
+    let current_line = getline('.')
+    
+    " Simple parsing of the Markdown table row. 
+    " This assumes the row starts and ends with '|' and columns are separated by '|'.
+    " We strip leading/trailing whitespace and the outer '|' characters.
+    let parts = split(current_line, '\|')
+    
+    " Filter out empty parts resulting from splitting and trim whitespace
+    let cleaned_parts = []
+    for part in parts
+        let trimmed_part = substitute(part, '^\s*\|\s*$', '', 'g')
+        if trimmed_part != ''
+            call add(cleaned_parts, trim(trimmed_part))
+        endif
+    endfor
+    
+    " The table structure is: | SSH_HOST | S | IP | D | STATUS |
+    " We expect 5 meaningful columns if the header is skipped.
+    if len(cleaned_parts) >= 5
+        " Assuming the order is: SSH_HOST, S, IP, D, STATUS
+        let ssh_host = cleaned_parts[1]
+        let s_val = cleaned_parts[2]
+        let ip_val = cleaned_parts[3]
+        let d_val = cleaned_parts[4]
+        let status_val = cleaned_parts[5]
+        
+        " Call the port-remote function with extracted arguments
+        " NOTE: You must ensure 'port-remote' function is defined elsewhere in your configuration.
+        call port_remote(ssh_host, s_val, ip_val, d_val, status_val)
+    else
+        echo "Error: Could not parse table row data correctly."
+    endif
+endfunction
+
+" Map 'ptrm' to invoke the function
+nnoremap <leader>ptrm :call PortRemoteFromTable()<CR>
