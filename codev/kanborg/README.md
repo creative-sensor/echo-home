@@ -108,6 +108,7 @@
 - [datum/2026/BACKLOG/CORTA-0.md](datum/2026/BACKLOG/CORTA-0.md)   ```# Cortana : Chief```
 - [datum/2026/BACKLOG/CORTA-19.md](datum/2026/BACKLOG/CORTA-19.md)   ```# tool-calling : web browser```
 - [datum/2026/BACKLOG/CORTA-20.md](datum/2026/BACKLOG/CORTA-20.md)   ```# ISSUE :```
+- [datum/2026/BACKLOG/CORTA-22.md](datum/2026/BACKLOG/CORTA-22.md)   ```# gemma4 : nvfp4```
 - [datum/2026/BACKLOG/CTNR-0.md](datum/2026/BACKLOG/CTNR-0.md)   ```# public : encrypted```
 - [datum/2026/BACKLOG/DBMS-0.md](datum/2026/BACKLOG/DBMS-0.md)   ```# Database : Meta System```
 - [datum/2026/BACKLOG/DBMS-1.md](datum/2026/BACKLOG/DBMS-1.md)   ```# Vector : Search```
