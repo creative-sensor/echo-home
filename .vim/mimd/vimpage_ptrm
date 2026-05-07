@@ -37,3 +37,16 @@ endfunction
 
 " Map 'ptrm' to invoke the function
 nnoremap <leader>ptrm :call PortRemoteFromTable()<CR>
+
+" Function to load MIMD view, opening ptrm.md first
+function! VimPage_mimd()
+    " Open ptrm.md in a new vertical split to show the UI
+    vsplit | e | source .vim/pages/ptrm.md
+    
+    " In the other split, list the mini modules
+    execute 'split | enew | r!cd ~/echo-home/.vim/mimd; find . -type f'
+    execute "0put ='### Mini Modules KM[mimds]'"
+    execute "1put ='--------'"
+    execute "$put ='' | $put ='--------'"
+    execute 'set ft=markdown'
+endfunction
