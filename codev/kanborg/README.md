@@ -148,5 +148,6 @@
 - [datum/2026/BACKLOG/TSQA-0.md](datum/2026/BACKLOG/TSQA-0.md)   ```# TEST : QUALITY```
 - [datum/2026/BACKLOG/VIM-0.md](datum/2026/BACKLOG/VIM-0.md)   ```# VIM : Bram Moolenaar ```
 - [datum/2026/BACKLOG/VIM-27.md](datum/2026/BACKLOG/VIM-27.md)   ```# GML : talk```
+- [datum/2026/BACKLOG/VIM-28.md](datum/2026/BACKLOG/VIM-28.md)   ```# vimpage : port-remote management```
 - [datum/2026/BACKLOG/VIM-3.md](datum/2026/BACKLOG/VIM-3.md)   ```# monitor : TUI dashboard```
 - [datum/2026/BACKLOG/WGI-0.md](datum/2026/BACKLOG/WGI-0.md)   ```# Web Graphic: Interface```
