@@ -1,0 +1,9 @@
+#!/bin/bash
+echo "VLVM Operator Assistant"
+echo "------------------------"
+echo "Available functions:"
+echo "  install - Download and setup a new model"
+echo "  manage  - List, delete, or update models"
+echo "  run     - Start an inference session"
+echo ""
+echo "Usage: .function/<function_name>"

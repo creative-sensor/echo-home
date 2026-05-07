@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Load variables
+source "$(dirname "$0")/../.properd/VARSET"
+
+echo "Accessing model management system..."
+echo "Current Runtime: $DEFAULT_RUNTIME"
+echo "-----------------------------------"
+
+if [ -z "$1" ]; then
+    echo "Usage: .function/manage [list|remove|status]"
+    exit 0
+fi
+
+case "$1" in
+    list)
+        echo "Listing installed models:"
+        $DEFAULT_RUNTIME list
+        ;;
+    remove)
+        if [ -z "$2" ]; then
+            echo "Error: Please specify a model name to remove."
+            exit 1
+        fi
+        echo "Removing model: $2..."
+        $DEFAULT_RUNTIME rm "$2"
+        ;;
+    status)
+        echo "Checking storage path: $MODEL_STORAGE_PATH"
+        if [ -d "$MODEL_STORAGE_PATH" ]; then
+            du -sh "$MODEL_STORAGE_PATH"
+        else
+            echo "Storage path does not exist."
+        fi
+        ;;
+    *)
+        echo "Invalid option. Use: list, remove <name>, or status."
+        ;;
+esac

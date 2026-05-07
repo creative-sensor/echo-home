@@ -1,0 +1,2 @@
+MODEL_STORAGE_PATH="/path/to/models"
+DEFAULT_RUNTIME="ollama"

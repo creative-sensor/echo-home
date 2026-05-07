@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Load variables
+source "$(dirname "$0")/../.properd/VARSET"
+
+echo "Initializing model installation..."
+
+if [ -z "$1" ]; then
+    echo "Error: No model name provided."
+    echo "Usage: .function/install <model_name>"
+    exit 1
+fi
+
+MODEL_NAME=$1
+
+echo "Checking for $DEFAULT_RUNTIME..."
+if ! command -v $DEFAULT_RUNTIME &> /dev/null; then
+    echo "Error: $DEFAULT_RUNTIME is not installed. Please install it first."
+    exit 1
+fi
+
+echo "Pulling model: $MODEL_NAME..."
+$DEFAULT_RUNTIME pull "$MODEL_NAME"
+
+if [ $? -eq 0 ]; then
+    echo "Successfully installed $MODEL_NAME."
+else
+    echo "Failed to install $MODEL_NAME."
+    exit 1
+fi

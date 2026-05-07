@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Load variables
+source "$(dirname "$0")/../.properd/VARSET"
+
+echo "Launching LLM runtime..."
+echo "-----------------------------------"
+
+if [ -z "$1" ]; then
+    echo "Error: No model name provided."
+    echo "Usage: .function/run <model_name>"
+    exit 1
+fi
+
+MODEL_NAME=$1
+
+echo "Starting $MODEL_NAME using $DEFAULT_RUNTIME..."
+
+# Check if model exists in the list first
+if ! $DEFAULT_RUNTIME list | grep -q "$MODEL_NAME"; then
+    echo "Error: Model '$MODEL_NAME' not found. Please run '.function/install $MODEL_NAME' first."
+    exit 1
+fi
+
+# Execute the run command
+$DEFAULT_RUNTIME run "$MODEL_NAME"

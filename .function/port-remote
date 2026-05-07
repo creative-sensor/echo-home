@@ -1,0 +1,9 @@
+#!/bin/bash  
+source $(dirname $0)/context_overrider
+
+SSH_HOST=$1
+PFWD_S=${2:-"8080"}
+PFWD_IP=${3:-"127.0.0.1"}
+PFWD_D=${4:-"$PFWD_S"}
+PORT_FORWARD=$PFWD_S:$PFWD_IP:$PFWD_D
+ssh -L $PORT_FORWARD  $SSH_HOST
