@@ -16,7 +16,7 @@ function! PortRemoteFromTable()
     " We expect 4 meaningful values (SSH_HOST, S, IP, D)
     if len(parts) >= 4
         " Execute the port-remote shell script
-        execute '! port-remote ' . output 
+        execute '! port-remote ' . output . ' &'
     else
         echo "Error: Could not parse table row data correctly using awk. Output received: " . output
     endif
