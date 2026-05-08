@@ -33,11 +33,11 @@ endfunction
 " Function to check port status using curl and display indicator
 function! CheckPortStatusFromTable()
     " Get the current line
-    let current_line = getline('.')
+    let l:current_line = getline('.')
     
     " Execute awk using the external script file to parse the Markdown table row.
     " The script reads from stdin, which is piped from the current line.
-    let awk_command = 'echo -e "' . current_line . '" | awk -f ~/echo-home/awk_script.awk'
+    let awk_command = 'echo -e "' . l:current_line . '" | awk -f ~/echo-home/awk_script.awk'
     
     " Execute awk directly on the line
     let output = system(awk_command)
@@ -48,26 +48,15 @@ function! CheckPortStatusFromTable()
     if len(parts) >= 4
         " Assuming the order is: SSH_HOST, S, IP, D
         let ssh_host = parts[0]
-        let s_val = parts[1] " This is the port we need to check
+        let l:s_val = parts[1] " This is the port we need to check
         let ip_val = parts[2]
         let d_val = parts[3]
         
-        " Check status using curl localhost:<port>
-        " We use -s (silent), -o /dev/null (discard body), and -w "%{http_code}" to get only the HTTP status code.
-        let curl_check_cmd = 'curl -s -o /dev/null -w "%{http_code}" http://localhost:' . s_val
-        let status_output = system(curl_check_cmd)
-        
-        " Check if the output indicates a successful connection (HTTP status code 2xx or 3xx)
-        let is_up = match(status_output, '^[23][0-9]{2}$')
-        
-        let status_icon = is_up ? '✅' : '❌'
-        
-        " Append status icon to the current line
-        let new_line = current_line . ' ' . status_icon
-        
-        " Replace the current line content with the new line
-        execute "normal! gdw" "
-        execute "normal! i" . new_line . "<Esc>"
+        let curl_check_cmd = 'curl -v -I http://localhost:'.  l:s_val  .' 2>&1  | grep -o -m 1 Connected'
+        let l:status_output = system(curl_check_cmd)
+        let l:connected = match(l:status_output, 'Connected')
+        let l:status_icon = l:connected ? '❌' : '✅'
+        execute "normal! A" . l:status_icon
     else
         echo "Error: Could not parse table row data correctly using awk. Output received: " . output
     endif
@@ -78,7 +67,6 @@ nnoremap ptrm :call VimPage_ptrm()<CR>
 nnoremap ptrmo :call PortRemoteFromTable()<CR>
 nnoremap ptrmc :call CheckPortStatusFromTable()<CR>
 
-" Function to load MIMD view, opening ptrm.md first
 function! VimPage_ptrm()
     tabnew | e | source .vim/pages/ptrm.md
 endfunction
