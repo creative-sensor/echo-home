@@ -5,24 +5,26 @@ function! PortRemoteFromTable()
     
     " Execute awk using the external script file to parse the Markdown table row.
     " The script reads from stdin, which is piped from the current line.
-    let awk_command = 'echo -e "' . current_line . '" | awk -f awk_script.awk'
+    let awk_command = 'echo -e "' . current_line . '" | awk -f ~/echo-home/awk_script.awk'
     
     " Execute awk directly on the line
     let output = system(awk_command)
     
     " Split the output string into parts based on spaces
     let parts = split(output, ' ')
-    
+    echo parts 
     " We expect 4 meaningful values (SSH_HOST, S, IP, D)
-    if len(parts) >= 4
+    if len(parts) >= 3
         " Assuming the order is: SSH_HOST, S, IP, D
-        let ssh_host = parts[1]
-        let s_val = parts[2]
-        let ip_val = parts[3]
-        let d_val = parts[4]
-        
-        " Execute the port-remote shell script using Neovim job control
-        lua vim.fn.jobstart('port-remote', {ssh_host, s_val, ip_val, d_val}, {})
+
+        let ssh_host = parts[0]
+        let s_val = parts[1]
+        let ip_val = parts[2]
+        let d_val = parts[3]
+        "let l:cmd = ['port-remote' ,'192.168.0.12', '8081', '127.0.0.1', '8081']
+        let l:cmd = ['port-remote' , ssh_host, s_val, ip_val, d_val]
+        let l:opts = {}
+        call jobstart(l:cmd, l:opts)
     else
         echo "Error: Could not parse table row data correctly using awk. Output received: " . output
     endif
