@@ -62,8 +62,8 @@ function! CheckPortStatusFromTable()
         
         let status_icon = is_up ? '✅' : '❌'
         
-        " Reconstruct the line with the status icon appended
-        let new_line = parts[0] . ' ' . parts[1] . ' ' . parts[2] . ' ' . parts[3] . ' ' . status_icon
+        " Append status icon to the current line
+        let new_line = current_line . ' ' . status_icon
         
         " Replace the current line content with the new line
         execute "normal! gdw" "
