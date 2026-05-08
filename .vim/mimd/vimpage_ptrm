@@ -25,6 +25,14 @@ function! PortRemoteFromTable()
         let l:cmd = ['port-remote' , ssh_host, s_val, ip_val, d_val]
         let l:opts = {}
         call jobstart(l:cmd, l:opts)
+
+        sleep 3
+        let curl_check_cmd = 'curl -v -I http://localhost:'.  s_val  .' 2>&1  | grep -o -m 1 Connected'
+        let l:status_output = system(curl_check_cmd)
+        let l:connected = match(l:status_output, 'Connected')
+        let l:status_icon = l:connected ? '❌' : '✅'
+        execute "normal! A" . l:status_icon
+
     else
         echo "Error: Could not parse table row data correctly using awk. Output received: " . output
     endif
@@ -67,6 +75,16 @@ nnoremap ptrm :call VimPage_ptrm()<CR>
 nnoremap ptrmo :call PortRemoteFromTable()<CR>
 nnoremap ptrmc :call CheckPortStatusFromTable()<CR>
 
+
+
 function! VimPage_ptrm()
-    tabnew | e | source .vim/pages/ptrm.md
+    " Construct the paths
+    let l:host_file = expand('~/echo-home/.vim/pages/' . g:hostname . '.ptrm.md')
+    let l:default_file = expand('~/echo-home/.vim/pages/ptrm.md')
+
+    " Determine which file to use
+    if filereadable(l:host_file)
+        let l:default_file = l:host_file
+    endif
+    exec 'tabnew '.l:default_file
 endfunction
