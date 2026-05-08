@@ -5,7 +5,7 @@ function! PortRemoteFromTable()
     
     " Execute awk using the external script file to parse the Markdown table row.
     " The script reads from stdin, which is piped from the current line.
-    let awk_command = 'echo -e "' . current_line . '" | awk -f ~/echo-home/awk_script.awk'
+    let awk_command = 'echo -e "' . current_line . '" | awk -f ~/echo-home/.vim/mimd/ptrm/args.awk'
     
     " Execute awk directly on the line
     let output = system(awk_command)
@@ -37,7 +37,7 @@ function! CheckPortStatusFromTable()
     
     " Execute awk using the external script file to parse the Markdown table row.
     " The script reads from stdin, which is piped from the current line.
-    let awk_command = 'echo -e "' . l:current_line . '" | awk -f ~/echo-home/awk_script.awk'
+    let awk_command = 'echo -e "' . current_line . '" | awk -f ~/echo-home/.vim/mimd/ptrm/args.awk'
     
     " Execute awk directly on the line
     let output = system(awk_command)
