@@ -27,9 +27,8 @@ function! PortRemoteFromTable()
         let d_val = cleaned_parts[4]
         let status_val = cleaned_parts[5]
         
-        " Call the port-remote function with extracted arguments
-        " NOTE: You must ensure 'port-remote' function is defined elsewhere in your configuration.
-        call port_remote(ssh_host, s_val, ip_val, d_val, status_val)
+        " Execute the port-remote shell script
+        execute '! .function/port-remote ' . ssh_host . ' ' . s_val . ' ' . ip_val . ' ' . d_val
     else
         echo "Error: Could not parse table row data correctly."
     endif
