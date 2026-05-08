@@ -5,6 +5,7 @@
 
 ### 1 SOLUTION
 
+https://github.com/creative-sensor/echo-home/commit/6eaf27cba27c66082ca58b8e81a76875874dc147
 
 ### 2 NOTES
 
