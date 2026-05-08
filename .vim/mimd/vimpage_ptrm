@@ -28,7 +28,7 @@ function! PortRemoteFromTable()
         let d_val = parts[4]
         
         " Execute the port-remote shell script
-        execute '! .function/port-remote ' . ssh_host . ' ' . s_val . ' ' . ip_val . ' ' . d_val
+        execute '! port-remote ' . ssh_host . ' ' . s_val . ' ' . ip_val . ' ' . d_val
     else
         echo "Error: Could not parse table row data correctly using awk."
     endif
