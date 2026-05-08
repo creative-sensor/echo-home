@@ -34,3 +34,6 @@ go: [ 1.24.4 , "https://go.dev/dl/go1.24.4.windows-amd64.msi", {"suffix":"msi"} 
 lmstudio: [ 0.3.25  , "https://installers.lmstudio.ai/win32/x64/0.3.25-2/LM-Studio-0.3.25-2-x64.exe" ]
 uv: [ 0.10.8 , "https://github.com/astral-sh/uv/releases/download/0.10.8/uv-x86_64-pc-windows-msvc.zip", {"suffix":"zip"} ]
 aider-desk: [ 0.61.1 , "https://github.com/hotovo/aider-desk/releases/download/v0.61.1/aider-desk-0.61.1-setup.exe" , {"suffix":"exe"} ]
+ntop: [ 0.3.21 , "https://github.com/gsass1/NTop/releases/download/v0.3.21/NTop.exe" , {"suffix":"exe"} ]
+htop: [ 0.1.7 , "https://github.com/faratech/htop-win/releases/download/v0.1.7/htop-win-amd64.exe" , {"suffix":"exe"} ]
+
