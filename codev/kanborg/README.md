@@ -21,6 +21,7 @@
 ### 3 TO DO
 
 - [datum/2026/TODO/APLE-12.md](datum/2026/TODO/APLE-12.md)   ```# geminide : thunderbolt ip link```
+- [datum/2026/TODO/ARTE-20.md](datum/2026/TODO/ARTE-20.md)   ```# uv : package```
 - [datum/2026/TODO/ASML-2.md](datum/2026/TODO/ASML-2.md)   ```# MLOps : high-level [6]```
 - [datum/2026/TODO/ASML-3.md](datum/2026/TODO/ASML-3.md)   ```# Agentic : Workflows```
 - [datum/2026/TODO/ASML-4.md](datum/2026/TODO/ASML-4.md)   ```# Foldable : DNS```
