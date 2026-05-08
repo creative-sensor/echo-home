@@ -30,10 +30,53 @@ function! PortRemoteFromTable()
     endif
 endfunction
 
+" Function to check port status using curl and display indicator
+function! CheckPortStatusFromTable()
+    " Get the current line
+    let current_line = getline('.')
+    
+    " Execute awk using the external script file to parse the Markdown table row.
+    " The script reads from stdin, which is piped from the current line.
+    let awk_command = 'echo -e "' . current_line . '" | awk -f ~/echo-home/awk_script.awk'
+    
+    " Execute awk directly on the line
+    let output = system(awk_command)
+    
+    " Split the output string into parts based on spaces
+    let parts = split(output, ' ')
+    
+    if len(parts) >= 4
+        " Assuming the order is: SSH_HOST, S, IP, D
+        let ssh_host = parts[0]
+        let s_val = parts[1] " This is the port we need to check
+        let ip_val = parts[2]
+        let d_val = parts[3]
+        
+        " Check status using curl localhost:<port>
+        " We use -s (silent), -o /dev/null (discard body), and -w "%{http_code}" to get only the HTTP status code.
+        let curl_check_cmd = 'curl -s -o /dev/null -w "%{http_code}" http://localhost:' . s_val
+        let status_output = system(curl_check_cmd)
+        
+        " Check if the output indicates a successful connection (HTTP status code 2xx or 3xx)
+        let is_up = match(status_output, '^[23][0-9]{2}$')
+        
+        let status_icon = is_up ? '✅' : '❌'
+        
+        " Reconstruct the line with the status icon appended
+        let new_line = parts[0] . ' ' . parts[1] . ' ' . parts[2] . ' ' . parts[3] . ' ' . status_icon
+        
+        " Replace the current line content with the new line
+        execute "normal! gdw" "
+        execute "normal! i" . new_line . "<Esc>"
+    else
+        echo "Error: Could not parse table row data correctly using awk. Output received: " . output
+    endif
+endfunction
+
 " Map 'ptrm' to invoke the function
 nnoremap ptrm :call VimPage_ptrm()<CR>
 nnoremap ptrmo :call PortRemoteFromTable()<CR>
-nnoremap ptrmc :call PortRemoteFromTable()<CR>
+nnoremap ptrmc :call CheckPortStatusFromTable()<CR>
 
 " Function to load MIMD view, opening ptrm.md first
 function! VimPage_ptrm()
