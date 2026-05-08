@@ -14,7 +14,7 @@ function! PortRemoteFromTable()
     let parts = split(output, ' ')
     echo parts 
     " We expect 4 meaningful values (SSH_HOST, S, IP, D)
-    if len(parts) >= 3
+    if len(parts) >= 4
         " Assuming the order is: SSH_HOST, S, IP, D
 
         let ssh_host = parts[0]
@@ -31,17 +31,11 @@ function! PortRemoteFromTable()
 endfunction
 
 " Map 'ptrm' to invoke the function
-nnoremap <leader>ptrm :call PortRemoteFromTable()<CR>
+nnoremap ptrm :call VimPage_ptrm()<CR>
+nnoremap ptrmo :call PortRemoteFromTable()<CR>
+nnoremap ptrmc :call PortRemoteFromTable()<CR>
 
 " Function to load MIMD view, opening ptrm.md first
-function! VimPage_mimd()
-    " Open ptrm.md in a new vertical split to show the UI
-    vsplit | e | source .vim/pages/ptrm.md
-    
-    " In the other split, list the mini modules
-    execute 'split | enew | r!cd ~/echo-home/.vim/mimd; find . -type f'
-    execute "0put ='### Mini Modules KM[mimds]'"
-    execute "1put ='--------'"
-    execute "$put ='' | $put ='--------'"
-    execute 'set ft=markdown'
+function! VimPage_ptrm()
+    tabnew | e | source .vim/pages/ptrm.md
 endfunction
