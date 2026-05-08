@@ -3,13 +3,12 @@ function! PortRemoteFromTable()
     " Get the current line
     let current_line = getline('.')
     
-    " Use awk to parse the Markdown table row, splitting by '|' and trimming whitespace from relevant fields.
-    " The expected fields are: SSH_HOST ($2), S ($3), IP ($4), D ($5).
-    " We use gsub to trim leading/trailing whitespace from fields 2 through 5.
-    let awk_script = 'BEGIN { FS="|"; OFS=" " } { gsub(/^ *| *$/, "", $2); gsub(/^ *| *$/, "", $3); gsub(/^ *| *$/, "", $4); gsub(/^ *| *$/, "", $5); print $2, $3, $4, $5 }'
+    " Execute awk using the external script file to parse the Markdown table row.
+    " The script reads from stdin, which is piped from the current line.
+    let awk_command = 'echo -e "' . current_line . '" | awk -f awk_script.awk'
     
-    " Execute awk directly on the line, passing the script via -v
-    let output = system('echo -e "' . current_line . '" | awk -F"|" -v script="' . awk_script . '" "{print script}"')
+    " Execute awk directly on the line
+    let output = system(awk_command)
     
     " Split the output string into parts based on spaces
     let parts = split(output, ' ')
@@ -25,7 +24,7 @@ function! PortRemoteFromTable()
         " Execute the port-remote shell script
         execute '! port-remote ' . ssh_host . ' ' . s_val . ' ' . ip_val . ' ' . d_val
     else
-        echo "Error: Could not parse table row data correctly using awk."
+        echo "Error: Could not parse table row data correctly using awk. Output received: " . output
     endif
 endfunction
 
