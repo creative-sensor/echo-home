@@ -24,6 +24,7 @@
 - [datum/2026/TODO/ACLS-2.md](datum/2026/TODO/ACLS-2.md)   ```# Haproxy : API access control```
 - [datum/2026/TODO/ADOBE-1.md](datum/2026/TODO/ADOBE-1.md)   ```# colorhunt.co : preset download```
 - [datum/2026/TODO/APLE-12.md](datum/2026/TODO/APLE-12.md)   ```# geminide : thunderbolt ip link```
+- [datum/2026/TODO/APLE-14.md](datum/2026/TODO/APLE-14.md)   ```# envsubst : binary build```
 - [datum/2026/TODO/ARTE-18.md](datum/2026/TODO/ARTE-18.md)   ```# minikube : images```
 - [datum/2026/TODO/ARTE-20.md](datum/2026/TODO/ARTE-20.md)   ```# uv : package```
 - [datum/2026/TODO/ARTE-7.md](datum/2026/TODO/ARTE-7.md)   ```# WSL : distro image```
