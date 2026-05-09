@@ -1,4 +1,4 @@
-# SPEC : Define new spec
+# vimpage : markdown as UI
 --------------------------------
 ### 0 DESCRIPTION
 
