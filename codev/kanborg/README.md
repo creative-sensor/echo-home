@@ -27,9 +27,11 @@
 - [datum/2026/TODO/ARTE-18.md](datum/2026/TODO/ARTE-18.md)   ```# minikube : images```
 - [datum/2026/TODO/ARTE-20.md](datum/2026/TODO/ARTE-20.md)   ```# uv : package```
 - [datum/2026/TODO/ARTE-7.md](datum/2026/TODO/ARTE-7.md)   ```# WSL : distro image```
+- [datum/2026/TODO/ASML-1.md](datum/2026/TODO/ASML-1.md)   ```# # SSO : Single Sign-On```
 - [datum/2026/TODO/ASML-2.md](datum/2026/TODO/ASML-2.md)   ```# MLOps : high-level [6]```
 - [datum/2026/TODO/ASML-3.md](datum/2026/TODO/ASML-3.md)   ```# Agentic : Workflows```
 - [datum/2026/TODO/ASML-4.md](datum/2026/TODO/ASML-4.md)   ```# Foldable : DNS```
+- [datum/2026/TODO/ASML-5.md](datum/2026/TODO/ASML-5.md)   ```# ptrm : short-range service discovery```
 - [datum/2026/TODO/CMW-2.md](datum/2026/TODO/CMW-2.md)   ```# commonwealth : vault function```
 - [datum/2026/TODO/CORTA-13.md](datum/2026/TODO/CORTA-13.md)   ```# tinygrad : pytorch distribute```
 - [datum/2026/TODO/CORTA-17.md](datum/2026/TODO/CORTA-17.md)   ```# tool : calling```
@@ -129,7 +131,6 @@
 - [datum/2026/BACKLOG/APLE-0.md](datum/2026/BACKLOG/APLE-0.md)   ```# Apple : bit```
 - [datum/2026/BACKLOG/ARTE-0.md](datum/2026/BACKLOG/ARTE-0.md)   ```# Artefacts: The Art of Civilization```
 - [datum/2026/BACKLOG/ASML-0.md](datum/2026/BACKLOG/ASML-0.md)   ```# Assembly : Mission```
-- [datum/2026/BACKLOG/ASML-1.md](datum/2026/BACKLOG/ASML-1.md)   ```# # SSO : Single Sign-On```
 - [datum/2026/BACKLOG/CMW-0.md](datum/2026/BACKLOG/CMW-0.md)   ```# Common : Wealth```
 - [datum/2026/BACKLOG/CORTA-0.md](datum/2026/BACKLOG/CORTA-0.md)   ```# Cortana : Chief```
 - [datum/2026/BACKLOG/CTNR-0.md](datum/2026/BACKLOG/CTNR-0.md)   ```# public : encrypted```
