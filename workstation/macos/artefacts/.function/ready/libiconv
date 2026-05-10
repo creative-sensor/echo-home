@@ -1,0 +1,9 @@
+mkdir -p $LOCAL_BIN/libiconv
+tar -xf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.tar.gz
+
+
+cd $name-${ARTIFACT_VERSION}
+./configure --prefix=$LOCAL_BIN/libiconv \
+            --enable-static \
+            --enable-shared
+make install

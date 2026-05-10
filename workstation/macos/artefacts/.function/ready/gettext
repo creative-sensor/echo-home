@@ -1,0 +1,17 @@
+rm -rf $LOCAL_BIN/gettext
+mkdir -p $LOCAL_BIN/gettext
+
+tar -xf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.tar.xz
+
+cd gettext-${ARTIFACT_VERSION}
+
+LIBICONV_DIR=$LOCAL_BIN/libiconv
+
+./configure --prefix=$LOCAL_BIN/gettext \
+            --with-libiconv-prefix=$LIBICONV_DIR \
+            --disable-dependency-tracking \
+            CPPFLAGS="-I$LIBICONV_DIR/include" \
+            LDFLAGS="-L$LIBICONV_DIR/lib"
+
+
+make install

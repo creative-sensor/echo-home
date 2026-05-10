@@ -4,6 +4,7 @@ path_dict=("mcfunction" "$HOME/echo-home/workstation/macos/.function"
            "yson" $HOME/echo-home/codev/yson/.function
            "cmake" $LOCAL_BIN/cmake/bin
            "gnupg" $HOME/.local/bin/gnupg/bin:$HOME/.local/bin/pinentry/bin
+           "gettext" $LOCAL_BIN/gettext/bin
            "gmlama" $LOCAL_BIN/gmlama)
 
 
