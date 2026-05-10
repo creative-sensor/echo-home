@@ -239,7 +239,7 @@ endfunction
 
 "-------- [FUNCTIONS] -------- MIMD
 function! VimPage_mimd()
-    exec 'vsplit | enew | r!cd ~/echo-home/.vim/mimd; find . -type f'
+    exec 'vsplit | enew | r!cd ~/echo-home/.vim/mimd; find . -maxdepth 1 -type f'
     exec "0put ='### Mini Modules KM[mimds]'"
     exec "1put ='--------'"
     exec "$put ='' | $put ='--------'"
@@ -369,3 +369,4 @@ endif
 exec 'source '.g:MIMD_BASE."/gme_xpro"
 exec 'source '.g:MIMD_BASE."/gme_xpro._macos"
 exec 'source '.g:MIMD_BASE."/gml8"
+exec 'source '.g:MIMD_BASE."/vimpage_ptrm"

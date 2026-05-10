@@ -1,0 +1,12 @@
+#lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["","-fa on"]
+#lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q6_K.gguf: ["","-fa on"]
+#lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q8_0.gguf: ["Fast32/Deep32/33tps","-fa on"]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q8_0.gguf: ["Agent8081/QUICK_SEARCH","-ctk q8_0 -ctv q8_0 -fa on --port 8081"]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q8_0.gguf: ["E/Agent/aider-chat","-c 65536 -ctk q8_0 -ctv q8_0 -fa on"]
+lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf: ["Agent3000/aider-chat","-c 32768 -ctk q4_0 -ctv q4_0 -fa on --port 3000"]
+#lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf: ["Fast4/27tps","-fa on"]
+#lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q6_K.gguf: ["Fast4/21tps","-fa on"]
+#lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q8_0.gguf: ["Fast4/Deep8/18tps","--rope-scaling none -ctk q4_0 -ctv q4_0 -fa on"]
+#lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q8_0.gguf: ["Fast4/Deep8/18tps","--rope-scaling none -ctk q8_0 -ctv q8_0 -fa on"]
+#lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q8_0.gguf: ["Fast4/Deep8/18tps"," -ctk q8_0 -ctv q8_0 -fa on"]
+
