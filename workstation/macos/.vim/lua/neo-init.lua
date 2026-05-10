@@ -20,7 +20,7 @@ require('tabby').setup(
     line = function(line)
       return {
         {
-          { '  ', hl = theme.head },
+          { ' M ', hl = theme.head },
           line.sep('', theme.head, theme.fill),
         },
         line.tabs().foreach(function(tab)
