@@ -67,6 +67,7 @@
 - [datum/2026/TODO/NJS-1.md](datum/2026/TODO/NJS-1.md)   ```# KANBORG : ELECTRON UI```
 - [datum/2026/TODO/VIM-26.md](datum/2026/TODO/VIM-26.md)   ```# LLM: text completion```
 - [datum/2026/TODO/VIM-27.md](datum/2026/TODO/VIM-27.md)   ```# GML : talk```
+- [datum/2026/TODO/VIM-29.md](datum/2026/TODO/VIM-29.md)   ```# markdown : table format```
 
 ### 4 DONE
 
