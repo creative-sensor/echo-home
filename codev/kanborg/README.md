@@ -39,6 +39,7 @@
 - [datum/2026/TODO/CORTA-20.md](datum/2026/TODO/CORTA-20.md)   ```# ISSUE :```
 - [datum/2026/TODO/CORTA-21.md](datum/2026/TODO/CORTA-21.md)   ```# vllm : library```
 - [datum/2026/TODO/CORTA-22.md](datum/2026/TODO/CORTA-22.md)   ```# gemma4 : nvfp4```
+- [datum/2026/TODO/CORTA-23.md](datum/2026/TODO/CORTA-23.md)   ```# MCP : first try```
 - [datum/2026/TODO/CORTA-4.md](datum/2026/TODO/CORTA-4.md)   ```# pytorch : start```
 - [datum/2026/TODO/CORTA-5.md](datum/2026/TODO/CORTA-5.md)   ```# tensorflow : start```
 - [datum/2026/TODO/DBMS-1.md](datum/2026/TODO/DBMS-1.md)   ```# Vector : Search```
@@ -48,10 +49,10 @@
 - [datum/2026/TODO/GGPU-4.md](datum/2026/TODO/GGPU-4.md)   ```# gpustack : distributed inference```
 - [datum/2026/TODO/GGPU-7.md](datum/2026/TODO/GGPU-7.md)   ```# ISSUE :```
 - [datum/2026/TODO/KBG-3.md](datum/2026/TODO/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
-- [datum/2026/TODO/KITE-2.md](datum/2026/TODO/KITE-2.md)   ```# Gitlab :```
 - [datum/2026/TODO/KITE-24.md](datum/2026/TODO/KITE-24.md)   ```# AttentionFlash: HF```
 - [datum/2026/TODO/KITE-27.md](datum/2026/TODO/KITE-27.md)   ```# langchain : agent development```
 - [datum/2026/TODO/KITE-29.md](datum/2026/TODO/KITE-29.md)   ```# openrouter.ai : remote llm```
+- [datum/2026/TODO/KITE-2.md](datum/2026/TODO/KITE-2.md)   ```# Gitlab :```
 - [datum/2026/TODO/KITE-31.md](datum/2026/TODO/KITE-31.md)   ```# kiro-cli : q```
 - [datum/2026/TODO/KITE-4.md](datum/2026/TODO/KITE-4.md)   ```# Facebook :```
 - [datum/2026/TODO/KITE-5.md](datum/2026/TODO/KITE-5.md)   ```# Sendgrid :```
