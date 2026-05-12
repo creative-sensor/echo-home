@@ -9,7 +9,6 @@ function ready (){
 	local PYTHON_VERSION=$(cat $ARTIFACT_YSON | yq -r ".${name}[1].python")
 	local IS_UV=$(cat $ARTIFACT_YSON | yq -r ".${name}[1].uv")
 
-  rm -rf $ARTIFACT_DIR/$name
   test -r $ARTIFACT_DIR/.function/ready/$name && source $ARTIFACT_DIR/.function/ready/$name && return
 
 	if [[ "$IS_UV" == "true" ]]; then
@@ -24,7 +23,7 @@ function ready (){
 		# Find whl files in the artifact directory for this package
 		# Note: artifacts are stored in $ARTIFACT_DIR/$name/ after extraction or download
 		# Based on geti, they are in $ARTIFACT_DIR/$name
-		find "$ARTIFACT_DIR/$name" -name "*.whl" | xargs pip install --target "$TARGET_DIR"
+		find "$ARTIFACT_DIR/$name" -name "*.whl" | xaargs pip install --target "$TARGET_DIR"
 	fi
 
   tar xf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION${OS}.tar.gz -C $ARTIFACT_DIR
