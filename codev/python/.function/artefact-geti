@@ -7,7 +7,7 @@ function install (){
     local name=$1
     local ARTIFACT_VERSION=$(cat $ARTIFACT_YSON | yq -r ".${name}[0]")
     local PYTHON_VERSION=$(cat $ARTIFACT_YSON | yq -r ".${name}[1].python")
-    local IS_PIP=$(cat $ARTIFACT_YSON | yq -r ".${name}[1].pip")
+    local IS_UV=$(cat $ARTIFACT_YSON | yq -r ".${name}[1].uv")
     export UV_TOOL_DIR="$ARTIFACT_DIR/$name/uv-tools"
     export UV_TOOL_BIN_DIR="$ARTIFACT_DIR/$name/bin"
     export UV_PYTHON_INSTALL_DIR="$ARTIFACT_DIR/$name/python"
@@ -18,15 +18,17 @@ function install (){
         PYTHON_VERSION=""
     fi
 
-    # Check if it's a pip package
-    if [[ "$IS_PIP" == "true" ]]; then
-        echo "Installing pip package..."
-        mkdir -p "$ARTIFACT_DIR/$name"
-        pip install --upgrade --target "$ARTIFACT_DIR/$name" $name==$ARTIFACT_VERSION
+    # Check if it's a uv package
+    if [[ "$IS_UV" == "true" ]]; then
+        echo "Installing via uv tool..."
+        uv tool install $PYTHON_VERSION $name@v$ARTIFACT_VERSION
         return
     fi
 
-    uv tool install $PYTHON_VERSION $name@v$ARTIFACT_VERSION
+    # Default to pip download
+    echo "Downloading pip package..."
+    mkdir -p "$ARTIFACT_DIR/$name"
+    pip download  --dest "$ARTIFACT_DIR/$name" $name==$ARTIFACT_VERSION
 }
 
 mkdir -p $ARTIFACT_DIR

@@ -21,8 +21,10 @@ function! PortRemoteFromTable()
         let s_val = parts[1]
         let ip_val = parts[2]
         let d_val = parts[3]
-        "let l:cmd = ['port-remote' ,'192.168.0.12', '8081', '127.0.0.1', '8081']
         let l:cmd = ['port-remote' , ssh_host, s_val, ip_val, d_val]
+        if $OS ==# 'Windows_NT'
+            let l:cmd = ['sh' , '~/echo-home/.function/port-remote' , ssh_host, s_val, ip_val, d_val]
+        endif
         let l:opts = {}
         call jobstart(l:cmd, l:opts)
 
