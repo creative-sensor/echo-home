@@ -28,7 +28,7 @@ function install (){
     # Default to pip download
     echo "Downloading pip package..."
     mkdir -p "$ARTIFACT_DIR/$name"
-    pip download --no-deps --dest "$ARTIFACT_DIR/$name" $name==$ARTIFACT_VERSION
+    pip download  --dest "$ARTIFACT_DIR/$name" $name==$ARTIFACT_VERSION
 }
 
 mkdir -p $ARTIFACT_DIR

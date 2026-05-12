@@ -11,8 +11,9 @@ function ready (){
   test -r $ARTIFACT_DIR/.function/ready/$name && source $ARTIFACT_DIR/.function/ready/$name && return
 
 	if [[ "$IS_UV" == "true" ]]; then
-		# For uv packages, we do nothing as per requirement
-		return
+     tar xf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION${OS}.tar.gz -C $ARTIFACT_DIR
+     ln -sf $(readlink -f $ARTIFACT_DIR/$name/bin/*) $LOCAL_BIN/$name
+		 return
 	fi
 
 	# Handle pip package
@@ -23,8 +24,6 @@ function ready (){
 	# Find whl files in the artifact directory for this package
 	find "$ARTIFACT_DIR/$name" -name "*.whl" | xargs pip install --target "$TARGET_DIR"
 
-  tar xf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION${OS}.tar.gz -C $ARTIFACT_DIR
-  ln -sf $(readlink -f $ARTIFACT_DIR/$name/bin/*) $LOCAL_BIN/$name
 
 }
 
