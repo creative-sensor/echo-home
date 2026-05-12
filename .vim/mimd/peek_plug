@@ -1,0 +1,4 @@
+
+Plug 'toppair/peek.nvim', { }
+
+lua require("peek_plug")
