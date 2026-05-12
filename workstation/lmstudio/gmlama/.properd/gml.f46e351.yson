@@ -1,0 +1,5 @@
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["9tps" , "-ctk q4_0 -ctv q4_0 -fa on"]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q8_0.gguf: ["7tps" , "-ctk q8_0 -ctv q8_0 -fa on"]
+lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf: ["5tps" , "-ctk q4_0 -ctv q4_0 -fa on"]
+LiquidAI/LFM2.5-VL-1.6B-GGUF/LFM2.5-VL-1.6B-F16.gguf: ["8tps" , ""]
+#standard
