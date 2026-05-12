@@ -5,12 +5,11 @@
 
 ### 1 WORK IN PROGRESS
 
-- [datum/2026/WIP/APLE-14.md](datum/2026/WIP/APLE-14.md)   ```# envsubst : binary build```
 - [datum/2026/WIP/APLE-6.md](datum/2026/WIP/APLE-6.md)   ```# geminide : communication bus```
 - [datum/2026/WIP/APLE-8.md](datum/2026/WIP/APLE-8.md)   ```# macos: ntfs-3g```
+- [datum/2026/WIP/ARTE-20.md](datum/2026/WIP/ARTE-20.md)   ```# uv : package```
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
-- [datum/2026/WIP/MDOS-28.md](datum/2026/WIP/MDOS-28.md)   ```# OpenSSH : Server```
-- [datum/2026/WIP/VIM-29.md](datum/2026/WIP/VIM-29.md)   ```# markdown : table format```
+- [datum/2026/WIP/MDOS-28.md](datum/2026/WIP/MDOS-28.md)   ```# OpenSSH : Server```
 
 ### 2 ON HOLD
 
@@ -27,7 +26,6 @@
 - [datum/2026/TODO/ADOBE-1.md](datum/2026/TODO/ADOBE-1.md)   ```# colorhunt.co : preset download```
 - [datum/2026/TODO/APLE-12.md](datum/2026/TODO/APLE-12.md)   ```# geminide : thunderbolt ip link```
 - [datum/2026/TODO/ARTE-18.md](datum/2026/TODO/ARTE-18.md)   ```# minikube : images```
-- [datum/2026/TODO/ARTE-20.md](datum/2026/TODO/ARTE-20.md)   ```# uv : package```
 - [datum/2026/TODO/ARTE-7.md](datum/2026/TODO/ARTE-7.md)   ```# WSL : distro image```
 - [datum/2026/TODO/ASML-1.md](datum/2026/TODO/ASML-1.md)   ```# # SSO : Single Sign-On```
 - [datum/2026/TODO/ASML-2.md](datum/2026/TODO/ASML-2.md)   ```# MLOps : high-level [6]```
@@ -76,6 +74,7 @@
 - [datum/2026/DONE/APLE-10.md](datum/2026/DONE/APLE-10.md)   ```# AttentionFlash : UMA```
 - [datum/2026/DONE/APLE-11.md](datum/2026/DONE/APLE-11.md)   ```# llama.cpp : metal build```
 - [datum/2026/DONE/APLE-13.md](datum/2026/DONE/APLE-13.md)   ```# aider-desk : agentic sillicon```
+- [datum/2026/DONE/APLE-14.md](datum/2026/DONE/APLE-14.md)   ```# envsubst : binary build```
 - [datum/2026/DONE/APLE-9.md](datum/2026/DONE/APLE-9.md)   ```# macmon : monitor```
 - [datum/2026/DONE/ARTE-14.md](datum/2026/DONE/ARTE-14.md)   ```# python : wheel modules```
 - [datum/2026/DONE/ARTE-15.md](datum/2026/DONE/ARTE-15.md)   ```# nodejs : standalone```
@@ -123,6 +122,7 @@
 - [datum/2026/DONE/VIM-24.md](datum/2026/DONE/VIM-24.md)   ```# ssh : attention flash```
 - [datum/2026/DONE/VIM-25.md](datum/2026/DONE/VIM-25.md)   ```# MIMD : module loading```
 - [datum/2026/DONE/VIM-28.md](datum/2026/DONE/VIM-28.md)   ```# vimpage : port-remote management```
+- [datum/2026/DONE/VIM-29.md](datum/2026/DONE/VIM-29.md)   ```# markdown : live preview```
 - [datum/2026/DONE/VIM-3.md](datum/2026/DONE/VIM-3.md)   ```# monitor : TUI dashboard```
 - [datum/2026/DONE/VIM-4.md](datum/2026/DONE/VIM-4.md)   ```# rc : container x-ray```
 

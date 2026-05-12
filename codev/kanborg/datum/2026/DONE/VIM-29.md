@@ -1,4 +1,4 @@
-# markdown : table format
+# markdown : live preview
 
 --------------------------------
 
