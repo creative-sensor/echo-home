@@ -25,10 +25,10 @@ function install (){
         return
     fi
 
-    # Default to pip
-    echo "Installing pip package..."
+    # Default to pip download
+    echo "Downloading pip package..."
     mkdir -p "$ARTIFACT_DIR/$name"
-    pip install --upgrade --target "$ARTIFACT_DIR/$name" $name==$ARTIFACT_VERSION
+    pip download --no-deps --dest "$ARTIFACT_DIR/$name" $name==$ARTIFACT_VERSION
 }
 
 mkdir -p $ARTIFACT_DIR
