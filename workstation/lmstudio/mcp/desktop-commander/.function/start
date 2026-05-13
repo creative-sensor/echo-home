@@ -9,4 +9,5 @@ source .properd/VARSET
 test -n "$VARSET_EXT" && source $VARSET_EXT
 
 # ---- |MAIN ----
-MSYS_NO_PATHCONV=1 uvx mcp-proxy --sse-port 9090 --allow-origin '*' -- docker run -i -v $HOME:/home/$(whoami) mcp/dekstop-commander
+#MSYS_NO_PATHCONV=1 uvx mcp-proxy --sse-port 9090 --allow-origin '*' -- docker run --shm-size=2gb -i -v $HOME/tmp:/home/$(whoami)  mcp/desktop-commander
+MSYS_NO_PATHCONV=1 uvx mcp-proxy --sse-port 9090 --allow-origin '*' -- docker start -i 3f96edb59bfe10b91c0537b1d75ea718ab19220e347bc41080bb3a1ad30cad01
