@@ -1,0 +1,5 @@
+
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["Agent/bash-cmd" , " -ctk q4_0 -ctv q4_0 -fa on -nkvo -sysf $HOME/echo-home/workstation/lmstudio/gmlama/prompt/system.bash-cmd"]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q8_0.gguf: ["Agent/bash-cmd" , " -ctk q8_0 -ctv q8_0 -fa on -nkvo -sysf $HOME/echo-home/workstation/lmstudio/gmlama/prompt/system.bash-cmd"]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q8_0.gguf: ["Agent/aider-chat" , " -ctk q8_0 -ctv q8_0 -fa on -nkvo "]
+
