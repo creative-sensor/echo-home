@@ -9,6 +9,8 @@
 - [datum/2026/WIP/APLE-8.md](datum/2026/WIP/APLE-8.md)   ```# macos: ntfs-3g```
 - [datum/2026/WIP/ARTE-20.md](datum/2026/WIP/ARTE-20.md)   ```# uv : package```
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
+- [datum/2026/WIP/CORTA-17.md](datum/2026/WIP/CORTA-17.md)   ```# tool : calling```
+- [datum/2026/WIP/CORTA-19.md](datum/2026/WIP/CORTA-19.md)   ```# tool-calling : playwright```
 - [datum/2026/WIP/MDOS-28.md](datum/2026/WIP/MDOS-28.md)   ```# OpenSSH : Server```
 
 ### 2 ON HOLD
@@ -34,8 +36,6 @@
 - [datum/2026/TODO/ASML-5.md](datum/2026/TODO/ASML-5.md)   ```# ptrm : short-range service discovery```
 - [datum/2026/TODO/CMW-2.md](datum/2026/TODO/CMW-2.md)   ```# commonwealth : vault function```
 - [datum/2026/TODO/CORTA-13.md](datum/2026/TODO/CORTA-13.md)   ```# tinygrad : pytorch distribute```
-- [datum/2026/TODO/CORTA-17.md](datum/2026/TODO/CORTA-17.md)   ```# tool : calling```
-- [datum/2026/TODO/CORTA-19.md](datum/2026/TODO/CORTA-19.md)   ```# tool-calling : web browser```
 - [datum/2026/TODO/CORTA-20.md](datum/2026/TODO/CORTA-20.md)   ```# ISSUE :```
 - [datum/2026/TODO/CORTA-21.md](datum/2026/TODO/CORTA-21.md)   ```# vllm : library```
 - [datum/2026/TODO/CORTA-22.md](datum/2026/TODO/CORTA-22.md)   ```# gemma4 : nvfp4```
