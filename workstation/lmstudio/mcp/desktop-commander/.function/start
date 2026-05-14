@@ -15,6 +15,7 @@ IMAGE_NAME="mcp/desktop-commander"
 
 touch .properd/$CONTAINER_NAME.id
 CONTAINER_ID=$(docker inspect -f '{{.Id}}' $CONTAINER_NAME)
+docker stop $CONTAINER_NAME
 if [[ "$CONTAINER_ID" != "$(<.properd/$CONTAINER_NAME.id)" ]] ; then
 #  MSYS_NO_PATHCONV=1 uvx mcp-proxy --transport streamablehttp --allow-origin '*' --port 10001 -- docker run -i --name $CONTAINER_NAME -v $HOME/tmp:/home/$(whoami) $IMAGE_NAME
   MSYS_NO_PATHCONV=1 uvx mcp-proxy --transport streamablehttp --allow-origin '*' --port 10001 -- docker run -i --name $CONTAINER_NAME -v $HOME/tmp:/home/$(whoami) $IMAGE_NAME
