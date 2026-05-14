@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#set -x
+set -x
 # ---- |EXT ----
 VARSET_EXT=$1
 # ---- |DEFAULT ----
@@ -9,5 +9,8 @@ source .properd/VARSET
 test -n "$VARSET_EXT" && source $VARSET_EXT
 
 # ---- |MAIN ----
-#MSYS_NO_PATHCONV=1 uvx mcp-proxy --sse-port 9090 --allow-origin '*' -- docker run --shm-size=2gb -i -v $HOME/tmp:/home/$(whoami)  mcp/desktop-commander
-MSYS_NO_PATHCONV=1 uvx mcp-proxy --sse-port 9090 --allow-origin '*' -- docker start -i 3f96edb59bfe10b91c0537b1d75ea718ab19220e347bc41080bb3a1ad30cad01
+
+#MSYS_NO_PATHCONV=1 uvx mcp-proxy --sse-port 9090 --allow-origin '*' -- docker run --rm -i -v $HOME/tmp:/home/$(whoami)  mcp/desktop-commander
+#MSYS_NO_PATHCONV=1 uvx mcp-proxy --transport streamablehttp --allow-origin '*' --port 10001 -- docker run  -i -v $HOME/tmp:/home/$(whoami)  mcp/desktop-commander
+
+MSYS_NO_PATHCONV=1 uvx mcp-proxy --transport streamablehttp --allow-origin '*' --port 10001 -- docker start -i 0cb5971447fc4aad1bda6a035e7791dbc8fb7db936a14858f34b06ca6e56e447
