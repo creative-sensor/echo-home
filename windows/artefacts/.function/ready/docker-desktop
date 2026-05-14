@@ -1,1 +1,1 @@
- "Docker Desktop Installer.exe" install --user
+cmd $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.exe install --user
