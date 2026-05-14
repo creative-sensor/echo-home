@@ -10,7 +10,22 @@ test -n "$VARSET_EXT" && source $VARSET_EXT
 
 # ---- |MAIN ----
 
-#MSYS_NO_PATHCONV=1 uvx mcp-proxy --sse-port 9090 --allow-origin '*' -- docker run --rm -i -v $HOME/tmp:/home/$(whoami)  mcp/desktop-commander
-#MSYS_NO_PATHCONV=1 uvx mcp-proxy --transport streamablehttp --allow-origin '*' --port 10001 -- docker run  -i -v $HOME/tmp:/home/$(whoami)  mcp/desktop-commander
+# 1. Run the container in detached mode to perform initial setup
+# We use -d so it runs in the background. 
+# We use --name to make it easy to reference.
+CONTAINER_NAME="desktop-commander-setup"
+IMAGE_NAME="mcp/desktop-commander"
 
-MSYS_NO_PATHCONV=1 uvx mcp-proxy --transport streamablehttp --allow-origin '*' --port 10001 -- docker start -i 0cb5971447fc4aad1bda6a035e7791dbc8fb7db936a14858f34b06ca6e56e447
+# Remove existing container if it exists to avoid name conflicts
+docker rm -f $CONTAINER_NAME >/dev/null 2>&1
+
+docker run -d --name $CONTAINER_NAME -v $HOME/tmp:/home/$(whoami) $IMAGE_NAME
+
+# 2. Wait for the setup to complete. 
+# Since we don't know exactly how long setup takes, we wait for the container 
+# to be "ready" or simply sleep. For this script, we will sleep for 15 seconds.
+# You can adjust this value.
+sleep 15
+
+# 3. Use mcp-proxy to attach to the container using its ID/Name
+MSYS_NO_PATHCONV=1 uvx mcp-proxy --transport streamablehttp --allow-origin '*' --port 10001 -- docker start -i $CONTAINER_NAME
