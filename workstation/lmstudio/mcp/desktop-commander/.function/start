@@ -13,11 +13,11 @@ test -n "$VARSET_EXT" && source $VARSET_EXT
 # 1. Run the container in detached mode to perform initial setup
 # We use -d so it runs in the background. 
 # We use --name to make it easy to reference.
-CONTAINER_NAME="desktop-commander-setup"
+CONTAINER_NAME="desktop-commander"
 IMAGE_NAME="mcp/desktop-commander"
 
 # Remove existing container if it exists to avoid name conflicts
-docker rm -f $CONTAINER_NAME >/dev/null 2>&1
+#docker rm -f $CONTAINER_NAME >/dev/null 2>&1
 
 docker run -d --name $CONTAINER_NAME -v $HOME/tmp:/home/$(whoami) $IMAGE_NAME
 
