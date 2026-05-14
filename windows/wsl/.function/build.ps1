@@ -1,4 +1,4 @@
-$DISTRO = "Ubuntu-20.04"
+$DISTRO = "Ubuntu-24.04"
 $WSL_VERSION = 2
 wsl --install -d $DISTRO
 wsl --set-default-version $WSL_VERSION
