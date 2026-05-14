@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -x
+# ---- |EXT ----
+VARSET_EXT=$1
+# ---- |DEFAULT ----
+
+# ---- |OVERRIDE ----
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+
+CONTAINER_NAME="desktop-commander"
+IMAGE_NAME="mcp/desktop-commander"
+
+touch .properd/$CONTAINER_NAME.id
+CONTAINER_ID=$(docker inspect -f '{{.Id}}' $CONTAINER_NAME)
+if [[ "$CONTAINER_ID" != "$(<.properd/$CONTAINER_NAME.id)" ]] ; then
+#  MSYS_NO_PATHCONV=1 uvx mcp-proxy --transport streamablehttp --allow-origin '*' --port 10001 -- docker run -i --name $CONTAINER_NAME -v $HOME/tmp:/home/$(whoami) $IMAGE_NAME
+  MSYS_NO_PATHCONV=1 uvx mcp-proxy --transport streamablehttp --allow-origin '*' --port 10001 -- docker run -i --name $CONTAINER_NAME -v $HOME/tmp:/home/$(whoami) $IMAGE_NAME
+  CONTAINER_ID=$(docker inspect -f '{{.Id}}' $CONTAINER_NAME)
+  echo $CONTAINER_ID > .properd/$CONTAINER_NAME.id
+fi
+
+# 3. Use mcp-proxy to attach to the container using its ID/Name
+MSYS_NO_PATHCONV=1 uvx mcp-proxy --transport streamablehttp --allow-origin '*' --port 10001 -- docker start -i $CONTAINER_ID
