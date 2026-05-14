@@ -9,7 +9,6 @@
 - [datum/2026/WIP/APLE-8.md](datum/2026/WIP/APLE-8.md)   ```# macos: ntfs-3g```
 - [datum/2026/WIP/ARTE-20.md](datum/2026/WIP/ARTE-20.md)   ```# uv : package```
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
-- [datum/2026/WIP/CORTA-17.md](datum/2026/WIP/CORTA-17.md)   ```# tool : calling```
 - [datum/2026/WIP/CORTA-19.md](datum/2026/WIP/CORTA-19.md)   ```# tool-calling : playwright```
 - [datum/2026/WIP/MDOS-28.md](datum/2026/WIP/MDOS-28.md)   ```# OpenSSH : Server```
 
@@ -86,6 +85,7 @@
 - [datum/2026/DONE/CORTA-12.md](datum/2026/DONE/CORTA-12.md)   ```# llama.cpp : specific version```
 - [datum/2026/DONE/CORTA-14.md](datum/2026/DONE/CORTA-14.md)   ```# aider.ai : agentic framework```
 - [datum/2026/DONE/CORTA-15.md](datum/2026/DONE/CORTA-15.md)   ```# llama.cpp : server mode```
+- [datum/2026/DONE/CORTA-17.md](datum/2026/DONE/CORTA-17.md)   ```# tool : calling```
 - [datum/2026/DONE/CORTA-18.md](datum/2026/DONE/CORTA-18.md)   ```# tool-calling : bash```
 - [datum/2026/DONE/CORTA-3.md](datum/2026/DONE/CORTA-3.md)   ```# lmstudio : cli```
 - [datum/2026/DONE/CORTA-6.md](datum/2026/DONE/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
