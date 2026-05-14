@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #set -x
 # ---- |EXT ----
-VARSET_EXT=$1
+AGENT_PORT=${1:-8080}
 # ---- |DEFAULT ----
 
 # ---- |OVERRIDE ----
@@ -9,9 +9,9 @@ test -r .properd/VARSET && source .properd/VARSET
 test -n "$VARSET_EXT" && source $VARSET_EXT
 
 # ---- |MAIN ----
-export OPENAI_API_BASE="http://localhost:8080/v1"
+export OPENAI_API_BASE="http://localhost:${AGENT_PORT}/v1"
 export OPENAI_API_KEY="localm"
-export AIDER_MODEL=openai/$(curl -s http:/localhost:8080/models | jq -r .models[0].name)
+export AIDER_MODEL=openai/$(curl -s http:/localhost:${AGENT_PORT}/models | jq -r .models[0].name)
 
 #aider --openai-api-base http://localhost:8080/v1 --openai-api-key localm --model $(curl http:/localhost:8080/models | jq .models[0].name)
 aider  --no-gitignore --no-show-model-warnings  --light-mode

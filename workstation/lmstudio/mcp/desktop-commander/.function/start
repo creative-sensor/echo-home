@@ -10,28 +10,17 @@ test -n "$VARSET_EXT" && source $VARSET_EXT
 
 # ---- |MAIN ----
 
-# 1. Run the container in detached mode to perform initial setup
-# We use -d so it runs in the background. 
-# We use --name to make it easy to reference.
 CONTAINER_NAME="desktop-commander"
 IMAGE_NAME="mcp/desktop-commander"
 
-## Check if the container already exists
-#if [ "$(docker ps -aq -f name=^/${CONTAINER_NAME}$)" ]; then
-#    echo "Container $CONTAINER_NAME already exists. Skipping setup."
-#else
-#    
-#    # 2. Wait for the setup to complete. 
-#    # Since we don't know exactly how long setup takes, we wait for the container 
-#    # to be "ready" or simply sleep. For this script, we will sleep for 15 seconds.
-#    # You can adjust this value.
-#    sleep 60
-#fi
-
-CONTAINER_ID=$(docker inspect -f '{{.Id}}' $CONTAINER_NAME > .properd/$CONTAINER_NAME.id)
-if 
-MSYS_NO_PATHCONV=1 uvx mcp-proxy --transport streamablehttp --allow-origin '*' --port 10001 -- docker run -i --name $CONTAINER_NAME -v $HOME/tmp:/home/$(whoami) $IMAGE_NAME
-docker inspect -f '{{.Id}}' $CONTAINER_NAME > .properd/$CONTAINER_NAME.id
+touch .properd/$CONTAINER_NAME.id
+CONTAINER_ID=$(docker inspect -f '{{.Id}}' $CONTAINER_NAME)
+if [[ "$CONTAINER_ID" != "$(<.properd/$CONTAINER_NAME.id)" ]] ; then
+#  MSYS_NO_PATHCONV=1 uvx mcp-proxy --transport streamablehttp --allow-origin '*' --port 10001 -- docker run -i --name $CONTAINER_NAME -v $HOME/tmp:/home/$(whoami) $IMAGE_NAME
+  MSYS_NO_PATHCONV=1 uvx mcp-proxy --transport streamablehttp --allow-origin '*' --port 10001 -- docker run -i --name $CONTAINER_NAME -v $HOME/tmp:/home/$(whoami) $IMAGE_NAME
+  CONTAINER_ID=$(docker inspect -f '{{.Id}}' $CONTAINER_NAME)
+  echo $CONTAINER_ID > .properd/$CONTAINER_NAME.id
+fi
 
 # 3. Use mcp-proxy to attach to the container using its ID/Name
-MSYS_NO_PATHCONV=1 uvx mcp-proxy --transport streamablehttp --allow-origin '*' --port 10001 -- docker start -i $CONTAINER_NAME
+MSYS_NO_PATHCONV=1 uvx mcp-proxy --transport streamablehttp --allow-origin '*' --port 10001 -- docker start -i $CONTAINER_ID
