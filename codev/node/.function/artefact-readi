@@ -16,10 +16,6 @@ function ready (){
     local TARGET_DIR="$TARGET_BASE/$name"
 
 
-    if [ -d "$TARGET_DIR" ]; then
-        echo "Package $name already present in $TARGET_DIR."
-        return
-    fi
 
     mkdir -p "$TARGET_DIR"
     # Find the .tgz file downloaded by npm pack
@@ -29,8 +25,7 @@ function ready (){
         echo "Extracting $FILE to $TARGET_DIR"
         tar -xzf "$FILE" -C "$TARGET_DIR" --strip-components=1
     else
-        echo "Error: No tarball found for $name in $ARTIFACT_DIR/$name"
-        exit 1
+        echo "Error: No tarball found for $name in $ARTIFACT_DIR/$name" >> .logs
     fi
 }
 
