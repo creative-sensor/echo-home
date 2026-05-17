@@ -33,7 +33,7 @@ mkdir -p $ARTIFACT_DIR
 if [[ "$NAME" =~ "all" ]] ; then
     LIST=$(cat $ARTIFACT_YSON | yq 'keys' | awk -F ' ' '{print $2}')
     for i in $LIST ; do
-        ready $i
+        ready $(echo $i | tr -d "\r")
     done
     exit
 fi

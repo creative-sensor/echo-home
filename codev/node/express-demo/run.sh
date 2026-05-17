@@ -2,11 +2,11 @@
 
 # Define the path to the root folder
 # We use the version that matches your current setup
-VERSION="18.20.4"
+VERSION="22.14.0"
 BASE_PATH="$LOCAL_BIN/node/$VERSION"
 
 # Point NODE_PATH to the node_modules folder inside it
-export NODE_PATH="$BASE_PATH/node_modules"
+export NODE_PATH="$BASE_PATH/"
 
 echo "Starting demo app..."
 echo "Target Node Version: $VERSION"
