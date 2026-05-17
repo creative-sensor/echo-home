@@ -10,9 +10,12 @@ if [ ! -d "$EXPRESS_PATH" ]; then
     exit 1
 fi
 
-# Set NODE_PATH to include the express directory so 'require(express)' works
-# We add the directory containing the package to NODE_PATH
-export NODE_PATH="$EXPRESS_PATH:$NODE_PATH"
+# Get the parent directory of the express folder.
+# NODE_PATH must point to the directory containing the 'express' folder.
+EXPRESS_PARENT_DIR=$(dirname "$EXPRESS_PATH")
+
+# Set NODE_PATH to include the parent directory so 'require(express)' works
+export NODE_PATH="$EXPRESS_PARENT_DIR:$NODE_PATH"
 
 echo "Starting demo app with NODE_PATH=$NODE_PATH"
 node index.js
