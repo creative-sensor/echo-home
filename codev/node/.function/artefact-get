@@ -5,7 +5,7 @@ ARTIFACT_YSON=.properd/artefacts.yaml
 
 function install (){
     local name=$1
-    local VERSION=$(cat $ARTIFACT_YSON | yq -r ".$${name}[0]")
+    local VERSION=$(cat $ARTIFACT_YSON | yq -r ".\"${name}\"[0]")
     
     mkdir -p "$ARTIFACT_DIR/$name"
     echo "Downloading npm package: $name@$VERSION"

@@ -12,16 +12,12 @@ TARGET_BASE="${LOCAL_BIN:-$PWD/bin}/node/$NODE_VERSION"
 
 function ready (){
     local name=$1
-    local VERSION=$(cat $ARTIFACT_YSON | yq -r ".$${name}[0]")
+    local VERSION=$(cat $ARTIFACT_YSON | yq -r ".\"${name}\"[0]")
     local TARGET_DIR="$TARGET_BASE/$name"
 
-    if [[ "$NAME" == "all" ]]; then
-        return
-    fi
 
     if [ -d "$TARGET_DIR" ]; then
         echo "Package $name already present in $TARGET_DIR."
-lan
         return
     fi
 
@@ -32,8 +28,6 @@ lan
     if [ -n "$FILE" ]; then
         echo "Extracting $FILE to $TARGET_DIR"
         tar -xzf "$FILE" -C "$TARGET_DIR" --strip-components=1
-        # Clean up the tarball from the artefacts directory
-        rm "$FILE"
     else
         echo "Error: No tarball found for $name in $ARTIFACT_DIR/$name"
         exit 1
