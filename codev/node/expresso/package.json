@@ -1,9 +1,12 @@
 {
-  "name": "express-demo",
+  "name": "expresso",
   "version": "1.0.0",
   "description": "A demo app using a specific express installation",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
   }
 }
