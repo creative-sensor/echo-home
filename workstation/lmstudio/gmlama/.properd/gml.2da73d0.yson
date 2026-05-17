@@ -1,0 +1,7 @@
+### km[gml8]
+- `gml8e`: editor
+- `gml8x`: cli interactive
+- `gml8w`: web interactive
+
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["Agent8901" , "-c 65536 -ctk q4_0 -ctv q4_0 -fa on --port 8901"]
+ggml-org/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf: ["Agent8083/aider-chat" , "-c 65536 -ctk q4_0 -ctv q4_0 -fa on --port 8083"]

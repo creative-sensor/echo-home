@@ -1,0 +1,52 @@
+#!/bin/bash -x 
+NAME=${1:-all}
+ARTIFACT_DIR=./artefacts
+ARTIFACT_YSON=.properd/artefacts.yaml
+
+# Get Node version (e.g., v20.10.0 -> 20.10.0)
+NODE_VERSION=$(node -v | sed 's/v//')
+# Define the target base directory
+# Assuming LOCAL_BIN is defined in a VARSET or environment
+# If not defined, we'll default to a local path relative to the project
+TARGET_BASE="${LOCAL_BIN:-$PWD/bin}/node/$NODE_VERSION"
+
+function ready (){
+    local name=$1
+    local VERSION=$(cat $ARTIFACT_YSON | yq -r ".\"${name}\"[0]")
+    local TARGET_DIR="$TARGET_BASE/$name"
+
+    # Handle scoped packages: target should be $TARGET_BASE/scope/package
+    if [[ "$name" == *"/"* ]]; then
+        local scope=$(echo "$name" | cut -d'/' -f1)
+        TARGET_DIR="$TARGET_BASE/$scope/$name"
+    fi
+
+    mkdir -p "$TARGET_DIR"
+    
+    # Find the .tgz file downloaded by npm pack
+    # We need to look in the specific scope folder if it's a scoped package
+    local SEARCH_DIR="$ARTIFACT_DIR"
+    if [[ "$name" == *"/"* ]]; then
+        local scope=$(echo "$name" | cut -d'/' -f1)
+        SEARCH_DIR="$ARTIFACT_DIR/$scope"
+    fi
+
+    FILE=$(find "$SEARCH_DIR/$name" -name "*.tgz" 2>/dev/null | head -n 1)
+    
+    if [ -n "$FILE" ]; then
+        echo "Extracting $FILE to $TARGET_DIR"
+        tar -xzf "$FILE" -C "$TARGET_DIR" --strip-components=1
+    else
+        echo "Error: No tarball found for $name in $SEARCH_DIR/$name" >> .logs
+    fi
+}
+
+mkdir -p $ARTIFACT_DIR
+if [[ "$NAME" =~ "all" ]] ; then
+    LIST=$(cat $ARTIFACT_YSON | yq 'keys' | awk -F ' ' '{print $2}')
+    for i in $LIST ; do
+        ready $(echo $i | tr -d "\r")
+    done
+    exit
+fi
+ready $NAME
