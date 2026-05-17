@@ -16,7 +16,7 @@ EXPRESS_PARENT_DIR=$(dirname "$EXPRESS_PATH")
 
 # Set NODE_PATH to include the parent directory so 'require(express)' works
 # Also include the node_modules inside the express folder to resolve its dependencies
-export NODE_PATH="$EXPRESS_PARENT_DIR:$EXPRESS_PATH/node_modules:$NODE_PATH"
+export NODE_PATH="$EXPRESS_PARENT_DIR"
 
 echo "Starting demo app with NODE_PATH=$NODE_PATH"
 node index.js
