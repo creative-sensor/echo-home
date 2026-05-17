@@ -1,0 +1,44 @@
+#!/bin/bash -x 
+NAME=${1:-all}
+ARTIFACT_DIR=./artefacts
+ARTIFACT_YSON=.properd/artefacts.yaml
+
+function ready (){
+    local name=$1
+    local VERSION=$(cat $ARTIFACT_YSON | yq -r ".$${name}[0]")
+    local TARGET_DIR="$ARTIFACT_DIR/$name"
+
+    if [[ "$NAME" == "all" ]]; then
+        # Logic for 'all' is handled by the loop below
+        return
+    fi
+
+    if [ -d "$TARGET_DIR" ]; then
+        echo "Package $name already present."
+        return
+    fi
+
+    mkdir -p "$TARGET_DIR"
+    # Find the .tgz file downloaded by npm pack
+    FILE=$(find "$TARGET_DIR" -name "*.tgz" | head -n 1)
+    
+    if [ -n "$FILE" ]; then
+        echo "Extracting $FILE"
+        tar -xzf "$FILE" -C "$TARGET_DIR" --strip-components=1
+        # Clean up the tarball after extraction
+        rm "$FILE"
+    else
+        echo "Error: No tarball found for $name"
+        exit 1
+    fi
+}
+
+mkdir -p $ARTIFACT_DIR
+if [[ "$NAME" =~ "all" ]] ; then
+    LIST=$(cat $ARTIFACT_YSON | yq 'keys' | awk -F ' ' '{print $2}')
+    for i in $LIST ; do
+        ready $i
+    done
+    exit
+fi
+ready $NAME
