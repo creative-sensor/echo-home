@@ -3,32 +3,39 @@ NAME=${1:-all}
 ARTIFACT_DIR=./artefacts
 ARTIFACT_YSON=.properd/artefacts.yaml
 
+# Get Node version (e.g., v20.10.0 -> 20.10.0)
+NODE_VERSION=$(node -v | sed 's/v//')
+# Define the target base directory
+# Assuming LOCAL_BIN is defined in a VARSET or environment
+# If not defined, we'll default to a local path relative to the project
+TARGET_BASE="${LOCAL_BIN:-$PWD/bin}/node/$NODE_VERSION"
+
 function ready (){
     local name=$1
     local VERSION=$(cat $ARTIFACT_YSON | yq -r ".$${name}[0]")
-    local TARGET_DIR="$ARTIFACT_DIR/$name"
+    local TARGET_DIR="$TARGET_BASE/$name"
 
     if [[ "$NAME" == "all" ]]; then
-        # Logic for 'all' is handled by the loop below
         return
     fi
 
     if [ -d "$TARGET_DIR" ]; then
-        echo "Package $name already present."
+        echo "Package $name already present in $TARGET_DIR."
+lan
         return
     fi
 
     mkdir -p "$TARGET_DIR"
     # Find the .tgz file downloaded by npm pack
-    FILE=$(find "$TARGET_DIR" -name "*.tgz" | head -n 1)
+    FILE=$(find "$ARTIFACT_DIR/$name" -name "*.tgz" | head -n 1)
     
     if [ -n "$FILE" ]; then
-        echo "Extracting $FILE"
+        echo "Extracting $FILE to $TARGET_DIR"
         tar -xzf "$FILE" -C "$TARGET_DIR" --strip-components=1
-        # Clean up the tarball after extraction
+        # Clean up the tarball from the artefacts directory
         rm "$FILE"
     else
-        echo "Error: No tarball found for $name"
+        echo "Error: No tarball found for $name in $ARTIFACT_DIR/$name"
         exit 1
     fi
 }
