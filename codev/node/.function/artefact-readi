@@ -15,17 +15,29 @@ function ready (){
     local VERSION=$(cat $ARTIFACT_YSON | yq -r ".\"${name}\"[0]")
     local TARGET_DIR="$TARGET_BASE/$name"
 
-
+    # Handle scoped packages: target should be $TARGET_BASE/scope/package
+    if [[ "$name" == *"/"* ]]; then
+        local scope=$(echo "$name" | cut -d'/' -f1)
+        TARGET_DIR="$TARGET_BASE/$scope/$name"
+    fi
 
     mkdir -p "$TARGET_DIR"
+    
     # Find the .tgz file downloaded by npm pack
-    FILE=$(find "$ARTIFACT_DIR/$name" -name "*.tgz" | head -n 1)
+    # We need to look in the specific scope folder if it's a scoped package
+    local SEARCH_DIR="$ARTIFACT_DIR"
+    if [[ "$name" == *"/"* ]]; then
+        local scope=$(echo "$name" | cut -d'/' -f1)
+        SEARCH_DIR="$ARTIFACT_DIR/$scope"
+    fi
+
+    FILE=$(find "$SEARCH_DIR/$name" -name "*.tgz" 2>/dev/null | head -n 1)
     
     if [ -n "$FILE" ]; then
         echo "Extracting $FILE to $TARGET_DIR"
         tar -xzf "$FILE" -C "$TARGET_DIR" --strip-components=1
     else
-        echo "Error: No tarball found for $name in $ARTIFACT_DIR/$name" >> .logs
+        echo "Error: No tarball found for $name in $SEARCH_DIR/$name" >> .logs
     fi
 }
 

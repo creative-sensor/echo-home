@@ -6,6 +6,17 @@ ARTIFACT_YSON=.properd/artefacts.yaml
 function install (){
     local name=$1
     local VERSION=$(cat $ARTIFACT_YSON | yq -r ".\"${name}\"[0]")
+    local TARGET_DIR="$ARTIFACT_DIR/$name"
+
+    # Handle scoped packages by creating the scope directory
+    if [[ "$name" == *"/"* ]]; then
+        local scope=$(echo "$name" | cut -d'/' -f1)
+        mkdir -p "$ARTIFACT_DIR/$scope"
+        TARGET_DIR="$ARTIFACT_DIR/$scope/$name"
+    fi
+
+    # Ensure the specific target directory exists
+    mkdir -p "$TARGET_DIR"
 
     npm pack "$name@$VERSION" --pack-destination "$ARTIFACT_DIR/"
 }
