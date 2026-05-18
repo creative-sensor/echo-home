@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+VARSET_EXT=$1
+# ---- |DEFAULT ----
+
+# ---- |OVERRIDE ----
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+
+uvx mcp-proxy --transport streamablehttp --allow-origin '*' --port 10002 -- npx @playwright/mcp@latest
+
