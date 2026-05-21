@@ -475,3 +475,6 @@ lua require("neo-init")
 "colorscheme solarized8_high
 "colorscheme solarized
 colorscheme gruvbox
+
+"-------- [MIMD] --------
+exec 'source '.g:MIMD_BASE."/vimpage_ptrm"
