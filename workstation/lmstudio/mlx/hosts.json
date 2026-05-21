@@ -1,0 +1,4 @@
+[
+  {"ssh": "localhost"},
+  {"ssh": "${GEMINIDE_RIGHT}"}
+]

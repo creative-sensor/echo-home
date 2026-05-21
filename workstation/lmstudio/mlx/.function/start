@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+MODEL=${1:-gpt-oss-20b-MXFP4-Q4}
+PORT=${2:-10322}
+# ---- |DEFAULT ----
+
+# ---- |OVERRIDE ----
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+mlx_lm.server --port $PORT --model "$HOME/.lmstudio/models/mlx-community/${MODEL}"

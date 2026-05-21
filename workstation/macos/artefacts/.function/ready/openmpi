@@ -1,0 +1,10 @@
+rm -rf $LOCAL_BIN/openmpi
+mkdir -p $LOCAL_BIN/openmpi
+
+tar -xf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.${ARTIFACT_SUFFIX}
+
+cd openmpi-${ARTIFACT_VERSION}
+
+./configure --prefix=$(readlink -f $LOCAL_BIN/openmpi/)
+make -j 4 all 2>&1 | tee make.out
+make install 2>&1 | tee install.out
