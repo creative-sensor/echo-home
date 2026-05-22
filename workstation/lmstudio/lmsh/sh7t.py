@@ -1,3 +1,4 @@
+import os
 import json
 import subprocess
 import re
@@ -5,6 +6,11 @@ import argparse
 from openai import OpenAI
 import requests
 from typing import Optional
+
+import subprocess
+import signal
+from typing import Dict
+
 
 parser = argparse.ArgumentParser(description="Connect to a local OpenAI API endpoint.")
 parser.add_argument(
@@ -101,27 +107,92 @@ OUTPUT SCHEMA:
 }
 """
 
-def execute_shell_command(command: str) -> dict:
-    """Executes a shell command and returns the stdout, stderr, and exit code."""
+
+
+def execute_shell_command(command: str) -> Dict:
+    """
+    Executes a shell command. Uses subprocess.Popen to allow manual 
+    management of the process and guarantee forceful termination 
+    (SIGKILL) if the timeout is reached.
+    """
     print(f"\n[SYSTEM] Executing: {command}")
+    
+    # Use the command list for Popen to avoid shell injection risk 
+    # (even though the original used shell=True, Popen is safer this way)
+    cmd_args = ["bash", "-c", command]
+    
+    proc = None
+    execbin = None
+    if os.environ.get('OS') == 'WINDOW_NT':
+        execbin = r"C:\Program Files\Git\bin\bash.exe"     
     try:
-        # WARNING: shell=True is dangerous. Run in an isolated environment.
-        result = subprocess.run(
-            command, 
-            shell=True, 
-            capture_output=True, 
-            text=True, 
-            timeout=30
+        # Start the process
+        proc = subprocess.Popen(
+            cmd_args, 
+            stdout=subprocess.PIPE, 
+            stderr=subprocess.PIPE, 
+            text=True,
+            executable=execbin
         )
-        return {
-            "exit_code": result.returncode,
-            "stdout": result.stdout.strip(),
-            "stderr": result.stderr.strip()
-        }
-    except subprocess.TimeoutExpired:
-        return {"exit_code": 124, "stdout": "", "stderr": "Command timed out."}
+        
+        try:
+            # Wait for the process, with a specified timeout
+            stdout_data, stderr_data = proc.communicate(timeout=30)
+            
+            # If communicate succeeds, the process finished normally
+            return {
+                "exit_code": proc.returncode,
+                "stdout": stdout_data.strip(),
+                "stderr": stderr_data.strip()
+            }
+
+        except subprocess.TimeoutExpired:
+            # --- THIS IS THE KEY CHANGE ---
+            # 1. The process is still running.
+            # 2. We explicitly send the SIGKILL signal (Signal 9).
+            print(f"[SYSTEM] Timeout reached (30s). Forcing termination (SIGKILL).")
+            proc.kill() 
+            
+            # Wait a moment for the OS to finalize the kill
+            proc.wait() 
+            
+            # Return the timeout status
+            return {"exit_code": 124, "stdout": "", "stderr": "Command timed out and was forcefully terminated (SIGKILL)."}
+
+    except FileNotFoundError:
+        return {"exit_code": 127, "stdout": "", "stderr": "Bash interpreter not found."}
     except Exception as e:
-        return {"exit_code": 1, "stdout": "", "stderr": str(e)}
+        # General error handling
+        return {"exit_code": 1, "stdout": "", "stderr": f"An unexpected error occurred: {str(e)}"}
+    finally:
+        # Ensure the process handle is cleaned up if it was started but failed before communicate()
+        if proc and proc.poll() is None:
+             proc.kill()
+
+
+
+
+#def execute_shell_command(command: str) -> dict:
+#    """Executes a shell command and returns the stdout, stderr, and exit code."""
+#    print(f"\n[SYSTEM] Executing: {command}")
+#    try:
+#        # WARNING: shell=True is dangerous. Run in an isolated environment.
+#        result = subprocess.run(
+#            command, 
+#            shell=True, 
+#            capture_output=True, 
+#            text=True, 
+#            timeout=30,
+#        )
+#        return {
+#            "exit_code": result.returncode,
+#            "stdout": result.stdout.strip(),
+#            "stderr": result.stderr.strip()
+#        }
+#    except subprocess.TimeoutExpired:
+#        return {"exit_code": 124, "stdout": "", "stderr": "Command timed out."}
+#    except Exception as e:
+#        return {"exit_code": 1, "stdout": "", "stderr": str(e)}
 
 def parse_llm_json(raw_text: str) -> dict:
     """Cleans up potential markdown from the LLM and parses the JSON."""
