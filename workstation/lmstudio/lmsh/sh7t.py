@@ -122,7 +122,9 @@ def execute_shell_command(command: str) -> Dict:
     cmd_args = ["bash", "-c", command]
     
     proc = None
-    git_bash_path = r"C:\Program Files\Git\bin\bash.exe"
+    execbin = None
+    if os.environ.get('OS') == 'WINDOW_NT':
+        execbin = r"C:\Program Files\Git\bin\bash.exe"     
     try:
         # Start the process
         proc = subprocess.Popen(
@@ -130,7 +132,7 @@ def execute_shell_command(command: str) -> Dict:
             stdout=subprocess.PIPE, 
             stderr=subprocess.PIPE, 
             text=True,
-            executable=git_bash_path
+            executable=execbin
         )
         
         try:
