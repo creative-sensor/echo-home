@@ -4,9 +4,32 @@ GMLBASE=${GMLBASE:-~/.lmstudio/models}
 PROPERD=~/echo-home/workstation/lmstudio/gmlama/.properd
 GML_YSON=$PROPERD/gml.${HOSTNAME}.yson
 
+
+
+
 if test -z "$MODEL_ID" ; then
   cat $GML_YSON | grep --color -n '^.*:' && read -p "MODEL_ID ?= " MODEL_ID
+else
+  if ! [[ "$MODEL_ID" =~ ^[0-9]+$ ]] ; then
+    cat <<EOF
+Usage: gml8w <model_ID>
+
+Description:
+  Run the gml8w command with a specific model ID.
+
+Available Models:
+$(cat $GML_YSON | grep --color -n '^.*:')
+
+Examples:
+  gml8w 1        # Run with model "1"
+  gml8w 2        # Run with model "2"
+EOF
+    exit 1
+  fi
 fi
+
+
+
 test -n "$GML_DEV" && GML_DEV="-dev $GML_DEV"
 gml_line=$(sed -n ${MODEL_ID}p < $GML_YSON)
 gml_describe=$(echo "$gml_line" | yq 'to_entries  | .[0].value[0]')
