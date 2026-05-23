@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 import json
 import subprocess
@@ -10,6 +11,10 @@ from typing import Optional
 import subprocess
 import signal
 from typing import Dict
+
+from prompt_toolkit import PromptSession
+from prompt_toolkit.key_binding import KeyBindings
+from prompt_toolkit.styles import Style
 
 
 parser = argparse.ArgumentParser(description="Connect to a local OpenAI API endpoint.")
@@ -282,8 +287,19 @@ if __name__ == "__main__":
             COLOR_FG='\033[1;34m\033[38;5;234m'
             COLOR_FG2='\033[38;5;11m'
             STOP='\033[0m'
-
-            user_input = input(f"\n{COLOR_BG}{COLOR_FG} LLM {STOP}{COLOR_BG2}{COLOR_FG2} Prompt!a {STOP} ")
+#            promptext = f"\n{COLOR_BG}{COLOR_FG} LLM {STOP}{COLOR_BG2}{COLOR_FG2} Prompt!a {STOP} "
+#            user_input = input(promptext)
+            promptia_session = PromptSession()
+            promptia_style = Style.from_dict({
+                'llm': 'bg:#c4c408 fg:#000000 bold',   # yellow background, black text
+                'prompt': 'bg:#000000 fg:#c4c408',     # black background, yellow text
+                'ws': 'bg:#c4c408 fg:#c4c408'      # white space
+            })
+            user_input = promptia_session.prompt(
+                    [('class:llm', ' LLM '), ('class:prompt', ' Prompt!a '), ('class:ws', ' ')],
+                    multiline=True,
+                    style=promptia_style
+            )
             if user_input.strip().lower() in ['exit', 'quit']:
                 break
             if user_input.strip():

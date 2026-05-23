@@ -1,0 +1,4 @@
+lmstudio-community/LFM2.5-1.2B-Instruct-GGUF/LFM2.5-1.2B-Instruct-Q8_0.gguf: ["","-c 32768 -ctk q4_0 -ctv q4_0"]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["Agent8901","-c 32768 -ctk q4_0 -ctv q4_0 -fa on --port 8901"]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q8_0.gguf: ["Agent8900","-c 32768 -ctk q8_0 -ctv q8_0 -fa on --port 8900"]
+
