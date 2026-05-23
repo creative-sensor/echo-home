@@ -1,0 +1,3 @@
+REQUIREMENT="promptia==1.0.0"
+
+ARTIFACT_DIR=artefacts
