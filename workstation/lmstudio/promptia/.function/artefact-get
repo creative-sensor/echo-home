@@ -9,4 +9,4 @@ test -n "$VARSET_EXT" && source $VARSET_EXT
 
 # ---- |MAIN ----
 mkdir -p $ARTIFACT_DIR/$REQUIREMENT
-pip download -r requirements.$REQUIREMENT -d $ARTIFACT_DIR/$REQUIREMENT
+pip download -r .requirements/$REQUIREMENT -d $ARTIFACT_DIR/$REQUIREMENT
