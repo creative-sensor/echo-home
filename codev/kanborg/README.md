@@ -10,7 +10,9 @@
 - [datum/2026/WIP/ARTE-20.md](datum/2026/WIP/ARTE-20.md)   ```# uv : package```
 - [datum/2026/WIP/ARTE-21.md](datum/2026/WIP/ARTE-21.md)   ```# node_modules : flattening```
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
-- [datum/2026/WIP/GGPU-4.md](datum/2026/WIP/GGPU-4.md)   ```# gpustack : distributed inference```
+- [datum/2026/WIP/CORTA-26.md](datum/2026/WIP/CORTA-26.md)   ```# ISSUE :```
+- [datum/2026/WIP/GGPU-4.md](datum/2026/WIP/GGPU-4.md)   ```# gpustack : distributed inference```
+- [datum/2026/WIP/MDOS-34.md](datum/2026/WIP/MDOS-34.md)   ```# ssh : pubkey auth```
 
 ### 2 ON HOLD
 
