@@ -296,7 +296,7 @@ if __name__ == "__main__":
                 'ws': 'bg:#c4c408 fg:#c4c408'      # white space
             })
             user_input = promptia_session.prompt(
-                    [('class:llm', ' LLM '), ('class:prompt', ' Prompt!a '), ('class:ws', ' ')],
+                    [('class:llm', ' SH7T '), ('class:prompt', ' Prompt!a '), ('class:ws', ' ')],
                     multiline=True,
                     style=promptia_style
             )

@@ -25,8 +25,8 @@ function! PortRemoteFromTable()
         if $OS ==# 'Windows_NT'
             let l:cmd = ['sh' , '~/echo-home/.function/port-remote' , ssh_host, s_val, ip_val, d_val]
         endif
-        let l:opts = {}
-        call jobstart(l:cmd, l:opts)
+        " Open command in a new terminal buffer
+        execute 'below terminal ' . join(l:cmd, ' ')
 
         sleep 3
         let curl_check_cmd = 'curl -v -I http://localhost:'.  s_val  .' 2>&1  | grep -o -m 1 Connected'
