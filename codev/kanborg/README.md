@@ -10,9 +10,8 @@
 - [datum/2026/WIP/ARTE-20.md](datum/2026/WIP/ARTE-20.md)   ```# uv : package```
 - [datum/2026/WIP/ARTE-21.md](datum/2026/WIP/ARTE-21.md)   ```# node_modules : flattening```
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
-- [datum/2026/WIP/CORTA-26.md](datum/2026/WIP/CORTA-26.md)   ```# ISSUE :```
-- [datum/2026/WIP/GGPU-4.md](datum/2026/WIP/GGPU-4.md)   ```# gpustack : distributed inference```
-- [datum/2026/WIP/MDOS-34.md](datum/2026/WIP/MDOS-34.md)   ```# ssh : pubkey auth```
+- [datum/2026/WIP/CORTA-20.md](datum/2026/WIP/CORTA-20.md)   ```# lmsh : neos```
+- [datum/2026/WIP/GGPU-4.md](datum/2026/WIP/GGPU-4.md)   ```# gpustack : distributed inference```
 
 ### 2 ON HOLD
 
@@ -37,7 +36,6 @@
 - [datum/2026/TODO/ASML-5.md](datum/2026/TODO/ASML-5.md)   ```# ptrm : short-range service discovery```
 - [datum/2026/TODO/CMW-2.md](datum/2026/TODO/CMW-2.md)   ```# commonwealth : vault function```
 - [datum/2026/TODO/CORTA-13.md](datum/2026/TODO/CORTA-13.md)   ```# tinygrad : pytorch distribute```
-- [datum/2026/TODO/CORTA-20.md](datum/2026/TODO/CORTA-20.md)   ```# ISSUE :```
 - [datum/2026/TODO/CORTA-21.md](datum/2026/TODO/CORTA-21.md)   ```# vllm : library```
 - [datum/2026/TODO/CORTA-22.md](datum/2026/TODO/CORTA-22.md)   ```# gemma4 : nvfp4```
 - [datum/2026/TODO/CORTA-23.md](datum/2026/TODO/CORTA-23.md)   ```# MCP : first try```
@@ -90,6 +88,7 @@
 - [datum/2026/DONE/CORTA-18.md](datum/2026/DONE/CORTA-18.md)   ```# tool-calling : bash```
 - [datum/2026/DONE/CORTA-19.md](datum/2026/DONE/CORTA-19.md)   ```# tool-calling : playwright```
 - [datum/2026/DONE/CORTA-25.md](datum/2026/DONE/CORTA-25.md)   ```# LLM : Shell```
+- [datum/2026/DONE/CORTA-26.md](datum/2026/DONE/CORTA-26.md)   ```# lmsh : scatmap```
 - [datum/2026/DONE/CORTA-3.md](datum/2026/DONE/CORTA-3.md)   ```# lmstudio : cli```
 - [datum/2026/DONE/CORTA-6.md](datum/2026/DONE/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
 - [datum/2026/DONE/CORTA-7.md](datum/2026/DONE/CORTA-7.md)   ```# gmlama```
@@ -112,6 +111,7 @@
 - [datum/2026/DONE/MDOS-31.md](datum/2026/DONE/MDOS-31.md)   ```# python: standalone```
 - [datum/2026/DONE/MDOS-32.md](datum/2026/DONE/MDOS-32.md)   ```# openssh-server : opterator function```
 - [datum/2026/DONE/MDOS-33.md](datum/2026/DONE/MDOS-33.md)   ```# ntop : monitor```
+- [datum/2026/DONE/MDOS-34.md](datum/2026/DONE/MDOS-34.md)   ```# ssh : pubkey auth```
 - [datum/2026/DONE/SPEC-3.md](datum/2026/DONE/SPEC-3.md)   ```# Foldable : system ```
 - [datum/2026/DONE/SPEC-4.md](datum/2026/DONE/SPEC-4.md)   ```# objectory : re-define```
 - [datum/2026/DONE/SPEC-5.md](datum/2026/DONE/SPEC-5.md)   ```# yson : re-define```
@@ -140,6 +140,7 @@
 - [datum/2026/BACKLOG/CMW-0.md](datum/2026/BACKLOG/CMW-0.md)   ```# Common : Wealth```
 - [datum/2026/BACKLOG/CORTA-0.md](datum/2026/BACKLOG/CORTA-0.md)   ```# Cortana : Chief```
 - [datum/2026/BACKLOG/CORTA-24.md](datum/2026/BACKLOG/CORTA-24.md)   ```# ISSUE :```
+- [datum/2026/BACKLOG/CORTA-27.md](datum/2026/BACKLOG/CORTA-27.md)   ```# ISSUE :```
 - [datum/2026/BACKLOG/CTNR-0.md](datum/2026/BACKLOG/CTNR-0.md)   ```# public : encrypted```
 - [datum/2026/BACKLOG/DBMS-0.md](datum/2026/BACKLOG/DBMS-0.md)   ```# Database : Meta System```
 - [datum/2026/BACKLOG/DROID-0.md](datum/2026/BACKLOG/DROID-0.md)   ```# Android : Platform```

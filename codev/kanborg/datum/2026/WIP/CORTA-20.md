@@ -1,11 +1,11 @@
-# ISSUE :
+# lmsh : neos
 --------------------------------
 ### 0 DESCRIPTION
 
 
 ### 1 SOLUTION
 
-https://github.com/creative-sensor/echo-home/commit/dd8217e2e6df1da783561e1dd3324b39e8c7c786
+https://github.com/creative-sensor/echo-home/commit/3362716601003907c9e9855cd9fc1e8e3ebae409
 
 ### 2 NOTES
 
