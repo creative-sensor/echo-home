@@ -61,3 +61,27 @@ require('peek').setup({
 -- vim.api.nvim_create_user_command('PeekClose', require('peek').close, {})
 vim.keymap.set('n', 'peek', require('peek').open, { desc = "Open Peek Markdown Preview" })
 vim.keymap.set('n', 'peeke', require('peek').close, { desc = "Close Peek Markdown Preview" })
+
+-- Create a table of your custom capabilities
+_G.AgentManifest = {
+    keymaps = {
+        ["tff"] = "Opens Telescope file finder",
+        ["tgr"] = "Opens Troubleshooting quickfix list",
+        ["e3"] = "Opens file path at depth 3",
+        ["e3"] = "Opens file path at depth 3",
+        ["ptrm"] = "Opens vimpage for Port Remote"
+    },
+    commands = {
+        ["Evx"] = "Opens file path at depth X",
+        ["FgXp"] = "Opens Field Git Explorer"
+    },
+    functions = {
+        ["AdjustFontSize"] = "Increase with AdjustFontSize(1) or decrease with AdjustFontSize(-1)",
+        ["VimPage_ptrm"] = "Open Vim Page for Port Remote"
+    }
+}
+
+-- Create a command the LLM can call to print this as JSON
+vim.api.nvim_create_user_command('AgentCapabilities', function()
+    print(vim.fn.json_encode(_G.AgentManifest))
+end, { desc = "Prints a JSON manifest of user-defined custom functions for the AI agent" })
