@@ -2,7 +2,11 @@ param (
     [string]$hostw = "localhost",
     [int]$portw = 8080,
     [string]$ApiKey = "localm",
-    [int]$MaxTurns = 7
+
+    [int]$MaxTurns = 8,
+
+    [int]$TimeoutSec = 600
+
 )
 
 $BaseUrl = "http://${hostw}:${portw}/v1"
@@ -110,7 +114,11 @@ function Start-AgentLoop {
         } | ConvertTo-Json -Depth 10
 
         try {
-            $Response = Invoke-RestMethod -Uri "$BaseUrl/chat/completions" -Method Post -Body $Payload -ContentType "application/json" -Headers @{ "Authorization" = "Bearer $ApiKey" } -TimeoutSec 120
+
+            # Applied the $TimeoutSec parameter here to prevent the "Request Aborted" error
+
+            $Response = Invoke-RestMethod -Uri "$BaseUrl/chat/completions" -Method Post -Body $Payload -ContentType "application/json" -Headers @{ "Authorization" = "Bearer $ApiKey" } -TimeoutSec $TimeoutSec
+
             
             $RawOutput = $Response.choices[0].message.content
             
