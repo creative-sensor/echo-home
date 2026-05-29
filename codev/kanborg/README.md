@@ -10,9 +10,7 @@
 - [datum/2026/WIP/ARTE-20.md](datum/2026/WIP/ARTE-20.md)   ```# uv : package```
 - [datum/2026/WIP/ARTE-21.md](datum/2026/WIP/ARTE-21.md)   ```# node_modules : flattening```
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
-- [datum/2026/WIP/CORTA-24.md](datum/2026/WIP/CORTA-24.md)   ```# lmsh : kubectl```
-- [datum/2026/WIP/CORTA-27.md](datum/2026/WIP/CORTA-27.md)   ```# lmsh : nodejs cliner```
-- [datum/2026/WIP/CORTA-29.md](datum/2026/WIP/CORTA-29.md)   ```# lmsh : python cliner```
+- [datum/2026/WIP/CORTA-28.md](datum/2026/WIP/CORTA-28.md)   ```# lmsh : powershell cliner```
 - [datum/2026/WIP/GGPU-4.md](datum/2026/WIP/GGPU-4.md)   ```# gpustack : distributed inference```
 
 ### 2 ON HOLD
@@ -90,8 +88,11 @@
 - [datum/2026/DONE/CORTA-18.md](datum/2026/DONE/CORTA-18.md)   ```# tool-calling : bash```
 - [datum/2026/DONE/CORTA-19.md](datum/2026/DONE/CORTA-19.md)   ```# tool-calling : playwright```
 - [datum/2026/DONE/CORTA-20.md](datum/2026/DONE/CORTA-20.md)   ```# lmsh : neos```
+- [datum/2026/DONE/CORTA-24.md](datum/2026/DONE/CORTA-24.md)   ```# lmsh : kubectl```
 - [datum/2026/DONE/CORTA-25.md](datum/2026/DONE/CORTA-25.md)   ```# LLM : Shell```
 - [datum/2026/DONE/CORTA-26.md](datum/2026/DONE/CORTA-26.md)   ```# lmsh : scatmap```
+- [datum/2026/DONE/CORTA-27.md](datum/2026/DONE/CORTA-27.md)   ```# lmsh : nodejs cliner```
+- [datum/2026/DONE/CORTA-29.md](datum/2026/DONE/CORTA-29.md)   ```# lmsh : python cliner```
 - [datum/2026/DONE/CORTA-3.md](datum/2026/DONE/CORTA-3.md)   ```# lmstudio : cli```
 - [datum/2026/DONE/CORTA-6.md](datum/2026/DONE/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
 - [datum/2026/DONE/CORTA-7.md](datum/2026/DONE/CORTA-7.md)   ```# gmlama```
@@ -142,7 +143,6 @@
 - [datum/2026/BACKLOG/ASML-0.md](datum/2026/BACKLOG/ASML-0.md)   ```# Assembly : Mission```
 - [datum/2026/BACKLOG/CMW-0.md](datum/2026/BACKLOG/CMW-0.md)   ```# Common : Wealth```
 - [datum/2026/BACKLOG/CORTA-0.md](datum/2026/BACKLOG/CORTA-0.md)   ```# Cortana : Chief```
-- [datum/2026/BACKLOG/CORTA-28.md](datum/2026/BACKLOG/CORTA-28.md)   ```# ISSUE :```
 - [datum/2026/BACKLOG/CTNR-0.md](datum/2026/BACKLOG/CTNR-0.md)   ```# public : encrypted```
 - [datum/2026/BACKLOG/DBMS-0.md](datum/2026/BACKLOG/DBMS-0.md)   ```# Database : Meta System```
 - [datum/2026/BACKLOG/DROID-0.md](datum/2026/BACKLOG/DROID-0.md)   ```# Android : Platform```
