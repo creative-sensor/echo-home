@@ -170,6 +170,7 @@ def execute_docker_task(worker_name: str, task: dict) -> dict:
         "docker", "run", "--rm",
         "-v", f"{WORKSPACE_DIR}:/workspace",
         "-w", "/workspace",
+        "-e", "DOCKER_HOST=tcp://host.docker.internal:2375",
         image,
         "sh", "-c", command_str
     ]
