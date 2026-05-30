@@ -10,7 +10,7 @@
 - [datum/2026/WIP/ARTE-20.md](datum/2026/WIP/ARTE-20.md)   ```# uv : package```
 - [datum/2026/WIP/ARTE-21.md](datum/2026/WIP/ARTE-21.md)   ```# node_modules : flattening```
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
-- [datum/2026/WIP/CORTA-30.md](datum/2026/WIP/CORTA-30.md)   ```# lmsh : craneum```
+- [datum/2026/WIP/CORTA-31.md](datum/2026/WIP/CORTA-31.md)   ```# lmsh : hesman```
 - [datum/2026/WIP/GGPU-4.md](datum/2026/WIP/GGPU-4.md)   ```# gpustack : distributed inference```
 
 ### 2 ON HOLD
@@ -95,6 +95,7 @@
 - [datum/2026/DONE/CORTA-28.md](datum/2026/DONE/CORTA-28.md)   ```# lmsh : powershell cliner```
 - [datum/2026/DONE/CORTA-29.md](datum/2026/DONE/CORTA-29.md)   ```# lmsh : python cliner```
 - [datum/2026/DONE/CORTA-3.md](datum/2026/DONE/CORTA-3.md)   ```# lmstudio : cli```
+- [datum/2026/DONE/CORTA-30.md](datum/2026/DONE/CORTA-30.md)   ```# lmsh : craneum```
 - [datum/2026/DONE/CORTA-6.md](datum/2026/DONE/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
 - [datum/2026/DONE/CORTA-7.md](datum/2026/DONE/CORTA-7.md)   ```# gmlama```
 - [datum/2026/DONE/CORTA-8.md](datum/2026/DONE/CORTA-8.md)   ```# llama.cpp : aka gmlala```
