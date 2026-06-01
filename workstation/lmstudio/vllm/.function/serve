@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+source .properd/VARSET
+echo "Launching vLLM server for $MODEL_NAME on port $PORT..."
+python3 -m vllm.entrypoints.openai.api_server \
+  --model "$MODEL_NAME" \
+  --port "$PORT" \
+  --gpu-memory-utilization "$GPU_MEMORY_UTILIZATION" \
+  --max-model-len "$MAX_MODEL_LEN" \
+  --tensor-parallel-size "$TENSOR_PARALLEL_SIZE"

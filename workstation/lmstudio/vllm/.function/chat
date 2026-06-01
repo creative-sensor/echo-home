@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+source .properd/VARSET
+echo "Opening local chat CLI..."
+python3 -m vllm.entrypoints.chat_utils --model "$MODEL_NAME"

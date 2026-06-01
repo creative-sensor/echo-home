@@ -1,0 +1,3 @@
+quantization: "awq"
+trust_remote_code: true
+dtype: "auto"
