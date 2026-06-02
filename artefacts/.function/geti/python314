@@ -1,0 +1,2 @@
+PYTHON_VERSION=$ARTIFACT_VERSION
+uv python install $PYTHON_VERSION    --install-dir $LOCAL_BIN/python/$PYTHON_VERSION

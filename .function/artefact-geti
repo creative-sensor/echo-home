@@ -7,6 +7,7 @@ ARTIFACT_YSON=.properd/artefacts.yaml
 
 function download (){
 	local name=$1
+	test -r $ARTIFACT_DIR/.function/geti/$name && source $ARTIFACT_DIR/.function/geti/$name && return
 	local ARTIFACT_VERSION=$(cat $ARTIFACT_YSON | yq -r ".${name}[0]")
 	local ARTIFACT_URL=$(cat $ARTIFACT_YSON | yq -r ".${name}[1]")
 	local ARTIFACT_SUFFIX=$(cat $ARTIFACT_YSON | yq -r ".${name}[2].suffix")
