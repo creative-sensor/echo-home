@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#set -x
+# ---- |EXT ----
+PYTHON_VERSION=${1:-$(python -c "import platform; print(platform.python_version())")}
+# ---- |DEFAULT ----
+
+# ---- |OVERRIDE ----
+source .properd/VARSET
+test -n "$VARSET_EXT" && source $VARSET_EXT
+
+# ---- |MAIN ----
+mkdir -p $ARTIFACT_DIR/$PYTHON_VERSION/$REQUIREMENT
+uv python install $PYTHON_VERSION    --install-dir $LOCAL_BIN/python/$PYTHON_VERSION
+#uv venv --clear --python $ARTIFACT_DIR/$PYTHON_VERSION/cpython-$PYTHON_VERSION-*/bin/python  $ARTIFACT_DIR/$PYTHON_VERSION
+#source $ARTIFACT_DIR/$PYTHON_VERSION/bin/activate
+#uv pip download -r .requirements/$REQUIREMENT --python $LOCAL_BIN/python/$PYTHON_VERSION/ ./$ARTIFACT_DIR/$PYTHON_VERSION/$REQUIREMENT
