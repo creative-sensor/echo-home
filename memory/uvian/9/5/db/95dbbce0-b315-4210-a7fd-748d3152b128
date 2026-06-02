@@ -1,0 +1,3 @@
+- Vector embedding
+- Mean pooling
+- uuid location
