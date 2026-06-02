@@ -4,6 +4,7 @@ let g:yaml_revealer_separator='➤'
     "<C-v>u27a4
 let g:font_name = "Cascadia\\ Mono:h12"
 let g:font_size = 12
+let g:hostname = substitute(system('hostname'), '\n$', '', '')
 "-------- [GLOBAL] -------- GML
 let g:GML_PROMPT = empty($GML_PROMPT) ?  '~/.gml.prompt' : $GML_PROMPT
 let g:GML_PROMPT_SSH = empty($GML_PROMPT_SSH) ?  '~/.gml.prompt' : $GML_PROMPT_SSH
@@ -398,6 +399,8 @@ map .ys : .!yq -P -I 4<CR>
 vmap b64    \atob<Esc>
 vmap b94    \btoa<Esc>
 vmap YY    y<Esc>:call CopyWL()<CR>
+vmap mdtb :!column -t -s '\|' -o '\|'<CR>
+
 
 map src : source ~/.vimrc.neo<CR>
 
@@ -447,3 +450,7 @@ lua require("neo-init")
 
 "-------- [POST-INIT] --------
 colorscheme gruvbox
+
+
+"-------- [MIMD] --------
+exec 'source '.g:MIMD_BASE."/vimpage_ptrm"

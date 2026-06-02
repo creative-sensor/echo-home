@@ -325,6 +325,7 @@ map \date :execute "normal! i" . substitute(system('date -u "+%Y-%m-%dT%H-%M-%SZ
 map \uuid :execute "normal! i" . substitute(system('uuidgen'), '\n$', '', '')<CR>
 vmap b64    \atob<Esc>
 vmap b94    \btoa<Esc>
+vmap mdtb :!column -t -s '\|' -o '\|'<CR>
 
 
 
