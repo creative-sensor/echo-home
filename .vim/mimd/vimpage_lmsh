@@ -1,0 +1,18 @@
+"-------- [LMSH] --------
+function! VimPage_lmsh()
+    let l:host_file = expand('~/echo-home/.vim/pages/' . g:hostname . '.lmsh.md')
+    let l:default_file = expand('~/echo-home/.vim/pages/lmsh.md')
+
+    if filereadable(l:host_file)
+        let l:default_file = l:host_file
+    endif
+    exec 'tabnew '.l:default_file
+endfunction
+
+function! LmshA(script_name)
+    let l:script_dir = expand('~/echo-home/workstation/lmstudio/promptia/.function/')
+    exec 'vsplit | term cd ' . l:script_dir . ' && ./' . a:script_name
+endfunction
+
+map lmsh : call VimPage_lmsh()<CR>
+map lmsha : call LmshA(expand('<cword'))<CR>
