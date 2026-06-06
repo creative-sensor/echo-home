@@ -6,13 +6,15 @@ function! VimPage_lmsh()
     if filereadable(l:host_file)
         let l:default_file = l:host_file
     endif
-    exec 'tabnew '.l:default_file
+    exec 'vsplit '.l:default_file
 endfunction
 
-function! LmshA(script_name)
-    let l:script_dir = expand('~/echo-home/workstation/lmstudio/promptia/.function/')
-    exec 'vsplit | term cd ' . l:script_dir . ' && ./' . a:script_name
+function! Lmsh_activate(agent_line)
+    let l:script_dir = expand('~/echo-home/workstation/lmstudio/promptia/')
+    let l:awk_command = 'echo -e "' . a:agent_line . '" | awk -f ~/echo-home/.vim/mimd/lmsh/args.awk'
+    let l:awk_out = system(l:awk_command)
+    exec 'term cd ' . l:script_dir . ' && ./'.l:awk_out
 endfunction
 
 map lmsh : call VimPage_lmsh()<CR>
-map lmsha : call LmshA(expand('<cword'))<CR>
+map lmsha : call Lmsh_activate(getline('.'))<CR>

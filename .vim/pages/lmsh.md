@@ -2,16 +2,22 @@
 
 ### Inventory
 
-| agent shell   | capabilities | llm recommendation |
-|:------------- | ------------ | ------------------ |
-| fbi           |              |                    |
-| fiberon       |              |                    |
-| hesman        |              |                    |
-| kube          |              |                    |
-| memphis       |              |                    |
-| neos          |              |                    |
-| node-cliner   |              |                    |
-| ps-cliner     |              |                    |
-| python-cliner |              |                    |
-| scatmap       |              |                    |
-| sh7t          |              |                    |
+| Agent Shell      | SOS | LLM Kernel |
+|:---------------- | --- | ---------- |
+| fbi.py           |     |            |
+| fiberon.py       |     |            |
+| hesman.py        |     |            |
+| kube.py          |     |            |
+| memphis.py       |     |            |
+| neos.py          |     |            |
+| node-cliner.js   |     |            |
+| ps-cliner.py     |     |            |
+| python-cliner.py |     |            |
+| scatmap.py       |     |            |
+| sh7t.py          |     |            |
+
+### Usage
+
+- `lmsha`: activate agent
+
+- `lmshs`: save console to workspace
