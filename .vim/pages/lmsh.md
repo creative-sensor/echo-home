@@ -11,7 +11,7 @@
 | memphis.py       |     |            |
 | neos.py          |     |            |
 | node-cliner.js   |     |            |
-| ps-cliner.py     |     |            |
+| ps-cliner.ps1    |     |            |
 | python-cliner.py |     |            |
 | scatmap.py       |     |            |
 | sh7t.py          |     |            |
