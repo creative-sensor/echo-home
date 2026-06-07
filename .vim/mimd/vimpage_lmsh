@@ -10,10 +10,35 @@ function! VimPage_lmsh()
 endfunction
 
 function! Lmsh_activate(agent_line)
-    let l:script_dir = expand('~/echo-home/workstation/lmstudio/promptia/')
-    let l:awk_command = 'echo -e "' . a:agent_line . '" | awk -f ~/echo-home/.vim/mimd/lmsh/args.awk'
-    let l:awk_out = system(l:awk_command)
-    exec 'term cd ' . l:script_dir . ' && ./'.l:awk_out
+    " Get the current line
+    let l:current_line = getline('.')
+    
+    " Execute awk using the external script file to parse the Markdown table row.
+    let l:awk_command = 'echo -e "' . l:current_line . '" | awk -f ~/echo-home/.vim/mimd/lmsh/args.awk'
+    " Trim the output to remove trailing newlines from the system call
+    let l:awk_out = trim(system(l:awk_command))
+    
+    " Split the output string into parts (parts[0] = script, parts[1] = port)
+    let l:parts = split(l:awk_out, ' ')
+    
+    if len(l:parts) > 0
+        let l:script_dir = expand('~/echo-home/workstation/lmstudio/promptia/')
+        let l:script_name = l:parts[0]
+        
+        " Default port to 8080
+        let l:port = '8080'
+        
+        " If the second part exists and is not an empty string, use it
+        if len(l:parts) > 1 && l:parts[1] != ''
+            let l:port = l:parts[1]
+        endif
+        
+        " Construct the command: cd to directory and run script with the port argument
+        let l:cmd = 'cd ' . l:script_dir . ' && ./' . l:script_name . ' --port ' . l:port
+        exec 'term ' . l:cmd
+    else
+        echo "Error: Could not parse table row data correctly using awk."
+    endif
 endfunction
 
 map lmsh : call VimPage_lmsh()<CR>
