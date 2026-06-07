@@ -4,9 +4,16 @@ import json
 import argparse
 import re
 import pynvim
+import uuid
+from datetime import datetime
 from openai import OpenAI
 import requests
 from typing import Optional, Dict
+
+try:
+    import chromadb
+except ImportError:
+    chromadb = None
 
 from prompt_toolkit import PromptSession
 from prompt_toolkit.styles import Style
@@ -23,6 +30,12 @@ parser.add_argument(
     type=str, 
     default='localhost', 
     help='The hostname of the local LLM server'
+)
+parser.add_argument(
+    '--training', 
+    type=str, 
+    default='off', 
+    help="Enable memory saving (e.g., '--training on')"
 )
 args = parser.parse_args()
 port = args.port
@@ -60,6 +73,66 @@ def model_name(host: str, port: int, endpoint: str) -> Optional[str]:
 # --- Execution ---
 
 MODEL_NAME = model_name(host, port, endpoint="/models")
+
+# ==========================================
+# RAG MEMORY MANAGER
+# ==========================================
+class RagMemoryManager:
+    def __init__(self, host: str = 'localhost', port: int = 8080):
+        if not chromadb:
+            print("❌ ERROR: Missing dependencies for memory. Run: pip install chromadb")
+            exit(1)
+        print("🧠 Initializing RAG Memory Database...")
+        self.chroma_client = chromadb.PersistentClient(path="./neos/vector")
+        self.collection = self.chroma_client.get_or_create_collection(name="nvim_sessions")
+        
+        print(f"   -> Using embedding endpoint at http://{host}:{port}/v1")
+        self.openai_client = OpenAI(base_url=f"http://{host}:{port}/v1", api_key="localm")
+
+    def get_embedding(self, text: str) -> list[float]:
+        response = self.openai_client.embeddings.create(input=[text], model="local-model")
+        return response.data[0].embedding
+
+    def retrieve_context(self, user_intent: str, top_k: int = 2) -> str:
+        """Searches past sessions for similar tasks."""
+        if self.collection.count() == 0:
+            return "No previous memories exist yet."
+            
+        query_embedding = self.get_embedding(user_intent)
+        results = self.collection.query(
+            query_embeddings=[query_embedding],
+            n_results=min(top_k, self.collection.count())
+        )
+        
+        if not results['documents'] or not results['documents'][0]:
+            return "No highly relevant past memories found."
+            
+        return "\n\n---\n\n".join(results['documents'][0])
+
+    def store_session(self, user_intent: str, summary: str):
+        session_id = str(uuid.uuid4())
+        document_text = f"Original Intent: {user_intent}\nSolution Summary:\n{summary}"
+        embedding = self.get_embedding(document_text)
+        
+        self.collection.add(
+            ids=[session_id],
+            embeddings=[embedding],
+            documents=[document_text],
+            metadatas=[{"intent": user_intent}]
+        )
+        print(f"💾 Memory stored permanently in ChromaDB! (ID: {session_id[:8]}...)")
+
+def standard_llm_call(system_prompt: str, user_prompt: str) -> str:
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ],
+        temperature=0.0
+    )
+    return response.choices[0].message.content
+
 
 # Highly focused Neovim Operator prompt
 SYSTEM_PROMPT = """You are an autonomous Neovim operator. You have direct access to the Neovim API. Your goal is to fulfill the User Intent inside their current editor session.
@@ -122,11 +195,25 @@ def parse_llm_json(raw_text: str) -> dict:
         print(f"[ERROR] Failed to parse JSON from LLM: {raw_text}")
         return {"action_type": "declare_result", "status": "FAILED", "reason": "LLM output invalid JSON."}
 
-def run_agent_loop(user_intent: str, max_turns: int = 7):
+def run_agent_loop(user_intent: str, memory_manager: Optional[RagMemoryManager] = None, max_turns: int = 7):
     """Manages the multi-turn Neovim execution and validation loop."""
+    
+    # ----------------------------------------
+    # RAG READ PHASE (Always on if memory is loaded)
+    # ----------------------------------------
+    if memory_manager:
+        print("\n🔍 Searching long-term memory for relevant past contexts...")
+        past_knowledge = memory_manager.retrieve_context(user_intent)
+        enriched_intent = (
+            f"User Intent: {user_intent}\n\n"
+            f"Past Relevant Knowledge/Solutions:\n{past_knowledge}"
+        )
+    else:
+        enriched_intent = f"User Intent: {user_intent}"
+
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user", "content": f"User Intent: {user_intent}"}
+        {"role": "user", "content": enriched_intent}
     ]
 
     for turn in range(max_turns):
@@ -151,6 +238,51 @@ def run_agent_loop(user_intent: str, max_turns: int = 7):
             reason = parsed_action.get("reason")
             print(f"\n❇  [FINAL RESULT] {status}")
             print(f"🧠 [REASON] {reason}")
+            
+            # ----------------------------------------
+            # RAG WRITE PHASE (Only if Training is Enabled)
+            # ----------------------------------------
+            if args.training.lower() == "on" and status == "SUCCESS" and memory_manager:
+                user_choice = input("\n💾 Do you want to save this successful session to memory? (y/n): ").strip().lower()
+                
+                if user_choice == 'y':
+                    print("\n📝 Summarizing successful session for memory storage...")
+                    
+                    history = "\n".join([m['content'] for m in messages if m['role'] != 'system'])
+                    summary_prompt = "Summarize the successful Neovim commands used to achieve the user's intent. Do not include failures, just the final working path."
+                    
+                    # 1. Save to Vector DB
+                    session_summary = standard_llm_call(summary_prompt, history)
+                    memory_manager.store_session(user_intent, session_summary)
+                    
+                    # 2. Save to text file
+                    date_str = datetime.now().strftime("%Y-%m-%d")
+                    # Create a safe, short slug from the user intent
+                    clean_intent = re.sub(r'[^a-zA-Z0-9\s]', '', user_intent).strip().lower()
+                    slug = re.sub(r'\s+', '-', clean_intent)[:35].rstrip('-')
+                    if not slug:
+                        slug = "session"
+                        
+                    doc_dir = os.path.join("neos", "docs")
+                    os.makedirs(doc_dir, exist_ok=True)
+                    
+                    file_path = os.path.join(doc_dir, f"{date_str}-{slug}.txt")
+                    
+                    try:
+                        with open(file_path, "w", encoding="utf-8") as f:
+                            f.write(f"Date: {date_str}\n")
+                            f.write(f"Intent: {user_intent}\n")
+                            f.write("="*50 + "\n")
+                            f.write(f"Summary:\n{session_summary}\n")
+                            f.write("="*50 + "\n")
+                            f.write(f"Full Agent History:\n{history}\n")
+                        print(f"📄 Text memory saved to: {file_path}")
+                    except Exception as e:
+                        print(f"❌ Failed to write text memory: {e}")
+                        
+                else:
+                    print("⏭️  Session memory discarded.")
+                    
             return
             
         elif action_type == "run_command":
@@ -189,6 +321,18 @@ if __name__ == "__main__":
         print("\n⚠️  WARNING: $NVIM environment variable not detected.")
         print("   This script is designed to manipulate Neovim using its RPC API.")
         print("   Please run this directly from a terminal inside a running Neovim instance (e.g., `:term`).\n")
+        
+    memory = None
+    if chromadb is not None:
+        # Load memory by default regardless of the training flag
+        memory = RagMemoryManager(host=args.host, port=args.port)
+    else:
+        print("\n⚠️ WARNING: chromadb not found. Memory reading/writing is disabled.")
+
+    if args.training.lower() == 'on':
+        print("🧠 Training Mode: ON (Will ask to save successful sessions to memory)")
+    else:
+        print("🧠 Training Mode: OFF (Will read from memory, but won't save new sessions)")
 
     print("🚀 Local Neovim LLM Agent Initialized. Type 'exit' to quit.")
     
@@ -208,7 +352,7 @@ if __name__ == "__main__":
             if user_input.strip().lower() in ['exit', 'quit']:
                 break
             if user_input.strip():
-                run_agent_loop(user_input)
+                run_agent_loop(user_input, memory_manager=memory)
         except KeyboardInterrupt:
             print("\nExiting...")
             break

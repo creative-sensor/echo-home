@@ -1,0 +1,7 @@
+Date: 2026-06-07
+Intent: open vim page LM shell by calling vim function VimPage_lmsh() without args
+==================================================
+Summary:
+:call VimPage_lmsh()
+==================================================
+

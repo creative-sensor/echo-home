@@ -1,0 +1,9 @@
+Date: 2026-06-07
+Intent: put cursor  in buffer ending with lmsh.md and search for text  "kube.py" and move cursor to search result and press key `lmsha` to open agent shell
+==================================================
+Summary:
+:call VimPage_lmsh()
+/kube.py
+:normal! lmsha
+==================================================
+
