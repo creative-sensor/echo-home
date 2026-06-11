@@ -5,6 +5,7 @@ import re
 import argparse
 import sys
 import io
+import math
 import traceback
 from contextlib import redirect_stdout, redirect_stderr
 from openai import OpenAI
@@ -27,15 +28,25 @@ parser.add_argument(
     default='localhost', 
     help='The hostname of the local LLM server'
 )
+parser.add_argument(
+    '--tool-dir', 
+    type=str, 
+    default=os.path.expanduser('~/echo-home/codev/python/cliner'), 
+    help='Directory containing python scripts for initial tool selection'
+)
 args = parser.parse_args()
 port = args.port
 host = args.host
+tool_dir = args.tool_dir
 
 # Configure for local LLM (e.g., Ollama, vLLM, or LM Studio)
 client = OpenAI(
     base_url=f"http://{host}:{port}/v1", 
     api_key="localm" 
 )
+
+# Global cache to prevent re-embedding filenames every turn
+TOOL_EMBEDDING_CACHE = {}
 
 def model_name(host: str, port: int, endpoint: str) -> Optional[str]:
     url = f"http://{host}:{port}{endpoint}"
@@ -61,27 +72,13 @@ def model_name(host: str, port: int, endpoint: str) -> Optional[str]:
         print("\n❌ ERROR: Connection Error.")
         print("   Ensure that the API service is running and accessible at the specified host and port.")
         return None
-    except requests.exceptions.HTTPError as e:
-        print(f"\n❌ ERROR: HTTP Error occurred: {e}")
-        print("   Check if the endpoint '/models' is correct and the server supports it.")
-        return None
-    except requests.exceptions.Timeout:
-        print("\n❌ ERROR: The request timed out.")
-        return None
-    except json.JSONDecodeError:
-        print("\n❌ ERROR: Failed to decode JSON. The API might be returning non-JSON data.")
-        return None
     except Exception as e:
         print(f"\n❌ An unexpected error occurred: {e}")
         return None
 
-# --- Execution ---
+# --- Execution & Logic ---
 
-MODEL_NAME = model_name(
-    host, 
-    port, 
-    endpoint="/models"
-)
+MODEL_NAME = model_name(host, port, endpoint="/models")
 
 SYSTEM_PROMPT = """You are an autonomous Python agent. Your goal is to fulfill the User Intent, verify it actually worked, and report the final status.
 
@@ -100,11 +97,76 @@ OUTPUT SCHEMA:
 }
 """
 
+def get_embedding(text: str) -> list[float]:
+    """Fetches text vector embeddings from the local API."""
+    try:
+        response = client.embeddings.create(
+            input=text,
+            model=MODEL_NAME
+        )
+        return response.data[0].embedding
+    except Exception as e:
+        print(f"⚠️ [WARNING] Failed to generate embedding: {e}")
+        return []
+
+def cosine_similarity(vec1: list[float], vec2: list[float]) -> float:
+    """Calculates cosine similarity natively without numpy."""
+    if not vec1 or not vec2:
+        return 0.0
+    dot_product = sum(a * b for a, b in zip(vec1, vec2))
+    mag1 = math.sqrt(sum(a * a for a in vec1))
+    mag2 = math.sqrt(sum(b * b for b in vec2))
+    if mag1 == 0 or mag2 == 0:
+        return 0.0
+    return dot_product / (mag1 * mag2)
+
+def find_relevant_tool_embedded(user_intent: str, tool_dir: str, threshold: float = 0.75) -> Optional[str]:
+    """
+    Selects a tool based on semantic similarity between the user intent
+    and the formatted filenames in the tool directory.
+    """
+    if not tool_dir or not os.path.isdir(tool_dir):
+        return None
+
+    # 1. Embed the user's intent
+    intent_vector = get_embedding(user_intent)
+    if not intent_vector:
+        return None
+
+    best_match_path = None
+    highest_similarity = 0.0
+
+    # 2. Iterate and embed/cache filenames
+    for filename in os.listdir(tool_dir):
+        if filename.endswith(".py"):
+            filepath = os.path.join(tool_dir, filename)
+            
+            # Clean filename for better semantic meaning (e.g., check_network_status.py -> check network status)
+            clean_name = filename[:-3].replace("_", " ").replace("-", " ")
+
+            # Check cache to avoid re-embedding files unnecessarily
+            if filepath not in TOOL_EMBEDDING_CACHE:
+                file_vector = get_embedding(clean_name)
+                if file_vector:
+                    TOOL_EMBEDDING_CACHE[filepath] = file_vector
+                else:
+                    continue
+
+            # 3. Calculate similarity
+            similarity = cosine_similarity(intent_vector, TOOL_EMBEDDING_CACHE[filepath])
+            
+            if similarity > highest_similarity:
+                highest_similarity = similarity
+                best_match_path = filepath
+
+    # 4. Return the best match if it clears our confidence threshold
+    if highest_similarity >= threshold:
+        return best_match_path
+    
+    return None
+
 def execute_python_code(code: str, global_state: dict) -> Dict:
-    """
-    Executes Python code natively using exec() and captures stdout/stderr.
-    The global_state dictionary allows variables to persist across multiple execution turns.
-    """
+    """Executes Python code natively using exec() and captures stdout/stderr."""
     print(f"\n[SYSTEM] Executing Python:\n\033[33m{code}\033[0m")
     
     stdout_trap = io.StringIO()
@@ -112,11 +174,9 @@ def execute_python_code(code: str, global_state: dict) -> Dict:
     exit_code = 0
     
     try:
-        # Redirect standard output and error to capture print statements and native errors
         with redirect_stdout(stdout_trap), redirect_stderr(stderr_trap):
             exec(code, global_state)
     except Exception:
-        # Catch any exceptions raised during exec() and dump the traceback to stderr
         traceback.print_exc(file=stderr_trap)
         exit_code = 1
         
@@ -128,7 +188,7 @@ def execute_python_code(code: str, global_state: dict) -> Dict:
 
 def parse_llm_json(raw_text: str) -> dict:
     """Cleans up potential markdown from the LLM and parses the JSON."""
-    clean_text = re.sub(r"```json", "", raw_text)
+    clean_text = re.sub(r"```json", "", raw_text, flags=re.IGNORECASE)
     clean_text = re.sub(r"```", "", clean_text).strip()
     try:
         return json.loads(clean_text)
@@ -136,16 +196,59 @@ def parse_llm_json(raw_text: str) -> dict:
         print(f"[ERROR] Failed to parse JSON from LLM: {raw_text}")
         return {"action_type": "declare_result", "status": "FAILED", "reason": "LLM output invalid JSON."}
 
-def run_agent_loop(user_intent: str, max_turns: int = 7):
+def run_agent_loop(user_intent: str, tool_dir: str, max_turns: int = 7):
     """Manages the multi-turn execution and validation loop."""
     messages = [
-        {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user", "content": f"User Intent: {user_intent}"}
+        {"role": "system", "content": SYSTEM_PROMPT}
     ]
     
-    # State dictionary to persist variables between exec() calls in the loop
     agent_globals = {}
+    
+    # --- FIRST ATTEMPT: Semantic Tool Search ---
+    print("\n\033[34m[SYSTEM] Performing semantic vector search for tools...\033[0m")
+    tool_path = find_relevant_tool_embedded(user_intent, tool_dir)
+    
+    if tool_path:
+        tool_filename = os.path.basename(tool_path)
+        print(f"\033[32m[SYSTEM] Semantic match found: {tool_filename}. Attempting execution...\033[0m")
+        try:
+            with open(tool_path, 'r', encoding='utf-8') as f:
+                tool_code = f.read()
+            
+            exec_result = execute_python_code(tool_code, agent_globals)
+            
+            if exec_result['stdout']:
+                print(f"[STDOUT]\n{exec_result['stdout']}")
+            if exec_result['stderr']:
+                print(f"[STDERR]\n{exec_result['stderr']}")
+            if not exec_result['stdout'] and not exec_result['stderr']:
+                print("[OUTPUT] (No standard output or error)")
+            
+            print(f"[EXIT CODE] {exec_result['exit_code']}")
+            
+            evidence = (
+                f"Tool '{tool_filename}' Executed:\n{tool_code}\n"
+                f"Exit Code: {exec_result['exit_code']}\n"
+                f"stdout: {exec_result['stdout']}\n"
+                f"stderr: {exec_result['stderr']}"
+            )
+            
+            initial_message = (
+                f"User Intent: {user_intent}\n\n"
+                f"A local script was automatically selected and executed to attempt to fulfill this intent:\n{evidence}\n\n"
+                f"Evaluate this output. If the execution successfully resolved the User Intent, declare SUCCESS. "
+                f"If it FAILED or did not meet the requirement, generate new 'run_python' code to fix/refine it."
+            )
+            messages.append({"role": "user", "content": initial_message})
+            
+        except Exception as e:
+            print(f"❌ [ERROR] Failed to read or execute tool '{tool_filename}': {e}")
+            messages.append({"role": "user", "content": f"User Intent: {user_intent}"})
+    else:
+        print("\033[33m[SYSTEM] No relevant tool met the similarity threshold. Falling back to LLM.\033[0m")
+        messages.append({"role": "user", "content": f"User Intent: {user_intent}"})
 
+    # --- MAIN LOOP ---
     for turn in range(max_turns):
         print(f"\n\033[36m\033[1m---- Turn {turn + 1} ----\033[0m")
         
@@ -176,7 +279,6 @@ def run_agent_loop(user_intent: str, max_turns: int = 7):
                 print("\n❌ [ERROR] LLM requested run_python but provided no code.")
                 break
                 
-            # Execute the Python code natively
             exec_result = execute_python_code(code, agent_globals)
             
             if exec_result['stdout']:
@@ -188,7 +290,6 @@ def run_agent_loop(user_intent: str, max_turns: int = 7):
             
             print(f"[EXIT CODE] {exec_result['exit_code']}")
             
-            # Format the system evidence for the LLM
             evidence = (
                 f"Code Executed:\n{code}\n"
                 f"Exit Code: {exec_result['exit_code']}\n"
@@ -196,7 +297,6 @@ def run_agent_loop(user_intent: str, max_turns: int = 7):
                 f"stderr: {exec_result['stderr']}"
             )
             
-            # Feed the evidence back to the LLM for the next turn
             messages.append({"role": "user", "content": evidence})
             
         else:
@@ -206,14 +306,17 @@ def run_agent_loop(user_intent: str, max_turns: int = 7):
     print("\n⚠️ [WARNING] Max turns reached. Agent loop terminated to prevent infinite execution.")
 
 if __name__ == "__main__":
-    print("🚀 Local LLM Python Agent Initialized. Type 'exit' to quit.")
+    if tool_dir == './tools' and not os.path.exists(tool_dir):
+        os.makedirs(tool_dir, exist_ok=True)
+        
+    print(f"🚀 Local LLM Python Agent Initialized. Tool dir: '{tool_dir}'. Type 'exit' to quit.")
     while True:
         try:
             promptia_session = PromptSession()
             promptia_style = Style.from_dict({
-                'llm': 'bg:#c4c408 fg:#000000 bold',   # yellow background, black text
-                'prompt': 'bg:#000000 fg:#c4c408',     # black background, yellow text
-                'ws': 'bg:#c4c408 fg:#c4c408'          # white space
+                'llm': 'bg:#c4c408 fg:#000000 bold',   
+                'prompt': 'bg:#000000 fg:#c4c408',     
+                'ws': 'bg:#c4c408 fg:#c4c408'          
             })
             user_input = promptia_session.prompt(
                     [('class:llm', ' PYTHON-CLINER '), ('class:prompt', ' Prompt!a '), ('class:ws', ' ')],
@@ -223,7 +326,7 @@ if __name__ == "__main__":
             if user_input.strip().lower() in ['exit', 'quit']:
                 break
             if user_input.strip():
-                run_agent_loop(user_input)
+                run_agent_loop(user_input, tool_dir)
         except KeyboardInterrupt:
             print("\nExiting...")
             break
