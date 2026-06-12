@@ -120,7 +120,7 @@ def cosine_similarity(vec1: list[float], vec2: list[float]) -> float:
         return 0.0
     return dot_product / (mag1 * mag2)
 
-def find_relevant_tool_embedded(user_intent: str, tool_dir: str, threshold: float = 0.75) -> Optional[str]:
+def find_relevant_tool_embedded(user_intent: str, tool_dir: str, threshold: float = 0.85) -> Optional[str]:
     """
     Selects a tool based on semantic similarity between the user intent
     and the formatted filenames in the tool directory.
