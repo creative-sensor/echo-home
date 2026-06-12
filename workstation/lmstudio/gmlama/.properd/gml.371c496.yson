@@ -1,0 +1,22 @@
+# --------
+
+lmstudio-community/granite-4.0-h-tiny-GGUF/granite-4.0-h-tiny-Q4_K_M.gguf: ["Agent","-c 32768 -ctk q4_0 -ctv q4_0 --port 5000"]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q8_0.gguf: ["Agent8900" , "-c 32768 -ctk q8_0 -ctv q8_0 -fa on --port 8900"]
+# --------
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q8_0.gguf: ["Agent8900" , "-c 32768 -ctk q8_0 -ctv q8_0 -fa on --port 8900"]
+#
+#
+ggml-org/gemma-4-E4B-it-GGUF/gemma-4-e4b-it-Q4_K_M.gguf: ["Agent8083" , "-c 131072 -ctk q4_0 -ctv q4_0 -fa on --port 8083 --embeddings --pooling mean"]
+#
+#
+#
+#
+#
+lmstudio-community/gemma-4-E4B-it-QAT-GGUF/gemma-4-E4B-it-QAT-Q4_0.gguf: ["Agent8089" , "-c 65636 -ctk q4_0 -ctv q4_0 -fa on -nkvo --port 8089 --embeddings --pooling mean"]
+lmstudio-community/gemma-4-E2B-it-QAT-GGUF/gemma-4-E2B-it-QAT-Q4_0.gguf: ["Agent8090" , "-c 65636 -ctk q4_0 -ctv q4_0 -fa on -nkvo --port 8090 --embeddings --pooling mean"]
+#
+#
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q8_0.gguf: ["GPU/Agent8900" , "-c 32768 -ctk q8_0 -ctv q8_0 -fa on -ngl 15 --port 8900 -kvo "]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["GPU/Agent8901" , "-c 131072 -ctk q4_0 -ctv q4_0 -fa on --port 8901 --embeddings --pooling mean"]
+#
+lmstudio-community/granite-4.0-h-tiny-GGUF/granite-4.0-h-tiny-Q4_K_M.gguf: ["Agent","-c 32768 -ctk q4_0 -ctv q4_0 --port 5000"]

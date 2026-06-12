@@ -12,6 +12,12 @@ from openai import OpenAI
 import requests
 from typing import Optional, Dict
 
+try:
+    import yaml
+    YAML_AVAILABLE = True
+except ImportError:
+    YAML_AVAILABLE = False
+
 from prompt_toolkit import PromptSession
 from prompt_toolkit.styles import Style
 
@@ -34,10 +40,17 @@ parser.add_argument(
     default=os.path.expanduser('~/echo-home/codev/python/cliner'), 
     help='Directory containing python scripts for initial tool selection'
 )
+parser.add_argument(
+    '--config', 
+    type=str, 
+    default='python-cliner/model-settings.yaml', 
+    help='Path to the YAML config file for model-specific similarity thresholds'
+)
 args = parser.parse_args()
 port = args.port
 host = args.host
 tool_dir = args.tool_dir
+config_path = args.config
 
 # Configure for local LLM (e.g., Ollama, vLLM, or LM Studio)
 client = OpenAI(
@@ -58,9 +71,9 @@ def model_name(host: str, port: int, endpoint: str) -> Optional[str]:
         if 'models' in data and data['models']:
             first_model = data['models'][0]
             if 'name' in first_model:
-                model_name = first_model['name']
-                print(f"✅ Ready: {model_name}")
-                return model_name
+                m_name = first_model['name']
+                print(f"✅ Ready: {m_name}")
+                return m_name
             else:
                 print("⚠️ Warning: Model structure found, but 'name' key is missing.")
                 return None
@@ -76,9 +89,44 @@ def model_name(host: str, port: int, endpoint: str) -> Optional[str]:
         print(f"\n❌ An unexpected error occurred: {e}")
         return None
 
+def load_threshold(model_id: str, config_file: str, default: float = 0.65) -> float:
+    """Loads the model-specific threshold from a YAML file."""
+    if not os.path.exists(config_file):
+        print(f"ℹ️  [INFO] Config file '{config_file}' not found. Using default threshold: {default}")
+        return default
+
+    if not YAML_AVAILABLE:
+        print("⚠️ [WARNING] 'pyyaml' is not installed. Cannot parse YAML config. Using default threshold.")
+        print("   Run 'pip install pyyaml' to enable dynamic thresholds.")
+        return default
+
+    try:
+        with open(config_file, 'r', encoding='utf-8') as f:
+            config = yaml.safe_load(f)
+            
+        if config and model_id in config:
+            raw_threshold = config[model_id].get('similarity_threshold')
+            if raw_threshold is not None:
+                # Convert whole numbers (e.g., 80) to percentages (0.80)
+                if raw_threshold > 1:
+                    actual_threshold = float(raw_threshold) / 100.0
+                else:
+                    actual_threshold = float(raw_threshold)
+                
+                print(f"⚙️  [CONFIG] similarity_threshold = {actual_threshold}")
+                return actual_threshold
+            
+        print(f"ℹ️  [INFO] No specific threshold found for '{model_id}' in config. Using default: {default}")
+        return default
+        
+    except Exception as e:
+        print(f"⚠️ [WARNING] Error reading config file '{config_file}': {e}. Using default threshold.")
+        return default
+
 # --- Execution & Logic ---
 
 MODEL_NAME = model_name(host, port, endpoint="/models")
+ACTIVE_THRESHOLD = load_threshold(MODEL_NAME, config_path, default=0.65) if MODEL_NAME else 0.65
 
 SYSTEM_PROMPT = """You are an autonomous Python agent. Your goal is to fulfill the User Intent, verify it actually worked, and report the final status.
 
@@ -120,7 +168,7 @@ def cosine_similarity(vec1: list[float], vec2: list[float]) -> float:
         return 0.0
     return dot_product / (mag1 * mag2)
 
-def find_relevant_tool_embedded(user_intent: str, tool_dir: str, threshold: float = 0.85) -> Optional[str]:
+def find_relevant_tool_embedded(user_intent: str, tool_dir: str, threshold: float = 0.5) -> Optional[str]:
     """
     Selects a tool based on semantic similarity between the user intent
     and the formatted filenames in the tool directory.
@@ -154,6 +202,9 @@ def find_relevant_tool_embedded(user_intent: str, tool_dir: str, threshold: floa
 
             # 3. Calculate similarity
             similarity = cosine_similarity(intent_vector, TOOL_EMBEDDING_CACHE[filepath])
+            
+            # Uncomment for debugging threshold values:
+            # print(f"   [DEBUG] {clean_name} -> Score: {similarity:.3f}")
             
             if similarity > highest_similarity:
                 highest_similarity = similarity
@@ -196,7 +247,7 @@ def parse_llm_json(raw_text: str) -> dict:
         print(f"[ERROR] Failed to parse JSON from LLM: {raw_text}")
         return {"action_type": "declare_result", "status": "FAILED", "reason": "LLM output invalid JSON."}
 
-def run_agent_loop(user_intent: str, tool_dir: str, max_turns: int = 7):
+def run_agent_loop(user_intent: str, tool_dir: str, threshold: float, max_turns: int = 7):
     """Manages the multi-turn execution and validation loop."""
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT}
@@ -205,8 +256,8 @@ def run_agent_loop(user_intent: str, tool_dir: str, max_turns: int = 7):
     agent_globals = {}
     
     # --- FIRST ATTEMPT: Semantic Tool Search ---
-    print("\n\033[34m[SYSTEM] Performing semantic vector search for tools...\033[0m")
-    tool_path = find_relevant_tool_embedded(user_intent, tool_dir)
+    print(f"\n\033[34m[SYSTEM] Performing semantic vector search for tools (Threshold: {threshold})...\033[0m")
+    tool_path = find_relevant_tool_embedded(user_intent, tool_dir, threshold)
     
     if tool_path:
         tool_filename = os.path.basename(tool_path)
@@ -326,7 +377,7 @@ if __name__ == "__main__":
             if user_input.strip().lower() in ['exit', 'quit']:
                 break
             if user_input.strip():
-                run_agent_loop(user_input, tool_dir)
+                run_agent_loop(user_input, tool_dir, ACTIVE_THRESHOLD)
         except KeyboardInterrupt:
             print("\nExiting...")
             break
