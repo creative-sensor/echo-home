@@ -1,0 +1,2 @@
+tar xf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.tar -C $LOCAL_BIN
+

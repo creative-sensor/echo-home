@@ -1,8 +1,43 @@
+
 LiquidAI/LFM2.5-1.2B-Instruct-GGUF/LFM2.5-1.2B-Instruct-F16.gguf: ["7tps","-fa on"]
 lmstudio-community/LFM2.5-1.2B-Instruct-GGUF/LFM2.5-1.2B-Instruct-Q8_0.gguf: ["14tps","-fa on"]
 lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["9tps","-fa on"]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["QUICK_SEARCH","-ctk q4_0 -ctv q4_0 -fa on"]
 lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q6_K.gguf: ["7tps","-fa on"]
 lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q8_0.gguf: ["6tps","-fa on"]
 lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf: ["5tps","-fa on"]
+lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf: ["Agent/aider-chat","-c 32768 -ctk q4_0 -ctv q4_0 -fa on"]
+lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q8_0.gguf: ["Agent/aider-chat","-c 32768 -ctk q8_0 -ctv q8_0 -fa on"]
 lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q6_K.gguf: ["4tps","-fa on"]
 lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q8_0.gguf: ["3tps","-fa on"]
+# --------
+
+LiquidAI/LFM2.5-1.2B-Instruct-GGUF/LFM2.5-1.2B-Instruct-F16.gguf: ["7tps","-fa on"]
+lmstudio-community/LFM2.5-1.2B-Instruct-GGUF/LFM2.5-1.2B-Instruct-Q8_0.gguf: ["14tps","-fa on"]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["9tps","-fa on"]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["QUICK_SEARCH","-ctk q4_0 -ctv q4_0 -fa on"]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q6_K.gguf: ["7tps","-fa on"]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q8_0.gguf: ["6tps","-fa on"]
+lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf: ["5tps","-fa on"]
+lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf: ["Agent/aider-chat","-c 32768 -ctk q4_0 -ctv q4_0 -fa on"]
+lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q8_0.gguf: ["Agent/aider-chat","-c 32768 -ctk q8_0 -ctv q8_0 -fa on"]
+lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q6_K.gguf: ["4tps","-fa on"]
+lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q8_0.gguf: ["3tps","-fa on"]
+# --------
+#
+#
+#
+ggml-org/gemma-4-E4B-it-GGUF/gemma-4-e4b-it-Q4_K_M.gguf: ["Agent8083" , "-c 131072 -ctk q4_0 -ctv q4_0 -fa on --port 8083 --embeddings --pooling mean"]
+#
+#
+#
+#
+#
+lmstudio-community/gemma-4-E4B-it-QAT-GGUF/gemma-4-E4B-it-QAT-Q4_0.gguf: ["Agent8089" , "-c 65636 -ctk q4_0 -ctv q4_0 -fa on --port 8089 --embeddings --pooling mean"]
+lmstudio-community/gemma-4-E2B-it-QAT-GGUF/gemma-4-E2B-it-QAT-Q4_0.gguf: ["Agent8090" , "-c 65636 -ctk q4_0 -ctv q4_0 -fa on --port 8090 --embeddings --pooling mean"]
+#
+#
+#
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["Agent8901" , "-c 131072 -ctk q4_0 -ctv q4_0 -fa on --port 8901 --embeddings --pooling mean"]
+#
+

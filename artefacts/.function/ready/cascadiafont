@@ -1,5 +1,5 @@
-unzip $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.zip  
-mkdir -p ~/.local/share/fonts/cascadiafont
-cp $ARTIFACT_DIR/$name-$ARTIFACT_VERSION/ttf/CascadiaMono.ttf  ~/.local/share/fonts/cascadiafont
-rm -rf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION
+mkdir -p ~/.local/share/fonts/cascadiafont $ARTIFACT_DIR/$name
+unzip $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.zip -d $ARTIFACT_DIR/$name 
+cp $ARTIFACT_DIR/$name/ttf/CascadiaMono.ttf  ~/.local/share/fonts/cascadiafont
+rm -rf $ARTIFACT_DIR/$name
 fc-cache -v
