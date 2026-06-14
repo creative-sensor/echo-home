@@ -449,7 +449,7 @@ if __name__ == "__main__":
             promptia_session = PromptSession()
             promptia_style = Style.from_dict({
                 'llm': 'bg:#c4c408 fg:#000000 bold',   
-                'prompt': 'bg:#000000 fg:#c4c408',     
+                'prompt': 'bg:#07337a fg:#c4c408',     
                 'ws': 'bg:#c4c408 fg:#c4c408'          
             })
             user_input = promptia_session.prompt(
