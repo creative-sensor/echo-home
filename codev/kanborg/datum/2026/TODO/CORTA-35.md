@@ -1,4 +1,4 @@
-# geminide : thunderbolt ip link
+# memory : uninified hash
 --------------------------------
 ### 0 DESCRIPTION
 
@@ -18,5 +18,5 @@
 
 --------------------------------
 ```json
-{ "project_code": "APLE" , "links": "" , "location": "" , "fpoint": "" }
+{ "project_code": "CORTA" , "links": "" , "location": "" , "fpoint": "" }
 ```

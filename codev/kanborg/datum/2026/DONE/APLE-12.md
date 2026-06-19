@@ -1,0 +1,31 @@
+# geminide : thunderbolt ip link
+
+--------------------------------
+
+### 0 DESCRIPTION
+
+### 1 SOLUTION
+
+thunderbolt bridge
+
+```
+ping HOSTNAME.local
+```
+
+
+
+
+
+### 2 NOTES
+
+
+
+### 3 TEST/VERIFICATION
+
+
+### 4 JOURNAL
+
+--------------------------------
+
+```json
+{ "project_code": "APLE" , "links": "" , "location": "" , "fpoint": "" }
