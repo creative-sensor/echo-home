@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# Exit immediately if a command exits with a non-zero status
+set -e
+
+# Generate a lowercase UUID
+if command -v uuidgen &> /dev/null; then
+    UUID=$(uuidgen | tr '[:upper:]' '[:lower:]')
+else
+    UUID=$(cat /proc/sys/kernel/random/uuid)
+fi
+
+# Extract the directory components from the UUID
+DIR1="${UUID:0:1}"      # 1st character
+DIR2="${UUID:1:1}"      # 2nd character
+DIR3="${UUID:2:2}"      # 3rd and 4th characters
+
+# Define the target directory path
+TARGET_DIR="./$DIR1/$DIR2/$DIR3"
+
+# Create the nested directories if they don't exist
+mkdir -p "$TARGET_DIR"
+
+# Read from stdin (pipe) and write to the UUID file
+cat > "$TARGET_DIR/$UUID"
+
+# Optional: Print the created path for verification
+echo "Created: $TARGET_DIR/$UUID"
