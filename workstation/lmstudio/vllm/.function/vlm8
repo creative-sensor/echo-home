@@ -1,0 +1,98 @@
+#!/bin/bash
+
+# Configuration and Base paths
+# Assuming a similar structure to gml8w for model mapping
+VLLM_BASE=${VLLM_BASE:-~/.lmstudio/models}
+PROPERD=~/echo-home/workstation/lmstudio/vllm/.properd
+VLLM_YSON=~/echo-home/workstation/lmstudio/gmlama/.properd/gml.${HOSTNAME}.yson
+
+MODEL_ID=$1
+
+# Check if MODEL_ID is provided
+if test -z "$MODEL_ID" ; then
+  if [ -f "$VLLM_YSON" ]; then
+    cat $VLLM_YSON | grep --color -n '^.*:' && read -p "MODEL_ID ?= " MODEL_ID
+  else
+    echo "Error: Configuration file $VLLM_YSON not found."
+    exit 1
+  fi
+else
+  # Validate that MODEL_ID is a number
+  if ! [[ "$MODEL_ID" =~ ^[0-9]+$ ]] ; then
+    cat <<EOF
+Usage: vlm8 <model_ID>
+
+Description:
+  Run the vlm8 command with a specific model ID mapped in $VLLM_YSON.
+
+Available Models:
+$(if [ -f "$VLLM_YSON" ]; then cat $VLLM_YSON | grep --color -n '^.*:'; else echo "No models configured."; fi)
+
+Examples:
+  vlm8 1        # Run with model ID 1
+EOF
+    exit 1
+  fi
+fi
+
+# Check if config file exists
+if [ ! -f "$VLLM_YSON" ]; then
+    echo "Error: Configuration file $VLLM_YSON not found."
+    exit 1
+fi
+
+# Extract model information from the yson file
+# We assume the yson format matches gml8w: line contains [description, params, version]
+gml_line=$(sed -n ${MODEL_ID}p < $VLLM_YSON)
+
+if [ -z "$gml_line" ]; then
+    echo "Error: Model ID $MODEL_ID not found in $VLLM_YSON"
+    exit 1
+fi
+
+# Extracting data using yq (matching the logic of gml8w)
+vlm_describe=$(echo "$gml_line" | yq 'to_entries  | .[0].value[0]')
+vlm_params=$(echo "$gml_line" | yq 'to_entries  | .[0].value[1]')
+vlm_model_name=$(echo $gml_line | yq keys[])
+
+# Execute vllm command
+# We use the .function/run script to ensure the environment/runtime is correctly loaded
+echo "Launching VLLM model: $vlm_model_name"
+echo "Parameters: $vlm_params"
+echo "-----------------------------------"
+
+# We call the 'run' function from the vllm directory to ensure the runtime is initialized
+# and then pass the vllm-specific arguments.
+# Note: This assumes the 'run' script can handle the extra parameters or that 
+# we are calling the underlying runtime directly if 'run' is too restrictive.
+# For this implementation, we will attempt to use the 'run' script with the model name
+# and then append the parameters.
+
+# Since .function/run executes $DEFAULT_RUNTIME run "$MODEL_NAME", 
+# we will use the logic to trigger the vllm command directly if needed, 
+# but here we try to stay within the established pattern.
+
+# If the 'run' script is strictly 'run <model>', we might need to call the runtime directly.
+# However, to keep it clean, we will use the model name and pass params.
+
+# Check if we can use the existing 'run' script
+if [ -f "$(dirname "$0")/run" ]; then
+    # We use the model name and append the parameters extracted from the yson
+    # We use 'bash' to execute the run script in the same directory
+    bash "$(dirname "$0")/run" "$vlm_model_name" & 
+    # Note: vllm usually runs as a server, so we run in background or let it take foreground
+    # We append the params to the command line if the runtime supports it.
+    # Since we don't know if $DEFAULT_RUNTIME supports extra args, 
+    # we'll assume the user wants the server to run with the parsed params.
+    
+    # If you want to pass the params directly to the runtime:
+    # $DEFAULT_RUNTIME run "$vlm_model_name" $vlm_params
+    
+    # For now, let's try to execute the command directly using the runtime 
+    # but using the logic from the 'run' script to ensure variables are loaded.
+    source "$(dirname "$0")/../.properd/VARSET"
+    $DEFAULT_RUNTIME run "$vlm_model_name" $vlm_params
+else
+    echo "Error: .function/run script not found."
+    exit 1
+fi
