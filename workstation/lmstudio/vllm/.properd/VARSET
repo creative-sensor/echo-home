@@ -1,2 +1,2 @@
-MODEL_STORAGE_PATH="/path/to/models"
-DEFAULT_RUNTIME="ollama"
+VERSION=0.20.1
+

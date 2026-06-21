@@ -1,0 +1,12 @@
+#!/bin/bash
+
+
+
+
+uv venv $LOCAL_BIN/vllm-x86 --python 3.12 --seed
+source $LOCAL_BIN/vllm-x86/bin/activate
+
+# use uv
+uv pip install \
+        https://github.com/vllm-project/vllm/releases/download/v0.23.0/vllm-0.23.0+cpu-cp38-abi3-manylinux_2_34_x86_64.whl \
+        --torch-backend cpu

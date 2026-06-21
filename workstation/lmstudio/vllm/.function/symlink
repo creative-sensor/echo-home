@@ -1,0 +1,3 @@
+#!/bin/bash
+
+ln -sf $(readlink -f .function/start) $LOCAL_BIN/vlm

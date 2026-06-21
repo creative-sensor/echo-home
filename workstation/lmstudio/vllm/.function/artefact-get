@@ -1,0 +1,8 @@
+#!/bin/bash
+source .properd/VARSET
+mkdir -p artefacts
+
+
+uv pip install --system \
+    https://github.com/vllm-project/vllm/releases/download/v${VERSION}/vllm-${VERSION}+cpu-cp38-abi3-manylinux_2_35_x86_64.whl \
+    --torch-backend cpu
