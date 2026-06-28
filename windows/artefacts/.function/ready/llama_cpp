@@ -1,0 +1,28 @@
+tar -xf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.tar.gz
+cd llama.cpp-${ARTIFACT_VERSION}
+mkdir -p $LOCAL_BIN/gmlama/${ARTIFACT_VERSION}
+
+export VULKAN_SDK="$LOCAL_BIN/vulkan-sdk"
+export PATH="$VULKAN_SDK/Bin:$PATH"
+
+cmake -G "Visual Studio 18 2026" -A x64 -DCMAKE_C_COMPILER="cl.exe" -DCMAKE_CXX_COMPILER="cl.exe" .
+
+# Convert your local path to a Windows-friendly path format for CMake
+WINDOWS_PREFIX=$(cygpath -w "$LOCAL_BIN/gmlama/${ARTIFACT_VERSION}")
+
+cmake -G "Visual Studio 18 2026" -A x64 -B build \
+  -DLLAMA_RPC=ON \
+  -DGGML_VULKAN=ON \
+  -DBUILD_SHARED_LIBS=ON \
+  -DCMAKE_INSTALL_PREFIX="$WINDOWS_PREFIX" \
+  -DCMAKE_INSTALL_BINDIR="." \
+  -DCMAKE_INSTALL_LIBDIR="." \
+  -DCMAKE_INSTALL_RPATH='.' \
+  -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON
+
+
+
+cmake --build build --config Release --target install
+
+cd .. 
+rm -rf llama.cpp-${ARTIFACT_VERSION}

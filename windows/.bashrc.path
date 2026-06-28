@@ -17,6 +17,8 @@ path_dict["rust_cargo"]=$LOCAL_BIN/rust/cargo/bin
 path_dict["nvim"]='/c/Program Files/Neovim/bin'
 path_dict["neovide"]='/c/Program Files/Neovide'
 path_dict["docker_desktop"]=$LOCALAPPDATA/Programs/DockerDesktop/resources/bin
+path_dict["cmake"]=$LOCAL_BIN/cmake/bin
+path_dict["xpack"]=$LOCAL_BIN/xpack/bin
 
 
 for key in "${!path_dict[@]}"; do
