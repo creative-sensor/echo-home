@@ -1,0 +1,4 @@
+unzip $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.${ARTIFACT_SUFFIX} -d $LOCAL_BIN/
+rm -rf $LOCAL_BIN/xpack
+mv $LOCAL_BIN/xpack-windows-build-tools-${ARTIFACT_VERSION} $LOCAL_BIN/xpack
+  

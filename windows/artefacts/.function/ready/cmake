@@ -1,0 +1,4 @@
+unzip $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.${ARTIFACT_SUFFIX} -d $LOCAL_BIN/
+rm -rf $LOCAL_BIN/cmake
+mv $LOCAL_BIN/cmake-${ARTIFACT_VERSION}-windows-x86_64 $LOCAL_BIN/cmake
+  

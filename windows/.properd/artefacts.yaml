@@ -38,4 +38,7 @@ ntop: [ 0.3.21 , "https://github.com/gsass1/NTop/releases/download/v0.3.21/NTop.
 htop: [ 0.1.7 , "https://github.com/faratech/htop-win/releases/download/v0.1.7/htop-win-amd64.exe" , {"suffix":"exe"} ]
 deno: [ 2.7.14 , "https://github.com/denoland/deno/releases/download/v2.7.14/deno-x86_64-pc-windows-msvc.zip",  {"suffix":"zip"}]
 wsl: [ 2.7.3 , "https://github.com/microsoft/WSL/releases/download/2.7.3/wsl.2.7.3.0.x64.msi", {"suffix":"msi"} ]
+llama_cpp: [ b9828 , "https://github.com/ggml-org/llama.cpp/archive/refs/tags/b9828.tar.gz", {"suffix":"tar.gz"}]
+cmake: [ 4.3.4 , "https://github.com/Kitware/CMake/releases/download/v4.3.4/cmake-4.3.4-windows-x86_64.zip", {"suffix":"zip"}]
+xpack: [ 4.4.1-3 , "https://github.com/xpack-dev-tools/windows-build-tools-xpack/releases/download/v4.4.1-3/xpack-windows-build-tools-4.4.1-3-win32-x64.zip", {"suffix":"zip"}]
 
