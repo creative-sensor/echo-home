@@ -1,0 +1,1 @@
+unzip -p $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.${ARTIFACT_SUFFIX} zstd-v${ARTIFACT_VERSION}-win64/zstd.exe >  $LOCAL_BIN/zstd.exe

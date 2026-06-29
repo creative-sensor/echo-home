@@ -19,6 +19,8 @@ path_dict["neovide"]='/c/Program Files/Neovide'
 path_dict["docker_desktop"]=$LOCALAPPDATA/Programs/DockerDesktop/resources/bin
 path_dict["cmake"]=$LOCAL_BIN/cmake/bin
 path_dict["xpack"]=$LOCAL_BIN/xpack/bin
+path_dict["rsync"]=$LOCAL_BIN/rsync/usr/bin
+path_dict["lib_msys"]=$LOCAL_BIN/lib-msys
 
 
 for key in "${!path_dict[@]}"; do

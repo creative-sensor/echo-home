@@ -1,0 +1,2 @@
+mkdir -p $LOCAL_BIN/$name
+tar --zstd -xvf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.${ARTIFACT_SUFFIX}  -C $LOCAL_BIN/$name
