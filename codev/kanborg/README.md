@@ -40,6 +40,7 @@
 - [datum/2026/TODO/CORTA-22.md](datum/2026/TODO/CORTA-22.md)   ```# gemma4 : nvfp4```
 - [datum/2026/TODO/CORTA-23.md](datum/2026/TODO/CORTA-23.md)   ```# MCP : first try```
 - [datum/2026/TODO/CORTA-35.md](datum/2026/TODO/CORTA-35.md)   ```# memory : uninified hash```
+- [datum/2026/TODO/CORTA-36.md](datum/2026/TODO/CORTA-36.md)   ```# stable-diffusion : cpp```
 - [datum/2026/TODO/CORTA-4.md](datum/2026/TODO/CORTA-4.md)   ```# pytorch : start```
 - [datum/2026/TODO/CORTA-5.md](datum/2026/TODO/CORTA-5.md)   ```# tensorflow : start```
 - [datum/2026/TODO/DBMS-1.md](datum/2026/TODO/DBMS-1.md)   ```# Vector : Search```
