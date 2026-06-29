@@ -60,7 +60,6 @@
 - [datum/2026/TODO/LEAF-20.md](datum/2026/TODO/LEAF-20.md)   ```# Boot : mono service```
 - [datum/2026/TODO/LEAF-5.md](datum/2026/TODO/LEAF-5.md)   ```# SPEC : Define new spec```
 - [datum/2026/TODO/LEAF-7.md](datum/2026/TODO/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
-- [datum/2026/TODO/MDOS-20.md](datum/2026/TODO/MDOS-20.md)   ```# rsync : source rebuild```
 - [datum/2026/TODO/MDOS-27.md](datum/2026/TODO/MDOS-27.md)   ```# wsli : WSL Windows interface```
 - [datum/2026/TODO/MONO-1.md](datum/2026/TODO/MONO-1.md)   ```# Apache : NiFi```
 - [datum/2026/TODO/MONO-7.md](datum/2026/TODO/MONO-7.md)   ```# ULI : Unified Linux Interface```
@@ -117,6 +116,7 @@
 - [datum/2026/DONE/KITE-30.md](datum/2026/DONE/KITE-30.md)   ```# claude: code```
 - [datum/2026/DONE/KROS-8.md](datum/2026/DONE/KROS-8.md)   ```# gmlama : gpu acceleration```
 - [datum/2026/DONE/LEAF-33.md](datum/2026/DONE/LEAF-33.md)   ```# pandoc : md-html```
+- [datum/2026/DONE/MDOS-20.md](datum/2026/DONE/MDOS-20.md)   ```# rsync : source rebuild```
 - [datum/2026/DONE/MDOS-28.md](datum/2026/DONE/MDOS-28.md)   ```# OpenSSH : Server```
 - [datum/2026/DONE/MDOS-29.md](datum/2026/DONE/MDOS-29.md)   ```# uv : package manager```
 - [datum/2026/DONE/MDOS-30.md](datum/2026/DONE/MDOS-30.md)   ```# node : fix path```
