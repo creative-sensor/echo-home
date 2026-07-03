@@ -1,0 +1,4 @@
+mkdir -p $LOCAL_BIN/lib-msys
+tar --zstd -xvf $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.${ARTIFACT_SUFFIX} \
+  --strip-components=2 \
+  -C $LOCAL_BIN/lib-msys 
