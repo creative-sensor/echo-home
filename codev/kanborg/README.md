@@ -41,6 +41,7 @@
 - [datum/2026/TODO/CORTA-23.md](datum/2026/TODO/CORTA-23.md)   ```# MCP : first try```
 - [datum/2026/TODO/CORTA-35.md](datum/2026/TODO/CORTA-35.md)   ```# memory : uninified hash```
 - [datum/2026/TODO/CORTA-36.md](datum/2026/TODO/CORTA-36.md)   ```# stable-diffusion : cpp```
+- [datum/2026/TODO/CORTA-37.md](datum/2026/TODO/CORTA-37.md)   ```# diffusion : llama cpp```
 - [datum/2026/TODO/CORTA-4.md](datum/2026/TODO/CORTA-4.md)   ```# pytorch : start```
 - [datum/2026/TODO/CORTA-5.md](datum/2026/TODO/CORTA-5.md)   ```# tensorflow : start```
 - [datum/2026/TODO/DBMS-1.md](datum/2026/TODO/DBMS-1.md)   ```# Vector : Search```
@@ -67,7 +68,8 @@
 - [datum/2026/TODO/NJS-1.md](datum/2026/TODO/NJS-1.md)   ```# KANBORG : ELECTRON UI```
 - [datum/2026/TODO/VIM-26.md](datum/2026/TODO/VIM-26.md)   ```# LLM: text completion```
 - [datum/2026/TODO/VIM-27.md](datum/2026/TODO/VIM-27.md)   ```# GML : talk```
-- [datum/2026/TODO/VIM-30.md](datum/2026/TODO/VIM-30.md)   ```# lmsh : console page```
+- [datum/2026/TODO/VIM-30.md](datum/2026/TODO/VIM-30.md)   ```# lmsh : console page```
+- [datum/2026/TODO/VIM-32.md](datum/2026/TODO/VIM-32.md)   ```# lmsh : instant promptia```
 
 ### 4 DONE
 
