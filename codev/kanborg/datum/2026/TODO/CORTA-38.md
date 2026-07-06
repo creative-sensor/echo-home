@@ -1,7 +1,8 @@
-# memory : uninified hash
+# lmsh : memphix
 --------------------------------
 ### 0 DESCRIPTION
 
+- memory-based tool calling
 
 ### 1 SOLUTION
 

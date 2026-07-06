@@ -39,9 +39,9 @@
 - [datum/2026/TODO/CORTA-13.md](datum/2026/TODO/CORTA-13.md)   ```# tinygrad : pytorch distribute```
 - [datum/2026/TODO/CORTA-22.md](datum/2026/TODO/CORTA-22.md)   ```# gemma4 : nvfp4```
 - [datum/2026/TODO/CORTA-23.md](datum/2026/TODO/CORTA-23.md)   ```# MCP : first try```
-- [datum/2026/TODO/CORTA-35.md](datum/2026/TODO/CORTA-35.md)   ```# memory : uninified hash```
 - [datum/2026/TODO/CORTA-36.md](datum/2026/TODO/CORTA-36.md)   ```# stable-diffusion : cpp```
 - [datum/2026/TODO/CORTA-37.md](datum/2026/TODO/CORTA-37.md)   ```# diffusion : llama cpp```
+- [datum/2026/TODO/CORTA-38.md](datum/2026/TODO/CORTA-38.md)   ```# lmsh : memphix```
 - [datum/2026/TODO/CORTA-4.md](datum/2026/TODO/CORTA-4.md)   ```# pytorch : start```
 - [datum/2026/TODO/CORTA-5.md](datum/2026/TODO/CORTA-5.md)   ```# tensorflow : start```
 - [datum/2026/TODO/DBMS-1.md](datum/2026/TODO/DBMS-1.md)   ```# Vector : Search```
@@ -104,6 +104,7 @@
 - [datum/2026/DONE/CORTA-31.md](datum/2026/DONE/CORTA-31.md)   ```# lmsh : hesman```
 - [datum/2026/DONE/CORTA-32.md](datum/2026/DONE/CORTA-32.md)   ```# lmsh : fiberon```
 - [datum/2026/DONE/CORTA-33.md](datum/2026/DONE/CORTA-33.md)   ```# lmsh : FBI```
+- [datum/2026/DONE/CORTA-35.md](datum/2026/DONE/CORTA-35.md)   ```# memory : uvian```
 - [datum/2026/DONE/CORTA-6.md](datum/2026/DONE/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
 - [datum/2026/DONE/CORTA-7.md](datum/2026/DONE/CORTA-7.md)   ```# gmlama```
 - [datum/2026/DONE/CORTA-8.md](datum/2026/DONE/CORTA-8.md)   ```# llama.cpp : aka gmlala```
