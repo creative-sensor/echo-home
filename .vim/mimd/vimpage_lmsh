@@ -11,7 +11,7 @@ endfunction
 
 function! Lmsh_activate(agent_line)
     " Get the current line
-    let l:current_line = getline('.')
+    let l:current_line = a:agent_line
     
     " Execute awk using the external script file to parse the Markdown table row.
     let l:awk_command = 'echo -e "' . l:current_line . '" | awk -f ~/echo-home/.vim/mimd/lmsh/args.awk'
@@ -43,3 +43,5 @@ endfunction
 
 map lmsh : call VimPage_lmsh()<CR>
 map lmsha : call Lmsh_activate(getline('.'))<CR>
+map lmsh0 : vsplit<CR>:call Lmsh_activate('\|sh7t.py\|gml8w 15\|8901\|')<CR>
+map lmsh1 : vsplit<CR>:call Lmsh_activate('\|python-cliner.py\|gml8w 15\|8083\|')<CR>
