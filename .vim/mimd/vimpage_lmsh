@@ -45,5 +45,7 @@ endfunction
 
 map lmsh : call VimPage_lmsh()<CR>
 map lmsha : call Lmsh_activate(getline('.'))<CR>
-map lmsh0 : vsplit<CR>:call Lmsh_activate('\|sh7t.py\|14\|8900\|')<CR>
-map lmsh1 : vsplit<CR>:call Lmsh_activate('\|python-cliner.py\|15\|8083\|')<CR>
+map lmsh1 : vsplit<CR>:call Lmsh_activate('\|sh7t.py\|4\|8083\|')<CR>
+map lmsh2 : vsplit<CR>:call Lmsh_activate('\|python-cliner.py\|3\|8082\|')<CR>
+map lmsh3 : vsplit<CR>:call Lmsh_activate('\|node-cliner.js\|3\|8082\|')<CR>
+map lmsh0 : vsplit<CR>:call Lmsh_activate('\|neos.py\|4\|8083\|')<CR>

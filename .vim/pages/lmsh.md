@@ -9,7 +9,7 @@
 | hesman.py        |        |          |
 | kube.py          |        |          |
 | memphis.py       |        |          |
-| neos.py          |        |          |
+| neos.py          |  14    |   8900   |
 | node-cliner.js   |        |          |
 | ps-cliner.ps1    |        |          |
 | python-cliner.py |        |          |
@@ -25,5 +25,7 @@
 - `lmsh1`: activate `sh7t`
 
 - `lmsh2`: activate `python-cliner`
+
+- `lmsh2`: activate `node-cliner`
 
 - `lmsh0`: activate `neos`
