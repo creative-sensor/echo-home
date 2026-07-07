@@ -5,7 +5,7 @@ BEGIN { FS="|"; OFS=" " }
     gsub(/^ *| *$/, "", $3);
     gsub(/^ *| *$/, "", $4);
     
-    # Print the Agent Shell and the LLM Kernel separated by a space
-    # This allows Vimscript to split the output into parts[0] and parts[1]
-    print $2, $4
+    # Print the Agent Shell, the Command/Args, and the Port separated by a space
+    # This allows Vimscript to split the output into parts[0], parts[1], and parts[2]
+    print $2, $3, $4
 }
