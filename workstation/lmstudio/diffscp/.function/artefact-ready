@@ -1,0 +1,25 @@
+#!/bin/bash
+PINNED_VERSION=$1
+source .properd/VARSET
+
+test -n "$PINNED_VERSION" && VERSION=$PINNED_VERSION
+mkdir -p $LOCAL_BIN/diffscp/$PINNED_VERSION
+mkdir -p $LOCAL_BIN/diffscp-vulkan/$PINNED_VERSION
+mkdir -p $LOCAL_BIN/diffscp-cuda/$PINNED_VERSION
+mkdir -p ~/.lmstudio/models.diffscp
+
+test "$OS" == "Windows_NT" && 
+    unzip -o artefacts/sd-${VERSION}-bin-win-cpu-x64.zip -d $LOCAL_BIN/diffscp/$PINNED_VERSION &&
+#    unzip -o artefacts/sd-${VERSION}-bin-win-vulkan-x64.zip -d $LOCAL_BIN/diffscp-vulkan/$PINNED_VERSION 
+   
+if test -d /boot/efi || test -d /mnt/chromeos ; then
+    tar -xzf artefacts/sd-${VERSION}-bin-ubuntu-x64.tar.gz -C $LOCAL_BIN/ &&
+    mv $LOCAL_BIN/sd-$VERSION/* $LOCAL_BIN/diffscp/$PINNED_VERSION && rm -r $LOCAL_BIN/sd-$VERSION
+    tar -xzf artefacts/sd-${VERSION}-bin-ubuntu-vulkan-x64.tar.gz -C $LOCAL_BIN/ && 
+    mv $LOCAL_BIN/sd-$VERSION/* $LOCAL_BIN/diffscp-vulkan/$PINNED_VERSION
+fi
+
+test -d /System/Volumes/Data/Applications &&
+    unzip artefacts/sd-${VERSION}-bin-Darwin-macOS-15.7.7-arm64.zip -d $LOCAL_BIN/diffscp
+#    mv $LOCAL_BIN/sd-$VERSION/* $LOCAL_BIN/diffscp/$PINNED_VERSION && rm -r $LOCAL_BIN/sd-$VERSION
+    

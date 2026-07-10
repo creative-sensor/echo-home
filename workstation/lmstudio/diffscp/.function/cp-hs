@@ -1,0 +1,7 @@
+#!/bin/bash
+
+hsum=$(echo $HOSTNAME | sha256sum)
+hsum=${hsum:0:7}
+
+echo "# --------" >> .properd/gml.$hsum.yson
+cat .properd/gml.$HOSTNAME.yson >> .properd/gml.$hsum.yson

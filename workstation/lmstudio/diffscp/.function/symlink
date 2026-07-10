@@ -1,0 +1,30 @@
+#!/bin/bash -x
+
+ln -sf $(readlink -f .function/gml8)  $LOCAL_BIN/gmlama/gml8
+ln -sf $(readlink -f .function/gml8w)  $LOCAL_BIN/gmlama/gml8w
+ln -sf $(readlink -f .function/vk-dev)  $LOCAL_BIN/gmlama/gmlvk-dev
+
+LIST="
+gml16
+gml32
+gml64
+gml642
+gml644
+"
+
+for cmd in $LIST; do
+  ln -sf $(readlink -f .function/gmlx)  $LOCAL_BIN/gmlama/$cmd
+done
+
+
+
+LIST_vk="
+gml4
+gml16
+gml32_4
+gml64_16
+"
+
+for cmd in $LIST_vk; do
+  ln -sf $(readlink -f .function/gmlxvk)  $LOCAL_BIN/gmlama/${cmd}vk
+done

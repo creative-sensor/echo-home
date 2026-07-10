@@ -1,0 +1,5 @@
+#!/bin/bash
+
+SEARCH_STR=$1
+cd $LOCAL_BIN/gmlama-vulkan &&
+  ./llama-cli.exe --list-devices 2>/dev/null | awk -F ":" "/$SEARCH_STR/ {print \$1}" | sed 's/ \+//g'

@@ -10,6 +10,7 @@ path_dict["yson"]="$HOME/echo-home/codev/yson/.function"
 path_dict["go"]="$PROGRAMFILES/Go/bin"
 path_dict["node"]=$LOCAL_BIN/node
 path_dict["gmlama"]=$LOCAL_BIN/gmlama
+path_dict["diffscp"]=$LOCAL_BIN/diffscp
 path_dict["vscodium"]=$LOCAL_BIN/vscodium
 path_dict["llvm_mingw"]=$LOCAL_BIN/llvm-mingw/bin
 path_dict["rust"]=$LOCAL_BIN/rust/rustc/bin

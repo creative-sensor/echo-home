@@ -1,0 +1,20 @@
+# --------
+ggml-org/gemma-3-1b-it-GGUF/gemma-3-1b-it-Q4_K_M.gguf: ["GgAI_1" , "-st"]
+ggml-org/gemma-3-1b-it-GGUF/gemma-3-1b-it-Q4_K_M.gguf: ["GgAI_8" , ""]
+# --------
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+lmstudio-community/gemma-4-E2B-it-QAT-GGUF/gemma-4-E2B-it-QAT-Q4_0.gguf: ["Agent8090" , "-c 65636 -ctk q4_0 -ctv q4_0 -fa on --port 8090 --embeddings --pooling mean"]
+#
+#
+#
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["Agent8901" , "-c 131072 -ctk q4_0 -ctv q4_0 -fa on --port 8901 --embeddings --pooling mean"]
+#

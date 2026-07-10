@@ -1,0 +1,19 @@
+#!/bin/bash
+PINNED_VERSION=$1
+source .properd/VARSET
+
+test -n "$PINNED_VERSION" && VERSION=$PINNED_VERSION
+mkdir -p artefacts
+
+
+SUITE="
+https://github.com/leejet/stable-diffusion.cpp/releases/download/${VERSION_BUILD}/sd-${VERSION}-bin-Darwin-macOS-15.7.7-arm64.zip
+https://github.com/leejet/stable-diffusion.cpp/releases/download/${VERSION_BUILD}/sd-${VERSION}-bin-win-cpu-x64.zip
+https://github.com/leejet/stable-diffusion.cpp/releases/download/${VERSION_BUILD}/sd-${VERSION}-bin-Linux-Ubuntu-24.04-x86_64-vulkan.zip
+"
+cd artefacts
+set -x
+for i in $SUITE ; do
+  curl -sLO $i
+done
+
