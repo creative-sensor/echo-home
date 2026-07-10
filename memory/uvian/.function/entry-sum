@@ -1,0 +1,154 @@
+#!/usr/bin/env python
+import os
+import yaml
+import requests
+import argparse
+import json
+
+def fetch_model_name(base_url: str) -> str:
+    """
+    Attempts to fetch the model name directly from the LLM port.
+    """
+    try:
+        response = requests.get(f"{base_url}/models", timeout=5)
+        response.raise_for_status()
+        data = response.json()
+        if "models" in data and len(data["models"]) > 0:
+            return data["models"][0]["name"]
+    except Exception:
+        pass 
+        
+    try:
+        response = requests.get(f"{base_url}/v1/models", timeout=5)
+        response.raise_for_status()
+        data = response.json()
+        if "data" in data and len(data["data"]) > 0:
+            return data["data"][0]["id"]
+    except Exception as e:
+        raise RuntimeError(f"Failed to auto-fetch model name from {base_url}. Error: {e}")
+
+def summarize_and_store(uuid_str: str, llm_endpoint: str, model_name: str, prompt: str, uvian_dir: str, yaml_file: str):
+    """
+    Locates a file based on its UUID, asks a local LLM to summarize it,
+    and appends the summary to a YAML file mapped by model name.
+    """
+    if len(uuid_str) < 4:
+        print(f"Error: UUID '{uuid_str}' is too short.")
+        return
+        
+    dir1 = uuid_str[0:1]
+    dir2 = uuid_str[1:2]
+    dir3 = uuid_str[2:4]
+    
+    file_path = os.path.join(uvian_dir, dir1, dir2, dir3, uuid_str)
+    
+    if not os.path.exists(file_path):
+        print(f"Error: Cache file not found at {file_path}")
+        return
+
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            file_content = f.read().strip()
+    except Exception as e:
+        print(f"Error reading {file_path}: {e}")
+        return
+        
+    if not file_content:
+        print(f"Warning: The file at {file_path} is empty. Skipping LLM request.")
+        return
+
+    print(f"Requesting summary for {uuid_str} using {model_name}...")
+    
+    payload = {
+        "model": model_name,
+        "messages": [
+            {
+                "role": "user", 
+                "content": f"{prompt}\n\nFile Content:\n\n{file_content}"
+            }
+        ],
+        "temperature": 0.0,
+        "max_tokens": 4096,
+        "stream": False
+    }
+    
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    }
+    
+    try:
+        response = requests.post(llm_endpoint, json=payload, headers=headers)
+        response.raise_for_status()
+        
+        response_data = response.json()
+        summary = response_data["choices"][0]["message"]["content"].strip()
+            
+    except Exception as e:
+        print(f"LLM API Error: {e}")
+        return
+
+    yaml_data = {}
+    
+    # PyYAML is perfectly fine for reading the mixed format
+    if os.path.exists(yaml_file):
+        with open(yaml_file, 'r', encoding='utf-8') as yf:
+            try:
+                yaml_data = yaml.safe_load(yf) or {}
+            except yaml.YAMLError as e:
+                print(f"Error parsing existing YAML: {e}")
+                yaml_data = {}
+
+    if uuid_str not in yaml_data:
+        yaml_data[uuid_str] = {}
+        
+    yaml_data[uuid_str][model_name] = summary
+
+    # Manually write the file to enforce strict JSON strings for the inner blocks
+    with open(yaml_file, 'w', encoding='utf-8') as yf:
+        for uid, models_dict in yaml_data.items():
+            # json.dumps guarantees double quotes around keys and values
+            json_block = json.dumps(models_dict, ensure_ascii=False)
+            yf.write(f"{uid}: {json_block}\n")
+
+    print(f"Success! Added {model_name} summary for {uuid_str} to {yaml_file}")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Summarize cached uvian files and append to a YAML file.")
+    
+    parser.add_argument("-u", "--uuid", required=True, help="The target UUID to summarize.")
+    parser.add_argument("-m", "--model", help="The name of the LLM model. If omitted, fetched automatically from the port.")
+    parser.add_argument("--host", default="localhost", help="The host for the local LLM API. (Default: localhost)")
+    parser.add_argument("--port", default=8080, type=int, help="The port for the local LLM API. (Default: 8080)")
+    parser.add_argument("-p", "--prompt", default="Provide a concise, one-sentence summary of the following file content. Describe its primary purpose, topic, or key information.",
+                        help="Prompt instruction for the LLM. (Default: General file summarizer)")
+    parser.add_argument("-d", "--dir", default="./", help="The root directory for uvian storage. (Default: ./)")
+    parser.add_argument("-y", "--yaml", default="summer.yaml", help="The target YAML file to store summaries. (Default: summer.yaml)")
+
+    args = parser.parse_args()
+
+    host = args.host
+    if not host.startswith("http://") and not host.startswith("https://"):
+        base_url = f"http://{host}:{args.port}"
+    else:
+        base_url = f"{host}:{args.port}"
+
+    active_model = args.model
+    if not active_model:
+        try:
+            active_model = fetch_model_name(base_url)
+            print(f"Auto-detected model: {active_model}")
+        except Exception as e:
+            print(e)
+            exit(1)
+
+    llm_endpoint = f"{base_url}/v1/chat/completions"
+
+    summarize_and_store(
+        uuid_str=args.uuid,
+        llm_endpoint=llm_endpoint,
+        model_name=active_model,
+        prompt=args.prompt,
+        uvian_dir=args.dir,
+        yaml_file=args.yaml
+    )

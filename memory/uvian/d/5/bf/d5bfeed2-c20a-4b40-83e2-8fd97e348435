@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#Run an LLM server with gml8w (llama cpp)
+MODEL_ID=${1:-1}
+gml8w $MODEL_ID

@@ -1,0 +1,14 @@
+curl http://localhost:8083/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gemma-4-e4b-it-Q4_K_M.gguf",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Provide a concise summary. File content: echo Hello World"
+      }
+    ],
+    "temperature": 0.3,
+    "max_tokens": 100
+  }'
+
