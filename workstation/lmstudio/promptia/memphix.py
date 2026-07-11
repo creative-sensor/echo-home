@@ -22,6 +22,32 @@ except ImportError:
     exit(1)
 
 # ==========================================
+# 0. GIT BASH & WINDOWS PATH RESOLVER
+# ==========================================
+def resolve_path(path_str: str) -> str:
+    """
+    Safely expands '~' and resolves Git Bash (/c/Users/...) vs Windows (C:/Users/...) 
+    path discrepancies, ensuring consistent forward-slashes for bash execution.
+    """
+    if not path_str:
+        return path_str
+        
+    # 1. Expand '~' respecting Git Bash $HOME over Windows $USERPROFILE if present
+    if path_str.startswith("~"):
+        home_dir = os.environ.get("HOME", os.path.expanduser("~"))
+        path_str = os.path.join(home_dir, path_str[1:].lstrip("/\\"))
+        
+    # 2. Convert Git Bash style drive letters (e.g., /c/Users -> C:/Users)
+    if platform.system() == "Windows" or os.environ.get("MSYSTEM"):
+        match = re.match(r"^/([a-zA-Z])/(.*)", path_str)
+        if match:
+            drive, rest = match.groups()
+            path_str = f"{drive.upper()}:/{rest}"
+            
+    # 3. Normalize all slashes to forward slashes for universal Bash compatibility
+    return os.path.normpath(path_str).replace("\\", "/")
+
+# ==========================================
 # 1. CLI ARGUMENTS & API SETUP
 # ==========================================
 parser = argparse.ArgumentParser(description="Memphix: Interactive LLM Agent with Uvian Memory & ChromaDB.")
@@ -32,9 +58,13 @@ parser.add_argument('--uvian-dir', type=str, default='~/echo-home/memory/uvian',
 parser.add_argument('--summary', type=str, default=None, help='YAML file containing uvian summaries (Default: <uvian-dir>/summer.yaml)')
 args = parser.parse_args()
 
-# Dynamically set default summary path to $uvian-dir/summer.yaml
+# Sanitize base directories using the path resolver
+args.uvian_dir = resolve_path(args.uvian_dir)
+
 if args.summary is None:
-    args.summary = os.path.join(args.uvian_dir, "summer.yaml")
+    args.summary = resolve_path(os.path.join(args.uvian_dir, "summer.yaml"))
+else:
+    args.summary = resolve_path(args.summary)
 
 client = OpenAI(
     base_url=f"http://{args.host}:{args.port}/v1", 
@@ -65,7 +95,7 @@ MODEL_NAME = get_model_name(args.host, args.port, endpoint="/models")
 class UvianMemoryManager:
     def __init__(self, host: str = 'localhost', port: int = 8080):
         print("🧠 Initializing Uvian ChromaDB Memory Base...")
-        self.chroma_client = chromadb.PersistentClient(path="./memphix/vector")
+        self.chroma_client = chromadb.PersistentClient(path=resolve_path("./memphix/vector"))
         self.collection = self.chroma_client.get_or_create_collection(name="uvian_memories")
         
         print(f"   -> Using embedding endpoint at http://{host}:{port}/v1")
@@ -76,6 +106,7 @@ class UvianMemoryManager:
         return response.data[0].embedding
 
     def sync_yaml_to_chroma(self, yaml_file: str):
+        yaml_file = resolve_path(yaml_file)
         if not os.path.exists(yaml_file):
             print(f"⚠️ Warning: Summary file '{yaml_file}' not found. Skipping sync.")
             return
@@ -105,7 +136,7 @@ class UvianMemoryManager:
                             continue
                             
                         embedding = self.get_embedding(summary)
-                        self.collection.add(  # Changed from upsert() to add() since we know it's new
+                        self.collection.add( 
                             ids=[doc_id],
                             embeddings=[embedding],
                             documents=[summary],
@@ -151,7 +182,9 @@ def handle_uvian_entry(uuid_str: str, uvian_dir: str = "./") -> Dict[str, str]:
     dir1 = uuid_str[0:1]
     dir2 = uuid_str[1:2]
     dir3 = uuid_str[2:4]
-    file_path = os.path.join(uvian_dir, dir1, dir2, dir3, uuid_str)
+    
+    # Safely join and normalize path for GitBash/Windows
+    file_path = resolve_path(os.path.join(uvian_dir, dir1, dir2, dir3, uuid_str))
     
     if not os.path.exists(file_path):
         return {"type": "error", "content": f"Uvian target file not found at {file_path}"}
@@ -274,8 +307,8 @@ OUTPUT SCHEMA:
 """
 
 def is_autopilot_enabled() -> bool:
-    """Checks ~/echo-home/autopilot.yaml to see if memphix is permitted to run automatically without prompting."""
-    autopilot_path = os.path.expanduser("~/echo-home/autopilot.yaml")
+    """Checks ~/echo-home/autopilot.yaml using cross-platform GitBash path resolution."""
+    autopilot_path = resolve_path("~/echo-home/autopilot.yaml")
     if os.path.exists(autopilot_path):
         try:
             with open(autopilot_path, 'r', encoding='utf-8') as f:
@@ -288,11 +321,11 @@ def is_autopilot_enabled() -> bool:
     return False
 
 def get_os_env_context() -> str:
-    """Collects relevant OS environment details for the LLM context."""
+    """Collects relevant OS environment details normalized for Bash context."""
     sys_name = platform.system()
     release = platform.release()
     arch = platform.machine()
-    cwd = os.getcwd()
+    cwd = resolve_path(os.getcwd())
     user = os.environ.get('USER', os.environ.get('USERNAME', 'unknown'))
     shell = os.environ.get('SHELL', 'default/bash')
     
@@ -307,9 +340,13 @@ def get_os_env_context() -> str:
 def execute_shell_command(command: str) -> Dict:
     print(f"\n[SYSTEM] Executing: {command}")
     cmd_args = ["bash", "-c", command]
-    execbin = r"C:\Program Files\Git\bin\bash.exe" if os.environ.get('OS') == 'Windows_NT' else None     
-    proc = None
     
+    # Locate native Git Bash executable on Windows environments
+    execbin = None
+    if os.environ.get('OS') == 'Windows_NT':
+        execbin = r"C:\Program Files\Git\bin\bash.exe"  
+                
+    proc = None
     try:
         proc = subprocess.Popen(cmd_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, executable=execbin)
         try:
