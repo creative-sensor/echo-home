@@ -9,13 +9,10 @@ source .properd/VARSET
 test -n "$VARSET_EXT" && source $VARSET_EXT
 
 # ---- |MAIN ----
-PROMPT="$@"
 MODEL=~/.lmstudio/models.diffscp/stabilityai/stable-diffusion-3.5-medium
  
-sd-cli   --model $MODEL/sd3.5_medium.safetensors   \
+sd-server   --model $MODEL/sd3.5_medium.safetensors   \
     --clip_l $MODEL/text_encoders/clip_l.safetensors   \
     --clip_g $MODEL/text_encoders/clip_g.safetensors   \
     --t5xxl $MODEL/text_encoders/t5xxl_fp8_e4m3fn.safetensors   \
-    --prompt "$PROMPT"   \
     --steps 30   --sampling-method euler   --width 360   --height 360   \
-    --output ~/Pictures/diffscp-$(date +%s).png
