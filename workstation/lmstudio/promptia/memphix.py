@@ -59,6 +59,7 @@ parser.add_argument('--summary', type=str, default=None, help='YAML file contain
 args = parser.parse_args()
 
 # Sanitize base directories using the path resolver
+uvian_dir_bash = args.uvian_dir
 args.uvian_dir = resolve_path(args.uvian_dir)
 
 if args.summary is None:
@@ -184,7 +185,7 @@ def handle_uvian_entry(uuid_str: str, uvian_dir: str = "./") -> Dict[str, str]:
     dir3 = uuid_str[2:4]
     
     # Safely join and normalize path for GitBash/Windows
-    file_path = resolve_path(os.path.join(uvian_dir, dir1, dir2, dir3, uuid_str))
+    file_path = resolve_path(os.path.join(uvian_dir_bash, dir1, dir2, dir3, uuid_str))
     
     if not os.path.exists(file_path):
         return {"type": "error", "content": f"Uvian target file not found at {file_path}"}
@@ -197,21 +198,30 @@ def handle_uvian_entry(uuid_str: str, uvian_dir: str = "./") -> Dict[str, str]:
         return {"type": "error", "content": f"Failed to inspect header: {str(e)}"}
         
     is_shebang = first_line.startswith("#!")
-    is_executable = os.access(file_path, os.X_OK)
     
-    if is_shebang or is_executable:
+    # On Windows/Git Bash, os.access(os.X_OK) is unreliable and often returns True for plain text files.
+    # For extensionless UUID files, we MUST rely strictly on the shebang to trigger script execution.
+    if is_shebang:
         # Determine engine from shebang
-        engine = "bash"
         if "python" in first_line.lower():
             engine = "python3" if subprocess.call(["command", "-v", "python3"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0 else "python"
         elif "node" in first_line.lower():
             engine = "node"
-        elif "sh" in first_line.lower() or "bash" in first_line.lower():
+        else:
             engine = "bash"
+            
+        # --- WINDOWS GIT BASH OVERRIDE ---
+        # Prevent Windows from defaulting to C:\Windows\System32\bash.exe (WSL)
+        if engine == "bash" and (platform.system() == "Windows" or os.environ.get('OS') == 'Windows_NT'):
+            git_bash_path = r"C:\Program Files\Git\bin\bash.exe"
+            if os.path.exists(git_bash_path):
+                engine = git_bash_path
+            else:
+                print("⚠️ [WARNING] Standard Git Bash path not found. Falling back to system PATH.")
     else:
         # Non-script: Default command to view file as output
         engine = "cat"
-        
+
     print(f"\n⚡ [UVIAN TOOL CALL] Executing {uuid_str} via '{engine}' engine (Zero-View)...")
     try:
         proc = subprocess.run([engine, file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=30)
@@ -342,13 +352,18 @@ def execute_shell_command(command: str) -> Dict:
     cmd_args = ["bash", "-c", command]
     
     # Locate native Git Bash executable on Windows environments
+    proc = None
     execbin = None
     if os.environ.get('OS') == 'Windows_NT':
         execbin = r"C:\Program Files\Git\bin\bash.exe"  
                 
-    proc = None
     try:
-        proc = subprocess.Popen(cmd_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, executable=execbin)
+        proc = subprocess.Popen(
+            cmd_args,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            executable=execbin)
         try:
             stdout_data, stderr_data = proc.communicate(timeout=30)
             return {"exit_code": proc.returncode, "stdout": stdout_data.strip(), "stderr": stderr_data.strip()}
