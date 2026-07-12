@@ -63,6 +63,7 @@
 - [datum/2026/TODO/LEAF-5.md](datum/2026/TODO/LEAF-5.md)   ```# SPEC : Define new spec```
 - [datum/2026/TODO/LEAF-7.md](datum/2026/TODO/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
 - [datum/2026/TODO/MDOS-27.md](datum/2026/TODO/MDOS-27.md)   ```# wsli : WSL Windows interface```
+- [datum/2026/TODO/MDOS-35.md](datum/2026/TODO/MDOS-35.md)   ```# fancontrol : winring0```
 - [datum/2026/TODO/MONO-1.md](datum/2026/TODO/MONO-1.md)   ```# Apache : NiFi```
 - [datum/2026/TODO/MONO-7.md](datum/2026/TODO/MONO-7.md)   ```# ULI : Unified Linux Interface```
 - [datum/2026/TODO/NJS-1.md](datum/2026/TODO/NJS-1.md)   ```# KANBORG : ELECTRON UI```
@@ -168,6 +169,7 @@
 - [datum/2026/BACKLOG/KUBEX-0.md](datum/2026/BACKLOG/KUBEX-0.md)   ```# Kubernetes : Cluster```
 - [datum/2026/BACKLOG/LEAF-0.md](datum/2026/BACKLOG/LEAF-0.md)   ```# Leaf : misc```
 - [datum/2026/BACKLOG/MDOS-0.md](datum/2026/BACKLOG/MDOS-0.md)   ```# MICROSOFT : WINDOWS```
+- [datum/2026/BACKLOG/MDOS-35.md](datum/2026/BACKLOG/MDOS-35.md)   ```# ISSUE :```
 - [datum/2026/BACKLOG/MONO-0.md](datum/2026/BACKLOG/MONO-0.md)   ```# Mono : lithium```
 - [datum/2026/BACKLOG/NCEPT-0.md](datum/2026/BACKLOG/NCEPT-0.md)   ```# CONCEPT : Fractual system```
 - [datum/2026/BACKLOG/NCEPT-1.md](datum/2026/BACKLOG/NCEPT-1.md)   ```# SHORT-GUN : CODE```
