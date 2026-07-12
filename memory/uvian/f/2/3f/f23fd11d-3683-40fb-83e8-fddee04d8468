@@ -1,0 +1,11 @@
+[SYSTEM] Executing: date +'%Y-%m-%d' && date -v+1y +'%A, %Y-%m-%d'
+
+[EXIT CODE] 0
+[STDOUT]
+2026-07-12
+Monday, 2027-07-12
+----------------------------------------
+
+
+[FINAL RESULT] SUCCESS
+[REASON] The command output shows that on the same date next year (2027-07-12), the weekday will be Monday.test
