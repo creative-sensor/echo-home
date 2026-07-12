@@ -1,0 +1,14 @@
+# How to run  gml8w
+
+### list model
+gml8w --help
+
+
+### run model
+gml8w <index>
+
+e.g: 
+```
+gml8w 1
+gml8w 14
+```
