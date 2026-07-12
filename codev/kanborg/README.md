@@ -41,7 +41,6 @@
 - [datum/2026/TODO/CORTA-23.md](datum/2026/TODO/CORTA-23.md)   ```# MCP : first try```
 - [datum/2026/TODO/CORTA-36.md](datum/2026/TODO/CORTA-36.md)   ```# stable-diffusion : cpp```
 - [datum/2026/TODO/CORTA-37.md](datum/2026/TODO/CORTA-37.md)   ```# diffusion : llama cpp```
-- [datum/2026/TODO/CORTA-38.md](datum/2026/TODO/CORTA-38.md)   ```# lmsh : memphix```
 - [datum/2026/TODO/CORTA-4.md](datum/2026/TODO/CORTA-4.md)   ```# pytorch : start```
 - [datum/2026/TODO/CORTA-5.md](datum/2026/TODO/CORTA-5.md)   ```# tensorflow : start```
 - [datum/2026/TODO/DBMS-1.md](datum/2026/TODO/DBMS-1.md)   ```# Vector : Search```
@@ -106,6 +105,7 @@
 - [datum/2026/DONE/CORTA-32.md](datum/2026/DONE/CORTA-32.md)   ```# lmsh : fiberon```
 - [datum/2026/DONE/CORTA-33.md](datum/2026/DONE/CORTA-33.md)   ```# lmsh : FBI```
 - [datum/2026/DONE/CORTA-35.md](datum/2026/DONE/CORTA-35.md)   ```# memory : uvian```
+- [datum/2026/DONE/CORTA-38.md](datum/2026/DONE/CORTA-38.md)   ```# lmsh : memphix```
 - [datum/2026/DONE/CORTA-6.md](datum/2026/DONE/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
 - [datum/2026/DONE/CORTA-7.md](datum/2026/DONE/CORTA-7.md)   ```# gmlama```
 - [datum/2026/DONE/CORTA-8.md](datum/2026/DONE/CORTA-8.md)   ```# llama.cpp : aka gmlala```
@@ -169,7 +169,6 @@
 - [datum/2026/BACKLOG/KUBEX-0.md](datum/2026/BACKLOG/KUBEX-0.md)   ```# Kubernetes : Cluster```
 - [datum/2026/BACKLOG/LEAF-0.md](datum/2026/BACKLOG/LEAF-0.md)   ```# Leaf : misc```
 - [datum/2026/BACKLOG/MDOS-0.md](datum/2026/BACKLOG/MDOS-0.md)   ```# MICROSOFT : WINDOWS```
-- [datum/2026/BACKLOG/MDOS-35.md](datum/2026/BACKLOG/MDOS-35.md)   ```# ISSUE :```
 - [datum/2026/BACKLOG/MONO-0.md](datum/2026/BACKLOG/MONO-0.md)   ```# Mono : lithium```
 - [datum/2026/BACKLOG/NCEPT-0.md](datum/2026/BACKLOG/NCEPT-0.md)   ```# CONCEPT : Fractual system```
 - [datum/2026/BACKLOG/NCEPT-1.md](datum/2026/BACKLOG/NCEPT-1.md)   ```# SHORT-GUN : CODE```
