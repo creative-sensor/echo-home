@@ -47,6 +47,20 @@ def resolve_path(path_str: str) -> str:
     # 3. Normalize all slashes to forward slashes for universal Bash compatibility
     return os.path.normpath(path_str).replace("\\", "/")
 
+def to_bash_path(path_str: str) -> str:
+    r"""
+    Converts a Windows path (e.g., C:/Users/... or C:\Users\...) into a POSIX Git Bash path
+    (e.g., /c/Users/...) so MSYS binaries like bash, cat, and sh can locate the file without error.
+    """
+    if not path_str:
+        return path_str
+    path_str = path_str.replace("\\", "/")
+    match = re.match(r"^([a-zA-Z]):/(.*)", path_str)
+    if match:
+        drive, rest = match.groups()
+        return f"/{drive.lower()}/{rest}"
+    return path_str
+
 # ==========================================
 # 1. CLI ARGUMENTS & API SETUP
 # ==========================================
@@ -94,16 +108,48 @@ MODEL_NAME = get_model_name(args.host, args.port, endpoint="/models")
 # 2. UVIAN MEMORY MANAGER (CHROMADB)
 # ==========================================
 class UvianMemoryManager:
-    def __init__(self, host: str = 'localhost', port: int = 8080):
-        print("🧠 Initializing Uvian ChromaDB Memory Base...")
-        self.chroma_client = chromadb.PersistentClient(path=resolve_path("./memphix/vector"))
-        self.collection = self.chroma_client.get_or_create_collection(name="uvian_memories")
+    def __init__(self, host: str = 'localhost', port: int = 8080, model_name: str = 'default_model', uvian_dir: str = './'):
+        self.model_name = model_name
+        self.uvian_dir = resolve_path(uvian_dir)
+        self.similarity_threshold = self._load_model_settings(model_name)
         
-        print(f"   -> Using embedding endpoint at http://{host}:{port}/v1")
+        # Sanitize model name to prevent illegal directory characters (/ \ : etc.)
+        safe_model_name = re.sub(r'[\/\\:]', '_', str(model_name))
+        db_path = resolve_path(f"./memphix/vector/{safe_model_name}")
+        
+        print(f"🧠 Initializing Uvian ChromaDB Memory Base at: {db_path}")
+        self.chroma_client = chromadb.PersistentClient(path=db_path)
+        
+        # Enforce Cosine distance metric so we can cleanly calculate similarity percentage (1.0 - distance)
+        self.collection = self.chroma_client.get_or_create_collection(
+            name="uvian_memories",
+            metadata={"hnsw:space": "cosine"}
+        )
+        
+        print(f"   -> Using embedding endpoint at http://{host}:{port}/v1 (Model: {model_name})")
         self.openai_client = OpenAI(base_url=f"http://{host}:{port}/v1", api_key="localm")
 
+    def _load_model_settings(self, model_name: str) -> float:
+        """Reads ./memphix/model-settings.yaml to determine the similarity threshold for the active model."""
+        settings_path = resolve_path("./memphix/model-settings.yaml")
+        default_threshold = 0.0  
+        
+        if os.path.exists(settings_path):
+            try:
+                with open(settings_path, 'r', encoding='utf-8') as f:
+                    config = yaml.safe_load(f) or {}
+                if model_name in config and "similarity_threshold" in config[model_name]:
+                    val = float(config[model_name]["similarity_threshold"])
+                    print(f"⚙️  Loaded custom similarity threshold for '{model_name}': {val:.2f}")
+                    return val
+            except Exception as e:
+                print(f"⚠️ [SETTINGS WARNING] Failed to parse {settings_path}: {e}")
+                
+        print(f"ℹ️  No custom similarity threshold found for '{model_name}'. Using default ({default_threshold:.2f}).")
+        return default_threshold
+
     def get_embedding(self, text: str) -> list[float]:
-        response = self.openai_client.embeddings.create(input=[text], model="local-model")
+        response = self.openai_client.embeddings.create(input=[text], model=self.model_name)
         return response.data[0].embedding
 
     def sync_yaml_to_chroma(self, yaml_file: str):
@@ -121,6 +167,7 @@ class UvianMemoryManager:
             
             count = 0
             skipped = 0
+            fallbacks = 0
             for line in raw_lines:
                 if ":" not in line:
                     continue
@@ -128,38 +175,61 @@ class UvianMemoryManager:
                 uid = uid_part.strip()
                 try:
                     models_dict = json.loads(json_block.strip())
-                    for model_name, summary in models_dict.items():
-                        doc_id = f"{uid}_{model_name}"
+                    doc_id = f"{uid}_{self.model_name}"
+                    
+                    # 2. Skip if this exact ID is already in the database
+                    if doc_id in existing_ids:
+                        skipped += 1
+                        continue
                         
-                        # 2. Skip if this exact ID is already in the database
-                        if doc_id in existing_ids:
-                            skipped += 1
-                            continue
+                    summary = None
+                    # 3. Select ONLY summary matching active model name
+                    if self.model_name in models_dict:
+                        summary = models_dict[self.model_name]
+                    else:
+                        # 4. If key matching model name not found, load the uuid file directly instead
+                        dir1 = uid[0:1]
+                        dir2 = uid[1:2]
+                        dir3 = uid[2:4]
+                        file_path = resolve_path(os.path.join(self.uvian_dir, dir1, dir2, dir3, uid))
+                        if os.path.exists(file_path):
+                            try:
+                                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                                    summary = f.read().strip()
+                                if summary:
+                                    fallbacks += 1
+                                    print(f"📄 [FALLBACK] Loaded raw content from file for UUID: {uid}")
+                            except Exception as fe:
+                                print(f"⚠️ [FALLBACK ERROR] Could not read file {file_path}: {fe}")
+                        else:
+                            print(f"⚠️ [SKIP] No summary for model '{self.model_name}' and file missing at {file_path}")
                             
+                    if summary:
                         embedding = self.get_embedding(summary)
                         self.collection.add( 
                             ids=[doc_id],
                             embeddings=[embedding],
                             documents=[summary],
-                            metadatas=[{"uuid": uid, "model": model_name}]
+                            metadatas=[{"uuid": uid, "model": self.model_name}]
                         )
                         count += 1
                 except json.JSONDecodeError:
                     continue
                     
-            print(f"🔄 Synced {count} new summaries into ChromaDB (Skipped {skipped} existing).")
+            print(f"🔄 Synced {count} new summaries into ChromaDB (Skipped {skipped} existing, {fallbacks} raw file fallbacks).")
         except Exception as e:
             print(f"❌ Error syncing YAML to ChromaDB: {e}")
 
     def retrieve_most_relevant_uuid(self, user_intent: str) -> Optional[Tuple[str, str]]:
-        """Queries ChromaDB to find the single most relevant UUID for the user's task."""
+        """Queries ChromaDB, calculating similarity and filtering against the model's threshold."""
         if self.collection.count() == 0:
             return None
             
         query_embedding = self.get_embedding(user_intent)
         results = self.collection.query(
             query_embeddings=[query_embedding],
-            n_results=1
+            n_results=1,
+            include=["documents", "metadatas", "distances"]
         )
         
         if not results['documents'] or not results['documents'][0]:
@@ -167,6 +237,17 @@ class UvianMemoryManager:
             
         top_summary = results['documents'][0][0]
         top_metadata = results['metadatas'][0][0]
+        distance = results['distances'][0][0]
+        
+        # Calculate Cosine Similarity (1.0 - Cosine Distance)
+        similarity = max(0.0, min(1.0, 1.0 - distance))
+        
+        print(f"📊 Evaluated Top Match Similarity: {similarity:.4f} (Required Threshold: {self.similarity_threshold:.2f})")
+        
+        if similarity < self.similarity_threshold:
+            print(f"⚠️ Top match ignored: Similarity score {similarity:.4f} is below threshold.")
+            return None
+            
         return top_metadata.get("uuid"), top_summary
 
 # ==========================================
@@ -222,9 +303,13 @@ def handle_uvian_entry(uuid_str: str, uvian_dir: str = "./") -> Dict[str, str]:
         # Non-script: Default command to view file as output
         engine = "cat"
 
+    # Translate file path to Git Bash (/c/...) format if executing via MSYS/Bash utilities
+    is_bash_engine = "bash" in str(engine).lower() or engine in ["sh", "cat"]
+    exec_path = to_bash_path(file_path) if is_bash_engine else file_path
+
     print(f"\n⚡ [UVIAN TOOL CALL] Executing {uuid_str} via '{engine}' engine (Zero-View)...")
     try:
-        proc = subprocess.run([engine, file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=30)
+        proc = subprocess.run([engine, exec_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=30)
         
         # Explicitly display Uvian Tool Output to the terminal
         print(f"\033[32m[UVIAN EXIT CODE]\033[0m {proc.returncode}")
@@ -335,7 +420,7 @@ def get_os_env_context() -> str:
     sys_name = platform.system()
     release = platform.release()
     arch = platform.machine()
-    cwd = resolve_path(os.getcwd())
+    cwd = to_bash_path(resolve_path(os.getcwd()))
     user = os.environ.get('USER', os.environ.get('USERNAME', 'unknown'))
     shell = os.environ.get('SHELL', 'default/bash')
     
@@ -506,7 +591,9 @@ if __name__ == "__main__":
         
     memory = UvianMemoryManager(
         host=args.host, 
-        port=args.port
+        port=args.port,
+        model_name=MODEL_NAME,
+        uvian_dir=args.uvian_dir
     )
     
     # Sync YAML summaries into ChromaDB at initialization
