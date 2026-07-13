@@ -8,9 +8,12 @@
 ### 1 SOLUTION
 
 
+https://github.com/creative-sensor/echo-home/commit/a725855cae523aac494b1c24a8879ff4fee81d04
+
 ### 2 NOTES
 
-- / script to manually set IP over thunderbolt bridge
+- /\ keymouse over wifi (on)
+- /\ host discovery: $HOSTNAME.local over thunderbolt bridge
 
 ### 3 TEST/VERIFICATION
 
