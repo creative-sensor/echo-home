@@ -132,7 +132,7 @@ class UvianMemoryManager:
     def _load_model_settings(self, model_name: str) -> float:
         """Reads ./memphix/model-settings.yaml to determine the similarity threshold for the active model."""
         settings_path = resolve_path("./memphix/model-settings.yaml")
-        default_threshold = 0.0  
+        default_threshold = 0.5  
         
         if os.path.exists(settings_path):
             try:

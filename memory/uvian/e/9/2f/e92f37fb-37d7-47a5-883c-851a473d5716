@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo "Troubleshooting internet connection ..."
+set -x
+nslookup www.google.com 8.8.8.8
+ping 8.8.8.8
+ipconfig || ip addr
+route print || ip route
+
+
