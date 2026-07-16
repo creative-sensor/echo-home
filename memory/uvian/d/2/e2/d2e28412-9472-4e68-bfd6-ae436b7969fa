@@ -1,1 +1,3 @@
+#!/bin/bash
+set -x
 date -v+1y +"%A, %B %d, %Y"
