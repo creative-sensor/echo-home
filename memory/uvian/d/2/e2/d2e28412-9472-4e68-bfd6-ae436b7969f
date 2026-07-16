@@ -1,5 +1,0 @@
-#!/bin/bash
-
-echo "What is week day name in next year?"
-echo "The weekday name in next year is:"
-date -j -f "%Y-%m-%d" "$(date +%Y-%m-%d)" +"%A"

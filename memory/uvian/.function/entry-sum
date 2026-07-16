@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import re
 import yaml
 import requests
 import argparse
@@ -27,14 +28,15 @@ def fetch_model_name(base_url: str) -> str:
     except Exception as e:
         raise RuntimeError(f"Failed to auto-fetch model name from {base_url}. Error: {e}")
 
-def summarize_and_store(uuid_str: str, llm_endpoint: str, model_name: str, prompt: str, uvian_dir: str, yaml_file: str):
+def summarize_and_store(uuid_str: str, llm_endpoint: str, model_name: str, prompt: str, uvian_dir: str, yaml_file: str, quiet: bool = False) -> bool:
     """
     Locates a file based on its UUID, asks a local LLM to summarize it,
     and appends the summary to a YAML file mapped by model name.
+    Returns True on success, False on failure.
     """
     if len(uuid_str) < 4:
-        print(f"Error: UUID '{uuid_str}' is too short.")
-        return
+        if not quiet: print(f"Error: UUID '{uuid_str}' is too short.")
+        return False
         
     dir1 = uuid_str[0:1]
     dir2 = uuid_str[1:2]
@@ -43,21 +45,22 @@ def summarize_and_store(uuid_str: str, llm_endpoint: str, model_name: str, promp
     file_path = os.path.join(uvian_dir, dir1, dir2, dir3, uuid_str)
     
     if not os.path.exists(file_path):
-        print(f"Error: Cache file not found at {file_path}")
-        return
+        if not quiet: print(f"Error: Cache file not found at {file_path}")
+        return False
 
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             file_content = f.read().strip()
     except Exception as e:
-        print(f"Error reading {file_path}: {e}")
-        return
+        if not quiet: print(f"Error reading {file_path}: {e}")
+        return False
         
     if not file_content:
-        print(f"Warning: The file at {file_path} is empty. Skipping LLM request.")
-        return
+        if not quiet: print(f"Warning: The file at {file_path} is empty. Skipping LLM request.")
+        return False
 
-    print(f"Requesting summary for {uuid_str} using {model_name}...")
+    if not quiet:
+        print(f"Requesting summary for {uuid_str} using {model_name}...")
     
     payload = {
         "model": model_name,
@@ -85,8 +88,8 @@ def summarize_and_store(uuid_str: str, llm_endpoint: str, model_name: str, promp
         summary = response_data["choices"][0]["message"]["content"].strip()
             
     except Exception as e:
-        print(f"LLM API Error: {e}")
-        return
+        if not quiet: print(f"LLM API Error: {e}")
+        return False
 
     yaml_data = {}
     
@@ -96,7 +99,7 @@ def summarize_and_store(uuid_str: str, llm_endpoint: str, model_name: str, promp
             try:
                 yaml_data = yaml.safe_load(yf) or {}
             except yaml.YAMLError as e:
-                print(f"Error parsing existing YAML: {e}")
+                if not quiet: print(f"Error parsing existing YAML: {e}")
                 yaml_data = {}
 
     if uuid_str not in yaml_data:
@@ -105,18 +108,80 @@ def summarize_and_store(uuid_str: str, llm_endpoint: str, model_name: str, promp
     yaml_data[uuid_str][model_name] = summary
 
     # Manually write the file to enforce strict JSON strings for the inner blocks
-    with open(yaml_file, 'w', encoding='utf-8') as yf:
-        for uid, models_dict in yaml_data.items():
-            # json.dumps guarantees double quotes around keys and values
-            json_block = json.dumps(models_dict, ensure_ascii=False)
-            yf.write(f"{uid}: {json_block}\n")
+    try:
+        with open(yaml_file, 'w', encoding='utf-8') as yf:
+            for uid, models_dict in yaml_data.items():
+                # json.dumps guarantees double quotes around keys and values
+                json_block = json.dumps(models_dict, ensure_ascii=False)
+                yf.write(f"{uid}: {json_block}\n")
+    except Exception as e:
+        if not quiet: print(f"Error writing to YAML: {e}")
+        return False
 
-    print(f"Success! Added {model_name} summary for {uuid_str} to {yaml_file}")
+    if not quiet:
+        print(f"Success! Added {model_name} summary for {uuid_str} to {yaml_file}")
+        
+    return True
+
+def rebuild_all(llm_endpoint: str, model_name: str, prompt: str, uvian_dir: str, yaml_file: str):
+    """
+    Walks the uvian_dir to find all cached files matching the UUID directory structure
+    and rebuilds their summaries/embeddings with clean, readable progress output.
+    """
+    # Matches standard 36-char hyphenated UUIDs or 32-char hex UUIDs
+    uuid_pattern = re.compile(r'^[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{12}$')
+    
+    matching_files = []
+    
+    # First pass: collect all matching file names to get the exact total count
+    for root, dirs, files in os.walk(uvian_dir):
+        for filename in files:
+            if len(filename) < 4:
+                continue
+                
+            dir1 = filename[0:1]
+            dir2 = filename[1:2]
+            dir3 = filename[2:4]
+            expected_suffix = os.path.join(dir1, dir2, dir3, filename)
+            full_path = os.path.join(root, filename)
+            
+            if uuid_pattern.match(filename) or full_path.endswith(expected_suffix):
+                matching_files.append(filename)
+                
+    total_files = len(matching_files)
+    
+    if total_files == 0:
+        print(f"No matching UUID files found in directory: {os.path.abspath(uvian_dir)}")
+        return
+        
+    print(f"Found {total_files} matching UUID files in '{os.path.abspath(uvian_dir)}'. Starting rebuild...\n")
+    
+    success_count = 0
+    # Second pass: process summaries and output formatted readable progress
+    for idx, filename in enumerate(matching_files, start=1):
+        success = summarize_and_store(
+            uuid_str=filename,
+            llm_endpoint=llm_endpoint,
+            model_name=model_name,
+            prompt=prompt,
+            uvian_dir=uvian_dir,
+            yaml_file=yaml_file,
+            quiet=True  # Suppress internal verbose prints for a clean list
+        )
+        
+        if success:
+            success_count += 1
+            print(f"  ✅ Rebuilt [{idx}/{total_files}]: {filename}")
+        else:
+            print(f"  ❌ Failed  [{idx}/{total_files}]: {filename}")
+            
+    print(f"\nRebuild completed: {success_count}/{total_files} files successfully summarized.")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Summarize cached uvian files and append to a YAML file.")
     
-    parser.add_argument("-u", "--uuid", required=True, help="The target UUID to summarize.")
+    parser.add_argument("-u", "--uuid", required=False, help="The target UUID to summarize.")
+    parser.add_argument("-w", "--walk", action="store_true", help="Walk directory to rebuild all summaries/embeddings, filtering for paths that match valid UUIDs.")
     parser.add_argument("-m", "--model", help="The name of the LLM model. If omitted, fetched automatically from the port.")
     parser.add_argument("--host", default="localhost", help="The host for the local LLM API. (Default: localhost)")
     parser.add_argument("--port", default=8080, type=int, help="The port for the local LLM API. (Default: 8080)")
@@ -126,6 +191,9 @@ if __name__ == "__main__":
     parser.add_argument("-y", "--yaml", default="summer.yaml", help="The target YAML file to store summaries. (Default: summer.yaml)")
 
     args = parser.parse_args()
+
+    if not args.uuid and not args.walk:
+        parser.error("You must specify either a target UUID (-u/--uuid) or use the rebuild flag (-w/--walk).")
 
     host = args.host
     if not host.startswith("http://") and not host.startswith("https://"):
@@ -144,11 +212,21 @@ if __name__ == "__main__":
 
     llm_endpoint = f"{base_url}/v1/chat/completions"
 
-    summarize_and_store(
-        uuid_str=args.uuid,
-        llm_endpoint=llm_endpoint,
-        model_name=active_model,
-        prompt=args.prompt,
-        uvian_dir=args.dir,
-        yaml_file=args.yaml
-    )
+    if args.walk:
+        rebuild_all(
+            llm_endpoint=llm_endpoint,
+            model_name=active_model,
+            prompt=args.prompt,
+            uvian_dir=args.dir,
+            yaml_file=args.yaml
+        )
+    else:
+        summarize_and_store(
+            uuid_str=args.uuid,
+            llm_endpoint=llm_endpoint,
+            model_name=active_model,
+            prompt=args.prompt,
+            uvian_dir=args.dir,
+            yaml_file=args.yaml,
+            quiet=False
+        )
