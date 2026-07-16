@@ -239,16 +239,21 @@ class UvianMemoryManager:
         top_metadata = results['metadatas'][0][0]
         distance = results['distances'][0][0]
         
+        # 1. Extract the UUID immediately from metadata
+        top_uuid = top_metadata.get("uuid", "UNKNOWN")
+        
         # Calculate Cosine Similarity (1.0 - Cosine Distance)
         similarity = max(0.0, min(1.0, 1.0 - distance))
         
-        print(f"📊 Evaluated Top Match Similarity: {similarity:.4f} (Required Threshold: {self.similarity_threshold:.2f})")
+        # 2. Include the UUID in the evaluation log
+        print(f"📊 Evaluated Top Match [UUID: {top_uuid}] Similarity: {similarity:.4f} (Required Threshold: {self.similarity_threshold:.2f})")
         
         if similarity < self.similarity_threshold:
-            print(f"⚠️ Top match ignored: Similarity score {similarity:.4f} is below threshold.")
+            # 3. Include the UUID in the ignored warning log
+            print(f"⚠️ Top match [UUID: {top_uuid}] ignored: Similarity score {similarity:.4f} is below threshold.")
             return None
             
-        return top_metadata.get("uuid"), top_summary
+        return top_uuid, top_summary
 
 # ==========================================
 # 3. UVIAN TOOL & DATA LOADER
