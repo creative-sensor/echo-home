@@ -221,36 +221,68 @@ class UvianMemoryManager:
             print(f"❌ Error syncing YAML to ChromaDB: {e}")
 
     def retrieve_most_relevant_uuid(self, user_intent: str) -> Optional[Tuple[str, str]]:
-        """Queries ChromaDB, calculating similarity and filtering against the model's threshold."""
+        """
+        Queries ChromaDB using a hybrid Semantic + Order-Independent Keyword matching pipeline
+        to ensure chaotic user prompts successfully hook to the correct UUID cache anchor.
+        """
         if self.collection.count() == 0:
             return None
             
+        # 1. Tokenize the user intent into distinct alphanumeric words (ignores order/syntax)
+        user_tokens = set(re.findall(r'\w+', user_intent.lower()))
+        
+        # 2. Perform standard semantic query extraction
         query_embedding = self.get_embedding(user_intent)
+        
+        # Fetch the top candidate pool to calculate keyword hooks
+        n_candidates = min(10, self.collection.count())
         results = self.collection.query(
             query_embeddings=[query_embedding],
-            n_results=1,
+            n_results=n_candidates,
             include=["documents", "metadatas", "distances"]
         )
         
         if not results['documents'] or not results['documents'][0]:
             return None
             
-        top_summary = results['documents'][0][0]
-        top_metadata = results['metadatas'][0][0]
-        distance = results['distances'][0][0]
+        best_candidate = None
+        best_score = -1.0
         
-        # 1. Extract the UUID immediately from metadata
-        top_uuid = top_metadata.get("uuid", "UNKNOWN")
+        # 3. Evaluate candidates by balancing latent semantics with absolute keyword matches
+        for idx in range(len(results['documents'][0])):
+            doc = results['documents'][0][idx]
+            meta = results['metadatas'][0][idx]
+            dist = results['distances'][0][idx]
+            
+            uuid_str = meta.get("uuid", "UNKNOWN")
+            semantic_sim = max(0.0, min(1.0, 1.0 - dist))
+            
+            # Extract words from the LLM-generated summary doc
+            doc_tokens = set(re.findall(r'\w+', doc.lower()))
+            matching_tokens = user_tokens.intersection(doc_tokens)
+            
+            # Ratio of user words successfully hooked into this specific document
+            keyword_score = len(matching_tokens) / len(user_tokens) if user_tokens else 0.0
+            
+            # Combine scores: Give keyword presence a heavy weight (60%) over raw sentence order (40%)
+            combined_score = (semantic_sim * 0.4) + (keyword_score * 0.6)
+            
+            if combined_score > best_score:
+                best_score = combined_score
+                best_candidate = (uuid_str, doc, semantic_sim, keyword_score, combined_score)
+                
+        if not best_candidate:
+            return None
+            
+        top_uuid, top_summary, final_sim, final_kw, final_score = best_candidate
         
-        # Calculate Cosine Similarity (1.0 - Cosine Distance)
-        similarity = max(0.0, min(1.0, 1.0 - distance))
+        print(f"📊 Hybrid Cache Hook [UUID: {top_uuid}]")
+        print(f"   -> Vector Semantic Sim:  {final_sim:.4f}")
+        print(f"   -> Orderless Word Match: {final_kw * 100:.1f}%")
+        print(f"   -> Combined Target Score: {final_score:.4f} (Required Threshold: {self.similarity_threshold:.2f})")
         
-        # 2. Include the UUID in the evaluation log
-        print(f"📊 Evaluated Top Match [UUID: {top_uuid}] Similarity: {similarity:.4f} (Required Threshold: {self.similarity_threshold:.2f})")
-        
-        if similarity < self.similarity_threshold:
-            # 3. Include the UUID in the ignored warning log
-            print(f"⚠️ Top match [UUID: {top_uuid}] ignored: Similarity score {similarity:.4f} is below threshold.")
+        if final_score < self.similarity_threshold:
+            print(f"⚠️ Top match [UUID: {top_uuid}] ignored: Combined score below threshold.")
             return None
             
         return top_uuid, top_summary
