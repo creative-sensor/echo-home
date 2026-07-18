@@ -4,17 +4,18 @@
 
 | Agent Shell      | GML_ID | LLM Port |
 |:---------------- | ------ | -------- |
-| fbi.py           |        |          |
-| fiberon.py       |        |          |
-| hesman.py        |        |          |
-| kube.py          |        |          |
-| memphis.py       |        |          |
-| neos.py          |  14    |   8900   |
-| node-cliner.js   |        |          |
-| ps-cliner.ps1    |        |          |
-| python-cliner.py |        |          |
-| scatmap.py       |        |          |
-| sh7t.py          |  14    |   8900   |
+| fbi.py           | 1      | 8080     |
+| fiberon.py       | 1      | 8080     |
+| hesman.py        | 1      | 8080     |
+| kube.py          | 1      | 8080     |
+| memphis.py       | 1      | 8080     |
+| memphix.py       | 4      | 8083     |
+| neos.py          | 14     | 8900     |
+| node-cliner.js   | 3      | 8082     |
+| ps-cliner.ps1    | 3      | 8082     |
+| python-cliner.py | 3      | 8082     |
+| scatmap.py       | 1      | 8083     |
+| sh7t.py          | 4      | 8083     |
 
 ### Usage
 
