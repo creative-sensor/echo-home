@@ -5,6 +5,8 @@ import yaml
 import requests
 import argparse
 import json
+import subprocess
+import base64
 
 def fetch_model_name(base_url: str) -> str:
     """
@@ -28,6 +30,35 @@ def fetch_model_name(base_url: str) -> str:
     except Exception as e:
         raise RuntimeError(f"Failed to auto-fetch model name from {base_url}. Error: {e}")
 
+def gpg_decrypt(b64_data: str) -> str:
+    """Decodes base64 string and decrypts using GPG."""
+    try:
+        raw_data = base64.b64decode(b64_data)
+        proc = subprocess.run(
+            ["gpg", "--batch", "--quiet", "--decrypt"],
+            input=raw_data,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=True
+        )
+        return proc.stdout.decode('utf-8')
+    except Exception as e:
+        raise RuntimeError(f"GPG decryption failed: {e}")
+
+def gpg_encrypt(text: str, recipient: str) -> str:
+    """Encrypts string using GPG and returns base64-encoded ASCII text."""
+    try:
+        proc = subprocess.run(
+            ["gpg", "--batch", "--yes", "--trust-model", "always", "--encrypt", "--recipient", recipient],
+            input=text.encode('utf-8'),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=True
+        )
+        return base64.b64encode(proc.stdout).decode('utf-8')
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"GPG encryption failed: {e.stderr.decode('utf-8', errors='ignore')}")
+
 def summarize_and_store(uuid_str: str, llm_endpoint: str, model_name: str, prompt: str, uvian_dir: str, yaml_file: str, quiet: bool = False) -> bool:
     """
     Locates a file based on its UUID, asks a local LLM to summarize it,
@@ -38,6 +69,20 @@ def summarize_and_store(uuid_str: str, llm_endpoint: str, model_name: str, promp
         if not quiet: print(f"Error: UUID '{uuid_str}' is too short.")
         return False
         
+    # Read existing YAML early to check if the file is flagged for encryption
+    yaml_data = {}
+    if os.path.exists(yaml_file):
+        with open(yaml_file, 'r', encoding='utf-8') as yf:
+            try:
+                yaml_data = yaml.safe_load(yf) or {}
+            except yaml.YAMLError as e:
+                if not quiet: print(f"Error parsing existing YAML: {e}")
+                yaml_data = {}
+
+    recipient = None
+    if uuid_str in yaml_data and isinstance(yaml_data[uuid_str], dict):
+        recipient = yaml_data[uuid_str].get("encrypted")
+
     dir1 = uuid_str[0:1]
     dir2 = uuid_str[1:2]
     dir3 = uuid_str[2:4]
@@ -55,6 +100,15 @@ def summarize_and_store(uuid_str: str, llm_endpoint: str, model_name: str, promp
         if not quiet: print(f"Error reading {file_path}: {e}")
         return False
         
+    # Decrypt base64 content if encryption flag was detected
+    if recipient:
+        if not quiet: print(f"Decrypting content for {uuid_str} (Recipient: {recipient})...")
+        try:
+            file_content = gpg_decrypt(file_content)
+        except Exception as e:
+            if not quiet: print(f"Error decrypting {file_path}: {e}")
+            return False
+
     if not file_content:
         if not quiet: print(f"Warning: The file at {file_path} is empty. Skipping LLM request.")
         return False
@@ -79,7 +133,7 @@ def summarize_and_store(uuid_str: str, llm_endpoint: str, model_name: str, promp
         "Content-Type": "application/json",
         "Accept": "application/json"
     }
-    
+   
     try:
         response = requests.post(llm_endpoint, json=payload, headers=headers)
         response.raise_for_status()
@@ -91,18 +145,16 @@ def summarize_and_store(uuid_str: str, llm_endpoint: str, model_name: str, promp
         if not quiet: print(f"LLM API Error: {e}")
         return False
 
-    yaml_data = {}
-    
-    # PyYAML is perfectly fine for reading the mixed format
-    if os.path.exists(yaml_file):
-        with open(yaml_file, 'r', encoding='utf-8') as yf:
-            try:
-                yaml_data = yaml.safe_load(yf) or {}
-            except yaml.YAMLError as e:
-                if not quiet: print(f"Error parsing existing YAML: {e}")
-                yaml_data = {}
+    # If the file was encrypted, encrypt and base64-encode the summary as well
+    if recipient:
+        if not quiet: print(f"Encrypting summary for {uuid_str}...")
+        try:
+            summary = gpg_encrypt(summary, recipient)
+        except Exception as e:
+            if not quiet: print(f"Error encrypting summary: {e}")
+            return False
 
-    if uuid_str not in yaml_data:
+    if uuid_str not in yaml_data or not isinstance(yaml_data[uuid_str], dict):
         yaml_data[uuid_str] = {}
         
     yaml_data[uuid_str][model_name] = summary
@@ -144,7 +196,7 @@ def rebuild_all(llm_endpoint: str, model_name: str, prompt: str, uvian_dir: str,
             dir3 = filename[2:4]
             expected_suffix = os.path.join(dir1, dir2, dir3, filename)
             full_path = os.path.join(root, filename)
-            
+         
             if uuid_pattern.match(filename) or full_path.endswith(expected_suffix):
                 matching_files.append(filename)
                 

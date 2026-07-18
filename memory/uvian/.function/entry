@@ -3,11 +3,57 @@
 # Exit immediately if a command exits with a non-zero status
 set -e
 
-# Generate a lowercase UUID
-if command -v uuidgen &> /dev/null; then
-    UUID=$(uuidgen | tr '[:upper:]' '[:lower:]')
+RECIPIENT=""
+YAML_FILE="summer.yaml"
+UUID=""
+
+# Parse optional command line arguments
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -u|--uuid)
+            UUID="$2"
+            shift 2
+            ;;
+        -e|--encrypt)
+            RECIPIENT="$2"
+            shift 2
+            ;;
+        -y|--yaml)
+            YAML_FILE="$2"
+            shift 2
+            ;;
+        *)
+            echo "Error: Unknown option $1" >&2
+            exit 1
+            ;;
+    esac
+done
+
+# Use provided UUID (sanitizing any directory prefixes) or generate a new one
+if [[ -n "$UUID" ]]; then
+    UUID=$(basename "$UUID")
 else
-    UUID=$(cat /proc/sys/kernel/random/uuid)
+    if command -v uuidgen &> /dev/null; then
+        UUID=$(uuidgen | tr '[:upper:]' '[:lower:]')
+    else
+        UUID=$(cat /proc/sys/kernel/random/uuid)
+    fi
+fi
+
+# If editing an existing entry, check YAML for existing encryption and clear stale content
+if [[ -f "$YAML_FILE" ]]; then
+    # Auto-detect existing encryption recipient if -e was not explicitly provided
+    if [[ -z "$RECIPIENT" && -n "$UUID" ]]; then
+        RECIPIENT=$(grep -F "$UUID:" "$YAML_FILE" 2>/dev/null | grep -o '"encrypted"[[:space:]]*:[[:space:]]*"[^"]*"' | cut -d'"' -f4 || true)
+        if [[ -n "$RECIPIENT" ]]; then
+            echo "Auto-detected encryption recipient from $YAML_FILE: $RECIPIENT" >&2
+        fi
+    fi
+
+    # Clear existing YAML entry (and any stale LLM summaries) for this UUID to prevent duplicates
+    if grep -q "^${UUID}:" "$YAML_FILE" 2>/dev/null; then
+        (grep -v "^${UUID}:" "$YAML_FILE" || true) > "${YAML_FILE}.tmp" && mv "${YAML_FILE}.tmp" "$YAML_FILE"
+    fi
 fi
 
 # Extract the directory components from the UUID
@@ -21,8 +67,23 @@ TARGET_DIR="./$DIR1/$DIR2/$DIR3"
 # Create the nested directories if they don't exist
 mkdir -p "$TARGET_DIR"
 
-# Read from stdin (pipe) and write to the UUID file
-cat > "$TARGET_DIR/$UUID"
+ACTION="Created"
+# Explicitly clear existing content if the file already exists on disk
+if [[ -f "$TARGET_DIR/$UUID" ]]; then
+    ACTION="Updated"
+    > "$TARGET_DIR/$UUID"
+fi
 
-# Optional: Print the created path for verification
-echo "Created: $TARGET_DIR/$UUID"
+if [[ -n "$RECIPIENT" ]]; then
+    # Encrypt stdin with GPG, base64-encode, and strip newlines for clean text storage
+    gpg --batch --yes --trust-model always --encrypt --recipient "$RECIPIENT" | base64 | tr -d '\r\n' > "$TARGET_DIR/$UUID"
+    
+    # Register the encryption flag in the YAML file
+    echo "$UUID: {\"encrypted\": \"$RECIPIENT\"}" >> "$YAML_FILE"
+else
+    # Read from stdin (pipe) and write directly to the UUID file
+    cat > "$TARGET_DIR/$UUID"
+fi
+
+# Print the resulting path and action for verification
+echo "$ACTION: $TARGET_DIR/$UUID"
