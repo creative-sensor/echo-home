@@ -1,0 +1,27 @@
+# how to activate lmsh shell in windows terminal
+
+
+### Inventory
+
+| LMSH Shell       | GML_ID | LLM Port |
+|:---------------- | ------ | -------- |
+| fbi.py           |        |          |
+| fiberon.py       |        |          |
+| hesman.py        |        |          |
+| kube.py          |        |          |
+| memphis.py       |        |          |
+| memphix.py       |        |   8082   |
+| neos.py          |  14    |   8900   |
+| node-cliner.js   |        |          |
+| ps-cliner.ps1    |        |          |
+| python-cliner.py |        |          |
+| scatmap.py       |        |          |
+| sh7t.py          |  14    |   8900   |
+
+### launch a lmsh shell name like sh7t.py
+```
+~/.local/bin/terminal/wt  "C:\Program Files\Git\bin\bash.exe" -li -c "cd ~/echo-home/workstation/lmstudio/promptia/ && ./sh7t.py --port 8082"
+```
+
+### Notes
+lmsh shell must be run under `wt` command above
