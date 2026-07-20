@@ -1,3 +1,4 @@
+#!/bin/bash
 set -x
 echo "# Testing network download speed"
 curl -s -o /dev/null -w "Size: %{size_download}\nTime: %{time_total}s\n" https://www.google.com
