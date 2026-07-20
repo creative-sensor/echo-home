@@ -9,6 +9,7 @@ import requests
 import uuid
 import yaml
 import platform
+import tempfile
 from typing import Optional, Dict, List, Callable, Tuple
 
 from openai import OpenAI
@@ -420,6 +421,9 @@ class VRAMOptimizedMapReduceAgent:
 # ==========================================
 # 5. SHELL AGENT CORE & AUTOPILOT
 # ==========================================
+# Persistent state tracking current working directory across shell commands
+CURRENT_CWD = resolve_path(os.getcwd())
+
 SYSTEM_PROMPT = """<|think|>
 You are Memphix, an interactive shell operator with autonomous memory tool execution.
 Your goal is to fulfill the User Intent, verify it worked using stdout/stderr proof, and report the final status.
@@ -453,11 +457,12 @@ def is_autopilot_enabled() -> bool:
     return False
 
 def get_os_env_context() -> str:
-    """Collects relevant OS environment details normalized for Bash context."""
+    """Collects relevant OS environment details normalized for Bash context using tracked working directory."""
+    global CURRENT_CWD
     sys_name = platform.system()
     release = platform.release()
     arch = platform.machine()
-    cwd = to_bash_path(resolve_path(os.getcwd()))
+    cwd = to_bash_path(CURRENT_CWD)
     user = os.environ.get('USER', os.environ.get('USERNAME', 'unknown'))
     shell = os.environ.get('SHELL', 'default/bash')
     
@@ -470,8 +475,17 @@ def get_os_env_context() -> str:
     )
 
 def execute_shell_command(command: str) -> Dict:
-    print(f"\n[SYSTEM] Executing: {command}")
-    cmd_args = ["bash", "-c", command]
+    global CURRENT_CWD
+    print(f"\n[SYSTEM] Executing in [{to_bash_path(CURRENT_CWD)}]: {command}")
+    
+    # Create temp file to capture CWD upon shell termination; close descriptor immediately for Windows file-locking safety
+    with tempfile.NamedTemporaryFile(mode='w', delete=False) as tf:
+        cwd_file = tf.name
+    bash_cwd_file = to_bash_path(cwd_file)
+    
+    # Wrap command in an EXIT trap to guarantee directory capture regardless of exit codes or early termination
+    wrapped_command = f"trap 'pwd > \"{bash_cwd_file}\"' EXIT\n{command}"
+    cmd_args = ["bash", "-c", wrapped_command]
     
     # Locate native Git Bash executable on Windows environments
     proc = None
@@ -485,9 +499,25 @@ def execute_shell_command(command: str) -> Dict:
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
+            cwd=CURRENT_CWD,
             executable=execbin)
         try:
             stdout_data, stderr_data = proc.communicate(timeout=30)
+            
+            # Read back captured directory and update global tracking state
+            if os.path.exists(cwd_file):
+                try:
+                    with open(cwd_file, 'r', encoding='utf-8') as f:
+                        captured_path = f.read().strip()
+                    if captured_path:
+                        new_cwd = resolve_path(captured_path)
+                        if os.path.isdir(new_cwd):
+                            if new_cwd != CURRENT_CWD:
+                                print(f"\033[33m[CWD CHANGED]\033[0m {to_bash_path(CURRENT_CWD)} -> {to_bash_path(new_cwd)}")
+                            CURRENT_CWD = new_cwd
+                except Exception as e:
+                    print(f"[SYSTEM] Warning: Could not parse updated directory: {e}")
+                    
             return {"exit_code": proc.returncode, "stdout": stdout_data.strip(), "stderr": stderr_data.strip()}
         except subprocess.TimeoutExpired:
             print(f"[SYSTEM] Timeout reached (30s). Forcing termination (SIGKILL).")
@@ -499,6 +529,11 @@ def execute_shell_command(command: str) -> Dict:
     finally:
         if proc and proc.poll() is None:
              proc.kill()
+        if os.path.exists(cwd_file):
+            try:
+                os.unlink(cwd_file)
+            except Exception:
+                pass
 
 def parse_llm_json(raw_text: str) -> dict:
     clean_text = re.sub(r"<\|channel>thought.*?<channel\|>", "", raw_text, flags=re.DOTALL)
@@ -511,6 +546,7 @@ def parse_llm_json(raw_text: str) -> dict:
         return {"action_type": "declare_result", "status": "FAILED", "reason": "LLM output invalid JSON."}
 
 def run_agent_loop(user_intent: str, memory_manager: UvianMemoryManager, max_turns: int = 8):
+    global CURRENT_CWD
     print("\n🔍 Searching Uvian ChromaDB for relevant memory entries...")
     match = memory_manager.retrieve_most_relevant_uuid(user_intent)
     
@@ -607,6 +643,7 @@ def run_agent_loop(user_intent: str, memory_manager: UvianMemoryManager, max_tur
             
             evidence = (
                 f"Command Executed: {command}\n"
+                f"Current Working Directory: {to_bash_path(CURRENT_CWD)}\n"
                 f"Exit Code: {exec_result['exit_code']}\n"
                 f"stdout: {final_stdout}\n"
                 f"stderr: {final_stderr}"
