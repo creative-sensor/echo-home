@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# find duplicate cards in kanborg
+cd ~/echo-home.kanborg/codev/kanborg
+duplicates=$(find datum -name '*.md' | sed 's|.*/||' | sort | uniq -d)
+for file in $duplicates; do
+    paths=($(find datum -name "$file"))
+    if [ "${#paths[@]}" -gt 1 ]; then
+        echo "--- Comparing $file ---"
+        for i in "${!paths[@]}"; do
+            echo "Path: ${paths[$i]}"
+        done
+        diff -u "${paths[0]}" "${paths[1]}" || echo "Differences found"
+        echo ""
+    fi
+done
