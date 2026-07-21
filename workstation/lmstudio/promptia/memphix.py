@@ -352,7 +352,7 @@ def handle_uvian_entry(uuid_str: str, uvian_dir: str = "./") -> Dict[str, str]:
         # Explicitly display Uvian Tool Output to the terminal
         print(f"\033[32m[UVIAN EXIT CODE]\033[0m {proc.returncode}")
         if proc.stdout.strip():
-            print(f"\033[32m[UVIAN STDOUT]\033[0m\n{proc.stdout.strip()}")
+            print(f"\033[32m[UVIAN STDOUT]\033[0m\n\033[38;5;108m{proc.stdout.strip()}\033[0m")
         if proc.stderr.strip():
             print(f"\033[31m[UVIAN STDERR]\033[0m\n{proc.stderr.strip()}")
             
@@ -476,7 +476,7 @@ def get_os_env_context() -> str:
 
 def execute_shell_command(command: str) -> Dict:
     global CURRENT_CWD
-    print(f"\n[SYSTEM] Executing in [{to_bash_path(CURRENT_CWD)}]: {command}")
+    print(f"\n[SYSTEM] Executing in [{to_bash_path(CURRENT_CWD)}]: \033[38;5;112m{command}\033[0m")
     
     # Create temp file to capture CWD upon shell termination; close descriptor immediately for Windows file-locking safety
     with tempfile.NamedTemporaryFile(mode='w', delete=False) as tf:

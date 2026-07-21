@@ -54,7 +54,7 @@ Kanborg workflows combine shell navigation, specialized Kanborg functions, and G
 
 ### 1. Command Execution
 
-We must set context directory everytime run a command: `cd ~/echo-home.kanborg/codev/kanborg; ./function/{COMMAND}`
+We must set context directory everytime run a command: `cd ~/echo-home.kanborg/codev/kanborg; .function/{COMMAND}`
 
 Example: `cd ~/echo-home.kanborg/codev/kanborg; .function/xcard KBG`
 
@@ -65,6 +65,7 @@ Kanborg uses specific functions to interact with tasks and cards, often referenc
 | Command                          | Description                         | Example                 |
 |:-------------------------------- |:----------------------------------- |:----------------------- |
 | `.function/xcard <PROJECT_CODE>` | Create new card with a project code | `.function/xcard CORTA` |
+| `find datum/$(date +%Y) | grep <CARD_NAME>.md` | Find current state or path of a card name | `find datum/$(date +%Y) | grep CORTA-40.md` |
 
 ### 3. Development Cycle (Moving Cards/Tasks)
 
@@ -75,12 +76,17 @@ When a task moves from an initial state (e.g., **BACKLOG**) to an active state (
 **Step-by-Step Process:**
 
 1. **Identify the Card:** Determine the path and name of the card file.
+   * *Command:* `find datum/$(date +%Y) | grep {CARD_NAME}.md`
    
-   * *Example:* `datum/2026/BACKLOG/CORTA-40.md`
+   * *Example:* `find datum/2026 | grep CORTA-40.md`
+   
+   * *Output:* `datum/2026/BACKLOG/CORTA-40.md`
+   
+   * *State:* `CORTA-40.md is currently in BACKLOG state based on Output above`
 
 2. **Stage the Move (Pre-Git):** Add the card file to the staging area. This prepares the file for renaming/moving.
    
-   - Command: `git add datum/$(date +%s)/{STATE}/{CARD_NAME}.md`
+   - Command: `git add datum/$(date +%Y)/{STATE}/{CARD_NAME}.md`
    
    - Example: `git add datum/2026/BACKLOG/CORTA-40.md`
 
@@ -108,18 +114,15 @@ This sequence demonstrates the typical flow for starting work on a specific task
 # 1. ALWAYS navigate to the Kanborg project directory before execute any command
 cd ~/echo-home.kanborg/codev/kanborg || cdx dev/kan
 
-# 2. Access the specific concept area (Optional, for context switching)
-.function/xcard CORTA
 
-# 3. Identify the card file
-# (The file is currently in the BACKLOG)
-ls datum/2026/BACKLOG/CORTA-40.md 
+# 3. Confirm the current state of the card file
+find datum/$(date +%Y) | grep CORTA-40.md 
 
 # 4. Stage the card file for movement
-git add datum/2026/BACKLOG/CORTA-40.md
+git add datum/$(date +%Y)/BACKLOG/CORTA-40.md
 
 # 5. Move the card file from BACKLOG to WIP using Git
-git mv datum/2026/BACKLOG/CORTA-40.md datum/2026/WIP/
+git mv datum/$(date +%Y)/BACKLOG/CORTA-40.md datum/$(date +%Y)/WIP/
 
 # 6. Execute the Kanborg commit function.
 # This logs the status change (Carding) in the Kanborg tracking system.

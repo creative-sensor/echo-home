@@ -1,5 +1,5 @@
 gemma-4-E2B-it-QAT-Q4_0.gguf:
-  similarity_threshold: 0.85 
+  similarity_threshold: 0.5 
 gemma-4-e2b-it-Q8_0.gguf:
   similarity_threshold: 0.4
 gemma-4-26B-A4B-it-Q4_K_M.gguf:
@@ -7,4 +7,6 @@ gemma-4-26B-A4B-it-Q4_K_M.gguf:
 gemma-4-e4b-it-Q4_K_M.gguf:
   similarity_threshold: 0.65
 gemma-4-26B-A4B-it-Q8_0.gguf:
+  similarity_threshold: 0.4
+gemma-4-12B-it-QAT-Q4_0.gguf:
   similarity_threshold: 0.4
