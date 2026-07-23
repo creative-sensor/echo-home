@@ -1,0 +1,188 @@
+#!/usr/bin/env python3
+#!/usr/bin/env python3
+import os
+import sys
+import json
+import re
+import argparse
+import urllib.request
+import urllib.error
+from pathlib import Path
+from typing import List, Dict, Any
+
+try:
+    import chromadb
+except ImportError:
+    sys.stderr.write("Error: 'chromadb' package not found. Please install it via: pip install chromadb\n")
+    sys.exit(1)
+
+# --- Uvian Directory & Path Resolution ---
+def get_uvian_dir() -> Path:
+    return Path(os.environ.get("UVIAN_DIR", ".")).resolve()
+
+def format_uvian_path(uuid_str: str) -> str:
+    """Returns the LLM-readable path: $UVIAN_DIR/d1/d2/d3/uuid"""
+    clean = uuid_str.strip().lower()
+    if len(clean) < 4:
+        return f"$UVIAN_DIR/{clean}"
+    return f"$UVIAN_DIR/{clean[0]}/{clean[1]}/{clean[2:4]}/{clean}"
+
+def get_cell_file_path(uuid_str: str, base_dir: Path) -> Path:
+    """Resolves the physical filesystem path for a UUID cell."""
+    clean = uuid_str.strip().lower()
+    return base_dir / clean[0] / clean[1] / clean[2:4] / clean
+
+def load_cells(base_dir: Path, target_uuid: str = None) -> Dict[str, str]:
+    """Loads a specific UUID or all Uvian text cells from storage."""
+    cells = {}
+    if target_uuid:
+        file_path = get_cell_file_path(target_uuid, base_dir)
+        if not file_path.exists():
+            raise FileNotFoundError(f"Uvian cell not found at: {file_path}")
+        content = file_path.read_text(errors="ignore").strip()
+        if content:
+            cells[target_uuid.lower()] = content
+        return cells
+
+    for p in base_dir.glob("?/?/??/*"):
+        if p.is_file() and not p.name.startswith("."):
+            try:
+                content = p.read_text(errors="ignore").strip()
+                if content:
+                    cells[p.name.lower()] = content
+            except Exception:
+                continue
+    return cells
+
+# --- OpenAI Model Detection & Embeddings ---
+def fetch_model_name(host: str, port: str) -> str:
+    """Queries OpenAI-compatible /v1/models endpoint to fetch the active model name."""
+    url = f"http://{host}:{port}/v1/models"
+    headers = {"Accept": "application/json"}
+    try:
+        req = urllib.request.Request(url, headers=headers, method="GET")
+        with urllib.request.urlopen(req, timeout=10) as response:
+            res_data = json.loads(response.read().decode("utf-8"))
+            if "data" in res_data and len(res_data["data"]) > 0:
+                model_id = res_data["data"][0].get("id")
+                if model_id:
+                    return model_id
+            raise ValueError(f"Invalid response structure from {url}: {res_data}")
+    except Exception as e:
+        raise RuntimeError(f"Failed to fetch model name from OpenAI endpoint ({url}): {e}")
+
+def fetch_embedding(text: str, host: str, port: str, model: str) -> List[float]:
+    """Queries OpenAI /v1/embeddings endpoint for embeddings."""
+    url = f"http://{host}:{port}/v1/embeddings"
+    headers = {"Content-Type": "application/json"}
+    payload = json.dumps({"input": text, "model": model}).encode("utf-8")
+    
+    try:
+        req = urllib.request.Request(url, data=payload, headers=headers, method="POST")
+        with urllib.request.urlopen(req, timeout=300) as response:
+            res_data = json.loads(response.read().decode("utf-8"))
+            return res_data["data"][0]["embedding"]
+    except Exception as e:
+        raise RuntimeError(f"Failed to fetch embedding from {url} for model '{model}': {e}")
+
+# --- ChromaDB Exporter ---
+def export_to_chroma(
+    cells: Dict[str, str],
+    db_path: Path,
+    host: str,
+    port: str,
+    collection_name: str = "uvian"
+):
+    # 1. Fetch model name from /v1/models
+    print(f"Detecting active model from http://{host}:{port}/v1/models...")
+    model_name = fetch_model_name(host, port)
+    print(f"Detected model: '{model_name}'")
+
+    # 2. Sanitize model name to prevent illegal directory characters (/ \ : etc.)
+    safe_model_name = re.sub(r'[\/\\:]', '_', str(model_name))
+
+    # 3. Enforce subfolder requirement if basename does not match the sanitized model name
+    if db_path.name != safe_model_name:
+        db_path = db_path / safe_model_name
+    
+    # 4. Explicitly check and initialize the database directory if it does not exist
+    if not db_path.exists():
+        print(f"📁 Database folder not found. Initializing new storage directory at: {db_path}...")
+    db_path.mkdir(parents=True, exist_ok=True)
+    
+    print(f"Connecting to ChromaDB at: {db_path}")
+    client = chromadb.PersistentClient(path=str(db_path))
+    
+    # Enforce cosine distance metric required by UvianMemoryManager
+    collection = client.get_or_create_collection(
+        name=collection_name,
+        metadata={"hnsw:space": "cosine"}
+    )
+    
+    ids = []
+    documents = []
+    embeddings = []
+    metadatas = []
+    
+    total = len(cells)
+    print(f"Processing {total} cell(s)...")
+    
+    for idx, (uuid_str, content) in enumerate(cells.items(), 1):
+        print(f"[{idx}/{total}] Embedding UUID: {uuid_str}...", end="", flush=True)
+        try:
+            emb = fetch_embedding(content, host, port, model_name)
+            ids.append(uuid_str)
+            documents.append(content)
+            embeddings.append(emb)
+            
+            # Inject required "uuid" and "model" keys into metadata schema
+            metadatas.append({
+                "uuid": uuid_str,
+                "model": model_name,
+                "path": format_uvian_path(uuid_str),
+                "word_count": len(content.split())
+            })
+            print(" ✅")
+        except Exception as e:
+            print(f" FAILED!\n -> Error: {e}")
+
+    if ids:
+        collection.upsert(
+            ids=ids,
+            embeddings=embeddings,
+            documents=documents,
+            metadatas=metadatas
+        )
+        print(f"\nSuccessfully upserted {len(ids)} record(s) into collection '{collection_name}'.")
+    else:
+        print("\nNo valid embeddings were generated. Nothing upserted.")
+
+def main():
+    parser = argparse.ArgumentParser(description="Export Uvian memory cells to ChromaDB.")
+    parser.add_argument("-u", "--uuid", required=False, help="Specific UUID to export (defaults to all cells if omitted)")
+    parser.add_argument("--host", default="localhost", help="LLM server hostname/IP (default: localhost)")
+    parser.add_argument("--port", default="8080", help="LLM server port (default: 8080)")
+    parser.add_argument("path", help="Target base directory path for ChromaDB")
+    
+    args = parser.parse_args()
+    
+    uvian_dir = get_uvian_dir()
+    try:
+        cells = load_cells(uvian_dir, target_uuid=args.uuid)
+    except Exception as e:
+        sys.stderr.write(f"Error loading Uvian cells: {e}\n")
+        sys.exit(1)
+        
+    if not cells:
+        print("No cells found to export.")
+        sys.exit(0)
+        
+    export_to_chroma(
+        cells=cells,
+        db_path=Path(args.path).resolve(),
+        host=args.host,
+        port=args.port
+    )
+
+if __name__ == "__main__":
+    main()

@@ -5,3 +5,11 @@ lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["Agent3000/Q
 #lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf: ["9tps","-fa on"]
 lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf: ["Agent8081/aider-chat","-ctk q4_0 -ctv q4_0 -fa on -nkvo"]
 
+# --------
+#lmstudio-community/gemma-4-26B-A4B-it-GGUF/gemma-4-26B-A4B-it-Q4_K_M.gguf: ["5tps","-ctk q4_0 -ctv q4_0 -fa on"]
+lmstudio-community/gemma-4-26B-A4B-it-GGUF/gemma-4-26B-A4B-it-Q4_K_M.gguf: ["Agent8082/","-ctk q4_0 -ctv q4_0 -fa on -nkvo"]
+#lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["9tps","-fa on"]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["Agent8901/QUICK_SEARCH","-ctk q4_0 -ctv q4_0 -fa on -nkvo --port 8901"]
+#lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf: ["9tps","-fa on"]
+lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf: ["Agent8083","-ctk q4_0 -ctv q4_0 -fa on -nkvo --port 8083"]
+

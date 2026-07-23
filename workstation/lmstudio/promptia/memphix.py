@@ -123,7 +123,7 @@ class UvianMemoryManager:
         
         # Enforce Cosine distance metric so we can cleanly calculate similarity percentage (1.0 - distance)
         self.collection = self.chroma_client.get_or_create_collection(
-            name="uvian_memories",
+            name="uvian",
             metadata={"hnsw:space": "cosine"}
         )
         
@@ -176,7 +176,7 @@ class UvianMemoryManager:
                 uid = uid_part.strip()
                 try:
                     models_dict = json.loads(json_block.strip())
-                    doc_id = f"{uid}_{self.model_name}"
+                    doc_id = f"{uid}"
                     
                     # 2. Skip if this exact ID is already in the database
                     if doc_id in existing_ids:
