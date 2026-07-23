@@ -3,3 +3,31 @@ lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q8_0.gguf: ["7tps" , "-ctk
 lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf: ["5tps" , "-ctk q4_0 -ctv q4_0 -fa on"]
 LiquidAI/LFM2.5-VL-1.6B-GGUF/LFM2.5-VL-1.6B-F16.gguf: ["8tps" , ""]
 #standard
+# --------
+#lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["9tps" , "-ctk q4_0 -ctv q4_0 -fa on"]
+#lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q8_0.gguf: ["7tps" , "-ctk q8_0 -ctv q8_0 -fa on"]
+#lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf: ["5tps" , "-ctk q4_0 -ctv q4_0 -fa on"]
+#LiquidAI/LFM2.5-VL-1.6B-GGUF/LFM2.5-VL-1.6B-F16.gguf: ["8tps" , ""]
+#standard
+lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf: ["Agent8083","-c 32768 -ctk q4_0 -ctv q4_0 -fa on --port 8083"]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q8_0.gguf: ["Agent8900","-c 32768 -ctk q8_0 -ctv q8_0 -fa on --port 8900"]
+
+# --------
+#
+#
+#
+lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf: ["Agent8083" , "-b 4096 -ub 4096 -c 16768 -ctk q4_0 -ctv q4_0 -fa on -nkvo --port 8083 --embeddings --pooling mean"]
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["Agent8901" , "-b 4096 -ub 4096 -c 16768 -ctk q4_0 -ctv q4_0 -fa on -nkvo --port 8901 --embeddings --pooling mean"]
+#
+#
+#
