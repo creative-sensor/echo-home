@@ -1,0 +1,201 @@
+#!/usr/bin/env python
+import os
+import sys
+import re
+import json
+import math
+import argparse
+import subprocess
+from pathlib import Path
+from collections import Counter, deque
+from typing import Dict, List, Tuple, Any
+
+# --- Zero-Dependency Semantic Similarity (TF-IDF Cosine) ---
+def tokenize(text: str) -> List[str]:
+    return re.findall(r'\w+', text.lower())
+
+def get_cosine_similarity(text1: str, text2: str) -> float:
+    """Computes cosine similarity between two text snippets."""
+    tokens1, tokens2 = tokenize(text1), tokenize(text2)
+    if not tokens1 or not tokens2:
+        return 0.0
+    
+    vec1, vec2 = Counter(tokens1), Counter(tokens2)
+    intersection = set(vec1.keys()) & set(vec2.keys())
+    
+    numerator = sum([vec1[x] * vec2[x] for x in intersection])
+    sum1 = sum([val**2 for val in vec1.values()])
+    sum2 = sum([val**2 for val in vec2.values()])
+    denominator = math.sqrt(sum1) * math.sqrt(sum2)
+    
+    return float(numerator) / denominator if denominator else 0.0
+
+# --- Uvian Path Utilities ---
+def get_uvian_dir() -> Path:
+    uvian_dir = os.environ.get("UVIAN_DIR", ".")
+    return Path(uvian_dir).resolve()
+
+def format_uvian_path(uuid_str: str) -> str:
+    """Returns the LLM-readable path format: $UVIAN_DIR/d1/d2/d3/uuid"""
+    clean_uuid = uuid_str.strip().lower()
+    if len(clean_uuid) < 4:
+        return f"$UVIAN_DIR/{clean_uuid}"
+    return f"$UVIAN_DIR/{clean_uuid[0]}/{clean_uuid[1]}/{clean_uuid[2:4]}/{clean_uuid}"
+
+def generate_hint(content: str, max_words: int = 15) -> str:
+    """Generates a short, low-token clue for the LLM."""
+    words = content.strip().split()
+    if not words:
+        return "[Empty memory cell]"
+    hint = " ".join(words[:max_words])
+    return f"{hint}..." if len(words) > max_words else hint
+
+def load_all_cells(base_dir: Path) -> Dict[str, str]:
+    """Scans the 3-level Uvian directory structure and loads memory contents."""
+    cells = {}
+    if not base_dir.exists():
+        return cells
+
+    # Iterate through level 1, 2, and 3 directories
+    for p in base_dir.glob("?/?/??/*"):
+        if p.is_file() and not p.name.startswith("."):
+            try:
+                # Read content; skip binary/encrypted undecodable files if not decrypted
+                content = p.read_text(errors="ignore").strip()
+                if content:
+                    cells[p.name.lower()] = content
+            except Exception as e:
+                continue
+    return cells
+
+# --- DAG Cluster Builder ---
+def build_dag_map(
+    start_uuid: str,
+    cells: Dict[str, str],
+    max_depth: int = 3,
+    threshold: float = 0.25,
+    max_branching: int = 3,
+    max_total_nodes: int = 15
+) -> Dict[str, Any]:
+    
+    start_uuid = start_uuid.lower()
+    if start_uuid not in cells:
+        raise ValueError(f"Start node UUID '{start_uuid}' not found in Uvian storage.")
+
+    # BFS Queue: stores tuples of (uuid, current_depth)
+    queue = deque([(start_uuid, 0)])
+    
+    # Visited set prevents loops (Acyclic guarantee)
+    visited = {start_uuid}
+    
+    nodes_map = {}
+    
+    while queue and len(visited) <= max_total_nodes:
+        current_uuid, current_depth = queue.popleft()
+        current_content = cells[current_uuid]
+        current_path = format_uvian_path(current_uuid)
+        
+        # Initialize node entry
+        nodes_map[current_path] = {
+            "uuid": current_uuid,
+            "depth": current_depth,
+            "hint": generate_hint(current_content),
+            "next_paths": []
+        }
+        
+        # Stop branching if we reached the maximum depth limit
+        if current_depth >= max_depth:
+            continue
+            
+        # Score similarity against all unvisited cells
+        candidates = []
+        for candidate_uuid, candidate_content in cells.items():
+            if candidate_uuid in visited:
+                continue
+            
+            sim_score = get_cosine_similarity(current_content, candidate_content)
+            if sim_score >= threshold:
+                candidates.append((sim_score, candidate_uuid))
+        
+        # Sort by relevance descending and cap by branching limit
+        candidates.sort(key=lambda x: x[0], reverse=True)
+        top_candidates = candidates[:max_branching]
+        
+        for score, next_uuid in top_candidates:
+            if len(visited) >= max_total_nodes:
+                break
+                
+            next_path = format_uvian_path(next_uuid)
+            nodes_map[current_path]["next_paths"].append({
+                "path": next_path,
+                "relevance_score": round(score, 3)
+            })
+            
+            visited.add(next_uuid)
+            queue.append((next_uuid, current_depth + 1))
+
+    return {
+        "cell_type": "uvian_cluster_map",
+        "start_node": format_uvian_path(start_uuid),
+        "metrics": {
+            "total_nodes": len(nodes_map),
+            "max_depth_reached": max([n["depth"] for n in nodes_map.values()]),
+            "relevance_threshold": threshold
+        },
+        "nodes": nodes_map
+    }
+
+def main():
+    parser = argparse.ArgumentParser(description="Uvian Memory DAG Cluster Generator")
+    parser.add_argument("-u", "--uuid", required=True, help="Start node UUID to build the map from")
+    parser.add_argument("-d", "--depth", type=int, default=3, help="Maximum traversal depth (default: 3)")
+    parser.add_argument("-t", "--threshold", type=float, default=0.20, help="Relevance threshold 0.0-1.0 (default: 0.20)")
+    parser.add_argument("-b", "--branch", type=int, default=3, help="Max outgoing links per cell (default: 3)")
+    parser.add_argument("-m", "--max-nodes", type=int, default=15, help="Hard cap on total cluster nodes (default: 15)")
+    parser.add_argument("-s", "--save", action="store_true", help="Pipe output directly to .function/entry as a new cell")
+    
+    args = parser.parse_args()
+    
+    uvian_dir = get_uvian_dir()
+    cells = load_all_cells(uvian_dir)
+    
+    try:
+        dag_map = build_dag_map(
+            start_uuid=args.uuid,
+            cells=cells,
+            max_depth=args.depth,
+            threshold=args.threshold,
+            max_branching=args.branch,
+            max_total_nodes=args.max_nodes
+        )
+    except Exception as e:
+        sys.stderr.write(f"Error building map: {str(e)}\n")
+        sys.exit(1)
+        
+    json_output = json.dumps(dag_map, indent=2)
+    
+    # Optionally save directly back to Uvian memory via entry script
+    if args.save:
+        entry_script = uvian_dir / ".function" / "entry"
+        if not entry_script.exists():
+            sys.stderr.write(f"Error: Entry script not found at {entry_script}\n")
+            sys.exit(1)
+            
+        process = subprocess.Popen(
+            [str(entry_script)],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        stdout, stderr = process.communicate(input=json_output)
+        if process.returncode == 0:
+            print(f"Map saved successfully as cell:\n{stdout.strip()}")
+        else:
+            sys.stderr.write(f"Failed to save map via entry: {stderr}\n")
+    else:
+        # Print to stdout for LLM consumption or inspection
+        print(json_output)
+
+if __name__ == "__main__":
+    main()
