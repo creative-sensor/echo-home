@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+find datum/$(date +%Y) | awk -F/ '
+/\/(BACKLOG|TODO|HOLD|WIP|DONE)\// {
+    status = $3
+    file   = $4
+    row = ++count[status]
+    data[status, row] = file
+    if (row > maxrows) maxrows = row
+}
+
+END {
+    cols[1] = "BACKLOG"
+    cols[2] = "TODO"
+    cols[3] = "HOLD"
+    cols[4] = "WIP"
+    cols[5] = "DONE"
+
+    # Determine column widths
+    for (c = 1; c <= 5; c++) {
+        w[c] = length(cols[c])
+        for (r = 1; r <= count[cols[c]]; r++) {
+            l = length(data[cols[c], r])
+            if (l > w[c]) w[c] = l
+        }
+    }
+
+    # Header
+    printf "|"
+    for (c = 1; c <= 5; c++)
+        printf " %-" w[c] "s |", cols[c]
+    print ""
+
+    # Markdown separator
+    printf "|"
+    for (c = 1; c <= 5; c++) {
+        for (i = 0; i < w[c] + 2; i++) printf "-"
+        printf "|"
+    }
+    print ""
+
+    # Rows
+    for (r = 1; r <= maxrows; r++) {
+        printf "|"
+        for (c = 1; c <= 5; c++)
+            printf " %-" w[c] "s |", data[cols[c], r]
+        print ""
+    }
+}'
