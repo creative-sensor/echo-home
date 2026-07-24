@@ -65,6 +65,7 @@ Kanborg uses specific functions to interact with tasks and cards, often referenc
 | Command                          | Description                         | Example                 |
 |:-------------------------------- |:----------------------------------- |:----------------------- |
 | `.function/xcard <PROJECT_CODE>` | Create new card with a project code | `.function/xcard CORTA` |
+| `.function/show` | show full board status as markdown table| `.function/show` |
 | `find datum/$(date +%Y) | grep <CARD_NAME>.md` | Find current state or path of a card name | `find datum/$(date +%Y) | grep CORTA-40.md` |
 
 ### 3. Development Cycle (Moving Cards/Tasks)
