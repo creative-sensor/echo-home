@@ -1,0 +1,38 @@
+# Color in Bash Shell
+
+This document shows how to find and experiment with color codes in the Bash shell.
+
+---
+
+### 1. Working Directory
+
+Before running any command, the **working directory must be set**.  
+For both human users and LLM models executing these commands, ensure the following step is performed first:
+
+```bash
+cd ~/echo-home/Documents/terminal-handbook/bash
+```
+
+### 2. Run Commands
+
+| Command                                                                    | Description                                                          | Example                         |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------- |
+| `.function/list-color`                                                     | List all available colors in the Bash shell                          | `.function/list-color`          |
+| `.function/find-harmony` `<BACKGROUND_COLOR_CODE>`                         | Display all foreground colors against the specified background color | `.function/find-harmony 34`     |
+| `.function/find-harmony` `<BACKGROUND_COLOR_CODE> <FOREGROUND_COLOR_CODE>` | Display foreground colors against the specified background color     | `.function/find-harmony 34 123` |
+
+### 3. Notes for LLM Models
+
+- Always **set the working directory** using the `cd` command before executing any `.function/...` script.
+
+- If the working directory is not set, the functions may fail or return errors.
+
+- Example workflow for an LLM model:
+  
+  bash
+  
+  ```
+  cd ~/echo-home/Documents/terminal-handbook/bash
+  .function/list-color
+  .function/find-harmony 34
+  ```
