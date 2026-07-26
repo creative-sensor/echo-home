@@ -48,4 +48,6 @@ dff4e4ca848e33e678a63b5b7d1f8bfa4a17e764415d0c0aaaad07c84f4d8fad *./ggml-org/gem
 704c66a0ba0711c7afaa12cc03860a1a289ae5efc7c4e6b046ef1307c57d63ba *./ggml-org/gemma-4-E4B-it-GGUF/gemma-4-e4b-it-Q8_0.gguf
 d0fdc60b643f14f9332e26c8779c062db8daacbb28a9bdc830851aa71bfddb5a *./ggml-org/gemma-4-E4B-it-GGUF/gemma-4-e4b-it-f16.gguf
 c9d25a7fff4c61d98948c6420a27ebee4acbc04c7bf26e54b844aa66a4bce182 *./lmstudio-community/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-GGUF/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-Q8_0.gguf
-
+aa6eb6d481b583a304269649d467fbff66267f7d9c480b18911bdcf081102790 *./lmstudio-community/gemma-4-E2B-it-QAT-GGUF/gemma-4-E2B-it-QAT-Q4_0.gguf
+d264fb541e1fd4cb67ff710664cef60a50aaa8ab6f7acdf2bf5c76911dbd5b76 *./lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf
+6c950d754366dd8b372fd17a40497ba5f130a46d833b4c5bccc9f6bb6382ce1e *./lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf

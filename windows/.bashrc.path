@@ -23,6 +23,7 @@ path_dict["xpack"]=$LOCAL_BIN/xpack/bin
 path_dict["rsync"]=$LOCAL_BIN/rsync/usr/bin
 path_dict["utilinux"]=$LOCAL_BIN/utilinux/usr/bin
 path_dict["lib_msys"]=$LOCAL_BIN/lib-msys
+path_dict["windows_terminal"]=$LOCAL_BIN/terminal
 
 
 for key in "${!path_dict[@]}"; do

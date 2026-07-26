@@ -1,14 +1,36 @@
-# How to run  gml8w
+# GML8W: Run llama-cpp gguf LLM model
 
-### list model
-gml8w --help
+This document shows how to run LLM model in GGUF format with llama-cpp backend engine
+
+---
+
+### 1. Model ID
+
+Find model id by listing all available model entry by invoking `gml8w --help`
+
+- Format of model entry: `<MODEL_ID>:<MODEL_NAME>: ["<MODEL_DESCRIPTION>", "<LLAMACPP_PARAMS>"]`
+
+- Example: `4` is MODEL_ID, `gemma-4-e4b-it-Q4_K_M.gguf` is model name, `Agent8083` is model descript, `--port 8083` is one of llama-cpp params
+  
+  ```
+  4:lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-e4b-it-Q4_K_M.gguf: ["Agent8083" , "-b 4096 -ub 4096 -c 8192 -ctk q4_0 -ctv q4_0 -fa on -nkvo --port 8083 --embeddings --pooling mean"]
+  ```
+
+### 2. Run Commands
+
+| Command            | Description                               | Example        |
+| ------------------ | ----------------------------------------- | -------------- |
+| `gml8w --help`     | List all available LLM models             | `gml8w --help` |
+| `gml8w <MODEL_ID>` | Run LLM model by specific ID (using `wt`) | `gml8w 4`      |
+
+### 3. Instructions
+
+1. Find `<MODEL_ID>` using `gml8w --help` command
+
+2. Run command `gml8w <MODEL_ID>` in background using `wt` command
+   Example: `wt  "C:\Program Files\Git\bin\bash.exe" -li -c "gml8w 4"`
+
+3. Test if command launched successfully:
+   `curl  http://localhost:<PORT>/v1/models`
 
 
-### run model
-gml8w <index>
-
-e.g: 
-```
-gml8w 1
-gml8w 14
-```
