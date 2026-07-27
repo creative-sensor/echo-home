@@ -1,0 +1,15 @@
+# Port-Remote
+
+This document show how to use `port-remote` script to open port for remote connection
+
+--- 
+
+## Instructions
+
+1. Read ptrm table for SSH_HOST, LOCAL_PORT, REMOTE_IP, REMOTE_PORT via command: `cat ~/echo-home/.vim/pages/$(hostname).ptrm.md | head -n -2`
+
+2. Then run : 
+- command: `wt  "C:\Program Files\Git\bin\bash.exe" -li -c "port-remote <SSH_HOST> <LOCAL_PORT> <REMOTE_IP> <REMOTE_PORT>"`
+
+- Example: `wt  "C:\Program Files\Git\bin\bash.exe" -li -c "port-remote llama-ssh-host 8082:127.0.0.1:8082"`
+3. Test port open successful: `curl -v http://127.0.0.1:<LOCAL_PORT> 2>&1  | grep -m 1 Established`
