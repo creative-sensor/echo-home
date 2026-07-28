@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+import argparse
+import os
+import sys
+import chromadb
+
+# ANSI Color Codes for clean terminal output
+GREEN = "\033[92m"
+YELLOW = "\033[93m"
+RED = "\033[91m"
+BLUE = "\033[94m"
+RESET = "\033[0m"
+
+def delete_entries(db_path, target_uuids):
+    if not os.path.exists(db_path):
+        print(f"{RED}Error: The directory '{db_path}' does not exist.{RESET}")
+        sys.exit(1)
+
+    print(f"Connecting to ChromaDB at: {BLUE}{db_path}{RESET}")
+    
+    try:
+        client = chromadb.PersistentClient(path=db_path)
+    except Exception as e:
+        print(f"{RED}Error connecting to database: {e}{RESET}")
+        sys.exit(1)
+
+    collections = client.list_collections()
+    if not collections:
+        print(f"{YELLOW}No collections found in this database.{RESET}")
+        return
+
+    # Track which UUIDs we still need to find and delete
+    pending_uuids = set(target_uuids)
+    deleted_count = 0
+
+    print(f"Searching across {len(collections)} collection(s) for {len(pending_uuids)} UUID(s)...\n")
+
+    for col in collections:
+        if not pending_uuids:
+            break  # Stop searching if all targeted UUIDs have been deleted
+
+        # Check which of our pending UUIDs actually exist in this collection
+        # We only fetch "ids" to make the check lightning fast
+        existing_data = col.get(ids=list(pending_uuids), include=[])
+        found_ids = existing_data["ids"]
+
+        if found_ids:
+            # Perform the deletion
+            col.delete(ids=found_ids)
+            
+            print(f"=== Collection: {BLUE}{col.name}{RESET} ===")
+            for doc_id in found_ids:
+                print(f"  {GREEN}✔ Deleted ID: {doc_id}{RESET}")
+                pending_uuids.remove(doc_id)
+                deleted_count += 1
+            print()
+
+    # Report results summary
+    print("-" * 50)
+    print(f"Total entries deleted: {GREEN}{deleted_count}{RESET}")
+    
+    # If any UUIDs weren't found in any collection, warn the user
+    if pending_uuids:
+        print(f"\n{YELLOW}⚠ Warning: Could not find the following {len(pending_uuids)} UUID(s) in any collection:{RESET}")
+        for missing_id in pending_uuids:
+            print(f"  - {missing_id}")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Delete one or many UUID entries across all collections in a ChromaDB database."
+    )
+    
+    # Positional argument 1: Database Path
+    parser.add_argument(
+        "db_path", 
+        type=str, 
+        help="Path to the ChromaDB database folder"
+    )
+    
+    # Positional argument 2+: One or more UUIDs
+    parser.add_argument(
+        "uuids", 
+        type=str, 
+        nargs="+", 
+        help="One or more UUIDs to delete (space-separated)"
+    )
+    
+    args = parser.parse_args()
+    delete_entries(args.db_path, args.uuids)
