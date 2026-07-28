@@ -2,7 +2,7 @@
 
 --------
 
-| SSH_HOST     | LOCAL_PORT | REMOTE_IP | REMOTE_PORT | USAGE                                |
+| SSH_HOST     | LOCAL_PORT | REMOTE_IP | REMOTE_PORT | NOTES                                |
 | ------------ | ---------- | --------- | ----------- | ------------------------------------ |
 | hostA        | 8082       | 127.0.0.1 | 8082        | llm/gemma-4-26B-A4B-it-QAT-Q4_0.gguf |
 | hostB        | 8087       | 127.0.0.1 | 8087        | web-ui                               |

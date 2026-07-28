@@ -18,3 +18,20 @@ lmstudio-community/gemma-4-E2B-it-QAT-GGUF/gemma-4-E2B-it-QAT-Q4_0.gguf: ["Agent
 #
 lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["Agent8901" , "-c 131072 -ctk q4_0 -ctv q4_0 -fa on --port 8901 --embeddings --pooling mean"]
 #
+# --------
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+lmstudio-community/gemma-4-E2B-it-QAT-GGUF/gemma-4-E2B-it-QAT-Q4_0.gguf: ["Agent8090" , "-b 4096 -ub 4096 -c 4096 -ctk q4_0 -ctv q4_0 -fa on --port 8090 --embeddings --pooling mean"]
+#
+#
+#
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["Agent8901" , "-b 4096 -ub 4096 -c 4096 -ctk q4_0 -ctv q4_0 -fa on --port 8901 --embeddings --pooling mean"]
+#

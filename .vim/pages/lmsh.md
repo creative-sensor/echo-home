@@ -27,6 +27,6 @@
 
 - `lmsh2`: activate `python-cliner`
 
-- `lmsh2`: activate `node-cliner`
+- `lmsh3`: activate `node-cliner`
 
 - `lmsh0`: activate `neos`
