@@ -84,7 +84,7 @@ lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-e4b-it-Q4_K_M.gguf: ["Agent8083" 
 #
 #
 lmstudio-community/gemma-4-31B-it-QAT-GGUF/gemma-4-31B-it-QAT-Q4_0.gguf: ["GM4D/Agent8086", "--rpc 169.254.9.86:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8086"]
-lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/gemma-4-26B-A4B-it-QAT-Q4_0.gguf: ["Agent8087" , "--rpc myra-m40n.local:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8087"]
+lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/gemma-4-26B-A4B-it-QAT-Q4_0.gguf: ["Agent8087" , "--rpc $GEMIR:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8087"]
 #
 lmstudio-community/gemma-4-E4B-it-QAT-GGUF/gemma-4-E4B-it-QAT-Q4_0.gguf: ["Agent8089" , "-b 4096 -ub 4096 -c 16384 -ctk q4_0 -ctv q4_0 -fa on --port 8089 --embeddings --pooling mean"]
 lmstudio-community/gemma-4-E2B-it-QAT-GGUF/gemma-4-E2B-it-QAT-Q4_0.gguf: ["Agent8090" , "-b 4096 -ub 4096 -c 16384 -ctk q4_0 -ctv q4_0 -fa on --port 8090 --embeddings --pooling mean"]
@@ -107,13 +107,36 @@ lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-e4b-it-Q4_K_M.gguf: ["Agent8083" 
 #
 #
 lmstudio-community/gemma-4-31B-it-QAT-GGUF/gemma-4-31B-it-QAT-Q4_0.gguf: ["GM4D/Agent8086", "--rpc 169.254.9.86:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8086"]
-lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/gemma-4-26B-A4B-it-QAT-Q4_0.gguf: ["GM4D/Agent8087" , "--rpc myra-m40n.local:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8087"]
+lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/gemma-4-26B-A4B-it-QAT-Q4_0.gguf: ["GM4D/Agent8087" , "--rpc $GEMIR:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8087"]
 #
 lmstudio-community/gemma-4-E4B-it-QAT-GGUF/gemma-4-E4B-it-QAT-Q4_0.gguf: ["Agent8089" , "-b 4096 -ub 4096 -c 16384 -ctk q4_0 -ctv q4_0 -fa on --port 8089 --embeddings --pooling mean"]
 lmstudio-community/gemma-4-E2B-it-QAT-GGUF/gemma-4-E2B-it-QAT-Q4_0.gguf: ["Agent8090" , "-b 4096 -ub 4096 -c 16384 -ctk q4_0 -ctv q4_0 -fa on --port 8090 --embeddings --pooling mean"]
 #
 #
 ggml-org/gemma-4-E2B-it-GGUF/gemma-4-e2b-it-Q8_0.gguf: ["Agent8900" , "-b 4096 -ub 4096 -c 16384 -ctk q8_0 -ctv q8_0 -fa on --port 8900 --embeddings --pooling mean"]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["Agent8901" , "-c 16384 -ctk q4_0 -ctv q4_0 -fa on --port 8901 --embeddings --pooling mean"]
+#
+lmstudio-community/gemma-4-31B-it-GGUF/gemma-4-31B-it-Q4_K_M.gguf: ["GM4D/Agent8091", "--rpc 169.254.9.86:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8091"]
+
+
+
+
+
+# --------
+lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-e4b-it-Q8_0.gguf: ["E/Agent" , "-b 2048 -ub 2048 -c 16384 -ctk q8_0 -ctv q8_0 -fa on --embeddings --pooling mean"]
+#
+lmstudio-community/gemma-4-26B-A4B-it-GGUF/gemma-4-26B-A4B-it-Q4_K_M.gguf: ["GM4D/Agent8082","--rpc 169.254.9.86:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8082 --embeddings --pooling mean"]
+lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-e4b-it-Q4_K_M.gguf: ["Agent8083" , "-b 4096 -ub 4096 -c 16384 -ctk q4_0 -ctv q4_0 -fa on --port 8083 --embeddings --pooling mean"]
+#
+#
+lmstudio-community/gemma-4-31B-it-QAT-GGUF/gemma-4-31B-it-QAT-Q4_0.gguf: ["GM4D/Agent8086", "--rpc 169.254.9.86:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8086"]
+lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/gemma-4-26B-A4B-it-QAT-Q4_0.gguf: ["GM4D/Agent8087" , "--rpc $GEMIR:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8087"]
+#
+lmstudio-community/gemma-4-E4B-it-QAT-GGUF/gemma-4-E4B-it-QAT-Q4_0.gguf: ["Agent8089" , "-b 4096 -ub 4096 -c 16384 -ctk q4_0 -ctv q4_0 -fa on --port 8089 --embeddings --pooling mean"]
+lmstudio-community/gemma-4-E2B-it-QAT-GGUF/gemma-4-E2B-it-QAT-Q4_0.gguf: ["Agent8090" , "-b 4096 -ub 4096 -c 16384 -ctk q4_0 -ctv q4_0 -fa on --port 8090 --embeddings --pooling mean"]
+#
+#
+ggml-org/gemma-4-E2B-it-GGUF/gemma-4-e2b-it-Q8_0.gguf: ["Agent8900" , "-b 2048 -ub 2048 -c 16384 -ctk q8_0 -ctv q8_0 -fa on --port 8900 --embeddings --pooling mean"]
 lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["Agent8901" , "-c 16384 -ctk q4_0 -ctv q4_0 -fa on --port 8901 --embeddings --pooling mean"]
 #
 lmstudio-community/gemma-4-31B-it-GGUF/gemma-4-31B-it-Q4_K_M.gguf: ["GM4D/Agent8091", "--rpc 169.254.9.86:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8091"]

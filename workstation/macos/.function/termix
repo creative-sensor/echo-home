@@ -1,0 +1,10 @@
+#!/bin/bash
+
+
+# $@ with escaping preserves exact arguments and internal quotes
+CMD=""
+for arg in "$@"; do
+  CMD="$CMD $(printf '%q' "$arg")"
+done
+
+osascript -e "tell application \"Terminal\" to do script \"/bin/bash --rcfile ~/.bashrc -i -c '$CMD ; exec bash'\""
