@@ -1,18 +1,18 @@
 # gpustack : distributed inference
+
 --------------------------------
+
 ### 0 DESCRIPTION
 
 https://github.com/gpustack/gpustack?tab=readme-ov-file
 
-
 ### 1 SOLUTION
 
+[GGPU-4 · creative-sensor/echo-home@204cbb5 · GitHub](https://github.com/creative-sensor/echo-home/commit/204cbb5228299d5c37090d472ea366a82dc9a1d0)
 
 ### 2 NOTES
 
-
 ### 3 TEST/VERIFICATION
-
 
 ### 4 JOURNAL
 
@@ -35,8 +35,8 @@ thus causing the job to be terminated. The first process to do so was:
    Exit code:    1
 ```
 
-
 --------------------------------
+
 ```json
 { "project_code": "GGPU" , "links": "" , "location": "" , "fpoint": "" }
 ```
