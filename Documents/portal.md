@@ -16,9 +16,9 @@
 | 8089  | `Agent8089`/gem4-E4B-Q4-QAT      |
 | 8090  | `Agent8090`/gem4-E2B-Q4-QAT      |
 | 8091  | `Agent8091`/gem4-31B-Q4          |
-| 8092  | `Agent8091`/gem4-E4B-f16         |
-| 8093  | `Agent8088`/gem4-12B-Q8          |
-| 8094  | `Agent8088`/gem4-12B-Q4          |
+| 8092  | `Agent8092`/gem4-E4B-f16         |
+| 8093  | `Agent8093`/gem4-12B-Q8          |
+| 8094  | `Agent8094`/gem4-12B-Q4          |
 | 8900  | `Agent8900`/gem4-E2B-Q8          |
 | 8901  | `Agent8901`/gem4-E2B-Q4          |
 | 8902  | `Agent8902`/nvidia-ntron-nano-Q8 |

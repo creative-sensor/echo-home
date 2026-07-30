@@ -51,3 +51,5 @@ c9d25a7fff4c61d98948c6420a27ebee4acbc04c7bf26e54b844aa66a4bce182 *./lmstudio-com
 aa6eb6d481b583a304269649d467fbff66267f7d9c480b18911bdcf081102790 *./lmstudio-community/gemma-4-E2B-it-QAT-GGUF/gemma-4-E2B-it-QAT-Q4_0.gguf
 d264fb541e1fd4cb67ff710664cef60a50aaa8ab6f7acdf2bf5c76911dbd5b76 *./lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf
 6c950d754366dd8b372fd17a40497ba5f130a46d833b4c5bccc9f6bb6382ce1e *./lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf
+6f63619c9e33826a2a8ab195a344c79ecae7c82341d5567e28fd8863df056a7b *./lmstudio-community/gemma-4-31B-it-QAT-GGUF/gemma-4-31B-it-QAT-Q4_0.gguf
+9b96aa267521008235f8792590cb8e2dc47a8a236c6ff1767964cbbe32510873 *./lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/gemma-4-26B-A4B-it-QAT-Q4_0.gguf
