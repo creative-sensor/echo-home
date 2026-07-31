@@ -12,3 +12,6 @@ test -z "$(yq -V | grep -o mikefarah)" \
 	&& chmod 0755 $LOCAL_BIN/yq
 
 ln -sf $(which python3) $LOCAL_BIN/python
+ln -sf $LOCAL_BIN/bash $LOCAL_BIN/bash5
+
+~/echo-home/.function/cpyso .bashrc.edit ~/.bashrc.edit

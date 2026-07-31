@@ -1,0 +1,102 @@
+#!/usr/bin/env bash5
+
+# cpyso - Copy Source to Target Env with Overriding mechanism based on Target header
+
+if [[ $# -lt 2 ]]; then
+    echo "Usage: $0 SOURCE_ENV TARGET_ENV"
+    exit 1
+fi
+
+SOURCE_ENV="$1"
+TARGET_ENV="$2"
+
+# Ensure source file exists
+if [[ ! -f "$SOURCE_ENV" ]]; then
+    echo "Error: SOURCE_ENV '$SOURCE_ENV' does not exist."
+    exit 1
+fi
+
+# Ensure target file exists, if not, it can't have the header, so exit cleanly
+if [[ ! -f "$TARGET_ENV" ]]; then
+    exit 0
+fi
+
+# RULE: TARGET_ENV must contain line starting exact with "# YS__OVERRIDER: {"
+# If not found, do nothing and exit
+HEADER_PREFIX="# YS__OVERRIDER: {"
+if ! grep -q "^${HEADER_PREFIX}" "$TARGET_ENV"; then
+    exit 0
+fi
+
+# Extract the header line and isolate the JSON string from TARGET_ENV
+OVERRIDER_LINE=$(grep "^${HEADER_PREFIX}" "$TARGET_ENV" | head -n 1)
+JSON_PAYLOAD=${OVERRIDER_LINE#*# YS__OVERRIDER: }
+
+# Parse the JSON payload into an associative array for fast rule lookups
+declare -A RULES
+# Strip spaces, quotes, and braces to create a simple comma-separated list (e.g., VAR_A:x,MY_ALIAS:o)
+CLEAN_JSON=$(echo "$JSON_PAYLOAD" | sed 's/^[[:space:]]*{//; s/}[[:space:]]*$//; s/"//g; s/[[:space:]]//g')
+
+IFS=',' read -ra RULE_PAIRS <<< "$CLEAN_JSON"
+for PAIR in "${RULE_PAIRS[@]}"; do
+    if [[ -n "$PAIR" ]]; then
+        KEY="${PAIR%%:*}"
+        VAL="${PAIR##*:}"
+        RULES["$KEY"]="$VAL"
+    fi
+done
+
+# Process SOURCE_ENV line by line
+while IFS= read -r line || [[ -n "$line" ]]; do
+    # Skip empty lines and comments in source
+    if [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]]; then
+        continue
+    fi
+
+    # Extract PREFIX (e.g., "alias "), KEY (e.g., "ABC" or "VAR_A"), and VALUE from source
+    if [[ "$line" =~ ^([[:space:]]*alias[[:space:]]+)?([^=[:space:]]+)=(.*)$ ]]; then
+        PREFIX="${BASH_REMATCH[1]}"
+        KEY="${BASH_REMATCH[2]}"
+        
+        # SEARCH_KEY combines the prefix and key (e.g. "VAR_A" or "alias ABC") for file matching
+        SEARCH_KEY="${PREFIX}${KEY}"
+        
+        # Look up rule for the pure KEY, default to '-' (keep intact or add new) if not specified
+        RULE="${RULES[$KEY]:--}"
+
+        # Check if TARGET_ENV already contains this SEARCH_KEY
+        TARGET_HAS_KEY=false
+        if grep -q "^${SEARCH_KEY}=" "$TARGET_ENV"; then
+            TARGET_HAS_KEY=true
+        fi
+
+        case "$RULE" in
+            x)
+                # "x": do nothing for the same VAR/alias in target or do not add new in target
+                # Action: Skip entirely
+                ;;
+            
+            o)
+                # "o": force overwrite or add VAR/alias to target
+                if $TARGET_HAS_KEY; then
+                    # Safe inline replacement using awk to avoid sed delimiter collision problems
+                    awk -v sk="$SEARCH_KEY" -v v="$line" 'BEGIN{FS="="} $1==sk {print v; next} 1' "$TARGET_ENV" > "${TARGET_ENV}.tmp" && mv "${TARGET_ENV}.tmp" "$TARGET_ENV"
+                    echo "[OVERRIDDEN] $SEARCH_KEY in $TARGET_ENV"
+                else
+                    echo "$line" >> "$TARGET_ENV"
+                    echo "[ADDED]      $SEARCH_KEY to $TARGET_ENV"
+                fi
+                ;;
+                
+            *)
+                # "-", "+", or default (*):
+                # If target VAR/alias exist, keep intact as it is
+                # If target VAR/alias not exist, add new to target
+                if ! $TARGET_HAS_KEY; then
+                    echo "$line" >> "$TARGET_ENV"
+                    echo "[ADDED]      $SEARCH_KEY to $TARGET_ENV"
+                fi
+                ;;
+        esac
+    fi
+done < "$SOURCE_ENV"

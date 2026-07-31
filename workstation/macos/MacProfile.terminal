@@ -12,7 +12,7 @@
 	ABkAAAAAAAAAAAAAAAAAAADY
 	</data>
 	<key>CommandString</key>
-	<string>~/.local/bin/bash</string>
+	<string></string>
 	<key>CursorBlink</key>
 	<true/>
 	<key>Font</key>
@@ -29,9 +29,9 @@
 	<key>FontWidthSpacing</key>
 	<real>1.004032258064516</real>
 	<key>ProfileCurrentVersion</key>
-	<real>2.0699999999999998</real>
+	<real>2.0899999999999999</real>
 	<key>RunCommandAsShell</key>
-	<false/>
+	<true/>
 	<key>SelectionColor</key>
 	<data>
 	YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMS

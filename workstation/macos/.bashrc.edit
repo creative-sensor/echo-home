@@ -1,3 +1,4 @@
+# YS__OVERRIDER: {"TESTO_":"o","DONT_":"x"}
 alias ll='ls -la'
 alias sed='gsed'
 alias vimtf='vim -u ~/.vim/rc/hcl'
@@ -19,3 +20,6 @@ export PEDRIVE_VOLUME=~/DATUM
 export GPG_TTY=$(tty)
 gpg-agent --pinentry-program=$LOCAL_BIN/pinentry/bin/pinentry --daemon &>/dev/null
 
+GEMIR="Geminide_Right"
+GEMIL="Geminide_Left"
+GEMIP="Geminide__Peer"
