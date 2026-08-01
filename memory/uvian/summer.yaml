@@ -16,3 +16,6 @@ f5aff512-4b7f-44e6-b719-d1e49045540d: {"gemma-4-26B-A4B-it-Q4_K_M.gguf": "This d
 e983202f-2f79-4377-a5e6-a544645aa94d: {"gemma-4-E2B-it-Q4_K_M.gguf": "This Bash script is designed to find duplicate Markdown files within the `datum` directory of a Kanborg repository and then use the `diff` command to compare the contents of those duplicate files."}
 3017a684-fa1e-4f4e-9793-f315d652a652: {}
 ac41383b-a448-4931-a514-e5d40dfd5c1a: {}
+d4b06703-8cf1-4f34-a795-1bdb73b217b0: {}
+c8f457a0-2d47-41ae-ba63-54fb4e55c835: {}
+

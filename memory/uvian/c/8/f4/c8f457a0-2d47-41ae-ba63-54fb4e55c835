@@ -1,0 +1,16 @@
+# How to detect high disk usage
+
+## Context
+
+- OS/Kernel: General
+
+## Instruction
+
+1. Check if disk usage got high
+
+- Command: `python  ~/echo-home/codev/python/cliner/df-h-filesystem-high-disk-usage.py`
+- Example output:
+```
+High Disk Usage Detected:
+  Filesystem: devfs -> Mounted on: /dev | Usage: 100%
+```

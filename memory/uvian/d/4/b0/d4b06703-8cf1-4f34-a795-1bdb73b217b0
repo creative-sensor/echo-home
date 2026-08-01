@@ -1,0 +1,28 @@
+# How to check CPU and RAM status
+
+## Context
+
+- OS/Kernel: Darwin 22.6.0 (x86_64)
+
+## Instruction
+
+1. Check CPU info
+
+- Command: `sysctl -n machdep.cpu.brand_string` 
+- Example output: `Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz` 
+
+
+2. Check CPU and RAM usage
+
+- Command: `python  ~/echo-home/codev/python/cliner/check-cpu-and-ram-usage.py`
+- Example output:
+```
+CPU Usage: 4.8%
+Status: CPU usage is normal.
+--- RAM Usage ---
+Total Memory: 16.00 GB
+Used Memory: 7.80 GB
+Available Memory: 7.08 GB
+Memory Usage Percentage: 55.8%
+```
+

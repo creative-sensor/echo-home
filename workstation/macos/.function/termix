@@ -7,4 +7,10 @@ for arg in "$@"; do
   CMD="$CMD $(printf '%q' "$arg")"
 done
 
-osascript -e "tell application \"Terminal\" to do script \"/bin/bash --rcfile ~/.bashrc -i -c '$CMD ; exec bash'\""
+
+osascript <<EOF
+tell application "Terminal"
+    set newTab to do script ""
+    do script "$CMD" in newTab
+end tell
+EOF
