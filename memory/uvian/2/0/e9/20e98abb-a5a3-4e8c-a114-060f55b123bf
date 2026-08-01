@@ -1,0 +1,22 @@
+# Workflows: check echo-home
+
+
+## Instruction
+
+- Run a target using **Command** if no dependency found
+- If **Command** failed target, do not execute parent target
+- If a target has dependencies, run its dependency target first
+
+
+## DAG Definition
+
+Complete target in DAG by executing **Command**
+
+```Makefile
+record_time:
+	# Command: `date`
+list_home: list_tmp record_time
+	# Command: `ls -la ~`
+list_tmp:
+	# Command: `ls ~/tmp` 
+```

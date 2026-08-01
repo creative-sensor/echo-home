@@ -1,0 +1,12 @@
+#!/bin/bash
+
+
+# $@ with escaping preserves exact arguments and internal quotes
+CMD=""
+for arg in "$@"; do
+  CMD="$CMD $(printf '%q' "$arg")"
+done
+
+
+
+gnome-terminal --tab -- bash  -c "$CMD ; exec bash" 
