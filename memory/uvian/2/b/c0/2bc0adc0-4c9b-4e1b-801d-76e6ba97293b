@@ -1,0 +1,37 @@
+# Workflow: waspinator-v
+
+
+## Instruction
+
+- Run a target using **Command** if no dependency found
+- If target got failure, do not execute its parent target
+- If a target has dependencies, run all of its dependency targets
+
+
+## DAG Definition
+
+Complete target in DAG by executing **Command**
+
+```Makefile
+check_df:
+	# Description: check disk space
+	# Command: `df -h`
+	# Success: disk usage under 95%
+	# Failure: disk usage above 95%
+record_time: check_df
+	# Description: record current time
+	# Command: `date`
+	# Success: today is even day
+	# Failure: current month is November 
+list_home: list_high record_time
+	# Description: check out home inventory
+	# Command: `ls -la ~ | head -1`
+	# Success: folder contains less than 9000 files
+	# Failure: from contains more than 9000 files
+list_high: check_df
+	# Description: check out tmp inventory
+	# Command: `ls <FOLDER>` 
+	# Success: folder contains files
+	# Failure: folder has no files
+	# Input: FOLDER with high disk usage from [check_df]
+```
