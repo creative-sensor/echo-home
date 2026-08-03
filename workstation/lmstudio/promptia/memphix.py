@@ -423,6 +423,7 @@ class VRAMOptimizedMapReduceAgent:
 # ==========================================
 # Persistent state tracking current working directory across shell commands
 CURRENT_CWD = resolve_path(os.getcwd())
+LAST_UUID = None
 
 SYSTEM_PROMPT = """<|think|>
 You are Memphix, an interactive shell operator with autonomous memory tool execution.
@@ -546,15 +547,24 @@ def parse_llm_json(raw_text: str) -> dict:
         return {"action_type": "declare_result", "status": "FAILED", "reason": "LLM output invalid JSON."}
 
 def run_agent_loop(user_intent: str, memory_manager: UvianMemoryManager, max_turns: int = 8):
-    global CURRENT_CWD
+    global CURRENT_CWD, LAST_UUID # <-- Add LAST_UUID to global scope
     print("\n🔍 Searching Uvian ChromaDB for relevant memory entries...")
     match = memory_manager.retrieve_most_relevant_uuid(user_intent)
     
     context_injection = ""
+    target_uuid = None
+    
     if match:
         target_uuid, summary = match
+        LAST_UUID = target_uuid # <-- Cache the successfully found UUID
         print(f"🎯 Match found! UUID: {target_uuid} (Summary: {summary})")
-        
+    elif LAST_UUID:
+        target_uuid = LAST_UUID # <-- Fall back to the cached UUID
+        print(f"♻️ No new match found. Reloading previous UUID: {target_uuid}")
+    else:
+        print("ℹ️ No relevant Uvian UUID entries found.")
+
+    if target_uuid:
         # Trigger Tool Calling (Scripts run native engine; Non-scripts run via 'cat')
         res = handle_uvian_entry(target_uuid, args.uvian_dir)
         if res["type"] == "tool_execution":
@@ -567,8 +577,6 @@ def run_agent_loop(user_intent: str, memory_manager: UvianMemoryManager, max_tur
             )
         elif res["type"] == "error":
             print(f"⚠️ Uvian Processing Error: {res['content']}")
-    else:
-        print("ℹ️ No relevant Uvian UUID entries found.")
 
     # ----------------------------------------------------
     # INJECT OS CONTEXT ALONGSIDE UVIAN MEMORY & USER INTENT
@@ -584,8 +592,7 @@ def run_agent_loop(user_intent: str, memory_manager: UvianMemoryManager, max_tur
     mr_tool = VRAMOptimizedMapReduceAgent(llm_call=standard_llm_call, max_chars_per_chunk=args.chunk_size)
 
     for turn in range(max_turns):
-        print(f"\n\033[36m\033[1m---- Turn {turn + 1} ----\033[0m")
-        
+        print(f"\n\033[36m\033[1m---- Turn {turn + 1} ----\033[0m")        
         response = client.chat.completions.create(
             model=MODEL_NAME,
             messages=messages,
