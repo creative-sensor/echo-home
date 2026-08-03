@@ -546,7 +546,7 @@ def parse_llm_json(raw_text: str) -> dict:
     except json.JSONDecodeError:
         return {"action_type": "declare_result", "status": "FAILED", "reason": "LLM output invalid JSON."}
 
-def run_agent_loop(user_intent: str, memory_manager: UvianMemoryManager, max_turns: int = 8):
+def run_agent_loop(user_intent: str, memory_manager: UvianMemoryManager, max_turns: int = 8, pinned_context: Optional[str] = None):
     global CURRENT_CWD, LAST_UUID # <-- Add LAST_UUID to global scope
     print("\n🔍 Searching Uvian ChromaDB for relevant memory entries...")
     match = memory_manager.retrieve_most_relevant_uuid(user_intent)
@@ -558,8 +558,14 @@ def run_agent_loop(user_intent: str, memory_manager: UvianMemoryManager, max_tur
         target_uuid, summary = match
         LAST_UUID = target_uuid # <-- Cache the successfully found UUID
         print(f"🎯 Match found! UUID: {target_uuid} (Summary: {summary})")
+        if pinned_context:
+          target_uuid = pinned_context
+          print(f"🎯 UUID is pinned @ {target_uuid} ")
     elif LAST_UUID:
         target_uuid = LAST_UUID # <-- Fall back to the cached UUID
+        if pinned_context:
+          target_uuid = pinned_context
+          print(f"🎯 UUID is pinned @ {target_uuid} ")
         print(f"♻️ No new match found. Reloading previous UUID: {target_uuid}")
     else:
         print("ℹ️ No relevant Uvian UUID entries found.")
@@ -689,6 +695,9 @@ if __name__ == "__main__":
         'ws': 'bg:#c4c408 fg:#c4c408'
     })
     
+    pinned_uuid = None
+    pinned_content = None
+    
     while True:
         try:
             user_input = promptia_session.prompt(
@@ -696,10 +705,69 @@ if __name__ == "__main__":
                     multiline=True,
                     style=promptia_style
             )
-            if user_input.strip().lower() in ['exit', 'quit']:
+            
+            clean_input = user_input.strip()
+            
+            if clean_input.lower() in ['exit', 'quit']:
                 break
-            if user_input.strip():
-                run_agent_loop(user_input, memory)
+
+            # Exit UUID pinning mode
+            if clean_input == '====':
+                if pinned_uuid:
+                    print(f"🔓 Unpinned memory ({pinned_uuid}). Exited UUID pinning mode.")
+                    pinned_uuid = None
+                    pinned_content = None
+                else:
+                    print("ℹ️ No memory file is currently pinned.")
+                continue
+
+            # Fallback direct memory search: =-=<key word to search>
+            if clean_input.startswith('=-='):
+                search_query = clean_input[3:].strip()
+                if not search_query:
+                    print("⚠️ Please enter keywords after '=-='")
+                    continue
+                
+                # Convert 'key word to search' into regex pattern 'key.*word.*to.*search'
+                words = search_query.split()
+                regex_pattern = ".*".join(re.escape(w) for w in words)
+                pattern = re.compile(regex_pattern, re.IGNORECASE)
+                
+                # Fetch all documents from UVIAN / ChromaDB memory
+                all_memories = memory.collection.get()
+                ids = all_memories.get('ids', [])
+                documents = all_memories.get('documents', [])
+                
+                yaml_lines = []
+                
+                for doc_id, doc_text in zip(ids, documents):
+                    matching_lines = [line.strip() for line in doc_text.splitlines() if pattern.search(line)]
+                    if matching_lines:
+                        yaml_lines.append(f"\033[44m\033[97m{doc_id}\033[0m: |")
+                        for line in matching_lines:
+                            yaml_lines.append(f"    {line}")
+                
+                if yaml_lines:
+                    print("```yaml")
+                    print("\n".join(yaml_lines))
+                    print("```")
+                    
+                    picked = input("\n📌 Enter UUID file to manually pick/pin (or press Enter to skip): ").strip()
+                    if picked in ids:
+                        pinned_uuid = picked
+                        pinned_content = documents[ids.index(picked)]
+                        print(f"✅ Memory {pinned_uuid} pinned! It will be used in subsequent prompts until you type '===='.")
+                    elif picked:
+                        print("❌ UUID not found. Proceeding without pinning.")
+                else:
+                    print("🔍 No matches found in memory.")
+                
+                # Halt agentic loop for search queries
+                continue
+
+            if clean_input:
+                run_agent_loop(user_input, memory, pinned_context=pinned_uuid)
+
         except KeyboardInterrupt:
             print("\nExiting...")
             break
