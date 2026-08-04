@@ -3,7 +3,7 @@ declare -A path_dict
 path_dict["python"]=$LOCAL_BIN/python
 path_dict["python_scripts"]=$LOCAL_BIN/python/Scripts
 path_dict["gvim"]='/c/Program Files (x86)/Vim/vim90'
-path_dict["marktext"]="$HOME/AppData/Local/Programs/MarkText"
+path_dict["marktext"]="$LOCAL_BIN/marktext"
 path_dict["wfunction"]="$HOME/echo-home/windows/.function"
 path_dict["rtfunction"]="$HOME/echo-home/.function"
 path_dict["yson"]="$HOME/echo-home/codev/yson/.function"
