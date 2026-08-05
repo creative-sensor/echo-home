@@ -2,7 +2,8 @@
 #set -x
 # ---- |EXT ----
 PROJECT_CODE=$1
-VARSET_EXT=$2
+DESCRIPTION=$2
+VARSET_EXT=$3
 # ---- |DEFAULT ----
 CYCLE=$(date +%Y)
 DATA_DIR=./datum
@@ -20,8 +21,8 @@ cat $PROJECT_MD
 test -z "$PROJECT_CODE" && read -p "PROJECT ?= " PROJECT_CODE
 export PROJECT_CODE=$PROJECT_CODE
 if ! grep -q "^$PROJECT_CODE :" $PROJECT_MD ; then
-    echo "$PROJECT_CODE is new PROJECT_CODE"
-    read -p "DESCRIPTION ?= " DESCRIPTION
+    echo "Initialize new project code \`\"$PROJECT_CODE\": {\"description\": \"$DESCRIPTION\"}\`"
+    test -z "$DESCRIPTION" && read -p "DESCRIPTION ?= " DESCRIPTION
     export DESCRIPTION=$DESCRIPTION
     export LAST_ID=-1
     sed -i '$d' $PROJECT_MD
