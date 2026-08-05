@@ -1,0 +1,72 @@
+# Kanborg
+
+This document show how to use Kanborg which is a kanban board using git underlying to manage cards/tickets
+
+## 1. Context
+
+- **Working directory**: `~/echo-home.kanborg/codev/kanborg`
+
+## 2. Card Management
+
+### Naming convention
+
+Each card is a markdown file whose name in format: `<PROJECT_CODE>-<ID_NUMBER>.md`
+
+### States
+
+Each card can be in the follow states:
+
+- `BACKLOG`: created
+- `TODO`: planned
+- `HOLD`: on hold, pending
+- `WIP`: work in progress
+- `DONE`: completed
+
+### Commands
+
+| Command                                      | Description                              |
+| -------------------------------------------- | ---------------------------------------- |
+| `cd ~/echo-home.kanborg/codev/kanborg`       | Set working directory                    |
+| `.function/xcard <PROJECT_CODE>`             | Create new card with a project code      |
+| `.function/show`                             | show full board status as markdown table |
+| `.function/commit`                           | save changes applied to kanborg          |
+| `find datum/$(date +%Y) \| grep <CARD_NAME>` | Search for card                          |
+| `cat datum/$(date +%Y)/PROJECT.md`           | List project and description             |
+
+## 3. Workflows
+
+### Create new card or project code
+
+```makefile
+new_card:
+    # Description: commit in kanborg
+    # Command: `.function/xcard <PROJECT_CODE> <OPTIONAL_DESCRIPTION>`
+    # Success: Output path of new card
+    # Failure: any error
+```
+
+### Moving a card
+
+```makefile
+find_card:
+    # Description: Find current state of card
+    # Command: `find datum/$(date +%Y) | grep <CARD_NAME>`
+    # Success: Output datum/<YEAR>/<CURRENT_STATE>/<CARD_NAME>
+    # Failure: No path to card is found
+    # Output: path of card
+move_card: find_card
+    # Description: move card from CURRENT_STATE to NEW_STATE
+    # Command: `git mv <path of card> datum/$(date +%Y)/{NEW_STATE}`
+    # Success: file exists at new path `datum/$(date +%Y)/{NEW_STATE}`
+    # Failure: No new path to card is found or error in git command
+```
+
+### Commit Card Changes
+
+```makefile
+commit:
+    # Description: commit in kanborg
+    # Command: `.function/commit`
+    # Success: new git commit created
+    # Failure: error in git command
+```
