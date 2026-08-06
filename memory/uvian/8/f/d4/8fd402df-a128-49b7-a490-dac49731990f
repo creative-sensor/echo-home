@@ -1,0 +1,28 @@
+# Workflow: ptrm
+
+This workflow `ptrm` open port in remote server to connect LLM service
+
+## Context
+
+- OS/Kernel: Windows 
+
+## Workflow
+
+```makefile
+
+ptrm_table:
+    # Description: read/view ptrm table to select entry which match user intent by <NOTES>
+    # Command: `cat ~/echo-home/.vim/pages/$(hostname).ptrm.md | head -n -2`
+    # Output: <SSH_HOST>, <LOCAL_PORT>, <REMOTE_IP>, <REMOTE_PORT> , <NOTES>
+ptrm_exec: ptrm_table
+    # Description: open port
+    # Command: `wingterm "port-remote <SSH_HOST> <LOCAL_PORT> <REMOTE_IP> <REMOTE_PORT>"`
+    # Success: no error in output
+    # Failure: any error
+    # Input: <REMOTE_IP> , default `127.0.0.1`
+ptrm_verify: ptrm_exec
+    # Description: Test if port is reachable
+    # Command: `curl -v http://127.0.0.1:<LOCAL_PORT>`
+    # Success: "Established" or "Connected" in output
+    # Failure: error
+```
