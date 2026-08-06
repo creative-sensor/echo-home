@@ -1,0 +1,9 @@
+#!/bin/bash
+
+CMD=""
+for arg in "$@"; do
+  CMD="$CMD $(printf '%q' "$arg")"
+done
+
+test -z "$CMD" && CMD="pwd"
+wt  "C:\Program Files\Git\bin\bash.exe" -li -c "$CMD && bash"

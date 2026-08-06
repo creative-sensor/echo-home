@@ -1,0 +1,53 @@
+# Workflow: GML8W
+
+This document shows how to run LLM model in GGUF format with llama-cpp backend engine
+
+## 1. Context
+
+- **Working directory**: `~/echo-home/workstation/lmstudio/gmlama`
+- **OS/Kernel**: Windows
+
+## 2. Model Inventory
+
+### Entry format
+
+Format: `<MODEL_ID>:<MODEL_NAME>: ["<MODEL_DESCRIPTION>", "<LLAMACPP_PARAMS>"]`
+
+Description:
+
+- MODEL_ID: index number to select model
+- MODEL_NAME: Name of model in gguf
+- MODEL_DESCRIPTION: Prefix `GPU/` is to run with GPU, otherwise with CPU 
+- LLAMACPP_PARAMS: parameters of llama-cli
+
+## 3. Commands
+
+| Command                                      | Description                 |
+| -------------------------------------------- | --------------------------- |
+| `cd ~/echo-home/workstation/lmstudio/gmlama` | Set working directory       |
+| `gml8w --help`                               | list model entries          |
+| `gml8w <MODEL_ID>`                           | run model with specified ID |
+
+## 4. Workflows
+
+### Run model from inventory
+
+```makefile
+list_model:
+    # Description: View inventory to select model id
+    # Command: `gml8w --help`
+    # Success: output list of entries in model inventory
+    # Failure: no entry found
+    # Output: <MODEL_ID>
+start_model: list_model
+    # Description: start a model by selected model id
+    # Command: `wingterm gml8w <MODEL_ID>`
+    # Success: no error
+    # Failure: any error
+test_port: start_model
+    # Description: test LLM port
+    # Command: `curl  http://localhost:<PORT>/v1/models`
+    # Success: output of model name
+    # Failure: any error
+    # Input: <PORT> specified in `LLAMACPP_PARAMS`
+```
