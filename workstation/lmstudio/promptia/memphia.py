@@ -220,6 +220,7 @@ class UvianMemoryManager:
         documents = all_memories.get('documents', [])
 
         yaml_lines = []
+        yaml_lines_stdout = []
         candidate_map = {}
 
         # Search for any single word match across documents
@@ -230,17 +231,20 @@ class UvianMemoryManager:
             ]
             if matching_lines:
                 candidate_map[doc_id] = doc_text
-                yaml_lines.append(f"\033[48;5;54m\033[38;5;177m{doc_id}\033[0m: |")
+                yaml_lines.append(f"{doc_id}: |")
+                yaml_lines_stdout.append(f"\033[48;5;54m\033[38;5;177m{doc_id}\033[0m: |")
                 for line in matching_lines:
                     yaml_lines.append(f"    {line}")
+                    yaml_lines_stdout.append(f"    \033[38;5;177m{line}\033[0m")
 
         if not candidate_map or not yaml_lines:
             print("🔍 Text matching found no candidates in memory.")
             return None
 
         yaml_output = "\n".join(yaml_lines)
+        yaml_output_std = "\n".join(yaml_lines_stdout)
         print("\n📄 [TEXT MATCH CANDIDATES (YAML)]\n```yaml")
-        print(yaml_output)
+        print(yaml_output_std)
         print("```")
 
         # --- STEP 2: SEPARATE LLM SELECTION LOOP ---
