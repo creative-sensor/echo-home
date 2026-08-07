@@ -1,2 +1,4 @@
 memphix:
   allow: yes
+memphia:
+  allow: yes
