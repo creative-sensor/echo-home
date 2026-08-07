@@ -714,6 +714,14 @@ if __name__ == "__main__":
             if clean_input.lower() in ['exit', 'quit']:
                 break
 
+            # Pin last UUID
+            if clean_input == '===l':
+                if LAST_UUID:
+                    print(f"📌 Memory pinned at {LAST_UUID}")
+                    pinned_content = LAST_UUID
+                else:
+                    print("ℹ️ No last uuid is found to be pinned.")
+                continue
             # Exit UUID pinning mode
             if clean_input == '====':
                 if pinned_uuid:
