@@ -553,6 +553,9 @@ def run_agent_loop(user_intent: str, memory_manager: UvianMemoryManager, max_tur
     
     context_injection = ""
     target_uuid = None
+    if pinned_context:
+        target_uuid = pinned_context
+        print(f"🎯 UUID is pinned @ {target_uuid} ")
     
     if match:
         target_uuid, summary = match

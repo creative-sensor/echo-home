@@ -6,7 +6,14 @@ This document show how to use Kanborg which is a kanban board using git underlyi
 
 - **Working directory**: `~/echo-home.kanborg/codev/kanborg`
 
-## 2. Card Management
+## 2. Instructions
+- Complete part or full of DAG (makefile) to meet user intent
+- Only run a target using **Command** if no dependency found
+- If a target has dependencies, make sure all of its dependency targets completed
+- If target got failure, do not execute its parent target
+
+
+## 3. Card Management
 
 ### Naming convention
 
@@ -22,38 +29,51 @@ Each card can be in the follow states:
 - `WIP`: work in progress
 - `DONE`: completed
 
-### Commands
 
-| Command                                      | Description                              |
-| -------------------------------------------- | ---------------------------------------- |
-| `cd ~/echo-home.kanborg/codev/kanborg`       | Set working directory                    |
-| `.function/xcard <PROJECT_CODE>`             | Create new card with a project code      |
-| `.function/show`                             | show full board status as markdown table |
-| `.function/commit`                           | save changes applied to kanborg          |
-| `find datum/$(date +%Y) \| grep <CARD_NAME>` | Search for card                          |
-| `cat datum/$(date +%Y)/PROJECT.md`           | List project and description             |
+## 4. Workflows
 
-## 3. Workflows
+### Set working directory
+
+```makefile
+set_workdir:
+    # Description: Set working directory to make command and data available
+    # Command:`cd ~/echo-home.kanborg/codev/kanborg` 
+```
 
 ### Create new card or project code
 
 ```makefile
-new_card:
+new_card: set_workdir
     # Description: commit in kanborg
     # Command: `.function/xcard <PROJECT_CODE> <OPTIONAL_DESCRIPTION>`
     # Success: Output path of new card
     # Failure: any error
 ```
 
-### Moving a card
+### show kanban board
 
 ```makefile
-find_card:
-    # Description: Find current state of card
+show_kanborg: set_workdir
+    # Description: display full kanban board of all cards
+    # Command: `.function/show`
+    # Success: output in markdown table
+    # Failure: any error
+```
+
+
+### Find card
+
+```makefile
+find_card: set_workdir
+    # Description: Find current state of card or search for path of card
     # Command: `find datum/$(date +%Y) | grep <CARD_NAME>`
     # Success: Output datum/<YEAR>/<CURRENT_STATE>/<CARD_NAME>
     # Failure: No path to card is found
     # Output: path of card
+```
+
+### Moving a card
+```makefile
 move_card: find_card
     # Description: move card from CURRENT_STATE to NEW_STATE
     # Command: `git mv <path of card> datum/$(date +%Y)/{NEW_STATE}`
@@ -61,12 +81,42 @@ move_card: find_card
     # Failure: No new path to card is found or error in git command
 ```
 
+### View a card
+
+```makefile
+view_card: find_card
+    # Description: view content of card
+    # Command: `cat <path_of_card>`
+    # Success: output content of card
+    # Failure: No content found
+    # Input: path of card
+    # Output: sections such as <CARD_TITLE>, <DESCRIPTION>, <SOLUTION>, <NOTES>, <TEST>, <JOURNAL> 
+```
+
+### Update a card
+```makefile
+update_card: view_card
+    # Description: edit content of card using sed, awk, etc
+    # Command: `<edit comand>`
+    # Success: new content meet user intent
+    # Failure: any error
+    # Input: Content of card
+```
+
 ### Commit Card Changes
 
 ```makefile
-commit:
+commit: set_workdir
     # Description: commit in kanborg
     # Command: `.function/commit`
     # Success: new git commit created
     # Failure: error in git command
+```
+
+### Run a shell command
+
+```makefile
+run_shell_command: set_workdir
+    # Description: run external shell command like git, gpul1 to update/manipulate kanborg data
+    # Command: `<USER_COMMAND>`
 ```
