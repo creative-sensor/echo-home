@@ -20,13 +20,12 @@ Description:
 - MODEL_DESCRIPTION: Prefix `GPU/` is to run with GPU, otherwise with CPU 
 - LLAMACPP_PARAMS: parameters of llama-cli
 
-## 3. Commands
+## 3. Instructions
+- Complete part or full of DAG (makefile) to meet user intent
+- Only run a target using **Command** if no dependency found
+- If a target has dependencies, make sure all of its dependency targets completed
+- If target got failure, do not execute its parent target
 
-| Command                                      | Description                 |
-| -------------------------------------------- | --------------------------- |
-| `cd ~/echo-home/workstation/lmstudio/gmlama` | Set working directory       |
-| `gml8w --help`                               | list model entries          |
-| `gml8w <MODEL_ID>`                           | run model with specified ID |
 
 ## 4. Workflows
 
