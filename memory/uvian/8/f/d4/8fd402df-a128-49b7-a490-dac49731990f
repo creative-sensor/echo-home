@@ -16,13 +16,13 @@ ptrm_table:
     # Output: <SSH_HOST>, <LOCAL_PORT>, <REMOTE_IP>, <REMOTE_PORT> , <NOTES>
 ptrm_exec: ptrm_table
     # Description: open port
-    # Command: `wingterm "port-remote <SSH_HOST> <LOCAL_PORT> <REMOTE_IP> <REMOTE_PORT>"`
+    # Command: `wingterm port-remote <SSH_HOST> <LOCAL_PORT> <REMOTE_IP> <REMOTE_PORT>`
     # Success: no error in output
     # Failure: any error
     # Input: <REMOTE_IP> , default `127.0.0.1`
 ptrm_verify: ptrm_exec
     # Description: Test if port is reachable
-    # Command: `curl -v http://127.0.0.1:<LOCAL_PORT>`
+    # Command: `curl -v -I http://127.0.0.1:<LOCAL_PORT>`
     # Success: "Established" or "Connected" in output
     # Failure: error
 ```
