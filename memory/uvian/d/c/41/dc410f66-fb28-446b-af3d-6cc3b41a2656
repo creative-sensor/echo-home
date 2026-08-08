@@ -1,0 +1,34 @@
+# LMSH: LLM Shell
+
+This document show how to launch LLM shell
+
+## 1. Context
+- OS/Kernel: Windows
+
+
+## 2. Instructions
+- Complete part or full of DAG (makefile) to meet user intent
+- Only run a target using **Command** if no dependency found
+- If a target has dependencies, make sure all of its dependency targets completed
+- If target got failure, do not execute its parent target
+
+
+## 3. Workflow
+
+
+```makefile
+set_workdir:
+    # Description: set working directory
+    # Command: `cd ~/echo-home/workstation/lmstudio/promptia`
+list_inventory:
+    # Description: list available lmsh shell
+    # Command:`cat ~/echo-home/.vim/pages/lmsh.md | grep '^|'` 
+    # Output: <AGENT_SHELL>, <LLM_PORT>
+activate_shell: set_workdir list_inventory
+    # Description: launch agent shell by name
+    # Command: `wingterm ./<AGENT_SHELL> --port <LLM_PORT>`
+    # Failure: any error
+    # Input <AGENT_SHELL>
+```
+
+

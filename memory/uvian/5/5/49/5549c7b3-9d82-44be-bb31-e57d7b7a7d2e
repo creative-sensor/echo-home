@@ -1,0 +1,30 @@
+# Workflow: remote-llm
+
+This document show how to launch LLM shell with remote LLM service
+
+## 1. Context
+- OS/Kernel: Windows
+
+
+## 2. Instructions
+- Complete part or full of DAG (makefile) to meet user intent
+- Only run a target using **Command** if no dependency found
+- If a target has dependencies, make sure all of its dependency targets completed
+- If target got failure, do not execute its parent target
+
+
+## 3. Workflow
+
+
+```makefile
+remote_llm:
+    # Description: read sub-workflow to connect port to remote LLM service
+    # Command: `cat ~/echo-home/memory/uvian/8/f/d4/8fd402df-a128-49b7-a490-dac49731990f`
+    # Output: <LOCAL_PORT>
+    # Success: <LOCAL_PORT> is reachable
+    # Failure: <LOCAL_PORT> is unreachable
+lmsh_launch: remote_llm
+    # Description: read sub-workflow to launch lmsh shell
+    # Command: `cat ~/echo-home/memory/uvian/d/c/41/dc410f66-fb28-446b-af3d-6cc3b41a2656`
+    # Input: <AGENT_SHELL>, <LLM_PORT> default as <LOCAL_PORT> or user intent
+```
