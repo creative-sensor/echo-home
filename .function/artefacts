@@ -2,10 +2,16 @@ source $(dirname $0)/context_overrider
 
 ARTEFACT_DIR=artefacts
 CHECKSUM=.properd/artefact.sha256sum
+PACKAGE_NAME=$1
 
 mkdir -p $ARTEFACT_DIR
 cd $ARTEFACT_DIR
 if ! test -f ../$CHECKSUM ;then
     find . -type f | grep -v '\.function' |  xargs -I {} sha256sum {} > ../$CHECKSUM
 fi
-sha256sum --check --ignore-missing ../$CHECKSUM
+
+if test -n "$PACKAGE_NAME"; then
+    grep "$PACKAGE_NAME-" ../.properd/artefact.sha256sum | sha256sum --check -
+else
+    sha256sum --check  --ignore-missing ../$CHECKSUM
+fi
