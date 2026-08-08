@@ -6,4 +6,4 @@ for arg in "$@"; do
 done
 
 test -z "$CMD" && CMD="pwd"
-wt  "C:\Program Files\Git\bin\bash.exe" -li -c "$CMD && bash"
+wt  "C:\Program Files\Git\bin\bash.exe" -li -c "set -x && $CMD && bash"

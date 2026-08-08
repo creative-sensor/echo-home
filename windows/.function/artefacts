@@ -1,10 +1,17 @@
+#!/bin/bash
 
 ARTEFACT_DIR=artefacts
 CHECKSUM=.properd/artefact.sha256sum
+PACKAGE_NAME=$1
 
 mkdir -p $ARTEFACT_DIR
 cd $ARTEFACT_DIR
 if ! test -f ../$CHECKSUM ;then
     find . -type f | xargs -I {} sha256sum {} > ../$CHECKSUM
 fi
-sha256sum --check  --ignore-missing ../$CHECKSUM
+
+if test -n "$PACKAGE_NAME"; then
+    grep "$PACKAGE_NAME-" ../.properd/artefact.sha256sum | sha256sum.exe --check -
+else
+    sha256sum --check  --ignore-missing ../$CHECKSUM
+fi

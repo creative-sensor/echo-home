@@ -1,10 +1,12 @@
 # Workflow: artefact-ready
 
-## Instruction
+This document show to manage artefact packages using artefact-ready facility
 
-- Run a target using **Command** if no dependency found
+## 2. Instructions
+- Complete part or full of DAG (makefile) to meet user intent
+- Only run a target using **Command** if no dependency found
+- If a target has dependencies, make sure all of its dependency targets completed
 - If target got failure, do not execute its parent target
-- If a target has dependencies, run all of its dependency targets
 
 ## Inventory Directory
 
@@ -14,31 +16,39 @@
 | Mac OS     | `~/echo-home/workstation/macos` |
 | Linux      | `~/echo-home`                   |
 
-## DAG Definition
+## Workflow 
 
-Complete target in DAG by executing **Command**
-
+### 1. Deploy a package
 ```Makefile
 inventory:
     # Description: check if <package> exists inventory
-    # Command: `cd <inventory_path>; cat .properd/artefacts.yaml`
+    # Command: `cd <inventory_path>; cat .properd/artefacts.yaml | grep <package>`
     # Success: output show `package` name
     # Failure: output show no `package` name, workflow can be aborted immediately
-check_sum:
-    # Description: check if <package> has sha256sum verified
-    # Command: `.function/artefacts`
-    # Success: output shows <package> OK
-    # Failure: output shows <package> not OK or missing
-download: check_sum inventory
-    # Description: download
-    # Command: `.function/artefact-geti <package>`
-    # Success: no error found in output
-    # Failure: error found in output 
-    # Input: [check_sum] must be in failure or [inventory] must be in success
-deploy: check_sum download
+    # Output: <package_name> , <package_version>
+
+check_sum: inventory
+    # Description: verify package integrity
+    # Command: `.function/artefacts <package_name>`
+    # Success: output with `<package_name>-.*: OK`
+    # Failure: output without OK` then run workflow `download` and retry
+    # Retry: 1
+deploy: check_sum
     # Description: install package into system
     # Command: `.function/artefact-readi <package>`
     # Success: no error found in output
     # Failure: error found in output
-    # Input: rerun [check_sum], [download] can be ignore when rerun of [check_sum] succeeds
+    # Input: check_sum must be OK and download is in Success
+``` 
+
+### 2. Download a package
+
+```makefile
+download: inventory
+    # Description: download package
+    # Command: `.function/artefact-geti <package>`
+    # Success: no error found in output
+    # Failure: error found in output 
+    # Input: <package_name>
+    # Retry: 1
 ```
