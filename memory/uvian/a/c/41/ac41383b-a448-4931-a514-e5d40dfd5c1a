@@ -1,0 +1,17 @@
+# Port-Remote
+
+This document show how to use `port-remote` script to open port for remote connection
+
+--- 
+## ENVIRONMENT CONTEXT
+- OS/Kernel: general
+
+## Instructions
+
+1. Read ptrm table for SSH_HOST, LOCAL_PORT, REMOTE_IP, REMOTE_PORT via command: `cat ~/echo-home/.vim/pages/$(hostname).ptrm.md | head -n -2`
+
+2. Then run : 
+- command: `termiu port-remote <SSH_HOST> <LOCAL_PORT> <REMOTE_IP> <REMOTE_PORT>`
+
+- Example: `termiu port-remote llama-ssh-host 8082 127.0.0.1 8082`
+3. Test port open successful: `curl -v http://127.0.0.1:8079 2>&1 | grep -m 1 'Connected'`
