@@ -25,7 +25,7 @@ def get_args(node):
 def format_function(node, indent_level):
     """Formats a function definition matching the requested YAML-like structure."""
     ind = "  " * indent_level
-    args_list = "['" + "', '".join(get_args(node))+"']"
+    args_list = "['" + "', '".join(get_args(node))+"']" if get_args(node) else "[]"
     ret = ast.unparse(node.returns) if getattr(node, 'returns', None) else "None"
     
     # Extract and unparse the body statements
@@ -86,56 +86,72 @@ def main():
         else:
             top_level_stmts.append(node)
 
-    # 1. Print Standalone Functions
-    if functions:
-        print("FunctionDef:")
-        for func in functions:
-            print(format_function(func, 1))
-        print()
-
-    # 2. Print Classes 
-    if classes:
-        print("ClassDef:")
-        for cls in classes:
-            print(format_class(cls, 1))
-        print()
-
-    # 3. Print Main Module Segment
-    filename = os.path.basename(file_path)
+    # Calculate absolute path to ensure accurate directory placement
+    abs_file_path = os.path.abspath(file_path)
+    base_dir = os.path.dirname(abs_file_path)
+    filename = os.path.basename(abs_file_path)
+    
+    # Init meta folder in the same path as the script
+    meta_dir_name = f".{filename}"
+    meta_dir_path = os.path.join(base_dir, meta_dir_name)
+    os.makedirs(meta_dir_path, exist_ok=True)
+    
+    output_yaml = os.path.join(meta_dir_path, "ast.yaml")
     module_name = os.path.splitext(filename)[0]
-    
-    print("Module:")
-    print(f"  name: {module_name}")
-    print("  body: |")
-    if top_level_stmts:
-        body_text = "\n".join(ast.unparse(stmt) for stmt in top_level_stmts)
-        for line in body_text.splitlines():
-            if line.strip():
-                print(f"    {line}")
-            else:
-                print("")
-    else:
-        print("    # No top-level statements found outside of definitions.")
-    print()
 
-    # 4. Print Architecture Segment
-    print("Architecture:")
-    print("  definition:")
-    
-    if functions:
-        print("    functions:")
-        for func in functions:
-            print(f"      - {func.name}: <DESCRIPTION>")
+    # Write the YAML structure to the file
+    with open(output_yaml, "w", encoding="utf-8") as out:
+        def w(text=""):
+            out.write(f"{text}\n")
 
-    if classes:
-        print("    class:")
-        for cls in classes:
-            print(f"      - {cls.name}: |")
-            # Fixed indentation: increased to 10 spaces to satisfy YAML block scalar rules
-            print("          <CLASS_DESCRIPTION>")
+        # 1. Print Standalone Functions
+        if functions:
+            w("FunctionDef:")
+            for func in functions:
+                w(format_function(func, 1))
+            w()
 
-    print("  workflow: |")
-    print("    <MODULE_DESCRIPTION>")
+        # 2. Print Classes 
+        if classes:
+            w("ClassDef:")
+            for cls in classes:
+                w(format_class(cls, 1))
+            w()
+
+        # 3. Print Main Module Segment
+        w("Module:")
+        w(f"  name: {module_name}")
+        w("  body: |")
+        if top_level_stmts:
+            body_text = "\n".join(ast.unparse(stmt) for stmt in top_level_stmts)
+            for line in body_text.splitlines():
+                if line.strip():
+                    w(f"    {line}")
+                else:
+                    w("")
+        else:
+            w("    # No top-level statements found outside of definitions.")
+        w()
+
+        # 4. Print Architecture Segment
+        w("Architecture:")
+        w("  definition:")
+        
+        if functions:
+            w("    functions:")
+            for func in functions:
+                w(f"      - {func.name}: <DESCRIPTION>")
+
+        if classes:
+            w("    class:")
+            for cls in classes:
+                w(f"      - {cls.name}: |")
+                w("          <CLASS_DESCRIPTION>")
+
+        w("  workflow: |")
+        w("    <MODULE_DESCRIPTION>")
+
+    print(f"[*] AST successfully extracted and saved to: {output_yaml}")
 
 if __name__ == "__main__":
     main()
