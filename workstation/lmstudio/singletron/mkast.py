@@ -145,9 +145,7 @@ def main():
         if classes:
             w("    class:")
             for cls in classes:
-                w(f"      - {cls.name}: |")
-                w("          <CLASS_DESCRIPTION>")
-
+                w(f"      - {cls.name}: <CLASS_DESCRIPTION>")
         w("  workflow: |")
         w("    <MODULE_DESCRIPTION>")
 

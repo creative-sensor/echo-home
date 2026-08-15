@@ -51,14 +51,14 @@ $(AST_FILE): $(SCRIPT) check-script
 	@echo "\n========================================"
 	@echo "[STAGE 1] Extracting AST..."
 	@echo "========================================"
-	python3 mkast.py -f $(SCRIPT)
+	python mkast.py -f $(SCRIPT)
 
 # Trigger architect script (will bypass LLM if file exists, unless --selective is used during merge)
 $(ARCHER_FILE): $(AST_FILE) check-script
 	@echo "\n========================================"
 	@echo "[STAGE 2] Generating Architecture Report..."
 	@echo "========================================"
-	python3 architect.py --input $(AST_FILE) --output $(ARCHER_FILE) --host $(HOST) --port $(PORT) $(DEBUG_FLAG)
+	python architect.py --input $(AST_FILE) --output $(ARCHER_FILE) --host $(HOST) --port $(PORT) $(DEBUG_FLAG)
 
 
 # --- Pipeline Steps (Phony Aliases) ---
@@ -72,15 +72,15 @@ microtask: check-script check-prompt $(ARCHER_FILE)
 	@echo "\n========================================"
 	@echo "[STAGE 3] Executing Microtasks..."
 	@echo "========================================"
-	python3 microtasker.py --script $(SCRIPT) --prompt "$(PROMPT)" --host $(HOST) --port $(PORT) $(DEBUG_FLAG)
+	python microtasker.py --script $(SCRIPT) --prompt "$(PROMPT)" --host $(HOST) --port $(PORT) $(DEBUG_FLAG)
 
 merge: check-script
 	@echo "\n========================================"
 	@echo "[STAGE 4] Merging Changes & Selective Architect Update..."
 	@echo "========================================"
-	python3 merge.py $(SCRIPT)
-	python3 mkast.py -f $(SCRIPT)
-	python3 architect.py --input $(AST_FILE) --output $(ARCHER_FILE) --host $(HOST) --port $(PORT) $(DEBUG_FLAG) --selective
+	python merge.py $(SCRIPT)
+	python mkast.py -f $(SCRIPT)
+	python architect.py --input $(AST_FILE) --output $(ARCHER_FILE) --host $(HOST) --port $(PORT) $(DEBUG_FLAG) --selective
 	@echo "[*] Cleaning up applied microtasks..."
 	rm -f $(META_DIR)/FunctionDef.* $(META_DIR)/ClassDef.* $(META_DIR)/Module.*
 	@touch $(AST_FILE)
