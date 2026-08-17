@@ -35,15 +35,19 @@ def extract_markdown_code(raw_output: str) -> str:
         
     return raw_output.strip()
 
-def get_body_via_awk(script_path: str, lineno: int, end_lineno: int) -> str:
-    """Retrieves the full body using awk from the original script."""
+
+def  get_body_lines(script_path: str, lineno: int, end_lineno: int) -> str:
+    """Retrieves the full body natively using Python."""
     if lineno == 0 or end_lineno == 0:
         return ""
-    cmd = f"awk 'NR >={lineno} && NR <={end_lineno} ' {script_path}"
+        
     try:
-        return subprocess.check_output(cmd, shell=True, text=True)
+        with open(script_path, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+            # Python is 0-indexed, awk's NR is 1-indexed
+            return "".join(lines[lineno - 1 : end_lineno])
     except Exception as e:
-        print(f"[!] Error running awk: {e}")
+        print(f"[!] Error reading file: {e}")
         return ""
 
 # ---------------------------------------------------------
@@ -290,20 +294,20 @@ def get_component_code(raw_ast_data: dict, comp_name: str, script_path: str) -> 
     funcs = raw_ast_data.get('FunctionDef', {})
     if comp_name in funcs:
         comp = funcs[comp_name]
-        return 'FunctionDef', comp_name, get_body_via_awk(script_path, comp.get('lineno', 0), comp.get('end_lineno', 0))
+        return 'FunctionDef', comp_name, get_body_lines(script_path, comp.get('lineno', 0), comp.get('end_lineno', 0))
 
     # Check top-level classes
     classes = raw_ast_data.get('ClassDef', {})
     if comp_name in classes:
         comp = classes[comp_name]
-        return 'ClassDef', comp_name, get_body_via_awk(script_path, comp.get('lineno', 0), comp.get('end_lineno', 0))
+        return 'ClassDef', comp_name, get_body_lines(script_path, comp.get('lineno', 0), comp.get('end_lineno', 0))
 
     # Check methods within classes
     for cls_name, cls_data in classes.items():
         methods = cls_data.get('FunctionDef', {})
         if comp_name in methods:
             comp = methods[comp_name]
-            return 'FunctionDef', comp_name, get_body_via_awk(script_path, comp.get('lineno', 0), comp.get('end_lineno', 0))
+            return 'FunctionDef', comp_name, get_body_lines(script_path, comp.get('lineno', 0), comp.get('end_lineno', 0))
 
     return 'Unknown', comp_name, ""
 
@@ -359,7 +363,6 @@ def main():
     
     # 2. Extract tasks using Regex
     tasks = extract_markdown_microtasks(llm_response)
-    
     if not tasks:
         print("[!] No valid microtasks generated.")
         return
@@ -370,7 +373,6 @@ def main():
     for i, task in enumerate(tasks, 1):
         comp_name = task['component_name']
         comp_type, resolved_name, component_code = get_component_code(raw_ast_data, comp_name, script_path)
-        
         micro_report_md = format_worker_report(task, component_code)
         
         print(f"    -> Executing Task {i}/{len(tasks)} targeting: {resolved_name}...")
