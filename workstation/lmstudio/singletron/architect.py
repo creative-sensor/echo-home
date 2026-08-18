@@ -189,7 +189,7 @@ def fill_module_workflow_with_llm(host: str, port: int, module_name: str, source
 # ---------------------------------------------------------
 def process_function_node(func_name: str, func_data: dict, host: str, port: int, debug: bool) -> str:
     """Processes a single function node and returns the high-level description."""
-    print(f"    -> Analyzing Function: {func_name}")
+    print(f"    \033[38;5;130m-> Analyzing Function: {func_name}\033[0m")
     
     args = func_data.get('args', [])
     ret_type = func_data.get('return', 'None')
@@ -336,7 +336,7 @@ def main():
                     update_placeholders(ast_data, class_name, old_desc)
                     continue
 
-            print(f"    -> Analyzing Class: {class_name}")
+            print(f"    \033[38;5;130m-> Analyzing Class: {class_name}\033[0m")
             raw_body = class_data.get('body', '')
             class_desc = fill_class_knowledge_with_llm(args.host, args.port, class_name, raw_body, args.debug)
             if class_desc:
@@ -352,7 +352,7 @@ def main():
             old_desc = get_old_description(old_archer, 'Module')
             if old_desc and "<MODULE_DESCRIPTION>" not in old_desc:
                 skip_module = True
-                print(f"    -> Skipping LLM for Module Workflow (Unchanged)")
+                print(f"    \033[38;5;221m-> Skipping LLM for Module Workflow (Unchanged)\033[0m")
                 update_placeholders(ast_data, module_name, old_desc, is_workflow=True)
 
         if not skip_module:

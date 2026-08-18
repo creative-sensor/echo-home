@@ -337,6 +337,7 @@ def main():
     ast_file = os.path.join(meta_dir, "ast.yaml")
     archer_file = os.path.join(meta_dir, "archer.yaml")
     
+    RESET="\033[0m"
     if not os.path.exists(ast_file) or not os.path.exists(archer_file):
         print(f"[!] Missing necessary files. Checked {ast_file} and {archer_file}.")
         return
@@ -377,7 +378,7 @@ def main():
         
         print(f"    -> Executing Task {i}/{len(tasks)} targeting: {resolved_name}...")
         print("       [*] Microtask Report Outline:")
-        print(f"           - Requirement: {task['requirement'][:60]}...")
+        print(f"           \033[38;5;126m{task['requirement']}{RESET}")
         
         # Route to the appropriate micro-agent
         if comp_type == 'Module':
