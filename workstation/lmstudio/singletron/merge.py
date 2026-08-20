@@ -34,17 +34,16 @@ def main():
         return
 
     imports = []
-    functions = {}
-    classes = {}
+    definitions = {}
+    def_order = []  # Track original order of functions and classes
     main_stmts = []
 
     for node in original_tree.body:
         if isinstance(node, (ast.Import, ast.ImportFrom)):
             imports.append(node)
-        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            functions[node.name] = node
-        elif isinstance(node, ast.ClassDef):
-            classes[node.name] = node
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            definitions[node.name] = node
+            def_order.append(node.name)
         else:
             main_stmts.append(node)
 
@@ -81,28 +80,26 @@ def main():
         try:
             comp_tree = ast.parse(comp_source)
             for node in comp_tree.body:
-                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                    functions[node.name] = node
-                elif isinstance(node, ast.ClassDef):
-                    classes[node.name] = node
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                    definitions[node.name] = node
+                    # If it's a completely new definition, append it to the end
+                    if node.name not in def_order:
+                        def_order.append(node.name)
         except SyntaxError as e:
             print(f"[!] Syntax error in component {filename}: {e}")
 
-    # 4. Reconstruct the strict standardized format
-    final_code = "# ---- GLOBAL ----\n"
+    # 4. Reconstruct the script keeping original definition sequence
+    final_code = "#!/usr/bin/env python\n\n"
+    final_code += "# ---- GLOBAL ----\n"
     if imports:
         final_code += ast.unparse(imports) + "\n"
-    final_code += "# ---- GLOBAL.end ----\n"
+    final_code += "# ---- GLOBAL.end ----\n\n"
     
-    final_code += "# ---- FUNCTION ----\n"
-    if functions:
-        final_code += ast.unparse(list(functions.values())) + "\n"
-    final_code += "# ---- FUNCTION.end ----\n"
-    
-    final_code += "# ---- CLASS ----\n"
-    if classes:
-        final_code += ast.unparse(list(classes.values())) + "\n"
-    final_code += "# ---- CLASS.end ----\n"
+    final_code += "# ---- DEFINITIONS (Classes & Functions) ----\n"
+    for name in def_order:
+        if name in definitions:
+            final_code += ast.unparse(definitions[name]) + "\n\n"
+    final_code += "# ---- DEFINITIONS.end ----\n\n"
     
     final_code += "# ---- MAIN ---\n"
     if main_stmts:
