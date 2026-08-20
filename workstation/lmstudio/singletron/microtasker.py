@@ -5,6 +5,7 @@ import requests
 import re
 import yaml
 import subprocess
+from typing import Optional, Dict, List
 
 # ---------------------------------------------------------
 # PyYAML Configuration (Preserve Multiline Strings as | )
@@ -133,6 +134,7 @@ def format_worker_report(task: dict, component_code: str) -> str:
 # ---------------------------------------------------------
 # LLM Integration: Microtask Generation (Architect)
 # ---------------------------------------------------------
+
 def compose_microtasks_with_llm(host: str, port: int, report_content: str, user_request: str, debug: bool = False) -> str:
     """Reads the multi-document Markdown architecture report and generates Markdown task instructions."""
     endpoint = f"http://{host}:{port}/v1/chat/completions"
@@ -187,6 +189,22 @@ def compose_microtasks_with_llm(host: str, port: int, report_content: str, user_
 # ---------------------------------------------------------
 # LLM Integration: Worker Agents (Executors)
 # ---------------------------------------------------------
+
+def model_name(host: str, ports: str, endpoint: str) -> Optional[str]:
+    # Support comma-separated ports by extracting the first (main) port
+    main_port = str(ports).split(',')[0].strip()
+    url = f"http://{host}:{main_port}{endpoint}"
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status() 
+        data = response.json()
+        if 'models' in data and data['models']:
+            return data['models'][0].get('name')
+    except Exception as e:
+        safe_print(f"\n❌ ERROR connecting to LLM: {e}")
+    return None
+
+
 def execute_worker_agent(host: str, port: int, micro_report_md: str, debug: bool = False) -> str:
     """Sends a markdown microtask report to the Worker LLM to modify Python code."""
     endpoint = f"http://{host}:{port}/v1/chat/completions"
@@ -311,12 +329,13 @@ def get_component_code(raw_ast_data: dict, comp_name: str, script_path: str) -> 
 
     return 'Unknown', comp_name, ""
 
+
 # ---------------------------------------------------------
 # CLI & Main Loop
 # ---------------------------------------------------------
 def main():
     parser = argparse.ArgumentParser(description="Microtask Composer & Execution Loop")
-    parser.add_argument('--port', type=int, default=8080, help='Port for the local LLM API')
+    parser.add_argument('--port', type=str, default='8080', help='Port(s) for the local LLM API (e.g. 8080,8085)')
     parser.add_argument('--host', type=str, default='localhost', help='Host for the local LLM API')
     parser.add_argument('--script', type=str, required=True, help='Path to the original Python script')
     parser.add_argument('--prompt', type=str, required=True, help='User intent/request for updating the codebase')
@@ -324,6 +343,15 @@ def main():
     
     args = parser.parse_args()
     
+    # Parse multi-port support (main_port for Architect, worker_port for Microtask Executors)
+    port_str = str(args.port)
+    if ',' in port_str:
+        main_port = int(port_str.split(',')[0].strip())
+        worker_port = int(port_str.split(',')[1].strip())
+    else:
+        main_port = int(port_str)
+        worker_port = main_port
+
     script_path = os.path.abspath(args.script)
     if not os.path.exists(script_path):
         print(f"[!] Script file '{script_path}' not found.")
@@ -359,8 +387,8 @@ def main():
     # Build the multi-document Markdown report
     report_content = build_markdown_report(raw_ast_data, module_name)
 
-    # 1. Compose Microtasks using Architect
-    llm_response = compose_microtasks_with_llm(args.host, args.port, report_content, args.prompt, args.debug)
+    # 1. Compose Microtasks using Architect (Uses MAIN Port)
+    llm_response = compose_microtasks_with_llm(args.host, main_port, report_content, args.prompt, args.debug)
     
     # 2. Extract tasks using Regex
     tasks = extract_markdown_microtasks(llm_response)
@@ -369,8 +397,10 @@ def main():
         return
 
     print(f"\n[*] Generated {len(tasks)} microtasks. Starting Worker Agent Loop...")
-    
-    # 3. Execute Microtasks (Agent Loop)
+    WORKER_MODEL_NAME = model_name(args.host, worker_port, endpoint="/models")
+    if WORKER_MODEL_NAME:
+      print(f"    ✅ Ready: {WORKER_MODEL_NAME}")
+    # 3. Execute Microtasks (Agent Loop - Uses WORKER Port)
     for i, task in enumerate(tasks, 1):
         comp_name = task['component_name']
         comp_type, resolved_name, component_code = get_component_code(raw_ast_data, comp_name, script_path)
@@ -383,10 +413,10 @@ def main():
         # Route to the appropriate micro-agent
         if comp_type == 'Module':
             print("       [~] Routing to dedicated Module Body Agent...")
-            updated_code = execute_module_body_agent(args.host, args.port, micro_report_md, args.debug)
+            updated_code = execute_module_body_agent(args.host, worker_port, micro_report_md, args.debug)
             target_path = os.path.join(meta_dir, f"Module.{module_name}")
         else:
-            updated_code = execute_worker_agent(args.host, args.port, micro_report_md, args.debug)
+            updated_code = execute_worker_agent(args.host, worker_port, micro_report_md, args.debug)
             target_path = os.path.join(meta_dir, f"{comp_type}.{resolved_name}")
         
         # Export the updated code directly to the meta directory

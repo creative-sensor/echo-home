@@ -4,6 +4,9 @@
 HOST ?= localhost
 PORT ?= 8080
 
+# Extract the main port safely for other scripts (e.g. architect.py) that only expect an integer
+MAIN_PORT = $(shell echo $(PORT) | cut -d',' -f1)
+
 # Conditionally add debug flag if DEBUG=true
 ifeq ($(DEBUG), true)
   DEBUG_FLAG = --debug
@@ -24,14 +27,14 @@ RESET         := \033[0m
 # Syntax: \033[<BOLD>;<FOREGROUND>;<BACKGROUND>m
 STAGE1_COLOR  := \033[1;30;46m# Bold Black text on Cyan background
 STAGE2_COLOR  := \033[1;30;43m# Bold Black text on Yellow background
-STAGE3_COLOR  := \033[1;37;45m# Bold White text on Magenta background
+STAGE3_COLOR  := \033[1;30;45m# Bold White text on Magenta background
 STAGE4_COLOR  := \033[1;30;42m# Bold Black text on Green background
 SUCCESS_COLOR := \033[1;37;42m# Bold White text on Green background
 ERROR_COLOR   := \033[1;37;41m# Bold White text on Red background
 RESET_COLOR   := \033[1;37;41m# Bold White text on Red background
 
 help:
-	@echo -e "\033[1mMicrotasker Pipeline Makefile\033[0m"
+	@echo "\033[1mMicrotasker Pipeline Makefile\033[0m"
 	@echo "-----------------------------"
 	@echo "Usage:"
 	@echo "  make run SCRIPT=<path/to/script.py> PROMPT=\"<your instruction>\" [DEBUG=true] [HOST=...] [PORT=...]"
@@ -46,13 +49,13 @@ help:
 # --- Safety Checks ---
 check-script:
 	@if [ -z "$(SCRIPT)" ]; then \
-		echo -e "$(ERROR_COLOR) [!] Error: SCRIPT variable is required. Example: SCRIPT=main.py $(RESET)"; \
+		echo "$(ERROR_COLOR) [!] Error: SCRIPT variable is required. Example: SCRIPT=main.py $(RESET)"; \
 		exit 1; \
 	fi
 
 check-prompt:
 	@if [ -z "$(PROMPT)" ]; then \
-		echo -e "$(ERROR_COLOR) [!] Error: PROMPT variable is required for microtasks. Example: PROMPT=\"Update the function...\" $(RESET)"; \
+		echo "$(ERROR_COLOR) [!] Error: PROMPT variable is required for microtasks. Example: PROMPT=\"Update the function...\" $(RESET)"; \
 		exit 1; \
 	fi
 
@@ -61,18 +64,18 @@ check-prompt:
 # Rebuild ast.yaml if the Python script has been modified, or if it doesn't exist
 $(AST_FILE): $(SCRIPT) check-script
 	@echo ""
-	@echo -e "$(STAGE1_COLOR) ======================================== $(RESET)"
-	@echo -e "$(STAGE1_COLOR) [STAGE 1] Extracting AST...              $(RESET)"
-	@echo -e "$(STAGE1_COLOR) ======================================== $(RESET)"
+	@echo "$(STAGE1_COLOR) ======================================== $(RESET)"
+	@echo "$(STAGE1_COLOR) [STAGE 1] Extracting AST...              $(RESET)"
+	@echo "$(STAGE1_COLOR) ======================================== $(RESET)"
 	python mkast.py -f $(SCRIPT)
 
 # Trigger architect script (will bypass LLM if file exists, unless --selective is used during merge)
 $(ARCHER_FILE): $(AST_FILE) check-script
 	@echo ""
-	@echo -e "$(STAGE2_COLOR) ======================================== $(RESET)"
-	@echo -e "$(STAGE2_COLOR) [STAGE 2] Generating Architecture...     $(RESET)"
-	@echo -e "$(STAGE2_COLOR) ======================================== $(RESET)"
-	python architect.py --input $(AST_FILE) --output $(ARCHER_FILE) --host $(HOST) --port $(PORT) $(DEBUG_FLAG)
+	@echo "$(STAGE2_COLOR) ======================================== $(RESET)"
+	@echo "$(STAGE2_COLOR) [STAGE 2] Generating Architecture...     $(RESET)"
+	@echo "$(STAGE2_COLOR) ======================================== $(RESET)"
+	python architect.py --input $(AST_FILE) --output $(ARCHER_FILE) --host $(HOST) --port $(MAIN_PORT) $(DEBUG_FLAG)
 
 # --- Pipeline Steps (Phony Aliases) ---
 
@@ -80,38 +83,38 @@ ast: $(AST_FILE)
 
 architect: $(ARCHER_FILE)
 
-# Microtask strictly requires the Architecture report to exist first
+# Microtask strictly requires the Architecture report to exist first, it receives the full PORT list
 microtask: check-script check-prompt $(ARCHER_FILE)
 	@echo ""
-	@echo -e "$(STAGE3_COLOR) ======================================== $(RESET)"
-	@echo -e "$(STAGE3_COLOR) [STAGE 3] Executing Microtasks...        $(RESET)"
-	@echo -e "$(STAGE3_COLOR) ======================================== $(RESET)"
+	@echo "$(STAGE3_COLOR) ======================================== $(RESET)"
+	@echo "$(STAGE3_COLOR) [STAGE 3] Executing Microtasks...        $(RESET)"
+	@echo "$(STAGE3_COLOR) ======================================== $(RESET)"
 	python microtasker.py --script $(SCRIPT) --prompt "$(PROMPT)" --host $(HOST) --port $(PORT) $(DEBUG_FLAG)
 
 # Merge conditionally passes down PROMPT to microtask if specified by user
 merge: check-script $(if $(PROMPT), microtask)
 	@echo ""
-	@echo -e "$(STAGE4_COLOR) ======================================== $(RESET)"
-	@echo -e "$(STAGE4_COLOR) [STAGE 4] Merging Changes & Selective... $(RESET)"
-	@echo -e "$(STAGE4_COLOR) ======================================== $(RESET)"
+	@echo "$(STAGE4_COLOR) ======================================== $(RESET)"
+	@echo "$(STAGE4_COLOR) [STAGE 4] Merging Changes & Selective... $(RESET)"
+	@echo "$(STAGE4_COLOR) ======================================== $(RESET)"
 	python merge.py $(SCRIPT)
 	python mkast.py -f $(SCRIPT)
-	python architect.py --input $(AST_FILE) --output $(ARCHER_FILE) --host $(HOST) --port $(PORT) $(DEBUG_FLAG) --selective
-	@echo -e "\033[1m[*] Cleaning up applied microtasks...\033[0m"
-	rm -f $(META_DIR)/FunctionDef.* $(META_DIR)/ClassDef.* $(META_DIR)/Module.*
+	python architect.py --input $(AST_FILE) --output $(ARCHER_FILE) --host $(HOST) --port $(MAIN_PORT) $(DEBUG_FLAG) --selective
+	@echo "\033[1m[*] Cleaning up applied microtasks...\033[0m"
+	rm -f $(META_DIR)/FunctionDef.* $(META_DIR)/ClassDef.* $(META_DIR)/Module.* $(META_DIR)/Unknown.* 
 	@touch $(AST_FILE)
 	@touch $(ARCHER_FILE)
 
 # --- All-in-One ---
 run: microtask merge
 	@echo ""
-	@echo -e "$(SUCCESS_COLOR) ======================================== $(RESET)"
-	@echo -e "$(SUCCESS_COLOR) [+] Pipeline completed for $(SCRIPT)! $(RESET)"
-	@echo -e "$(SUCCESS_COLOR) ======================================== $(RESET)"
+	@echo "$(SUCCESS_COLOR) ======================================== $(RESET)"
+	@echo "$(SUCCESS_COLOR) [+] Pipeline completed for $(SCRIPT)! $(RESET)"
+	@echo "$(SUCCESS_COLOR) ======================================== $(RESET)"
 
 # --- Cleanup / Hard Reset ---
 reset: check-script
-	@echo -e "$(RESET_COLOR) [*] Hard resetting meta directory for $(SCRIPT) (wiping all AST and architecture data)... $(RESET)"
+	@echo "$(RESET_COLOR) [*] Hard resetting meta directory for $(SCRIPT) (wiping all AST and architecture data)... $(RESET)"
 	rm -rf $(META_DIR)
 
 # Alias for backwards compatibility if you used 'make clean' previously

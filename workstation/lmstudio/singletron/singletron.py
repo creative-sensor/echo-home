@@ -16,8 +16,10 @@ def safe_print(*args_print, **kwargs):
     with print_lock:
         print(*args_print, **kwargs)
 
-def model_name(host: str, port: int, endpoint: str) -> Optional[str]:
-    url = f"http://{host}:{port}{endpoint}"
+def model_name(host: str, ports: str, endpoint: str) -> Optional[str]:
+    # Support comma-separated ports by extracting the first (main) port
+    main_port = str(ports).split(',')[0].strip()
+    url = f"http://{host}:{main_port}{endpoint}"
     try:
         response = requests.get(url, timeout=10)
         response.raise_for_status() 
@@ -32,7 +34,7 @@ def main():
     parser = argparse.ArgumentParser(description="Vibe Coding Interactive Shell")
     parser.add_argument("-f", "--script", required=True, help="Path to Python script target")
     parser.add_argument("--host", default=os.getenv("HOST", "localhost"), help="LLM Server Host")
-    parser.add_argument("--port", default=os.getenv("PORT", "8080"), help="LLM Server Port")
+    parser.add_argument("--port", default=os.getenv("PORT", "8080"), help="LLM Server Port(s) (comma-separated)")
     parser.add_argument("--debug", action="store_true", help="Enable debug mode")
     args = parser.parse_args()
 
@@ -43,9 +45,9 @@ def main():
     # Configure prompt_toolkit session and custom styling
     promptia_session = PromptSession()
     promptia_style = Style.from_dict({
-        'llm': 'bg:#c4c408 fg:#000000 bold',
-        'prompt': 'bg:#000000 fg:#c4c408',
-        'ws': 'bg:#c4c408 fg:#c4c408'
+        'llm': 'bg:#408175 fg:#89D7B7 bold',
+        'prompt': 'bg:#000000 fg:#408175',
+        'ws': 'bg:#89D7B7 fg:#89D7B7'
     })
 
     print(f"==========================================")
