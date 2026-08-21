@@ -56,12 +56,10 @@ def  get_body_lines(script_path: str, lineno: int, end_lineno: int) -> str:
 # ---------------------------------------------------------
 def build_markdown_report(raw_ast_data: dict, module_name: str) -> str:
     """Converts the raw architecture dictionary into a strict Markdown report."""
-    lines = [f"# Architecture Report: {module_name}", "## Definition"]
-    
+    lines = [f'# Architecture Report: {module_name}', '## Definition']
     arch = raw_ast_data.get('Architecture', {})
     defs = arch.get('definition', {})
-    
-    # Helper to safely process both dictionaries and lists of dictionaries
+
     def extract_items(data_node):
         if isinstance(data_node, dict):
             return data_node.items()
@@ -69,55 +67,91 @@ def build_markdown_report(raw_ast_data: dict, module_name: str) -> str:
             items = []
             for item in data_node:
                 if isinstance(item, dict):
-                    # Handle flat lists like: - name: my_func \n description: ...
                     if 'name' in item:
                         name = item.pop('name')
                         items.append((name, item))
-                    # Handle nested lists like: - my_func: { description: ... }
                     else:
                         items.extend(item.items())
             return items
         return []
-
-    # Process Functions
-    lines.append("### Function")
+        
+    lines.append('### Function')
     functions = defs.get('functions', [])
     func_items = extract_items(functions)
     if func_items:
         for name, data in func_items:
             desc = data.get('description', 'No description provided') if isinstance(data, dict) else str(data)
-            lines.append(f"- **{name}** : {desc}")
+            lines.append(f'- **{name}** : {desc}')
     else:
-        lines.append("- *No functions defined*")
+        lines.append('- *No functions defined*')
         
-    # Process Classes
-    lines.append("### Class")
+    lines.append('### Class')
     classes = defs.get('class', [])
     cls_items = extract_items(classes)
     if cls_items:
         for name, data in cls_items:
             desc = data.get('description', 'No description provided') if isinstance(data, dict) else str(data)
-            lines.append(f"- **{name}**: {desc}")
+            lines.append(f'- **{name}**: {desc}')
     else:
-        lines.append("- *No classes defined*")
+        lines.append('- *No classes defined*')
         
-    # Process Workflow
-    lines.append("## Workflow")
+    lines.append('## Workflow')
     workflow = arch.get('workflow', {})
     if workflow:
         if isinstance(workflow, dict):
             for k, v in workflow.items():
-                lines.append(f"{k}: {v}")
+                lines.append(f'{k}: {v}')
         elif isinstance(workflow, list):
             for item in workflow:
-                lines.append(f"- {str(item)}")
+                lines.append(f'- {str(item)}')
         else:
             lines.append(str(workflow))
     else:
-        lines.append("*No workflow description provided.*")
-        
-    return "\n".join(lines)
+        lines.append('*No workflow description provided.*')
 
+    # ---- DATAFLOW SECTION ADDITION ----
+    lines.append('## Dataflow')
+    dataflow = arch.get('dataflow', {})
+    if dataflow:
+        # Prioritize MODULE at the top of the section
+        if 'MODULE' in dataflow:
+            lines.append('### MODULE')
+            calls = dataflow['MODULE'].get('calls', [])
+            if calls:
+                lines.append('- calls:')
+                for call in calls:
+                    lines.append(f'  - {call}')
+            else:
+                lines.append('- calls: []')
+        
+        # Output remaining components
+        for comp_name, data in dataflow.items():
+            if comp_name == 'MODULE':
+                continue
+                
+            lines.append(f'### {comp_name}')
+            
+            # Format inputs
+            in_args = data.get('in', [])
+            in_str = f"[{', '.join(in_args)}]" if isinstance(in_args, list) else str(in_args)
+            lines.append(f'- in: {in_str}')
+            
+            # Format outputs
+            out_val = data.get('out', 'None')
+            lines.append(f'- out: {out_val}')
+            
+            # Format calls
+            calls = data.get('calls', [])
+            if calls:
+                lines.append('- call:')
+                for call in calls:
+                    lines.append(f'  - {call}')
+            else:
+                lines.append('- call: []')
+    else:
+        lines.append('*No dataflow definitions provided.*')
+
+    return '\n'.join(lines)
 
 def format_worker_report(task: dict, component_code: str) -> str:
     """Formats the final Markdown Microtask Report for the worker agent."""
