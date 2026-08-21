@@ -49,13 +49,13 @@ help:
 # --- Safety Checks ---
 check-script:
 	@if [ -z "$(SCRIPT)" ]; then \
-		echo "$(ERROR_COLOR) [!] Error: SCRIPT variable is required. Example: SCRIPT=main.py $(RESET)"; \
+		echo -e "$(ERROR_COLOR) [!] Error: SCRIPT variable is required. Example: SCRIPT=main.py $(RESET)"; \
 		exit 1; \
 	fi
 
 check-prompt:
 	@if [ -z "$(PROMPT)" ]; then \
-		echo "$(ERROR_COLOR) [!] Error: PROMPT variable is required for microtasks. Example: PROMPT=\"Update the function...\" $(RESET)"; \
+		echo -e "$(ERROR_COLOR) [!] Error: PROMPT variable is required for microtasks. Example: PROMPT=\"Update the function...\" $(RESET)"; \
 		exit 1; \
 	fi
 
@@ -85,7 +85,7 @@ architect: $(ARCHER_FILE)
 
 # Microtask strictly requires the Architecture report to exist first, it receives the full PORT list
 microtask: check-script check-prompt $(ARCHER_FILE)
-	@echo -e ""
+	@echo  ""
 	@echo -e "$(STAGE3_COLOR) ======================================== $(RESET)"
 	@echo -e "$(STAGE3_COLOR) [STAGE 3] Executing Microtasks...        $(RESET)"
 	@echo -e "$(STAGE3_COLOR) ======================================== $(RESET)"
@@ -93,7 +93,7 @@ microtask: check-script check-prompt $(ARCHER_FILE)
 
 # Merge conditionally passes down PROMPT to microtask if specified by user
 merge: check-script $(if $(PROMPT), microtask)
-	@echo -e ""
+	@echo  ""
 	@echo -e "$(STAGE4_COLOR) ======================================== $(RESET)"
 	@echo -e "$(STAGE4_COLOR) [STAGE 4] Merging Changes & Selective... $(RESET)"
 	@echo -e "$(STAGE4_COLOR) ======================================== $(RESET)"
@@ -107,7 +107,7 @@ merge: check-script $(if $(PROMPT), microtask)
 
 # --- All-in-One ---
 run: microtask merge
-	@echo -e ""
+	@echo  ""
 	@echo -e "$(SUCCESS_COLOR) ======================================== $(RESET)"
 	@echo -e "$(SUCCESS_COLOR) [+] Pipeline completed for $(SCRIPT)! $(RESET)"
 	@echo -e "$(SUCCESS_COLOR) ======================================== $(RESET)"
