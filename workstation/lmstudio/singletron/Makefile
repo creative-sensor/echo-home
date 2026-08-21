@@ -34,17 +34,17 @@ ERROR_COLOR   := \033[1;37;41m# Bold White text on Red background
 RESET_COLOR   := \033[1;37;41m# Bold White text on Red background
 
 help:
-	@echo "\033[1mMicrotasker Pipeline Makefile\033[0m"
-	@echo "-----------------------------"
-	@echo "Usage:"
-	@echo "  make run SCRIPT=<path/to/script.py> PROMPT=\"<your instruction>\" [DEBUG=true] [HOST=...] [PORT=...]"
-	@echo ""
-	@echo "Individual Stages:"
-	@echo "  make ast SCRIPT=<script.py>                      - Generate AST YAML"
-	@echo "  make architect SCRIPT=<script.py>                - Generate high-level Architecture YAML"
-	@echo "  make microtask SCRIPT=<script.py> PROMPT=\"...\"   - Run agents to modify components"
-	@echo "  make merge SCRIPT=<script.py> [PROMPT=\"...\"]     - Patch original script (runs microtask if PROMPT is given)"
-	@echo "  make reset SCRIPT=<script.py>                    - Hard reset by completely wiping the meta directory"
+	@echo -e "\033[1mMicrotasker Pipeline Makefile\033[0m"
+	@echo -e "-----------------------------"
+	@echo -e "Usage:"
+	@echo -e "  make run SCRIPT=<path/to/script.py> PROMPT=\"<your instruction>\" [DEBUG=true] [HOST=...] [PORT=...]"
+	@echo -e ""
+	@echo -e "Individual Stages:"
+	@echo -e "  make ast SCRIPT=<script.py>                      - Generate AST YAML"
+	@echo -e "  make architect SCRIPT=<script.py>                - Generate high-level Architecture YAML"
+	@echo -e "  make microtask SCRIPT=<script.py> PROMPT=\"...\"   - Run agents to modify components"
+	@echo -e "  make merge SCRIPT=<script.py> [PROMPT=\"...\"]     - Patch original script (runs microtask if PROMPT is given)"
+	@echo -e "  make reset SCRIPT=<script.py>                    - Hard reset by completely wiping the meta directory"
 
 # --- Safety Checks ---
 check-script:
@@ -63,18 +63,18 @@ check-prompt:
 
 # Rebuild ast.yaml if the Python script has been modified, or if it doesn't exist
 $(AST_FILE): $(SCRIPT) check-script
-	@echo ""
-	@echo "$(STAGE1_COLOR) ======================================== $(RESET)"
-	@echo "$(STAGE1_COLOR) [STAGE 1] Extracting AST...              $(RESET)"
-	@echo "$(STAGE1_COLOR) ======================================== $(RESET)"
+	@echo -e ""
+	@echo -e "$(STAGE1_COLOR) ======================================== $(RESET)"
+	@echo -e "$(STAGE1_COLOR) [STAGE 1] Extracting AST...              $(RESET)"
+	@echo -e "$(STAGE1_COLOR) ======================================== $(RESET)"
 	python mkast.py -f $(SCRIPT)
 
 # Trigger architect script (will bypass LLM if file exists, unless --selective is used during merge)
 $(ARCHER_FILE): $(AST_FILE) check-script
-	@echo ""
-	@echo "$(STAGE2_COLOR) ======================================== $(RESET)"
-	@echo "$(STAGE2_COLOR) [STAGE 2] Generating Architecture...     $(RESET)"
-	@echo "$(STAGE2_COLOR) ======================================== $(RESET)"
+	@echo -e ""
+	@echo -e "$(STAGE2_COLOR) ======================================== $(RESET)"
+	@echo -e "$(STAGE2_COLOR) [STAGE 2] Generating Architecture...     $(RESET)"
+	@echo -e "$(STAGE2_COLOR) ======================================== $(RESET)"
 	python architect.py --input $(AST_FILE) --output $(ARCHER_FILE) --host $(HOST) --port $(MAIN_PORT) $(DEBUG_FLAG)
 
 # --- Pipeline Steps (Phony Aliases) ---
@@ -85,36 +85,36 @@ architect: $(ARCHER_FILE)
 
 # Microtask strictly requires the Architecture report to exist first, it receives the full PORT list
 microtask: check-script check-prompt $(ARCHER_FILE)
-	@echo ""
-	@echo "$(STAGE3_COLOR) ======================================== $(RESET)"
-	@echo "$(STAGE3_COLOR) [STAGE 3] Executing Microtasks...        $(RESET)"
-	@echo "$(STAGE3_COLOR) ======================================== $(RESET)"
+	@echo -e ""
+	@echo -e "$(STAGE3_COLOR) ======================================== $(RESET)"
+	@echo -e "$(STAGE3_COLOR) [STAGE 3] Executing Microtasks...        $(RESET)"
+	@echo -e "$(STAGE3_COLOR) ======================================== $(RESET)"
 	python microtasker.py --script $(SCRIPT) --prompt "$(PROMPT)" --host $(HOST) --port $(PORT) $(DEBUG_FLAG)
 
 # Merge conditionally passes down PROMPT to microtask if specified by user
 merge: check-script $(if $(PROMPT), microtask)
-	@echo ""
-	@echo "$(STAGE4_COLOR) ======================================== $(RESET)"
-	@echo "$(STAGE4_COLOR) [STAGE 4] Merging Changes & Selective... $(RESET)"
-	@echo "$(STAGE4_COLOR) ======================================== $(RESET)"
+	@echo -e ""
+	@echo -e "$(STAGE4_COLOR) ======================================== $(RESET)"
+	@echo -e "$(STAGE4_COLOR) [STAGE 4] Merging Changes & Selective... $(RESET)"
+	@echo -e "$(STAGE4_COLOR) ======================================== $(RESET)"
 	python merge.py $(SCRIPT)
 	python mkast.py -f $(SCRIPT)
 	python architect.py --input $(AST_FILE) --output $(ARCHER_FILE) --host $(HOST) --port $(MAIN_PORT) $(DEBUG_FLAG) --selective
-	@echo "\033[1m[*] Cleaning up applied microtasks...\033[0m"
+	@echo -e "\033[1m[*] Cleaning up applied microtasks...\033[0m"
 	rm -f $(META_DIR)/FunctionDef.* $(META_DIR)/ClassDef.* $(META_DIR)/Module.* $(META_DIR)/Unknown.* 
 	@touch $(AST_FILE)
 	@touch $(ARCHER_FILE)
 
 # --- All-in-One ---
 run: microtask merge
-	@echo ""
-	@echo "$(SUCCESS_COLOR) ======================================== $(RESET)"
-	@echo "$(SUCCESS_COLOR) [+] Pipeline completed for $(SCRIPT)! $(RESET)"
-	@echo "$(SUCCESS_COLOR) ======================================== $(RESET)"
+	@echo -e ""
+	@echo -e "$(SUCCESS_COLOR) ======================================== $(RESET)"
+	@echo -e "$(SUCCESS_COLOR) [+] Pipeline completed for $(SCRIPT)! $(RESET)"
+	@echo -e "$(SUCCESS_COLOR) ======================================== $(RESET)"
 
 # --- Cleanup / Hard Reset ---
 reset: check-script
-	@echo "$(RESET_COLOR) [*] Hard resetting meta directory for $(SCRIPT) (wiping all AST and architecture data)... $(RESET)"
+	@echo -e "$(RESET_COLOR) [*] Hard resetting meta directory for $(SCRIPT) (wiping all AST and architecture data)... $(RESET)"
 	rm -rf $(META_DIR)
 
 # Alias for backwards compatibility if you used 'make clean' previously

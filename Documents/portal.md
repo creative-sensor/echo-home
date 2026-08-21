@@ -25,6 +25,7 @@
 | 8903  | `Agent8903`/nvidia-ntron-omni-Q4                                                          |
 | 8904  | `Agent8904`/llmfan46/gemma-4-12B-coder-fable5-composer2.5-v1-uncensored-heretic-Q8_0.gguf |
 | 8905  | `Agent8905`/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-Q4_K_M.gguf                             |
+| 8906  | `Agent8906`/Qwen3.6-35B-A3B-Q4_K_M.gguf                                                   |
 | ...   | ...                                                                                       |
 | 8998  |                                                                                           |
 | 8999  | [Service Placeholder]                                                                     |
