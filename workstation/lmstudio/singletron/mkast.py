@@ -2,6 +2,7 @@
 import argparse
 import ast
 import os
+import json
 
 def get_args(node):
     """Extracts argument names from a FunctionDef node."""
@@ -11,21 +12,22 @@ def get_args(node):
         args.extend(a.arg for a in node.args.posonlyargs)
     # Standard args
     args.extend(a.arg for a in node.args.args)
-    # *args
+    # *args (Removed the '*' prefix to prevent YAML alias parsing errors)
     if getattr(node.args, 'vararg', None):
-        args.append(f"*{node.args.vararg.arg}")
+        args.append(node.args.vararg.arg)
     # Keyword-only args
     if getattr(node.args, 'kwonlyargs', None):
         args.extend(a.arg for a in node.args.kwonlyargs)
-    # **kwargs
+    # **kwargs (Removed the '**' prefix to prevent YAML alias parsing errors)
     if getattr(node.args, 'kwarg', None):
-        args.append(f"**{node.args.kwarg.arg}")
+        args.append(node.args.kwarg.arg)
     return args
 
 def format_function(node, indent_level):
     """Formats a function definition matching the requested YAML-like structure."""
     ind = "  " * indent_level
-    args_list = "['" + "', '".join(get_args(node))+"']" if get_args(node) else "[]"
+    # Safely dump list to JSON/YAML compatible array
+    args_list = json.dumps(get_args(node))
     ret = ast.unparse(node.returns) if getattr(node, 'returns', None) else "None"
     
     # Extract and unparse the body statements
@@ -287,7 +289,8 @@ def main():
                 
             w(f"    {comp_name}:")
             
-            in_str = "[" + ", ".join(data['in']) + "]"
+            # --- UPDATED: Use json.dumps to safely quote arrays and escape characters ---
+            in_str = json.dumps(data['in'])
             w(f"      in: {in_str}")
             w(f"      out: {data['out']}")
             
