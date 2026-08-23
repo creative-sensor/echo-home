@@ -52,4 +52,5 @@ map lmsh3 : vsplit<CR>:call Lmsh_activate('\|node-cliner.js\|3\|8082\|')<CR>
 map lmsh9 : vsplit<CR>:call Lmsh_activate('\|sh7t.py\|1\|8080\|')<CR>
 map lmsh0 : vsplit<CR>:call Lmsh_activate('\|neos.py\|1\|8080\|')<CR>
 nnoremap lmsht :let f=expand('%:p') <Bar> vsplit <Bar> exe 'term cd ~/echo-home/workstation/lmstudio/singletron && ./singletron.py -f ' . shellescape(f) . ' --port ' . LMSH_PORT<CR>
+nnoremap lmshs :let f=expand('%:p') <Bar> vsplit <Bar> exe 'term cd ~/echo-home/workstation/lmstudio/singletron && ./singletasker.py -f ' . shellescape(f) . ' --port ' . LMSH_PORT . ' --line '.line(".")<CR> 
 nnoremap lmshp :let LMSH_PORT=input('LLM_PORT ?= ')<CR>
