@@ -173,6 +173,7 @@ def main():
 
     base_dir = os.path.dirname(script_path)
     script_name = os.path.basename(script_path)
+    module_name = os.path.splitext(script_name)[0]
     meta_dir = os.path.join(base_dir, f".{script_name}")
     ast_file = os.path.join(meta_dir, "ast.yaml")
 
@@ -195,7 +196,12 @@ def main():
         return
 
     is_module = (comp_type == 'Module')
-    target_path = os.path.join(meta_dir, f"{comp_type}.{resolved_name}")
+    
+    # Generate target path identical to microtasker.py so merge detects the changed module
+    if is_module:
+        target_path = os.path.join(meta_dir, f"Module.{module_name}")
+    else:
+        target_path = os.path.join(meta_dir, f"{comp_type}.{resolved_name}")
 
     MODEL_NAME = model_name(args.host, args.port, endpoint='/models')
     if MODEL_NAME: 
