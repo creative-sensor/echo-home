@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 import argparse
+import ast
 import os
 import requests
 import re
 import yaml
 import subprocess
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, Tuple
 
 # ---------------------------------------------------------
 # PyYAML Configuration (Preserve Multiline Strings as | )
@@ -19,13 +20,13 @@ yaml.add_representer(str, str_presenter)
 yaml.representer.SafeRepresenter.add_representer(str, str_presenter)
 
 # ---------------------------------------------------------
-# Utility: Clean Outputs & AWK Command
+# Utility: Clean Outputs & Strict AST Diffing
 # ---------------------------------------------------------
 def extract_markdown_code(raw_output: str) -> str:
     """Extracts Python code, stripping markdown code blocks."""
     raw_output = raw_output.strip()
-    pattern = r"^```(?:python)?\s*\n(.*?)\n```$"
-    match = re.search(pattern, raw_output, re.DOTALL | re.IGNORECASE)
+    pattern = r"^```(?:python)?\s*\n(.*?)\n```"
+    match = re.search(pattern, raw_output, re.DOTALL | re.IGNORECASE | re.MULTILINE)
     
     if match:
         return match.group(1).strip()
@@ -36,8 +37,7 @@ def extract_markdown_code(raw_output: str) -> str:
         
     return raw_output.strip()
 
-
-def  get_body_lines(script_path: str, lineno: int, end_lineno: int) -> str:
+def get_body_lines(script_path: str, lineno: int, end_lineno: int) -> str:
     """Retrieves the full body natively using Python."""
     if lineno == 0 or end_lineno == 0:
         return ""
@@ -45,11 +45,67 @@ def  get_body_lines(script_path: str, lineno: int, end_lineno: int) -> str:
     try:
         with open(script_path, 'r', encoding='utf-8') as f:
             lines = f.readlines()
-            # Python is 0-indexed, awk's NR is 1-indexed
             return "".join(lines[lineno - 1 : end_lineno])
     except Exception as e:
         print(f"[!] Error reading file: {e}")
         return ""
+
+def get_strict_args(node) -> List[str]:
+    """Extracts strictly ordered arguments with their type annotations."""
+    args = []
+    
+    def format_arg(a):
+        if getattr(a, 'annotation', None):
+            return f"{a.arg}: {ast.unparse(a.annotation)}"
+        return a.arg
+
+    if getattr(node.args, 'posonlyargs', None):
+        args.extend(format_arg(a) for a in node.args.posonlyargs)
+    if getattr(node.args, 'args', None):
+        args.extend(format_arg(a) for a in node.args.args)
+    if getattr(node.args, 'vararg', None):
+        args.append(f"*{format_arg(node.args.vararg)}")
+    if getattr(node.args, 'kwonlyargs', None):
+        args.extend(format_arg(a) for a in node.args.kwonlyargs)
+    if getattr(node.args, 'kwarg', None):
+        args.append(f"**{format_arg(node.args.kwarg)}")
+    
+    return args
+
+def parse_component_signature(source: str, comp_name: str) -> tuple[Optional[list], Optional[str]]:
+    """Deterministically extracts the strict signature (order, types) of a function/method."""
+    try:
+        tree = ast.parse(source)
+    except Exception:
+        return None, None
+    
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            if node.name == comp_name or ('.' in comp_name and comp_name.endswith(node.name)):
+                in_args = get_strict_args(node)
+                out_type = ast.unparse(node.returns) if getattr(node, 'returns', None) else "None"
+                return in_args, out_type
+                
+    return None, None
+
+def get_original_component_code(raw_ast_data: dict, comp_name: str, script_path: str) -> str:
+    """Resolves the original component code from the base script, ignoring WIP drafts."""
+    if comp_name.lower() == 'workflow' or comp_name.lower() == 'module':
+        return raw_ast_data.get('Module', {}).get('body', '')
+
+    funcs = raw_ast_data.get('FunctionDef', {})
+    classes = raw_ast_data.get('ClassDef', {})
+    
+    if comp_name in funcs:
+        return get_body_lines(script_path, funcs[comp_name].get('lineno', 0), funcs[comp_name].get('end_lineno', 0))
+    elif comp_name in classes:
+        return get_body_lines(script_path, classes[comp_name].get('lineno', 0), classes[comp_name].get('end_lineno', 0))
+    else:
+        for cls_name, cls_data in classes.items():
+            methods = cls_data.get('FunctionDef', {})
+            if comp_name in methods:
+                return get_body_lines(script_path, methods[comp_name].get('lineno', 0), methods[comp_name].get('end_lineno', 0))
+    return ""
 
 # ---------------------------------------------------------
 # Markdown Formatting Utilities
@@ -109,11 +165,9 @@ def build_markdown_report(raw_ast_data: dict, module_name: str) -> str:
     else:
         lines.append('*No workflow description provided.*')
 
-    # ---- DATAFLOW SECTION ADDITION ----
     lines.append('## Dataflow')
     dataflow = arch.get('dataflow', {})
     if dataflow:
-        # Prioritize MODULE at the top of the section
         if 'MODULE' in dataflow:
             lines.append('### MODULE')
             calls = dataflow['MODULE'].get('calls', [])
@@ -124,23 +178,14 @@ def build_markdown_report(raw_ast_data: dict, module_name: str) -> str:
             else:
                 lines.append('- calls: []')
         
-        # Output remaining components
         for comp_name, data in dataflow.items():
-            if comp_name == 'MODULE':
-                continue
-                
+            if comp_name == 'MODULE': continue
             lines.append(f'### {comp_name}')
-            
-            # Format inputs
             in_args = data.get('in', [])
             in_str = f"[{', '.join(in_args)}]" if isinstance(in_args, list) else str(in_args)
             lines.append(f'- in: {in_str}')
-            
-            # Format outputs
             out_val = data.get('out', 'None')
             lines.append(f'- out: {out_val}')
-            
-            # Format calls
             calls = data.get('calls', [])
             if calls:
                 lines.append('- call:')
@@ -166,11 +211,10 @@ def format_worker_report(task: dict, component_code: str) -> str:
     )
 
 # ---------------------------------------------------------
-# LLM Integration: Microtask Generation (Architect)
+# LLM Integration: Architect Generation & Review
 # ---------------------------------------------------------
-
 def compose_microtasks_with_llm(host: str, port: int, report_content: str, user_request: str, debug: bool = False) -> str:
-    """Reads the multi-document Markdown architecture report and generates Markdown task instructions."""
+    """Reads the architecture report and generates initial Markdown task instructions."""
     endpoint = f"http://{host}:{port}/v1/chat/completions"
     
     system_prompt = (
@@ -185,14 +229,7 @@ def compose_microtasks_with_llm(host: str, port: int, report_content: str, user_
         "- **Implementation Hints**: <tailored hints for the component>\n"
     )
 
-    user_prompt = (
-        "---\n"
-        f"{report_content}\n"
-        "---\n"
-        "# User intent\n"
-        f"{user_request}\n"
-        "---"
-    )
+    user_prompt = f"---\n{report_content}\n---\n# User intent\n{user_request}\n---"
 
     payload = {
         "model": "gemma", 
@@ -204,28 +241,64 @@ def compose_microtasks_with_llm(host: str, port: int, report_content: str, user_
         "max_tokens": 4096
     }
 
-    print("[*] Asking Architect LLM to generate microtasks based on the Markdown report...")
+    print("[*] Asking Architect LLM to generate initial microtasks...")
     try:
         response = requests.post(endpoint, json=payload, timeout=600)
         response.raise_for_status()
         raw_output = response.json()['choices'][0]['message']['content'].strip()
-        
         if debug:
-            print("\n[DEBUG] === RAW ARCHITECT RESPONSE ===")
-            print(raw_output)
-            print("[DEBUG] ==============================\n")
-            
+            print("\n[DEBUG] === RAW ARCHITECT RESPONSE ===\n" + raw_output + "\n[DEBUG] ==============================\n")
         return raw_output
     except requests.exceptions.RequestException as e:
         print(f"[!] Architect LLM Connection Error: {e}")
         return ""
 
+def review_interface_deltas_with_llm(host: str, port: int, report_content: str, deltas: str, debug: bool = False) -> str:
+    """Reviews explicitly detected interface changes to generate tasks for affected downstream callers."""
+    endpoint = f"http://{host}:{port}/v1/chat/completions"
+    
+    system_prompt = (
+        "You are a master Software Architect overseeing an automated code modification pipeline.\n"
+        "Worker agents have modified some components, and a strict programmatic AST analysis has detected that their interface signatures (argument order, type annotations, or returns) have changed.\n"
+        "You will be provided with the 'Architecture Report' (showing dataflow and structure) and the 'Interface Deltas' (listing the exact old/new signatures and any dependent caller components).\n"
+        "Your ONLY job is to determine if these strict signature changes break the Dependent Callers.\n\n"
+        "RULES:\n"
+        "1. If a Dependent Caller needs to be updated to accommodate the new signature, compose a new microtask for it.\n"
+        "2. Output new tasks STRICTLY in this Markdown format:\n\n"
+        "### <component_name>\n"
+        "- **Change requirement**: <detailed objective to update the component for the newly modified interface>\n"
+        "- **Implementation Hints**: <hints>\n\n"
+        "3. If no dependent callers need updates, or there are no dependent callers, output the exact word: APPROVED\n"
+        "Do NOT add any conversational text."
+    )
+
+    user_prompt = f"---\n{report_content}\n---\n# Interface Deltas\n{deltas}"
+
+    payload = {
+        "model": "gemma", 
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ],
+        "temperature": 0.2,
+        "max_tokens": 4096
+    }
+
+    try:
+        response = requests.post(endpoint, json=payload, timeout=600)
+        response.raise_for_status()
+        raw_output = response.json()['choices'][0]['message']['content'].strip()
+        if debug:
+            print("\n[DEBUG] === ARCHITECT DELTA REVIEW RESPONSE ===\n" + raw_output + "\n[DEBUG] =======================================\n")
+        return raw_output
+    except requests.exceptions.RequestException as e:
+        print(f"[!] Architect LLM Review Error: {e}")
+        return ""
+
 # ---------------------------------------------------------
 # LLM Integration: Worker Agents (Executors)
 # ---------------------------------------------------------
-
 def model_name(host: str, ports: str, endpoint: str) -> Optional[str]:
-    # Support comma-separated ports by extracting the first (main) port
     main_port = str(ports).split(',')[0].strip()
     url = f"http://{host}:{main_port}{endpoint}"
     try:
@@ -235,12 +308,11 @@ def model_name(host: str, ports: str, endpoint: str) -> Optional[str]:
         if 'models' in data and data['models']:
             return data['models'][0].get('name')
     except Exception as e:
-        safe_print(f"\n❌ ERROR connecting to LLM: {e}")
+        print(f"\n❌ ERROR connecting to LLM: {e}")
     return None
 
-
 def execute_worker_agent(host: str, port: int, micro_report_md: str, debug: bool = False) -> str:
-    """Sends a markdown microtask report to the Worker LLM to modify Python code."""
+    """Executes code changes strictly returning code."""
     endpoint = f"http://{host}:{port}/v1/chat/completions"
     
     system_prompt = (
@@ -267,17 +339,13 @@ def execute_worker_agent(host: str, port: int, micro_report_md: str, debug: bool
         response = requests.post(endpoint, json=payload, timeout=600)
         response.raise_for_status()
         raw_output = response.json()['choices'][0]['message']['content'].strip()
-        
         if debug:
-            print("\n       [DEBUG] === RAW WORKER LLM RESPONSE ===")
-            print(f"       {raw_output.replace('\n', '\n       ')}")
-            print("       [DEBUG] ===============================\n")
+            print("\n       [DEBUG] === RAW WORKER LLM RESPONSE ===\n" + raw_output + "\n       [DEBUG] ===============================\n")
             
         return extract_markdown_code(raw_output)
     except Exception as e:
         print(f"       [!] Worker LLM Error: {e}")
         return ""
-
 
 def execute_module_body_agent(host: str, port: int, micro_report_md: str, debug: bool = False) -> str:
     """Dedicated micro-agent explicitly for handling modifications to the top-level Module body."""
@@ -306,17 +374,13 @@ def execute_module_body_agent(host: str, port: int, micro_report_md: str, debug:
         response = requests.post(endpoint, json=payload, timeout=600)
         response.raise_for_status()
         raw_output = response.json()['choices'][0]['message']['content'].strip()
-        
         if debug:
-            print("\n       [DEBUG] === RAW MODULE BODY WORKER LLM RESPONSE ===")
-            print(f"       {raw_output.replace('\n', '\n       ')}")
-            print("       [DEBUG] ===========================================\n")
+            print("\n       [DEBUG] === RAW MODULE WORKER LLM RESPONSE ===\n" + raw_output + "\n       [DEBUG] =======================================\n")
             
         return extract_markdown_code(raw_output)
     except Exception as e:
         print(f"       [!] Module Body Worker LLM Error: {e}")
         return ""
-
 
 # ---------------------------------------------------------
 # Memory Management & Microtask Extraction
@@ -335,34 +399,42 @@ def extract_markdown_microtasks(llm_output: str) -> list:
         })
     return tasks
 
-def get_component_code(raw_ast_data: dict, comp_name: str, script_path: str) -> tuple[str, str, str]:
-    """Resolves the component name to its source code using the AST data."""
+def get_component_code(raw_ast_data: dict, comp_name: str, script_path: str, meta_dir: str, module_name: str) -> tuple[str, str, str]:
+    """Resolves the component code. It reads WIP drafts from the meta_dir if they exist."""
+    comp_type = 'Unknown'
+    resolved_name = comp_name
+    base_code = ""
+
     if comp_name.lower() == 'workflow' or comp_name.lower() == 'module':
+        comp_type = 'Module'
+        resolved_name = 'Module'
         if 'Module' in raw_ast_data and 'body' in raw_ast_data['Module']:
-            return 'Module', 'Module', raw_ast_data['Module']['body']
-        return 'Module', 'Module', ''
+            base_code = raw_ast_data['Module']['body']
+    else:
+        funcs = raw_ast_data.get('FunctionDef', {})
+        classes = raw_ast_data.get('ClassDef', {})
+        
+        if comp_name in funcs:
+            comp_type = 'FunctionDef'
+            base_code = get_body_lines(script_path, funcs[comp_name].get('lineno', 0), funcs[comp_name].get('end_lineno', 0))
+        elif comp_name in classes:
+            comp_type = 'ClassDef'
+            base_code = get_body_lines(script_path, classes[comp_name].get('lineno', 0), classes[comp_name].get('end_lineno', 0))
+        else:
+            for cls_name, cls_data in classes.items():
+                methods = cls_data.get('FunctionDef', {})
+                if comp_name in methods:
+                    comp_type = 'FunctionDef'
+                    base_code = get_body_lines(script_path, methods[comp_name].get('lineno', 0), methods[comp_name].get('end_lineno', 0))
 
-    # Check top-level functions
-    funcs = raw_ast_data.get('FunctionDef', {})
-    if comp_name in funcs:
-        comp = funcs[comp_name]
-        return 'FunctionDef', comp_name, get_body_lines(script_path, comp.get('lineno', 0), comp.get('end_lineno', 0))
+    # Read from WIP draft if already modified in a previous iteration
+    if comp_type != 'Unknown':
+        target_path = os.path.join(meta_dir, f"Module.{module_name}") if comp_type == 'Module' else os.path.join(meta_dir, f"{comp_type}.{resolved_name}")
+        if os.path.exists(target_path):
+            with open(target_path, 'r', encoding='utf-8') as f:
+                return comp_type, resolved_name, f.read()
 
-    # Check top-level classes
-    classes = raw_ast_data.get('ClassDef', {})
-    if comp_name in classes:
-        comp = classes[comp_name]
-        return 'ClassDef', comp_name, get_body_lines(script_path, comp.get('lineno', 0), comp.get('end_lineno', 0))
-
-    # Check methods within classes
-    for cls_name, cls_data in classes.items():
-        methods = cls_data.get('FunctionDef', {})
-        if comp_name in methods:
-            comp = methods[comp_name]
-            return 'FunctionDef', comp_name, get_body_lines(script_path, comp.get('lineno', 0), comp.get('end_lineno', 0))
-
-    return 'Unknown', comp_name, ""
-
+    return comp_type, resolved_name, base_code
 
 # ---------------------------------------------------------
 # CLI & Main Loop
@@ -377,7 +449,6 @@ def main():
     
     args = parser.parse_args()
     
-    # Parse multi-port support (main_port for Architect, worker_port for Microtask Executors)
     port_str = str(args.port)
     if ',' in port_str:
         main_port = int(port_str.split(',')[0].strip())
@@ -418,50 +489,110 @@ def main():
         print("[!] Cannot find a valid 'Architecture' key in the combined reports.")
         return
 
-    # Build the multi-document Markdown report
     report_content = build_markdown_report(raw_ast_data, module_name)
 
-    # 1. Compose Microtasks using Architect (Uses MAIN Port)
     llm_response = compose_microtasks_with_llm(args.host, main_port, report_content, args.prompt, args.debug)
-    
-    # 2. Extract tasks using Regex
     tasks = extract_markdown_microtasks(llm_response)
+    
     if not tasks:
         print("[!] No valid microtasks generated.")
         return
 
-    print(f"\n[*] Generated {len(tasks)} microtasks. Starting Worker Agent Loop...")
     WORKER_MODEL_NAME = model_name(args.host, worker_port, endpoint="/models")
     if WORKER_MODEL_NAME:
-      print(f"    ✅ Ready: {WORKER_MODEL_NAME}")
-    # 3. Execute Microtasks (Agent Loop - Uses WORKER Port)
-    for i, task in enumerate(tasks, 1):
-        comp_name = task['component_name']
-        comp_type, resolved_name, component_code = get_component_code(raw_ast_data, comp_name, script_path)
-        micro_report_md = format_worker_report(task, component_code)
+        print("[%] LLM Worker begins")
+        print(f"    ✅ Ready: {WORKER_MODEL_NAME}")
+
+    iteration = 1
+    max_iterations = 4
+    max_worker_retries = 3
+
+    # The Deterministic Feedback Loop
+    while tasks and iteration <= max_iterations:
+        print(f"\n[*] Execution Cycle {iteration} | Targeting {len(tasks)} components...")
+        deltas_found = []
+
+        for i, task in enumerate(tasks, 1):
+            comp_name = task['component_name']
+            comp_type, resolved_name, component_code = get_component_code(raw_ast_data, comp_name, script_path, meta_dir, module_name)
+            micro_report_md = format_worker_report(task, component_code)
+            
+            print(f"    -> Task {i}/{len(tasks)}: {resolved_name}...")
+            print(f"       [*] \033[38;5;126m{task['requirement']}{RESET}")
+            
+            updated_code = ""
+            
+            # Retry loop for worker agent execution
+            for attempt in range(1, max_worker_retries + 1):
+                if comp_type == 'Module':
+                    updated_code = execute_module_body_agent(args.host, worker_port, micro_report_md, args.debug)
+                    target_path = os.path.join(meta_dir, f"Module.{module_name}")
+                else:
+                    updated_code = execute_worker_agent(args.host, worker_port, micro_report_md, args.debug)
+                    target_path = os.path.join(meta_dir, f"{comp_type}.{resolved_name}")
+                
+                if updated_code:
+                    with open(target_path, 'w', encoding='utf-8') as f:
+                        f.write(updated_code + "\n")
+                    print(f"       [+] Wrote updated code -> {target_path}")
+                    break
+                else:
+                    if attempt < max_worker_retries:
+                        print(f"       [-] Worker returned empty. Retrying ({attempt}/{max_worker_retries})...")
+                    else:
+                        print(f"       [-] Worker failed to update component: `{comp_type}.{resolved_name}` after {max_worker_retries} attempts.")
+
+            # Run strict deterministic AST Delta check if it's a function/method
+            if updated_code and comp_type in ['FunctionDef', 'ClassDef']:
+                new_in, new_out = parse_component_signature(updated_code, resolved_name)
+                
+                # Fetch the true original source for accurate strict signature comparison
+                original_code = get_original_component_code(raw_ast_data, resolved_name, script_path)
+                old_in, old_out = parse_component_signature(original_code, resolved_name)
+                
+                if new_in is not None and old_in is not None and (old_in != new_in or old_out != new_out):
+                    # Extract callers that depend on this component
+                    callers = []
+                    dataflow = raw_ast_data.get('Architecture', {}).get('dataflow', {})
+                    for caller_name, caller_data in dataflow.items():
+                        if resolved_name in caller_data.get('calls', []):
+                            callers.append(caller_name)
+                    
+                    delta_info = (
+                        f"### {resolved_name}\n"
+                        f"- Old Signature: in={old_in}, out={old_out}\n"
+                        f"- New Signature: in={new_in}, out={new_out}\n"
+                        f"- Dependent Callers: {callers if callers else 'None'}\n"
+                    )
+                    deltas_found.append(delta_info)
+                    print(f"       [!] Strict interface modification detected (Arguments/Types changed). Alerting Architect.")
+                else:
+                    print(f"       [✓] Strict interface verified intact. No delta detected.")
+
+        if not deltas_found:
+            print("\n[*] No interface signature changes detected. Bypassing Architect review.")
+            break
+
+        print(f"\n[*] Reviewing {len(deltas_found)} interface delta(s) with LLM Architect...")
+        deltas_text = "\n".join(deltas_found)
+        review_response = review_interface_deltas_with_llm(args.host, main_port, report_content, deltas_text, args.debug)
         
-        print(f"    -> Executing Task {i}/{len(tasks)} targeting: {resolved_name}...")
-        print("       [*] Microtask Report Outline:")
-        print(f"           \033[38;5;126m{task['requirement']}{RESET}")
-        
-        # Route to the appropriate micro-agent
-        if comp_type == 'Module':
-            print("       [~] Routing to dedicated Module Body Agent...")
-            updated_code = execute_module_body_agent(args.host, worker_port, micro_report_md, args.debug)
-            target_path = os.path.join(meta_dir, f"Module.{module_name}")
+        if "APPROVED" in review_response.upper() and not extract_markdown_microtasks(review_response):
+            print("    [+] Architect approved the new interface structure. No downstream updates needed.")
+            break
+            
+        new_tasks = extract_markdown_microtasks(review_response)
+        if new_tasks:
+            print(f"    [!] Architect deployed {len(new_tasks)} new microtasks to handle interface dependencies.")
+            tasks = new_tasks
         else:
-            updated_code = execute_worker_agent(args.host, worker_port, micro_report_md, args.debug)
-            target_path = os.path.join(meta_dir, f"{comp_type}.{resolved_name}")
-        
-        # Export the updated code directly to the meta directory
-        if updated_code:
-            with open(target_path, 'w', encoding='utf-8') as f:
-                f.write(updated_code + "\n")
-            print(f"       [+] Process complete. Wrote updated component -> {target_path}")
-        else:
-            print(f"       [-] Worker failed to update component: `{comp_type}.{resolved_name}`.")
-            if not args.debug:
-                print("       [!] HINT: Run the command with `DEBUG=true` (or pass `--debug`) to see the RAW LLM output.")
+            print("    [?] Architect did not explicitly approve, but provided no new tasks. Concluding pipeline.")
+            break
+            
+        iteration += 1
+
+    if iteration > max_iterations:
+        print("[!] Reached maximum iteration limit for refinement.")
 
 if __name__ == "__main__":
     main()
