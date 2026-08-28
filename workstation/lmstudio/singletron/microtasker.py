@@ -6,7 +6,8 @@ import requests
 import re
 import yaml
 import subprocess
-from typing import Optional, Dict, List, Tuple
+from typing import Optional, Dict, List
+import base64
 
 # ---------------------------------------------------------
 # PyYAML Configuration (Preserve Multiline Strings as | )
@@ -444,11 +445,26 @@ def main():
     parser.add_argument('--port', type=str, default='8080', help='Port(s) for the local LLM API (e.g. 8080,8085)')
     parser.add_argument('--host', type=str, default='localhost', help='Host for the local LLM API')
     parser.add_argument('--script', type=str, required=True, help='Path to the original Python script')
-    parser.add_argument('--prompt', type=str, required=True, help='User intent/request for updating the codebase')
+    
+    # Make standard prompt optional to allow for prompt64
+    parser.add_argument('--prompt', type=str, help='User intent/request for updating the codebase')
+    parser.add_argument('--prompt64', type=str, help='Base64 encoded user intent/request')
     parser.add_argument('--debug', action='store_true', help='Print verbose outputs')
     
     args = parser.parse_args()
     
+
+        
+    # Resolve the active prompt
+    if args.prompt64:
+        active_prompt = base64.b64decode(args.prompt64).decode('utf-8')
+    elif args.prompt:
+        active_prompt = args.prompt
+    else:
+        print("[!] Error: Either --prompt or --prompt64 must be provided.")
+        return
+    
+    # Parse multi-port support (main_port for Architect, worker_port for Microtask Executors)
     port_str = str(args.port)
     if ',' in port_str:
         main_port = int(port_str.split(',')[0].strip())
@@ -491,9 +507,11 @@ def main():
 
     report_content = build_markdown_report(raw_ast_data, module_name)
 
-    llm_response = compose_microtasks_with_llm(args.host, main_port, report_content, args.prompt, args.debug)
+    llm_response = compose_microtasks_with_llm(args.host, main_port, report_content, active_prompt, args.debug)
     tasks = extract_markdown_microtasks(llm_response)
     
+    # 2. Extract tasks using Regex
+    tasks = extract_markdown_microtasks(llm_response)
     if not tasks:
         print("[!] No valid microtasks generated.")
         return

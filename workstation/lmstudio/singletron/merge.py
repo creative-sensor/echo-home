@@ -68,10 +68,7 @@ def main():
         except SyntaxError as e:
             print(f"[!] Syntax error in updated Module file: {e}")
 
-    # Track existing imports to prevent duplicates when pulling from microtasks
-    existing_imports = set(ast.unparse(imp) for imp in imports)
-
-    # 3. Override with updated Functions and Classes, extracting new imports
+    # 3. Override with updated Functions and Classes and collect their imports
     for comp_file in glob.glob(os.path.join(meta_dir, "*.*")):
         filename = os.path.basename(comp_file)
         if filename.startswith("Module.") or filename.endswith(".yaml"):
@@ -83,12 +80,8 @@ def main():
         try:
             comp_tree = ast.parse(comp_source)
             for node in comp_tree.body:
-                # Capture and deduplicate new imports from microtask outputs
                 if isinstance(node, (ast.Import, ast.ImportFrom)):
-                    imp_str = ast.unparse(node)
-                    if imp_str not in existing_imports:
-                        existing_imports.add(imp_str)
-                        imports.append(node)
+                    imports.append(node)
                 elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
                     definitions[node.name] = node
                     # If it's a completely new definition, append it to the end
@@ -97,11 +90,18 @@ def main():
         except SyntaxError as e:
             print(f"[!] Syntax error in component {filename}: {e}")
 
+    # Deduplicate imports based on their string representation
+    unique_imports = {}
+    for imp in imports:
+        imp_str = ast.unparse(imp)
+        if imp_str not in unique_imports:
+            unique_imports[imp_str] = imp
+
     # 4. Reconstruct the script keeping original definition sequence
     final_code = "#!/usr/bin/env python\n\n"
     final_code += "# ---- GLOBAL ----\n"
-    if imports:
-        final_code += ast.unparse(imports) + "\n"
+    if unique_imports:
+        final_code += "\n".join(ast.unparse(imp) for imp in unique_imports.values()) + "\n"
     final_code += "# ---- GLOBAL.end ----\n\n"
     
     final_code += "# ---- DEFINITIONS (Classes & Functions) ----\n"
