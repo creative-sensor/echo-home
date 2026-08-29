@@ -11,7 +11,7 @@
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
 - [datum/2026/WIP/CORTA-21.md](datum/2026/WIP/CORTA-21.md)   ```# vllm : library```
 - [datum/2026/WIP/CORTA-34.md](datum/2026/WIP/CORTA-34.md)   ```# lmsh : hemisphere```
-- [datum/2026/WIP/CORTA-40.md](datum/2026/WIP/CORTA-40.md)   ```# lmsh: memphia```
+- [datum/2026/WIP/CORTA-41.md](datum/2026/WIP/CORTA-41.md)   ```# singletron : inspector```
 - [datum/2026/WIP/VIM-31.md](datum/2026/WIP/VIM-31.md)   ```# vimpage : vllm```
 
 ### 2 ON HOLD
@@ -107,6 +107,7 @@
 - [datum/2026/DONE/CORTA-33.md](datum/2026/DONE/CORTA-33.md)   ```# lmsh : FBI```
 - [datum/2026/DONE/CORTA-35.md](datum/2026/DONE/CORTA-35.md)   ```# memory : uvian```
 - [datum/2026/DONE/CORTA-38.md](datum/2026/DONE/CORTA-38.md)   ```# lmsh : memphix```
+- [datum/2026/DONE/CORTA-40.md](datum/2026/DONE/CORTA-40.md)   ```# lmsh : memphia```
 - [datum/2026/DONE/CORTA-6.md](datum/2026/DONE/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
 - [datum/2026/DONE/CORTA-7.md](datum/2026/DONE/CORTA-7.md)   ```# gmlama```
 - [datum/2026/DONE/CORTA-8.md](datum/2026/DONE/CORTA-8.md)   ```# llama.cpp : aka gmlala```
