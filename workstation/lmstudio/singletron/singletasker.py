@@ -219,7 +219,8 @@ def main():
     print(f'==========================================')
     print('Press [Meta+Enter] or [Esc] then [Enter] to submit multiline prompts.')
     print("Type 'exit' or press Ctrl+C to quit.")
-    print("Type '===m' to merge current meta changes into the original script.\n")
+    print("Type '===m' to merge current meta changes into the original script.")
+    print("Type '===a' to generate new AST of the original script.\n")
     
     chat_history = ""
 
@@ -243,7 +244,10 @@ def main():
                 print(f"[*] Triggering make merge for {args.script}...")
                 subprocess.run(['make', 'merge', f'SCRIPT={args.script}'])
                 continue
-
+            if user_input.strip() == '===a':
+                print(f"[*] Triggering make merge for {args.script}...")
+                subprocess.run(['make', 'ast', f'SCRIPT={args.script}'])
+                continue
             print(f"[*] Processing update for {resolved_name}...")
             
             # Read the absolute latest draft from the meta directory if it exists
