@@ -50,6 +50,14 @@ help:
 
 
 # --- Safety Checks ---
+
+check-script:
+	@if [ -z "$(SCRIPT)" ]; then \
+		echo -e "$(ERROR_COLOR) [!] Error: SCRIPT variable is required. Example: SCRIPT=main.py $(RESET)"; \
+		echo "$(ERROR_COLOR) [!] Error: SCRIPT variable is required. Example: SCRIPT=main.py $(RESET)"; \
+		exit 1; \
+	fi
+
 check-prompt:
 	@if [ -z "$(PROMPT)" ] && [ -z "$(PROMPT64)" ]; then \
 		echo -e "$(ERROR_COLOR) [!] Error: PROMPT or PROMPT64 variable is required. $(RESET)"; \
@@ -64,7 +72,7 @@ microtask: check-script check-prompt $(ARCHER_FILE)
 	@echo -e "$(STAGE3_COLOR) [STAGE 3] Executing Microtasks...        $(RESET)"
 	@echo -e "$(STAGE3_COLOR) ======================================== $(RESET)"
 	@if [ -n "$(PROMPT64)" ]; then \
-		python microtasker.py --script $(SCRIPT) --prompt64 "$(PROMPT64)" --host $(HOST) --port $(PORT) $(DEBUG_FLAG); \
+		python microtasker.py --script "$(SCRIPT)" --prompt64 "$(PROMPT64)" --host $(HOST) --port $(PORT) $(DEBUG_FLAG); \
 	else \
 		python microtasker.py --script $(SCRIPT) --prompt "$(PROMPT)" --host $(HOST) --port $(PORT) $(DEBUG_FLAG); \
 	fi
