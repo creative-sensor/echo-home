@@ -10,6 +10,9 @@ import yaml
 import threading
 from prompt_toolkit import PromptSession
 from prompt_toolkit.styles import Style
+from prompt_toolkit.history import FileHistory
+from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
+from prompt_toolkit.completion import WordCompleter
 from typing import Optional, Tuple
 # ---- GLOBAL.end ----
 
@@ -208,7 +211,12 @@ def main():
         safe_print(f'✅ Ready: {MODEL_NAME}')
 
     # Prompt toolkit UI setup
-    promptia_session = PromptSession()
+    HISTORY_FILE = ".singletron.py.history"
+    promptia_session = PromptSession(
+        history=FileHistory(os.path.join("./", HISTORY_FILE)),
+        auto_suggest=AutoSuggestFromHistory(),
+        completer=WordCompleter(['===m','===a','exit'], ignore_case=True)
+    )
     promptia_style = Style.from_dict({'llm': 'bg:#408175 fg:#89D7B7 bold', 'prompt': 'bg:#000000 fg:#89D7B7', 'ws': 'bg:#89D7B7 fg:#89D7B7'})
     
     print(f'==========================================')

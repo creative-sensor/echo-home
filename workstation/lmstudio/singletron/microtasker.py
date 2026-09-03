@@ -9,6 +9,20 @@ import subprocess
 from typing import Optional, Dict, List
 import base64
 
+def build_interface_summary(raw_ast_data: dict) -> str:
+    """Builds a lightweight summary of available module interfaces for the worker agent."""
+    lines = ["\n# Available Module Interfaces (Do NOT recreate these, use them if needed):"]
+    dataflow = raw_ast_data.get('Architecture', {}).get('dataflow', {})
+    
+    for comp_name, data in dataflow.items():
+        if comp_name == 'MODULE': continue
+        in_args = data.get('in', [])
+        in_str = f"[{', '.join(in_args)}]" if isinstance(in_args, list) else str(in_args)
+        out_val = data.get('out', 'None')
+        lines.append(f"- {comp_name}(in: {in_str}) -> {out_val}")
+        
+    return "\n".join(lines) if len(lines) > 1 else ""
+
 # ---------------------------------------------------------
 # PyYAML Configuration (Preserve Multiline Strings as | )
 # ---------------------------------------------------------
@@ -224,11 +238,12 @@ def compose_microtasks_with_llm(host: str, port: int, report_content: str, user_
         "Your goal is to analyze the user intent and determine exactly which components within this module need to be modified.\n\n"
         "RULES:\n"
         "1. Pick the exact component names from the Architecture Report (e.g., function names, class names, or 'Workflow') that must be changed to meet the user's intent.\n"
-        "2. For each component you pick, output the directions STRICTLY in the following Markdown format. Do not add any conversational text outside of this structure:\n\n"
+        "2. IMPORTANT: If you need to modify a method inside a class, you MUST target the entire parent Class name (e.g., target `Note` instead of `Note.to_dict`). Do NOT target individual methods.\n"
+        "3. For each component you pick, output the directions STRICTLY in the following Markdown format. Do not add any conversational text outside of this structure:\n\n"
         "### <component_name>\n"
         "- **Change requirement**: <detailed objective and expected inputs/outputs>\n"
         "- **Implementation Hints**: <tailored hints for the component>\n"
-    )
+    ) 
 
     user_prompt = f"---\n{report_content}\n---\n# User intent\n{user_request}\n---"
 
@@ -312,7 +327,7 @@ def model_name(host: str, ports: str, endpoint: str) -> Optional[str]:
         print(f"\n❌ ERROR connecting to LLM: {e}")
     return None
 
-def execute_worker_agent(host: str, port: int, micro_report_md: str, debug: bool = False) -> str:
+def execute_worker_agent(host: str, port: int, micro_report_md: str, interface_summary: str, debug: bool = False) -> str:
     """Executes code changes strictly returning code."""
     endpoint = f"http://{host}:{port}/v1/chat/completions"
     
@@ -324,13 +339,15 @@ def execute_worker_agent(host: str, port: int, micro_report_md: str, debug: bool
         "1. Output ONLY the fully updated Python code enclosed in a ```python ... ``` markdown block.\n"
         "2. Do NOT include explanations, introductions, conversational filler, or any other text.\n"
         "3. Maintain original indentation and syntax as closely as possible.\n"
+        "4. STRICT SCOPE: Modify ONLY the provided component. DO NOT define new classes or functions outside of it. (Internal inner-functions or imports are allowed).\n"
+        "5. REUSE: Review the 'Available Module Interfaces' in the prompt and use them instead of duplicating work.\n"
     )
 
     payload = {
         "model": "gemma", 
         "messages": [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": micro_report_md}
+            {"role": "user", "content": micro_report_md + interface_summary}
         ],
         "temperature": 0.1,
         "max_tokens": 4096
@@ -348,7 +365,7 @@ def execute_worker_agent(host: str, port: int, micro_report_md: str, debug: bool
         print(f"       [!] Worker LLM Error: {e}")
         return ""
 
-def execute_module_body_agent(host: str, port: int, micro_report_md: str, debug: bool = False) -> str:
+def execute_module_body_agent(host: str, port: int, micro_report_md: str, interface_summary: str, debug: bool = False) -> str:
     """Dedicated micro-agent explicitly for handling modifications to the top-level Module body."""
     endpoint = f"http://{host}:{port}/v1/chat/completions"
     
@@ -359,13 +376,14 @@ def execute_module_body_agent(host: str, port: int, micro_report_md: str, debug:
         "RULES:\n"
         "1. Output ONLY the fully updated Python code enclosed in a ```python ... ``` markdown block.\n"
         "2. Do NOT include explanations, introductions, conversational filler, or any other text.\n"
+        "3. STRICT SCOPE: DO NOT define new classes or functions in the module body. Stick to procedural logic, globals, and imports.\n"
     )
 
     payload = {
         "model": "gemma", 
         "messages": [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": micro_report_md}
+            {"role": "user", "content": micro_report_md + interface_summary}
         ],
         "temperature": 0.1,
         "max_tokens": 4096
@@ -414,7 +432,12 @@ def get_component_code(raw_ast_data: dict, comp_name: str, script_path: str, met
     else:
         funcs = raw_ast_data.get('FunctionDef', {})
         classes = raw_ast_data.get('ClassDef', {})
-        
+
+        if '.' in comp_name:
+            parent_class = comp_name.split('.')[0]
+            if parent_class in classes:
+                comp_name = parent_class
+                resolved_name = parent_class 
         if comp_name in funcs:
             comp_type = 'FunctionDef'
             base_code = get_body_lines(script_path, funcs[comp_name].get('lineno', 0), funcs[comp_name].get('end_lineno', 0))
@@ -523,8 +546,10 @@ def main():
 
     iteration = 1
     max_iterations = 4
-    max_worker_retries = 3
+    max_worker_retries = 2
 
+
+    interface_summary = build_interface_summary(raw_ast_data)
     # The Deterministic Feedback Loop
     while tasks and iteration <= max_iterations:
         print(f"\n[*] Execution Cycle {iteration} | Targeting {len(tasks)} components...")
@@ -543,10 +568,10 @@ def main():
             # Retry loop for worker agent execution
             for attempt in range(1, max_worker_retries + 1):
                 if comp_type == 'Module':
-                    updated_code = execute_module_body_agent(args.host, worker_port, micro_report_md, args.debug)
+                    updated_code = execute_module_body_agent(args.host, worker_port, micro_report_md, interface_summary, args.debug)
                     target_path = os.path.join(meta_dir, f"Module.{module_name}")
                 else:
-                    updated_code = execute_worker_agent(args.host, worker_port, micro_report_md, args.debug)
+                    updated_code = execute_worker_agent(args.host, worker_port, micro_report_md, interface_summary, args.debug)
                     target_path = os.path.join(meta_dir, f"{comp_type}.{resolved_name}")
                 
                 if updated_code:

@@ -8,6 +8,9 @@ import sys
 import requests
 from prompt_toolkit import PromptSession
 from prompt_toolkit.styles import Style
+from prompt_toolkit.history import FileHistory
+from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
+from prompt_toolkit.completion import WordCompleter
 from typing import Optional, Dict, List
 import threading
 # ---- GLOBAL.end ----
@@ -40,9 +43,14 @@ def main():
     args = parser.parse_args()
     base_filename = os.path.basename(args.script)
     MODEL_NAME = model_name(args.host, args.port, endpoint='/models')
+    HISTORY_FILE = ".singletron.py.history"
     if MODEL_NAME:
         safe_print(f'✅ Ready: {MODEL_NAME}')
-    promptia_session = PromptSession()
+    promptia_session = PromptSession(
+        history=FileHistory(os.path.join("./", HISTORY_FILE)),
+        auto_suggest=AutoSuggestFromHistory(),
+        completer=WordCompleter(['===m'], ignore_case=True)
+    )
     promptia_style = Style.from_dict({'llm': 'bg:#408175 fg:#89D7B7 bold', 'prompt': 'bg:#000000 fg:#89D7B7', 'ws': 'bg:#89D7B7 fg:#89D7B7'})
     print(f'==========================================')
     print(f' Singletron Interactive Shell')
