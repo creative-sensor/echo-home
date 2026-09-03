@@ -7,6 +7,29 @@ import requests
 import shlex
 import base64
 import re
+import sys
+import threading
+import queue
+
+def get_input_with_timeout(prompt: str, timeout: int) -> str:
+    """Gets user input with a timeout, returning an empty string if it expires."""
+    print(prompt, end='', flush=True)
+    q = queue.Queue()
+    
+    def read_input():
+        try:
+            q.put(sys.stdin.readline().strip())
+        except Exception:
+            pass
+
+    t = threading.Thread(target=read_input, daemon=True)
+    t.start()
+    
+    try:
+        return q.get(timeout=timeout)
+    except queue.Empty:
+        print("\n[*] Timeout reached.")
+        return ""
 
 def get_or_create_test_args(script_path: str, meta_dir: str) -> str:
     """Retrieves the cached test arguments or prompts the user after checking --help."""
@@ -92,7 +115,9 @@ def main():
     archer_file = os.path.join(meta_dir, "archer.yaml")
     
     test_args = get_or_create_test_args(script_path, meta_dir)
-    
+    if "!NOTEST!" in test_args:
+        print("\n[*] '!NOTEST!' flag detected. Skipping testing loop.")
+        return
     # Construct the full execution command dynamically
     parsed_cmd = ["python", script_path]
     if test_args:
@@ -100,10 +125,25 @@ def main():
         
     test_cmd_display = " ".join(parsed_cmd)
 
+
     max_iterations = 3
     iteration = 1
 
-    while iteration <= max_iterations:
+    # --- UPDATED LOOP STRUCTURE ---
+    while True:
+        if iteration > max_iterations:
+            print("\n[!] Reached maximum TDD iterations.")
+            choice = get_input_with_timeout("Type r to reset for 3 more cycles or leave empty for default timeout: ", 30)
+            if choice.lower() == 'r':
+                print("\n[*] Resetting to cycle 1...")
+                iteration = 1
+            else:
+                break
+        choice = get_input_with_timeout("Type c to cancel TDD loop immediately or leave empty for default timeout: ", 15)
+        if choice.lower() == 'c':
+            print("[*] Exiting loop as requested.")
+            break
+
         print(f"\n\033[1;30;44m [TDD CYCLE {iteration}/{max_iterations}] Executing Test... \033[0m")
         print(f"[*] Running: {test_cmd_display}")
         
