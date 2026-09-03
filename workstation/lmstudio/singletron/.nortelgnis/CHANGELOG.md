@@ -2,6 +2,14 @@
 
 
 
+## [2.0] -
+
+- fix ClassDef disorder after merge
+- prevent worker duplicate work on dependent components
+- comply with `__main__`
+- enhance prompt session with history and autocomplete
+- TDD cycle reset and intervention timeout
+
 ## [1.0] - 2026-08-29
 
 - First release: TDD cycle enriches context
