@@ -546,7 +546,7 @@ def main():
 
     iteration = 1
     max_iterations = 4
-    max_worker_retries = 3
+    max_worker_retries = 2
 
 
     interface_summary = build_interface_summary(raw_ast_data)

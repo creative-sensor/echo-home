@@ -133,13 +133,13 @@ def main():
     while True:
         if iteration > max_iterations:
             print("\n[!] Reached maximum TDD iterations.")
-            choice = get_input_with_timeout("Type r to reset for 3 more cycles or leave empty for default timeout: ", 30)
+            choice = get_input_with_timeout("Type r to reset for 3 more cycles or enter to ignore: ", 30)
             if choice.lower() == 'r':
                 print("\n[*] Resetting to cycle 1...")
                 iteration = 1
             else:
                 break
-        choice = get_input_with_timeout("Type c to cancel TDD loop immediately or leave empty for default timeout: ", 15)
+        choice = get_input_with_timeout("Type c to cancel TDD loop immediately or enter to continue: ", 15)
         if choice.lower() == 'c':
             print("[*] Exiting loop as requested.")
             break
