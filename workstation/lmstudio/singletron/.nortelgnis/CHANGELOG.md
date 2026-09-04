@@ -2,7 +2,7 @@
 
 
 
-## [2.6] -
+## [2.8] -
 
 - fix ClassDef disorder after merge
 - prevent worker duplicate work on dependent components
@@ -11,6 +11,9 @@
 - TDD cycle reset and intervention timeout
 
 - prompt64 for inspector 
+
+- skip test.args during ast merge
+- increase max token for worker loop
 
 ## [1.0] - 2026-08-29
 

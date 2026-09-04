@@ -350,7 +350,7 @@ def execute_worker_agent(host: str, port: int, micro_report_md: str, interface_s
             {"role": "user", "content": micro_report_md + interface_summary}
         ],
         "temperature": 0.1,
-        "max_tokens": 4096
+        "max_tokens": 8192
     }
 
     try:
@@ -386,7 +386,7 @@ def execute_module_body_agent(host: str, port: int, micro_report_md: str, interf
             {"role": "user", "content": micro_report_md + interface_summary}
         ],
         "temperature": 0.1,
-        "max_tokens": 4096
+        "max_tokens": 8192
     }
 
     try:

@@ -111,7 +111,7 @@ def main():
     # 3. Override with updated Functions and Classes
     for comp_file in glob.glob(os.path.join(meta_dir, "*.*")):
         filename = os.path.basename(comp_file)
-        if filename.startswith("Module.") or filename.endswith(".yaml"):
+        if filename.startswith("test.") or filename.startswith("Module.") or filename.endswith(".yaml"):
             continue
             
         with open(comp_file, 'r', encoding='utf-8') as f:
