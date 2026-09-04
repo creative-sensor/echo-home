@@ -104,11 +104,30 @@ def evaluate_execution_with_llm(host: str, port: str, prompt: str, stdout: str, 
 def main():
     parser = argparse.ArgumentParser(description="TDD Loop Inspector")
     parser.add_argument('--script', type=str, required=True, help='Path to the target Python script')
-    parser.add_argument('--prompt', type=str, required=True, help='Original user intent/request')
+    
+    # Make prompt optional and add prompt64
+    parser.add_argument('--prompt', type=str, help='Original user intent/request')
+    parser.add_argument('--prompt64', type=str, help='Base64 encoded user intent')
+    
     parser.add_argument('--host', type=str, default='localhost', help='Host for the local LLM API')
     parser.add_argument('--port', type=str, default='8080', help='Port(s) for the local LLM API')
     parser.add_argument('--debug', action='store_true', help='Print verbose outputs')
     args = parser.parse_args()
+
+    # Ensure at least one prompt is provided
+    if not args.prompt and not args.prompt64:
+        parser.error("Either --prompt or --prompt64 must be provided.")
+
+    # Decode base64 prompt if provided, otherwise use standard prompt
+    if args.prompt64:
+        try:
+            user_prompt = base64.b64decode(args.prompt64).decode('utf-8')
+        except Exception as e:
+            print(f"[!] Error decoding --prompt64: {e}")
+            sys.exit(1)
+    else:
+        user_prompt = args.prompt
+
 
     script_path = os.path.abspath(args.script)
     meta_dir = os.path.join(os.path.dirname(script_path), f".{os.path.basename(script_path)}")
@@ -143,7 +162,16 @@ def main():
         if choice.lower() == 'c':
             print("[*] Exiting loop as requested.")
             break
-
+        test_args = get_or_create_test_args(script_path, meta_dir)
+        if "!NOTEST!" in test_args:
+            print("\n[*] '!NOTEST!' flag detected. Skipping testing loop.")
+            return
+        # Construct the full execution command dynamically
+        parsed_cmd = ["python", script_path]
+        if test_args:
+            parsed_cmd.extend(shlex.split(test_args))
+            
+        test_cmd_display = " ".join(parsed_cmd)
         print(f"\n\033[1;30;44m [TDD CYCLE {iteration}/{max_iterations}] Executing Test... \033[0m")
         print(f"[*] Running: {test_cmd_display}")
         
@@ -158,9 +186,9 @@ def main():
                 archer_data = yaml.safe_load(f) or {}
 
         evaluation_result = evaluate_execution_with_llm(
-            args.host, args.port, args.prompt, result.stdout, result.stderr, archer_data, args.debug
+            args.host, args.port, user_prompt, result.stdout, result.stderr, archer_data, args.debug
         )
-        print(evaluation_result) 
+        print(f"\n\033[1;30;44m{evaluation_result}\033[0m") 
         if "APPROVED" in evaluation_result.upper() and not evaluation_result.startswith("ERROR:"):
             print("\n\033[1;37;42m [✓] Inspector LLM Approved: Execution meets user intent! \033[0m")
             break

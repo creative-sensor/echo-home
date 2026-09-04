@@ -123,7 +123,7 @@ inspect: check-script check-prompt
 	@echo -e "$(STAGE5_COLOR) ======================================== $(RESET)"
 	@echo -e "$(STAGE5_COLOR) [STAGE 5] Inspecting Execution...        $(RESET)"
 	@echo -e "$(STAGE5_COLOR) ======================================== $(RESET)"
-	python inspector.py --script $(SCRIPT) --prompt "$(PROMPT)" --host $(HOST) --port $(PORT) $(DEBUG_FLAG)
+	python inspector.py --script $(SCRIPT) --prompt64 "$(PROMPT64)" --host $(HOST) --port $(PORT) $(DEBUG_FLAG)
 
 
 

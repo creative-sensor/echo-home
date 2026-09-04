@@ -13,6 +13,7 @@ from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.completion import WordCompleter
 from typing import Optional, Dict, List
 import threading
+import base64
 # ---- GLOBAL.end ----
 
 # ---- DEFINITIONS (Classes & Functions) ----
@@ -62,12 +63,13 @@ def main():
     while True:
         try:
             user_input = promptia_session.prompt([('class:llm', ' SINGLETRON '), ('class:prompt', f' {base_filename} '), ('class:ws', ' ')], multiline=True, style=promptia_style).strip()
+            prompt64 = base64.b64encode(user_input.encode('utf-8')).decode('utf-8')
             if not user_input:
                 continue
             if user_input.lower() in ('exit', 'quit'):
                 print('Exiting vibe shell.')
                 break
-            cmd = ['make', 'run', f'SCRIPT={args.script}', f'PROMPT={user_input}', f'HOST={args.host}', f'PORT={args.port}']
+            cmd = ['make', 'run', f'SCRIPT={args.script}', f'PROMPT64={prompt64}', f'HOST={args.host}', f'PORT={args.port}']
             if args.debug:
                 cmd.append('DEBUG=true')
 

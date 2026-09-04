@@ -2,13 +2,15 @@
 
 
 
-## [2.0] -
+## [2.6] -
 
 - fix ClassDef disorder after merge
 - prevent worker duplicate work on dependent components
 - comply with `__main__`
 - enhance prompt session with history and autocomplete
 - TDD cycle reset and intervention timeout
+
+- prompt64 for inspector 
 
 ## [1.0] - 2026-08-29
 
