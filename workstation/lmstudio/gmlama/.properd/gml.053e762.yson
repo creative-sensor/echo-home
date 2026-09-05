@@ -117,3 +117,29 @@ lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-e2b-it-Q8_0.gguf: ["Agent8900" , 
 empero-ai/Qwen3.8-9B-Distill-GGUF/Qwen3.8-9B-Q8_0.gguf: ["Agent8907" , " -c 8192 -ctk q8_0 -ctv q8_0 -fa on --port 8907"]
 ---
 
+# --------
+lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-e4b-it-Q8_0.gguf: ["E/Agent" , "-b 2048 -ub 2048 -c 8192 -ctk q8_0 -ctv q8_0 -fa on --embeddings --pooling mean"]
+#
+#
+#
+#
+#
+#
+#
+google/gemma-4-12B-it-qat-q4_0-gguf/gemma-4-12b-it-qat-q4_0.gguf: ["Agent8088" , "-c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8088 --repeat-penalty 1.09 --repeat-last-n 128"]
+#
+#
+#
+#
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-e2b-it-Q8_0.gguf: ["Agent8900" , " -c 8192 -ctk q8_0 -ctv q8_0 -fa on --port 8900 --embeddings --pooling mean"]
+#
+#
+#
+#
+#
+#
+empero-ai/Qwen3.8-9B-Distill-GGUF/Qwen3.8-9B-Q8_0.gguf: ["Agent8907" , " -c 8192 -ctk q8_0 -ctv q8_0 -fa on --port 8907"]
+google/gemma-4-E2B-it-qat-q4_0-gguf/gemma-4-E2B_q4_0-it.gguf: ["Agent8908" , "-b 4096 -ub 4096 -c 16384 -ctk q4_0 -ctv q4_0 -fa on --port 8908 --embeddings --pooling mean"]
+google/gemma-4-E4B-it-qat-q4_0-gguf/gemma-4-E4B_q4_0-it.gguf: ["Agent8909" , "-b 2048 -ub 2048 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8909 --embeddings --pooling mean"]
+---
+

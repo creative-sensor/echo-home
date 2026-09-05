@@ -27,6 +27,8 @@
 | 8905  | `Agent8905`/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-Q4_K_M.gguf                             |
 | 8906  | `Agent8906`/Qwen3.6-35B-A3B-Q4_K_M.gguf                                                   |
 | 8907  | `Agent8907`/Qwen3.8-9B-Q8_0.gguf                                                          |
+| 8908  | `Agent8908`/gemma-4-E2B_q4_0-it.gguf                                                      |
+| 8909  | `Agent8909`/gemma-4-E4B_q4_0-it.gguf                                                      |
 | ...   | ...                                                                                       |
 | 8998  |                                                                                           |
 | 8999  | [Service Placeholder]                                                                     |
