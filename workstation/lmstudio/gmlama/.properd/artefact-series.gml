@@ -22,3 +22,4 @@ empero-ai/Qwen3.8-9B-Distill-GGUF/Qwen3.8-9B-Q8_0.gguf
 google/gemma-4-E2B-it-qat-q4_0-gguf/gemma-4-E2B_q4_0-it.gguf
 google/gemma-4-E4B-it-qat-q4_0-gguf/gemma-4-E4B_q4_0-it.gguf
 ggml-org/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-GGUF/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-Q4_0.gguf: ["GM4D/Agent8908","--rpc $GEMIR:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8908"]
+google/gemma-4-26B-A4B-it-qat-q4_0-gguf/gemma-4-26B_q4_0-it.gguf
