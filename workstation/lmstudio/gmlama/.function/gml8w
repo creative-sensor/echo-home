@@ -30,17 +30,19 @@ fi
 
 
 
-test -n "$GML_DEV" && GML_DEV="-dev $GML_DEV"
 gml_line=$(sed -n ${MODEL_ID}p < $GML_YSON)
 gml_describe=$(echo "$gml_line" | yq 'to_entries  | .[0].value[0]')
 gml_params=$(echo "$gml_line" | yq 'to_entries  | .[0].value[1]' | envsubst | sed -E 's/([A-Z]):\\/\/\L\1\//g' | sed 's,\\,\/,g')
 llamacpp_version=$(echo "$gml_line" | yq 'to_entries  | .[0].value[2]')
+gml_dev=$(echo "$gml_line" | yq 'to_entries  | .[0].value[3]' | envsubst | sed -E 's/([A-Z]):\\/\/\L\1\//g' | sed 's,\\,\/,g')
 gml_model=$(echo $gml_line | yq keys[])
 
+test -n "$GML_DEV" && gpu_dev="-dev $GML_DEV"
+[[ "$gml_dev" =~ 'null' ]] || gpu_dev="-dev $gml_dev"
 [[ "$llamacpp_version" =~ 'null' ]] && unset llamacpp_version
 if echo $gml_describe | grep -q '^GPU/' ; then
     set -x
-    cd $LOCAL_BIN/gmlama-vulkan/${llamacpp_version} ; ./llama-server -m $GMLBASE/$gml_model $gml_params $GML_DEV
+    cd $LOCAL_BIN/gmlama-vulkan/${llamacpp_version} ; ./llama-server -m $GMLBASE/$gml_model $gml_params $gpu_dev
     exit 1   
 fi
 set -x

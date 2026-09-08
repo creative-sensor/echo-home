@@ -1,5 +1,14 @@
 #!/bin/bash
 
 SEARCH_STR=$1
-cd $LOCAL_BIN/gmlama-vulkan &&
-  ./llama-cli.exe --list-devices 2>/dev/null | awk -F ":" "/$SEARCH_STR/ {print \$1}" | sed 's/ \+//g'
+
+cd "$LOCAL_BIN/gmlama-vulkan" || exit 1
+
+test -z "$SEARCH_STR" && ./llama-server --list-devices && exit 1
+
+./llama-cli.exe --list-devices 2>/dev/null | \
+  grep -Ei "$SEARCH_STR" | \
+  cut -d':' -f1 | \
+  tr -d '[:blank:]' | \
+  paste -sd "," -
+
