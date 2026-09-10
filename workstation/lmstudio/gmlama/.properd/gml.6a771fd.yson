@@ -201,3 +201,38 @@ lmstudio-community/Qwen3.6-35B-A3B-GGUF/Qwen3.6-35B-A3B-Q4_K_M.gguf: ["GM4D/Agen
 
 
 
+# --------
+#
+#
+lmstudio-community/gemma-4-26B-A4B-it-GGUF/gemma-4-26B-A4B-it-Q4_K_M.gguf: ["GM4D/Agent8082","--rpc $GEMIR:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8082"]
+#
+#
+#
+lmstudio-community/gemma-4-31B-it-QAT-GGUF/gemma-4-31B-it-QAT-Q4_0.gguf: ["GM4D/Agent8086" , " --rpc $GEMIR:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0    -ngl all --port 8086  -sm layer -ts 25,35  -fit off "]
+lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/gemma-4-26B-A4B-it-QAT-Q4_0.gguf: ["GM4D/Agent8087" , "--rpc $GEMIR:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0  --repeat-penalty 1.1 --repeat-last-n 4096 -ngl all --port 8087 -sm layer -ts 10,20  -fit off" ]
+#
+lmstudio-community/gemma-4-E4B-it-QAT-GGUF/gemma-4-E4B-it-QAT-Q4_0.gguf: ["Agent8089" , "-b 2048 -ub 2048 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8089 --embeddings --pooling mean"]
+lmstudio-community/gemma-4-E2B-it-QAT-GGUF/gemma-4-E2B-it-QAT-Q4_0.gguf: ["Agent8090" , "-b 4096 -ub 4096 -c 16384 -ctk q4_0 -ctv q4_0 -fa on --port 8090 --embeddings --pooling mean"]
+#
+#
+#
+#
+lmstudio-community/Qwen3.6-35B-A3B-GGUF/Qwen3.6-35B-A3B-Q4_K_M.gguf: ["GM4D/Agent8906","--rpc $GEMIR:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8906"]
+#
+ggml-org/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-GGUF/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-Q4_0.gguf: ["GM4D/Agent8910","--rpc $GEMIR:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8910"]
+#
+#
+#
+#
+#
+#
+#
+---
+# ---- TEST ----
+lmstudio-community/gemma-4-31B-it-QAT-GGUF/gemma-4-31B-it-QAT-Q4_0.gguf: ["GM4D/Agent8086", "--rpc $GEMIR:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8086"]
+lmstudio-community/gemma-4-31B-it-QAT-GGUF/gemma-4-31B-it-QAT-Q4_0.gguf: ["GM4D/Agent8086" , " --rpc $GEMIR:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0    -ngl all --port 8086  -sm row -ts 25,35  -fit off "] ####: 5tps
+lmstudio-community/gemma-4-31B-it-QAT-GGUF/gemma-4-31B-it-QAT-Q4_0.gguf: ["GM4D/Agent8086" , " --rpc $GEMIR:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0    -ngl all --port 8086  -sm layer -ts 25,35  -fit off "] ####: 5tps 
+lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/gemma-4-26B-A4B-it-QAT-Q4_0.gguf: ["GM4D/Agent8087" , "--rpc $GEMIR:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0  --repeat-penalty 1.1 --repeat-last-n 4096 -ngl all --port 8087 -sm layer -ts 10,20  -fit off" ] ####: 18tps"
+lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/gemma-4-26B-A4B-it-QAT-Q4_0.gguf: ["GM4D/Agent8087" , "--rpc $GEMIR:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0  -ngl all --port 8087 -sm row -ts 7,23  -fit off" ] ####: 18tps"
+lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/gemma-4-26B-A4B-it-QAT-Q4_0.gguf: ["GM4D/Agent8087" , "--rpc $GEMIR:50052 -dev mtl0,rpc0 -c 8192 -ctk q4_0 -ctv q4_0 --repeat-penalty 1.1 --repeat-last-n 4096 -ngl all --port 8087 -sm layer -ts 5,25  -fit off" ] ####: 
+# ---- TEST.end ----
