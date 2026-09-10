@@ -12,6 +12,7 @@ mkdir -p ~/.lmstudio/gml-logi
 test "$OS" == "Windows_NT" && 
     unzip -o artefacts/llama-${VERSION}-bin-win-cpu-x64.zip -d $LOCAL_BIN/gmlama/$PINNED_VERSION &&
     unzip -o artefacts/llama-${VERSION}-bin-win-vulkan-x64.zip -d $LOCAL_BIN/gmlama-vulkan/$PINNED_VERSION 
+    unzip -o artefacts/llama-${VERSION}-bin-win-cuda-$CUDA_VERSION-x64.zip -d $LOCAL_BIN/gmlama-cuda/$PINNED_VERSION 
    
 if test -d /boot/efi || test -d /mnt/chromeos ; then
     tar -xzf artefacts/llama-${VERSION}-bin-ubuntu-x64.tar.gz -C $LOCAL_BIN/ &&

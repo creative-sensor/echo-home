@@ -3,6 +3,7 @@ MODEL_ID=$1
 GMLBASE=${GMLBASE:-~/.lmstudio/models}
 PROPERD=~/echo-home/workstation/lmstudio/gmlama/.properd
 GML_YSON=$PROPERD/gml.${HOSTNAME}.yson
+GPU_TYPE=vulkan
 
 
 
@@ -38,11 +39,17 @@ gml_dev=$(echo "$gml_line" | yq 'to_entries  | .[0].value[3]' | envsubst | sed -
 gml_model=$(echo $gml_line | yq keys[])
 
 test -n "$GML_DEV" && gpu_dev="-dev $GML_DEV"
-[[ "$gml_dev" =~ 'null' ]] || gpu_dev="-dev $gml_dev"
+if ! [[ "$gml_dev" =~ 'null' ]] ; then
+    gpu_dev="-dev $gml_dev"
+    GML_DEV=$gml_dev
+fi
 [[ "$llamacpp_version" =~ 'null' ]] && unset llamacpp_version
 if echo $gml_describe | grep -q '^GPU/' ; then
+    if gmlvk-dev | grep -i "  $GML_DEV: NVIDIA" ; then
+        GPU_TYPE=CUDA
+    fi
     set -x
-    cd $LOCAL_BIN/gmlama-vulkan/${llamacpp_version} ; ./llama-server -m $GMLBASE/$gml_model $gml_params $gpu_dev
+    cd $LOCAL_BIN/gmlama-$GPU_TYPE/${llamacpp_version} ; ./llama-server -m $GMLBASE/$gml_model $gml_params $gpu_dev
     exit 1   
 fi
 set -x
