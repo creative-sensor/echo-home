@@ -15,6 +15,10 @@ from typing import Optional, Dict, List, Callable, Tuple
 from openai import OpenAI
 from prompt_toolkit import PromptSession
 from prompt_toolkit.styles import Style
+from prompt_toolkit.history import FileHistory
+from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
+from prompt_toolkit.completion import WordCompleter
+
 
 try:
     import chromadb
@@ -114,6 +118,7 @@ def get_model_name(host: str, port: int, endpoint: str) -> Optional[str]:
     return None
 
 MODEL_NAME = get_model_name(args.host, args.port, endpoint="/models")
+HISTORY_FILE = ".memphia.py.history"
 
 # ==========================================
 # 2. UVIAN MEMORY MANAGER (TEXT SEARCH & LLM SELECTION)
@@ -645,7 +650,11 @@ if __name__ == "__main__":
         
     print("🚀 Memphia Agentic Loop Initialized. Type 'exit' to quit.")
     print(f"🖥️  Detected System: {get_os_env_context()}")
-    promptia_session = PromptSession()
+    promptia_session = PromptSession(
+        history=FileHistory(os.path.join("./", HISTORY_FILE)),
+        auto_suggest=AutoSuggestFromHistory(),
+        completer=WordCompleter(['===m'], ignore_case=True)
+    )
     promptia_style = Style.from_dict({
         'llm': 'bg:#c4c408 fg:#000000 bold',
         'prompt': 'bg:#000000 fg:#c4c408',
