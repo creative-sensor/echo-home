@@ -12,6 +12,7 @@
 - [datum/2026/WIP/CORTA-21.md](datum/2026/WIP/CORTA-21.md)   ```# vllm : library```
 - [datum/2026/WIP/CORTA-34.md](datum/2026/WIP/CORTA-34.md)   ```# lmsh : hemisphere```
 - [datum/2026/WIP/CORTA-41.md](datum/2026/WIP/CORTA-41.md)   ```# singletron : inspector```
+- [datum/2026/WIP/CORTA-42.md](datum/2026/WIP/CORTA-42.md)   ```# singletron : design mode```
 - [datum/2026/WIP/VIM-31.md](datum/2026/WIP/VIM-31.md)   ```# vimpage : vllm```
 
 ### 2 ON HOLD
