@@ -2,7 +2,7 @@
 
 
 
-## [2.8] -
+## [2.10] -
 
 - fix ClassDef disorder after merge
 - prevent worker duplicate work on dependent components
@@ -14,6 +14,9 @@
 
 - skip test.args during ast merge
 - increase max token for worker loop
+
+- feature writer for inspector
+- design mode: work with Head architect
 
 ## [1.0] - 2026-08-29
 
