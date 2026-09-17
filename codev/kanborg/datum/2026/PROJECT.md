@@ -32,4 +32,5 @@ AIVE : {"description":"AI Vertex Eyes","last_id":0,"related":""}
 ADOBE : {"description":"Adobe house","last_id":1,"related":""}
 WGI : {"description":"Web Graphic Interface","last_id":0,"related":""}
 GGPU : {"description":"Graphics Processing and Gaming","last_id":7,"related":""}
+MEMR : {"description":"Memory Slot","last_id":1,"related":""}
 ```

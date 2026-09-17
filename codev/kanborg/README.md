@@ -13,6 +13,7 @@
 - [datum/2026/WIP/CORTA-34.md](datum/2026/WIP/CORTA-34.md)   ```# lmsh : hemisphere```
 - [datum/2026/WIP/CORTA-41.md](datum/2026/WIP/CORTA-41.md)   ```# singletron : inspector```
 - [datum/2026/WIP/CORTA-42.md](datum/2026/WIP/CORTA-42.md)   ```# singletron : design mode```
+- [datum/2026/WIP/MEMR-1.md](datum/2026/WIP/MEMR-1.md)   ```# llamark : prompt memory```
 - [datum/2026/WIP/VIM-31.md](datum/2026/WIP/VIM-31.md)   ```# vimpage : vllm```
 
 ### 2 ON HOLD
@@ -173,6 +174,7 @@
 - [datum/2026/BACKLOG/KUBEX-0.md](datum/2026/BACKLOG/KUBEX-0.md)   ```# Kubernetes : Cluster```
 - [datum/2026/BACKLOG/LEAF-0.md](datum/2026/BACKLOG/LEAF-0.md)   ```# Leaf : misc```
 - [datum/2026/BACKLOG/MDOS-0.md](datum/2026/BACKLOG/MDOS-0.md)   ```# MICROSOFT : WINDOWS```
+- [datum/2026/BACKLOG/MEMR-0.md](datum/2026/BACKLOG/MEMR-0.md)   ```# Memory : Bank```
 - [datum/2026/BACKLOG/MONO-0.md](datum/2026/BACKLOG/MONO-0.md)   ```# Mono : lithium```
 - [datum/2026/BACKLOG/NCEPT-0.md](datum/2026/BACKLOG/NCEPT-0.md)   ```# CONCEPT : Fractual system```
 - [datum/2026/BACKLOG/NCEPT-1.md](datum/2026/BACKLOG/NCEPT-1.md)   ```# SHORT-GUN : CODE```
