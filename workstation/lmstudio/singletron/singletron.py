@@ -163,7 +163,7 @@ def summarize_design_plan(history: List[dict], host: str, port: str) -> str:
     }
     
     try:
-        response = requests.post(endpoint, json=payload, timeout=120)
+        response = requests.post(endpoint, json=payload, timeout=600)
         response.raise_for_status()
         return response.json()['choices'][0]['message']['content'].strip()
     except Exception as e:
