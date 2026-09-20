@@ -36,6 +36,7 @@
 - [datum/2026/TODO/ASML-3.md](datum/2026/TODO/ASML-3.md)   ```# Agentic : Workflows```
 - [datum/2026/TODO/ASML-4.md](datum/2026/TODO/ASML-4.md)   ```# Foldable : DNS```
 - [datum/2026/TODO/ASML-5.md](datum/2026/TODO/ASML-5.md)   ```# ptrm : short-range service discovery```
+- [datum/2026/TODO/ASML-6.md](datum/2026/TODO/ASML-6.md)   ```# heada : agent dispatcher```
 - [datum/2026/TODO/CMW-2.md](datum/2026/TODO/CMW-2.md)   ```# commonwealth : vault function```
 - [datum/2026/TODO/CORTA-13.md](datum/2026/TODO/CORTA-13.md)   ```# tinygrad : pytorch distribute```
 - [datum/2026/TODO/CORTA-22.md](datum/2026/TODO/CORTA-22.md)   ```# gemma4 : nvfp4```
