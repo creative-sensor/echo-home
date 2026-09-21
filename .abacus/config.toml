@@ -1,0 +1,83 @@
+version = 2
+default_profile = "8090"
+
+[profiles.8909]
+name = "google/gemma-4-E4B_q4_0-it.gguf"
+base_url = "http://localhost:8909/v1"
+model = "1"
+protocol = "chat-completions"
+allow_fallbacks = true
+
+[profiles.8911]
+name = "google/gemma-4-26B_q4_0-it.gguf"
+base_url = "http://localhost:8911/v1"
+model = "1"
+protocol = "chat-completions"
+allow_fallbacks = true
+
+
+[profiles.8912]
+name = "google/gemma-4-12B_q4_0-it.gguf"
+base_url = "http://localhost:8912/v1"
+model = "1"
+protocol = "chat-completions"
+allow_fallbacks = true
+
+
+[profiles.8913]
+name = "google/gemma-4-31B_q4_0-it.gguf"
+base_url = "http://localhost:8913/v1"
+model = "1"
+protocol = "chat-completions"
+allow_fallbacks = true
+
+
+[profiles.8090]
+name = "gemma-4-E2B-it-QAT-Q4_0.gguf"
+base_url = "http://localhost:8090/v1"
+model = "1"
+protocol = "chat-completions"
+allow_fallbacks = true
+
+[ui]
+permission_mode = "always-approve"
+vim_mode = true
+animations = true
+show_tooltips = true
+theme = "light"
+show_thinking = true
+check_updates = true
+show_token_rate = false
+draft_replies = true
+
+[agent]
+max_steps = 128
+tool_output_limit = 32768
+
+[skills]
+paths = []
+
+[plugins]
+paths = []
+disabled = []
+
+[mcp]
+
+[trust]
+projects = []
+
+[feedback]
+enabled = false
+endpoint = "https://abacus.empero.org/v1/feedback"
+include_diagnostics = false
+
+[activity]
+enabled = false
+endpoint = "https://abacus.empero.org/v1/activity"
+
+[search]
+enabled = true
+backend = "auto"
+
+[trace]
+enabled = true

@@ -51,4 +51,4 @@ zstd: [ 1.5.7 , "https://github.com/facebook/zstd/releases/download/v1.5.7/zstd-
 git: [ 2.55.0 , "https://github.com/git-for-windows/git/releases/download/v2.55.0.windows.1/Git-2.55.0-64-bit.exe", {"suffix":"exe"}]
 fancontrol: [ 271 , "https://github.com/Rem0o/FanControl.Releases/releases/download/V271/FanControl_271_net_10_0_Installer.exe", {"suffix":"exe"}]
 windeskrt: [ 10.0.9 , "https://builds.dotnet.microsoft.com/dotnet/WindowsDesktop/10.0.9/windowsdesktop-runtime-10.0.9-win-x64.exe", {"suffix":"exe"}]
-
+abacus: [ 0.6.1 , "https://github.com/empero-org/abacus/releases/download/v0.6.1/abacus-x86_64-pc-windows-msvc.exe", {"suffix":"exe"}]
