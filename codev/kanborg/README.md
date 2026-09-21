@@ -8,6 +8,7 @@
 - [datum/2026/WIP/APLE-8.md](datum/2026/WIP/APLE-8.md)   ```# macos: ntfs-3g```
 - [datum/2026/WIP/ARTE-20.md](datum/2026/WIP/ARTE-20.md)   ```# uv : package```
 - [datum/2026/WIP/ARTE-21.md](datum/2026/WIP/ARTE-21.md)   ```# node_modules : flattening```
+- [datum/2026/WIP/ARTE-22.md](datum/2026/WIP/ARTE-22.md)   ```# lmsh: abacus```
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
 - [datum/2026/WIP/CORTA-21.md](datum/2026/WIP/CORTA-21.md)   ```# vllm : library```
 - [datum/2026/WIP/CORTA-34.md](datum/2026/WIP/CORTA-34.md)   ```# lmsh : hemisphere```
