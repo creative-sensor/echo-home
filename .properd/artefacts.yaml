@@ -4,4 +4,6 @@ uv: [ 0.11.3 , "https://releases.astral.sh/github/uv/releases/download/0.11.3/uv
 python312: [ 3.12.13 ]
 python314: [ 3.14.3 ] 
 neovide: [ 0.16.2 , "https://github.com/neovide/neovide/releases/download/0.16.2/neovide-linux-x86_64.tar", {"suffix":"tar"} ]
+abacus: [ 0.6.1 , "https://github.com/empero-org/abacus/releases/download/v0.6.1/abacus-x86_64-unknown-linux-gnu", {"suffix":"linux"}]
+pip: [ 3.9 , "https://bootstrap.pypa.io/pip/3.9/get-pip.py" , {"suffix":"py"}]
 
