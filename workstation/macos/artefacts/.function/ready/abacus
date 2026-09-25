@@ -1,0 +1,3 @@
+chmod +x  $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.${ARTIFACT_SUFFIX}
+ln -sf $(readlink -f $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.${ARTIFACT_SUFFIX})  $LOCAL_BIN/${name}
+cp -r ../../.abacus ~/

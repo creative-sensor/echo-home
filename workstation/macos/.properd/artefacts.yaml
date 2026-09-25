@@ -36,3 +36,5 @@ cmake: [ 4.3.1 , "https://github.com/Kitware/CMake/releases/download/v4.3.1/cmak
 gettext: [ 1.0 , "https://ftp.gnu.org/pub/gnu/gettext/gettext-1.0.tar.xz", {"suffix":"tar.xz"}]
 libiconv: [ 1.19 , "https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.19.tar.gz", {"suffix":"tar.gz"}]
 openmpi: [ 5.0.10 , "https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.10.tar.bz2", {"suffix":"tar.bz2"}]
+abacus: [ 0.6.1 , "https://github.com/empero-org/abacus/releases/download/v0.6.1/abacus-aarch64-apple-darwin", {"suffix":"macos"}]
+
