@@ -31,7 +31,6 @@
 - [datum/2026/TODO/ACLS-2.md](datum/2026/TODO/ACLS-2.md)   ```# Haproxy : API access control```
 - [datum/2026/TODO/ADOBE-1.md](datum/2026/TODO/ADOBE-1.md)   ```# colorhunt.co : preset download```
 - [datum/2026/TODO/ARTE-18.md](datum/2026/TODO/ARTE-18.md)   ```# minikube : images```
-- [datum/2026/TODO/ARTE-23.md](datum/2026/TODO/ARTE-23.md)   ```# python : venv shell```
 - [datum/2026/TODO/ARTE-7.md](datum/2026/TODO/ARTE-7.md)   ```# WSL : distro image```
 - [datum/2026/TODO/ASML-1.md](datum/2026/TODO/ASML-1.md)   ```# # SSO : Single Sign-On```
 - [datum/2026/TODO/ASML-2.md](datum/2026/TODO/ASML-2.md)   ```# MLOps : high-level [6]```
@@ -90,6 +89,7 @@
 - [datum/2026/DONE/ARTE-16.md](datum/2026/DONE/ARTE-16.md)   ```# nmap : geti```
 - [datum/2026/DONE/ARTE-17.md](datum/2026/DONE/ARTE-17.md)   ```# llvm : rustc```
 - [datum/2026/DONE/ARTE-19.md](datum/2026/DONE/ARTE-19.md)   ```# rust : cargo```
+- [datum/2026/DONE/ARTE-23.md](datum/2026/DONE/ARTE-23.md)   ```# pythonxnv : venv shell```
 - [datum/2026/DONE/CORTA-10.md](datum/2026/DONE/CORTA-10.md)   ```# gml : profile override by host```
 - [datum/2026/DONE/CORTA-11.md](datum/2026/DONE/CORTA-11.md)   ```# gml8 : custom params```
 - [datum/2026/DONE/CORTA-12.md](datum/2026/DONE/CORTA-12.md)   ```# llama.cpp : specific version```
