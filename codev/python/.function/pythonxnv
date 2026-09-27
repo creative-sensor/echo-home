@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# Define LOCAL_BIN if it is not set, defaulting to the user's specified path
+if [ -z "$LOCAL_BIN" ]; then
+    LOCAL_BIN="~/.local/bin"
+fi
+
+# --- Argument Parsing and Mode Selection ---
+if [ -z "$1" ] && [ -z "$2" ]; then
+    # Mode 3: pythonxnv (List versions)
+    echo "Available Python interpreters in $LOCAL_BIN:"
+    find "$LOCAL_BIN" -type f -executable -not -name "*config*" -name "python*"
+    exit 0
+elif [ -n "$1" ] && [ -z "$2" ]; then
+    # Mode 1: pythonxnv <version> (Use for current folder venv)
+    PYTHON_VERSION=$1
+    VENV_PATH=".venv" # Default to .venv in current folder
+elif [ -n "$1" ] && [ -n "$2" ]; then
+    # Mode 2: pythonxnv <version> <venv_path> (Swap usage)
+    PYTHON_VERSION=$1
+    VENV_PATH=$2
+else
+    echo "Error: Invalid number of arguments provided."
+    echo "Usage:"
+    echo "  pythonxnv                   # List available Python versions"
+    echo "  pythonxnv <version>          # Use version to activate/create .venv in current directory"
+    echo "  pythonxnv <version> <path>  # Use version to create venv at specified path"
+    exit 1
+fi
+
+PYTHON_BIN_DIR="$LOCAL_BIN"
+
+# Check if the Python directory exists
+if [ ! -d "$PYTHON_BIN_DIR" ]; then
+    echo "Error: Python binaries directory $PYTHON_BIN_DIR not found."
+    echo "Please ensure LOCAL_BIN is set and the directory exists."
+    exit 1
+fi
+
+# --- Find All Interpreters ---
+PYTHON_VERSIONS=()
+# Find all unique executable python interpreters
+while IFS= read -r interpreter; do
+    # Ensure the interpreter is not already listed
+    if ! printf "%s\n" "${PYTHON_VERSIONS[@]}" | grep -Fxq "$interpreter"; then
+        PYTHON_VERSIONS+=("$interpreter")
+    fi
+done < <(find "$PYTHON_BIN_DIR" -type f -executable -not -name "*config*" -name "python*")
+
+# --- Find Requested Interpreter ---
+FOUND_PYTHON=""
+for p in "${PYTHON_VERSIONS[@]}"; do
+    if [[ "$p" == *"$PYTHON_VERSION"* ]]; then # Basic string match for version
+        FOUND_PYTHON="$p"
+        break
+    fi
+done
+
+if [ -z "$FOUND_PYTHON" ]; then
+    echo "Error: Python version '$PYTHON_VERSION' not found among available interpreters."
+    echo "Available interpreters:"
+    printf "%s\n" "${PYTHON_VERSIONS[@]}"
+    exit 1
+fi
+
+echo "Using Python interpreter: $FOUND_PYTHON"
+
+# --- Setup Virtual Environment / Activation ---
+if [ -d "$VENV_PATH" ]; then
+    echo "Virtual environment found at $VENV_PATH. Activating..."
+    # Attempt to source activation script (works on Linux/macOS)
+    source "$VENV_PATH/bin/activate" 2>/dev/null
+    if [ $? -ne 0 ]; then
+        echo "Warning: Could not activate environment at $VENV_PATH. Please activate manually."
+        exit 1
+    fi
+else
+    echo "Virtual environment not found at $VENV_PATH. Creating it using $FOUND_PYTHON..."
+    uv venv --python "$FOUND_PYTHON" "$VENV_PATH"
+
+    if [ $? -eq 0 ]; then
+        echo "Successfully created virtual environment at $VENV_PATH."
+        source "$VENV_PATH/bin/activate"
+    else
+        echo "Error creating virtual environment. Ensure $FOUND_PYTHON is executable."
+        exit 1
+    fi
+fi
+python -V
+bash
