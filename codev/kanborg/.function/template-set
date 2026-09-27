@@ -26,6 +26,7 @@ export DONE=$(count "DONE")
 
 # SVG
 cat $DASHBOARD_TEMPLATE | envsubst > $DASHBOARD_SET
+sed -i 's/\r$//' $DASHBOARD_SET
 git add $DASHBOARD_TEMPLATE  $DASHBOARD_SET
 
 # LIST_BACKLOG
@@ -83,4 +84,6 @@ export LIST_DONE=$LIST_DONE
 
 # Issueing README.md
 cat .template/README.md | envsubst > README.md
+git commit -m "Kanborg: carding"
+sed -i 's/\r$//' README.md
 git add README.md
