@@ -1,2 +1,12 @@
 PYTHON_VERSION=$ARTIFACT_VERSION
+rm -rf $LOCAL_BIN/python/$ARTIFACT_VERSION
+rm $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.tar.gz
 uv python install $PYTHON_VERSION    --install-dir $LOCAL_BIN/python/$PYTHON_VERSION
+ARTIFACT_DIR=$(readlink -f $ARTIFACT_DIR)
+cd $LOCAL_BIN
+tar --sort=name \
+    --mtime='2000-01-01' \
+    --owner=0 --group=0 \
+    --numeric-owner \
+    --pax-option=exthdr.name=%d/PaxHeaders/%f,delete=atime,delete=ctime \
+    -czf  $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.tar.gz .
