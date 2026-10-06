@@ -412,6 +412,7 @@ map sua : %sort u<CR>
 map .ys : .!yq -P -I 4<CR>
 vmap b64    \atob<Esc>
 vmap b94    \btoa<Esc>
+vmap mdtb :!column -t -s "\|" -o "\|"<CR>
 
 
 
