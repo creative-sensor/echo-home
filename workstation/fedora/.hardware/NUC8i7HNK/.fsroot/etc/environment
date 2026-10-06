@@ -1,0 +1,8 @@
+
+MUTTER_DEBUG_PRIMARY_DEVICE=/dev/dri/card0
+SHED_DRM_DEVICE=/dev/dri/card0
+
+
+
+
+DRI_PRIME=0
