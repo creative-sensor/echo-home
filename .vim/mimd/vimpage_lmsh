@@ -1,6 +1,6 @@
 "-------- [LMSH] --------
-let LMSH_PORT=8090
-let GML8W_ID=11
+let LMSH_PORT=8080
+let GML8W_ID=1
 function! VimPage_lmsh()
     let l:host_file = expand('~/echo-home/.vim/pages/' . g:hostname . '.lmsh.md')
     let l:default_file = expand('~/echo-home/.vim/pages/lmsh.md')
@@ -38,7 +38,7 @@ function! Lmsh_activate(agent_line)
         if !empty(l:port_from_line) && l:port_from_line !~ '^[[:space:]]+$'
             let l:port_candidate = l:port_from_line
         else
-            let l:port_candidate = 8090
+            let l:port_candidate = 8080
         endif
     endif
     

@@ -1,5 +1,5 @@
 version = 2
-default_profile = "8090"
+default_profile = "8080"
 
 [profiles.8909]
 name = "google/gemma-4-E4B_q4_0-it.gguf"
@@ -35,6 +35,13 @@ allow_fallbacks = true
 [profiles.8090]
 name = "gemma-4-E2B-it-QAT-Q4_0.gguf"
 base_url = "http://localhost:8090/v1"
+model = "1"
+protocol = "chat-completions"
+allow_fallbacks = true
+
+[profiles.8080]
+name = "GML8W-1-GXC"
+base_url = "http://localhost:8080/v1"
 model = "1"
 protocol = "chat-completions"
 allow_fallbacks = true
