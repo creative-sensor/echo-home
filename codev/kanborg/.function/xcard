@@ -44,5 +44,6 @@ CARD=$CYCLE_DIR/BACKLOG/${PROJECT_CODE}-${LAST_ID}.md
 TEMPLATE_CARD=.template/${PROJECT_CODE}.CARD.md
 test -s $TEMPLATE_CARD || TEMPLATE_CARD=CARD.md
 cat $TEMPLATE_CARD | envsubst > $CARD
+sed -i 's/\r$//' $CARD
 git add $CARD
 echo -e "\nCARD=$CARD"
