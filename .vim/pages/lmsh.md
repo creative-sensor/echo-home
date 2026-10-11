@@ -31,3 +31,7 @@
 - `lmsh3`: activate `node-cliner`
 
 - `lmsh0`: activate `neos`
+
+- `lmshabc`: activate shell `abacus` 
+
+- `lmshopc`: activate shell `opencode` 

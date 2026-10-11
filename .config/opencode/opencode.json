@@ -1,0 +1,21 @@
+{
+  "$schema": "~/echo-home/.config/opencode/opencode.ai/config.json",
+  "provider": {
+    "local": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "LlamaCPP",
+      "options": {
+        "baseURL": "http://localhost:8080/v1"
+      },
+      "models": {
+        "local-model": {
+          "name": "AgentGXC",
+          "limit": {
+            "context": 32768,
+            "output": 65536
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+set -x
+rm -rf ~/.config/opencode/tui*.json* ~/.config/opencode/open*.json*
+mkdir -p ~/.config/opencode
+curl -sLo opencode.ai/tui.json  "https://opencode.ai/tui.json"
+curl -sLo opencode.ai/config.json  "https://opencode.ai/config.json"
+cp -r  tui.json   ~/.config/opencode/
+cp -r  opencode.json   ~/.config/opencode/

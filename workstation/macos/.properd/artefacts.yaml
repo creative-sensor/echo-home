@@ -37,4 +37,4 @@ gettext: [ 1.0 , "https://ftp.gnu.org/pub/gnu/gettext/gettext-1.0.tar.xz", {"suf
 libiconv: [ 1.19 , "https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.19.tar.gz", {"suffix":"tar.gz"}]
 openmpi: [ 5.0.10 , "https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.10.tar.bz2", {"suffix":"tar.bz2"}]
 abacus: [ 0.6.1 , "https://github.com/empero-org/abacus/releases/download/v0.6.1/abacus-aarch64-apple-darwin", {"suffix":"macos"}]
-
+opencode: [ 1.19.0 , "https://github.com/anomalyco/opencode/releases/download/v1.19.0/opencode-darwin-arm64.zip", {"suffix":"zip"}]
