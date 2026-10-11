@@ -5,6 +5,7 @@
 
 ### 1 WORK IN PROGRESS
 
+- [datum/2026/WIP/APLE-15.md](datum/2026/WIP/APLE-15.md)   ```# opencode : json config```
 - [datum/2026/WIP/APLE-8.md](datum/2026/WIP/APLE-8.md)   ```# macos: ntfs-3g```
 - [datum/2026/WIP/ARTE-20.md](datum/2026/WIP/ARTE-20.md)   ```# uv : package```
 - [datum/2026/WIP/ARTE-21.md](datum/2026/WIP/ARTE-21.md)   ```# node_modules : flattening```
@@ -14,7 +15,6 @@
 - [datum/2026/WIP/CORTA-34.md](datum/2026/WIP/CORTA-34.md)   ```# lmsh : hemisphere```
 - [datum/2026/WIP/CORTA-41.md](datum/2026/WIP/CORTA-41.md)   ```# singletron : inspector```
 - [datum/2026/WIP/CORTA-42.md](datum/2026/WIP/CORTA-42.md)   ```# singletron : design mode```
-- [datum/2026/WIP/CORTA-43.md](datum/2026/WIP/CORTA-43.md)   ```# mtp : speculative decoding```
 - [datum/2026/WIP/MEMR-1.md](datum/2026/WIP/MEMR-1.md)   ```# llamark : prompt memory```
 - [datum/2026/WIP/VIM-31.md](datum/2026/WIP/VIM-31.md)   ```# vimpage : vllm```
 
@@ -114,6 +114,7 @@
 - [datum/2026/DONE/CORTA-35.md](datum/2026/DONE/CORTA-35.md)   ```# memory : uvian```
 - [datum/2026/DONE/CORTA-38.md](datum/2026/DONE/CORTA-38.md)   ```# lmsh : memphix```
 - [datum/2026/DONE/CORTA-40.md](datum/2026/DONE/CORTA-40.md)   ```# lmsh : memphia```
+- [datum/2026/DONE/CORTA-43.md](datum/2026/DONE/CORTA-43.md)   ```# mtp : speculative decoding```
 - [datum/2026/DONE/CORTA-6.md](datum/2026/DONE/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
 - [datum/2026/DONE/CORTA-7.md](datum/2026/DONE/CORTA-7.md)   ```# gmlama```
 - [datum/2026/DONE/CORTA-8.md](datum/2026/DONE/CORTA-8.md)   ```# llama.cpp : aka gmlala```
