@@ -8,8 +8,15 @@
         "baseURL": "http://localhost:8080/v1"
       },
       "models": {
-        "local-model": {
+        "AgentGXC": {
           "name": "AgentGXC",
+          "limit": {
+            "context": 32768,
+            "output": 65536
+          }
+        },
+        "Agent8087": {
+          "name": "Agent8087",
           "limit": {
             "context": 32768,
             "output": 65536

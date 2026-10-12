@@ -1,0 +1,2371 @@
+#!/usr/bin/env python
+"""catl - `cat` for LLM readers.
+
+Instead of dumping a large file, catl prints a compact, token-budgeted map of it
+(outline, topics, key terms, cross-links) and ends with the exact commands a
+reader LLM can run next: skip the file, open a node, read a line span, search,
+grep, or follow links. The first run builds the map; later runs on the same
+content are served from the cache:
+
+    $MEMBASE_DIR/<sha[0]>/<sha[1]>/<sha[2:4]>/<sha256>/
+        meta.json     name, kind, size, source paths (+ size/mtime), tools used, version
+        map.json      nodes, segments, regions, topics, terms, links
+        index.sqlite  contentless SQLite FTS5 index (inverted index only, no text)
+
+The cache never copies the document. Zoom-in commands read the original file
+from its recorded path, after checking it still has the same content (size +
+mtime, falling back to a sha256 check). PDF/HTML/JSON text is re-derived from
+the file the same way it was at build time, so line numbers stay stable. Only
+stdin input, which has no file to go back to, is kept as stdin.bin.
+
+MEMBASE_DIR defaults to ~/.membase. Cached documents can be addressed by hash
+prefix (catl @3fa9c1d2 --open S2), so follow-up reads never rehash the source.
+
+Runs on the Python standard library. Uses these when installed:
+  pymupdf (fitz), pdftotext, pypdf   PDF text and bookmarks
+  tree-sitter-language-pack          exact outlines for non-Python code
+  drain3                             log template mining
+"""
+from __future__ import annotations
+
+import argparse
+import ast
+import csv
+import hashlib
+import heapq
+import html.parser
+import io
+import json
+import math
+import os
+import re
+import shlex
+import shutil
+import sqlite3
+import statistics
+import subprocess
+import sys
+import tempfile
+import time
+from collections import Counter, defaultdict
+
+VERSION = 2
+MEMBASE_DIR = os.path.expanduser(os.environ.get("MEMBASE_DIR") or "~/echo-home/memory/catls")
+SEG_TOKENS = 1000        # segment size used for search, topics, regions
+SMALL_FILE_TOKENS = 1500  # at or below this size, print the content itself
+DEFAULT_BUDGET = 1800    # token budget of a rendered map
+PAGE_TOKENS = 2500       # token budget per page for --open / --lines
+MAX_LINE_CHARS = 2000    # longer lines are truncated on display
+MAX_TEMPLATES = 5000
+
+SENT_END = tuple(".!?:;\"'\u201d)\u3002\uff01\uff1f")
+STOP = set("""
+a about above after again against all almost also am among an and any are aren
+as at be because been before being below between both but by can cannot could
+did do does doing done down during each either else etc even ever every few for
+from further had has have having he her here hers herself him himself his how
+however i if in into is isn it its itself just least less let like made make
+many may me might more most much must my myself neither no nor not now of off
+often on once one only or other others otherwise our ours ourselves out over own
+per perhaps rather same shall she should since so some still such than that the
+their theirs them themselves then there therefore these they this those though
+through thus to too two under until up upon us use used uses using very via was
+we well were what whatever when where whether which while who whom whose why
+will with within without would yet you your yours yourself yourselves
+của các những được trong cho với này không một khi theo như vào đến từ thì cũng
+nhưng hoặc tại về người đây rằng
+""".split())
+CODE_STOP = STOP | set("""
+self this return def class function const let var else elif for while import
+from true false none null new public private protected static void int str
+string bool boolean float double char long print end then not and try except
+catch finally raise throw throws async await yield lambda pass break continue
+case switch default struct type interface impl pub mut use mod package func
+chan map err nil len make range args kwargs value values key keys item items
+result data name list dict set get object error console log require module
+exports undefined assert unsigned auto include define endif ifdef typedef
+""".split())
+
+TERM_RX = re.compile(r"[^\W\d_](?:[\w'\u2019-]*[^\W_])?")
+TERM_BREAK_RX = re.compile(r"([^\W\d_](?:[\w'\u2019-]*[^\W_])?)|[.!?;:,()\[\]{}\"\u201c\u201d|/\n\u3002\uff0c]")
+IDENT_RX = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
+CJK_RX = re.compile(r"[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7af]")
+
+
+# ---------------------------------------------------------------- utilities
+
+def die(msg: str, code: int = 1):
+    print(f"catl: {msg}", file=sys.stderr)
+    sys.exit(code)
+
+
+def est_tokens(s: str) -> float:
+    """Fast token estimate: ~4 chars/token for ASCII, ~1.5 for other scripts."""
+    a = len(s.encode("ascii", "ignore"))
+    return a / 4.0 + (len(s) - a) / 1.5
+
+
+def fmt_tok(n) -> str:
+    n = int(round(n))
+    if n >= 1_000_000:
+        return f"{n / 1e6:.1f}M"
+    return f"{n / 1e3:.1f}K" if n >= 1000 else str(n)
+
+
+def fmt_bytes(n: int) -> str:
+    for unit in ("B", "KB", "MB", "GB"):
+        if n < 1024 or unit == "GB":
+            return f"{n}B" if unit == "B" else f"{n:.1f}{unit}"
+        n /= 1024
+    return str(n)
+
+
+def clip(s: str, n: int) -> str:
+    s = " ".join(s.split())
+    return s if len(s) <= n else s[: n - 1] + "\u2026"
+
+
+def compact_ids(prefix: str, idxs, limit: int = 6) -> str:
+    runs = []
+    for i in sorted(set(idxs)):
+        if runs and i == runs[-1][1] + 1:
+            runs[-1][1] = i
+        else:
+            runs.append([i, i])
+    parts = [f"{prefix}{a}" if a == b else f"{prefix}{a}-{prefix}{b}" for a, b in runs]
+    extra = len(parts) - limit
+    return ",".join(parts[:limit]) + (f" +{extra} more" if extra > 0 else "")
+
+
+def decode(data: bytes) -> str:
+    try:
+        text = data.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        text = data.decode("cp1252", errors="replace")
+    return text.replace("\r\n", "\n").replace("\r", "\n")
+
+
+def split_lines(text: str) -> list[str]:
+    lines = text.split("\n")
+    if lines and lines[-1] == "":
+        lines.pop()
+    return lines
+
+
+def q(s) -> str:
+    return shlex.quote(str(s))
+
+
+def sha256_file(path: str) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for block in iter(lambda: f.read(1 << 20), b""):
+            h.update(block)
+    return h.hexdigest()
+
+
+def cache_dir(sha: str) -> str:
+    """$MEMBASE_DIR/<1st hex>/<2nd hex>/<3rd+4th hex>/<full sha256>"""
+    return os.path.join(MEMBASE_DIR, sha[0], sha[1], sha[2:4], sha)
+
+
+def find_cached(prefix: str) -> list[str]:
+    """Cache directories whose sha256 starts with prefix (at least 2 hex digits)."""
+    level2 = os.path.join(MEMBASE_DIR, prefix[0], prefix[1])
+    if len(prefix) >= 4:
+        buckets = [os.path.join(level2, prefix[2:4])]
+    else:
+        buckets = [os.path.join(level2, b) for b in (sorted(os.listdir(level2)) if os.path.isdir(level2) else [])
+                   if len(b) == 2 and b.startswith(prefix[2:])]
+    found = []
+    for bucket in buckets:
+        if os.path.isdir(bucket):
+            found += [os.path.join(bucket, d) for d in sorted(os.listdir(bucket))
+                      if d.startswith(prefix) and not d.startswith(".")]
+    return found
+
+
+def write_json_atomic(path: str, obj):
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(obj, f, ensure_ascii=False, separators=(",", ":"))
+    os.replace(tmp, path)
+
+
+# ------------------------------------------------------------ kind detection
+
+CODE_LANG = {
+    ".py": "python", ".pyw": "python", ".js": "javascript", ".mjs": "javascript",
+    ".cjs": "javascript", ".jsx": "javascript", ".ts": "typescript", ".tsx": "tsx",
+    ".go": "go", ".rs": "rust", ".java": "java", ".kt": "kotlin", ".kts": "kotlin",
+    ".scala": "scala", ".swift": "swift", ".c": "c", ".h": "c", ".cc": "cpp",
+    ".cpp": "cpp", ".cxx": "cpp", ".hpp": "cpp", ".hh": "cpp", ".cs": "csharp",
+    ".rb": "ruby", ".php": "php", ".lua": "lua", ".sh": "bash", ".bash": "bash",
+    ".zsh": "bash",
+}
+TS_ANY = re.compile(
+    r"\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:[.,]\d+)?(?:Z|[+-]\d{2}:?\d{2})?"
+    r"|\b[A-Z][a-z]{2}\s+\d{1,2}\s\d{2}:\d{2}:\d{2}"
+    r"|\d{2}/[A-Z][a-z]{2}/\d{4}:\d{2}:\d{2}:\d{2}(?: [+-]\d{4})?")
+
+
+def detect_kind(name: str, data: bytes) -> str:
+    ext = os.path.splitext(name)[1].lower()
+    head = data[:8192]
+    if head.startswith(b"%PDF") or ext == ".pdf":
+        return "pdf"
+    if b"\x00" in head:
+        return "binary"
+    if ext in (".md", ".markdown", ".mdx"):
+        return "markdown"
+    if ext in (".html", ".htm", ".xhtml"):
+        return "html"
+    if ext == ".json":
+        return "json"
+    if ext in (".jsonl", ".ndjson"):
+        return "jsonl"
+    if ext in (".csv", ".tsv"):
+        return "table"
+    if ext in CODE_LANG:
+        return "code"
+    if ext == ".log":
+        return "log"
+    txt = head.decode("utf-8", "replace").lstrip()
+    if txt[:1] in "{[":
+        try:
+            json.loads(decode(data))
+            return "json"
+        except ValueError:
+            first = [l for l in txt.splitlines()[:5] if l.strip()]
+            try:
+                if len(first) >= 2 and all(isinstance(json.loads(l), (dict, list)) for l in first[:-1]):
+                    return "jsonl"
+            except ValueError:
+                pass
+    if re.match(r"(?is)<!doctype html|<html", txt):
+        return "html"
+    sample = txt.splitlines()[:200]
+    nonblank = [l for l in sample if l.strip()]
+    if len(nonblank) >= 10 and sum(bool(TS_ANY.search(l[:60])) for l in nonblank) >= 0.6 * len(nonblank):
+        return "log"
+    if sum(bool(re.match(r"#{1,6}\s+\S", l)) for l in sample) >= 3:
+        return "markdown"
+    if txt.startswith("#!") and re.search(r"python", txt.split("\n", 1)[0]):
+        return "code"
+    return "text"
+
+
+# ------------------------------------------------------------ outline helpers
+
+def heading_spans(heads, nlines: int) -> list[dict]:
+    """heads: sorted (line0, level, title). Returns items with 1-based start/end."""
+    items, open_ = [], []
+    for i, lvl, title in heads:
+        while open_ and open_[-1]["lvl"] >= lvl:
+            open_.pop()["end"] = i
+        it = {"start": i + 1, "end": nlines, "lvl": lvl, "title": title}
+        open_.append(it)
+        items.append(it)
+    for it in items:
+        it["end"] = max(it["end"], it["start"])
+    return items
+
+
+def nest(items: list[dict], sure: bool) -> list[dict]:
+    """Assign hierarchical ids (S1, S1.2, ...) by span containment."""
+    items = sorted(items, key=lambda x: (x["start"], -x["end"]))
+    stack, out, top = [], [], 0
+    for it in items:
+        while stack and not (it["end"] <= stack[-1]["end"]):
+            stack.pop()
+        if stack:
+            p = stack[-1]
+            p["_k"] += 1
+            nid, depth, pid = f"{p['id']}.{p['_k']}", p["depth"] + 1, p["id"]
+        else:
+            top += 1
+            nid, depth, pid = f"S{top}", 1, None
+        node = {k: v for k, v in it.items() if k != "lvl"}
+        node.update(id=nid, depth=depth, parent=pid, sure=it.get("sure", sure), _k=0)
+        stack.append(node)
+        out.append(node)
+    for nd in out:
+        nd.pop("_k", None)
+    return out
+
+
+def add_preamble(heads, lines):
+    if heads and heads[0][0] > 0 and any(l.strip() and not l.startswith("=== page ") for l in lines[: heads[0][0]]):
+        return [(0, 99, "(before first heading)")] + list(heads)
+    return list(heads)
+
+
+def deepest(nodes: list[dict], line: int):
+    best = None
+    for nd in nodes:
+        if nd["start"] > line:
+            break
+        if nd["end"] >= line and (best is None or nd["depth"] > best["depth"]):
+            best = nd
+    return best
+
+
+# ------------------------------------------------------------ plain text
+
+NUM_H = re.compile(r"^\s{0,3}((?:\d{1,2}\.)*\d{1,2})[.)]?\s+(\S.*)$")
+WORD_H = re.compile(r"^\s{0,3}(chapter|part|section|appendix|book|ch\u01b0\u01a1ng|ph\u1ea7n|m\u1ee5c)\b", re.I)
+ROMAN_H = re.compile(r"^\s{0,3}[IVXLC]{1,6}\.\s+\S")
+
+
+def plain_headings(lines: list[str]):
+    heads, n = [], len(lines)
+    for i, l in enumerate(lines):
+        s = l.strip()
+        if not s or len(s) > 90 or s.startswith("=== page "):
+            continue
+        if i > 0 and lines[i - 1].strip() and not lines[i - 1].startswith("=== page "):
+            continue
+        next_blank = i + 1 >= n or not lines[i + 1].strip()
+        words = len(s.split())
+        level = None
+        m = NUM_H.match(l)
+        if m and words <= 14 and s[-1] not in ".,;" and m.group(2)[:1].isalpha():
+            level = m.group(1).count(".") + 1
+        elif WORD_H.match(s) and words <= 14 and s[-1] not in ".,;":
+            level = 1
+        elif ROMAN_H.match(l) and words <= 12 and s[-1] not in ".,;":
+            level = 1
+        elif (next_blank and words <= 10 and s.upper() == s
+              and sum(c.isalpha() for c in s) >= 3 and s[-1] not in ".,;"):
+            level = 1
+        if level:
+            heads.append((i, min(level, 4), s))
+    return heads
+
+
+def text_nodes(lines: list[str], m: dict):
+    heads = plain_headings(lines)
+    total = sum(est_tokens(l) for l in lines)
+    if len(heads) > max(40, total / 150):
+        heads = [h for h in heads if h[1] == 1]
+        if len(heads) > max(40, total / 150):
+            m["notes"].append("heading-like lines are too frequent to trust; no outline")
+            heads = []
+    nonblank = [len(l) for l in lines if l.strip()]
+    if len(nonblank) > 50:
+        med = statistics.median(nonblank)
+        near = sum(abs(x - med) <= 10 for x in nonblank) / len(nonblank)
+        if 50 <= med <= 100 and near >= 0.6:
+            m["notes"].append("text is hard-wrapped: single newlines are not paragraph breaks")
+    return nest(heading_spans(add_preamble(heads, lines), len(lines)), sure=False)
+
+
+def build_text(data, name, tools):
+    text = decode(data)
+    lines = split_lines(text)
+    m = {"notes": []}
+    m["nodes"] = text_nodes(lines, m)
+    return text, m
+
+
+# ------------------------------------------------------------ markdown / html
+
+def md_headings(lines: list[str]):
+    heads, fence = [], None
+    for i, l in enumerate(lines):
+        s = l.lstrip()
+        fm = re.match(r"(`{3,}|~{3,})", s)
+        if fm:
+            if fence is None:
+                fence = fm.group(1)
+            elif s.startswith(fence):
+                fence = None
+            continue
+        if fence:
+            continue
+        hm = re.match(r"^ {0,3}(#{1,6})\s+(.*?)(?:\s+#+)?\s*$", l)
+        if hm and hm.group(2):
+            heads.append((i, len(hm.group(1)), hm.group(2).strip()))
+        elif (i >= 1 and re.match(r"^ {0,3}(=+|-{3,})\s*$", l) and lines[i - 1].strip()
+              and len(lines[i - 1].strip()) <= 100
+              and not re.match(r"^\s*([-*+]|\d+\.)\s", lines[i - 1])
+              and (i == 1 or not lines[i - 2].strip())):
+            heads.append((i - 1, 1 if "=" in l else 2, lines[i - 1].strip()))
+    return heads
+
+
+def build_markdown(data, name, tools, text=None):
+    text = decode(data) if text is None else text
+    lines = split_lines(text)
+    heads = md_headings(lines)
+    m = {"notes": []}
+    for _, lvl, title in heads:
+        if lvl == 1:
+            m["title"] = title
+            break
+    m["nodes"] = nest(heading_spans(add_preamble(heads, lines), len(lines)), sure=True)
+    return text, m
+
+
+class _HTMLToText(html.parser.HTMLParser):
+    BLOCK = {"p", "div", "section", "article", "header", "footer", "main", "aside",
+             "ul", "ol", "table", "tr", "blockquote", "br", "hr", "dt", "dd",
+             "figure", "form", "nav", "pre"}
+    SKIP = {"script", "style", "noscript", "svg", "template"}
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.out, self.skip, self.pre, self.in_title, self.title = [], 0, 0, False, ""
+
+    def handle_starttag(self, tag, attrs):
+        if tag in self.SKIP:
+            self.skip += 1
+        elif tag == "title":
+            self.in_title = True
+        elif re.fullmatch(r"h[1-6]", tag):
+            self.out.append("\n\n" + "#" * int(tag[1]) + " ")
+        elif tag == "li":
+            self.out.append("\n- ")
+        elif tag in ("td", "th"):
+            self.out.append(" | ")
+        elif tag in self.BLOCK:
+            self.out.append("\n")
+        if tag == "pre":
+            self.pre += 1
+
+    def handle_endtag(self, tag):
+        if tag in self.SKIP:
+            self.skip = max(0, self.skip - 1)
+        elif tag == "title":
+            self.in_title = False
+        elif re.fullmatch(r"h[1-6]", tag):
+            self.out.append("\n\n")
+        elif tag in self.BLOCK:
+            self.out.append("\n")
+        if tag == "pre":
+            self.pre = max(0, self.pre - 1)
+
+    def handle_data(self, d):
+        if self.in_title:
+            self.title += d
+            return
+        if self.skip:
+            return
+        self.out.append(d if self.pre else re.sub(r"\s+", " ", d))
+
+
+def build_html(data, name, tools):
+    p = _HTMLToText()
+    p.feed(decode(data))
+    p.close()
+    text = "".join(p.out)
+    text = "\n".join(l.strip() for l in text.split("\n"))
+    text = re.sub(r"\n{3,}", "\n\n", text).strip() + "\n"
+    text, m = build_markdown(b"", name, tools, text=text)
+    if p.title.strip():
+        m["title"] = clip(p.title, 120)
+    m["notes"].append("HTML converted to text; headings kept as '#' lines")
+    return text, m
+
+
+# ------------------------------------------------------------ pdf
+
+def build_pdf(data, name, tools):
+    pages, toc, title = None, [], ""
+    try:
+        try:
+            import pymupdf as fitz
+        except ImportError:
+            import fitz
+        doc = fitz.open(stream=data, filetype="pdf")
+        pages = [pg.get_text() for pg in doc]
+        toc = doc.get_toc(simple=True)
+        title = (doc.metadata or {}).get("title") or ""
+        tools.append("pymupdf")
+    except Exception:
+        pages = None
+    if pages is None and shutil.which("pdftotext"):
+        with tempfile.NamedTemporaryFile(suffix=".pdf") as tmp:
+            tmp.write(data)
+            tmp.flush()
+            r = subprocess.run(["pdftotext", "-layout", tmp.name, "-"], capture_output=True)
+        if r.returncode == 0:
+            pages = r.stdout.decode("utf-8", "replace").split("\f")
+            if pages and not pages[-1].strip():
+                pages.pop()
+            tools.append("pdftotext")
+    if pages is None:
+        try:
+            from pypdf import PdfReader
+            pages = [pg.extract_text() or "" for pg in PdfReader(io.BytesIO(data)).pages]
+            tools.append("pypdf")
+        except Exception:
+            pages = None
+    if pages is None:
+        raise RuntimeError("no PDF text extractor found: pip install pymupdf (or install poppler-utils)")
+    lines, page_line = [], {}
+    for k, ptext in enumerate(pages, 1):
+        page_line[k] = len(lines)
+        lines.append(f"=== page {k} ===")
+        lines.extend(split_lines(ptext.replace("\r\n", "\n")))
+    text = "\n".join(lines) + "\n"
+    m = {"notes": [f"{len(pages)} pages; page markers are lines '=== page N ==='"]}
+    if title.strip():
+        m["title"] = clip(title, 120)
+    if sum(len(p.strip()) for p in pages) < 100 * max(1, len(pages)):
+        m["notes"].append("very little extractable text: likely scanned, OCR needed")
+    heads = []
+    if toc:
+        for lvl, t, pg in toc:
+            if pg not in page_line:
+                continue
+            at, end = page_line[pg], page_line.get(pg + 1, len(lines))
+            key = " ".join(t.split()).casefold()[:40]
+            for j in range(at, end):
+                if key and key in " ".join(lines[j].split()).casefold():
+                    at = j
+                    break
+            heads.append((at, lvl, t.strip()))
+        heads.sort(key=lambda h: h[0])
+        m["nodes"] = nest(heading_spans(add_preamble(heads, lines), len(lines)), sure=True)
+    else:
+        m["nodes"] = text_nodes(lines, m)
+    return text, m
+
+
+# ------------------------------------------------------------ code
+
+REGEX_FAMILY = {"python": "py", "javascript": "js", "typescript": "js", "tsx": "js",
+                "go": "go", "rust": "rust", "java": "jvm", "kotlin": "jvm", "scala": "jvm",
+                "swift": "jvm", "csharp": "jvm", "c": "c", "cpp": "c", "ruby": "ruby",
+                "php": "php", "lua": "lua", "bash": "bash"}
+MODS = r"(?:(?:public|private|protected|internal|static|final|abstract|sealed|partial|open|data|override|async|virtual|synchronized|suspend|export|default)\s+)*"
+REGEX_SYMBOLS = {
+    "py": [r"^\s*(?:async\s+)?(?:def|class)\s+([A-Za-z_]\w*)"],
+    "js": [r"^\s*(?:export\s+)?(?:default\s+)?(?:async\s+)?function\s*\*?\s*([A-Za-z_$][\w$]*)",
+           r"^\s*(?:export\s+)?(?:default\s+)?(?:abstract\s+)?(?:class|interface|enum)\s+([A-Za-z_$][\w$]*)",
+           r"^\s*(?:export\s+)?(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s+)?(?:function\b|\([^)]*\)\s*=>|[A-Za-z_$][\w$]*\s*=>)",
+           r"^\s+(?:(?:static|async|get|set|public|private|protected|readonly)\s+)*([A-Za-z_$][\w$]*)\s*\([^)]*\)\s*(?::\s*[^{]+)?\{\s*$"],
+    "go": [r"^func\s+(?:\([^)]*\)\s*)?([A-Za-z_]\w*)", r"^type\s+([A-Za-z_]\w*)\s+(?:struct|interface)"],
+    "rust": [r"^\s*(?:pub(?:\([^)]*\))?\s+)?(?:(?:async|unsafe|const)\s+)*(?:fn|struct|enum|trait|mod|union)\s+([A-Za-z_]\w*)",
+             r"^\s*impl(?:<[^>]*>)?\s+(?:[\w:<>, ]+\s+for\s+)?([A-Za-z_][\w:]*)"],
+    "jvm": [r"^\s*" + MODS + r"(?:class|interface|enum|record|struct|object|trait)\s+([A-Za-z_]\w*)",
+            r"^\s*" + MODS + r"(?:fun\s+|func\s+|def\s+)?(?:[\w<>\[\],.?]+\s+)?([A-Za-z_]\w*)\s*\([^;]*\)\s*[\w<>\[\],.?: ]*\{?\s*$"],
+    "c": [r"^[A-Za-z_][\w:<>,*&\s]*?[\s*&]([A-Za-z_][\w:~]*)\s*\([^;]*\)\s*(?:const\s*)?\{?\s*$",
+          r"^\s*(?:typedef\s+)?(?:struct|class|enum|union|namespace)\s+([A-Za-z_]\w*)\s*\{?\s*$"],
+    "ruby": [r"^\s*(?:def|class|module)\s+(?:self\.)?([\w.:?!]+)"],
+    "php": [r"^\s*(?:(?:public|private|protected|static|abstract|final)\s+)*function\s+&?([A-Za-z_]\w*)",
+            r"^\s*(?:abstract\s+|final\s+)?(?:class|interface|trait)\s+([A-Za-z_]\w*)"],
+    "lua": [r"^\s*(?:local\s+)?function\s+([\w.:]+)"],
+    "bash": [r"^\s*(?:function\s+)?([A-Za-z_][\w-]*)\s*\(\)\s*\{?"],
+}
+BRACE_FAMILIES = {"js", "go", "rust", "jvm", "c", "php", "bash"}
+NOT_NAMES = {"if", "for", "while", "switch", "catch", "return", "else", "elif", "sizeof",
+             "do", "try", "with", "new", "until", "unless", "foreach", "using", "lock"}
+
+
+def brace_end(lines, i0):
+    depth, opened = 0, False
+    for i in range(i0, len(lines)):
+        s = re.sub(r'"(?:\\.|[^"\\])*"|//.*$', "", lines[i])
+        for ch in s:
+            if ch == "{":
+                depth += 1
+                opened = True
+            elif ch == "}":
+                depth -= 1
+            if opened and depth <= 0:
+                return i + 1
+        if not opened and (i - i0 >= 3 or s.rstrip().endswith(";")):
+            return None
+    return len(lines) if opened else None
+
+
+def indent_end(lines, i0, ind, family):
+    for i in range(i0 + 1, len(lines)):
+        l = lines[i]
+        if not l.strip():
+            continue
+        li = len(l) - len(l.lstrip())
+        if li <= ind:
+            if family in ("ruby", "lua") and re.match(r"\s*end\b", l):
+                return i + 1
+            if not re.match(r"\s*[}\])]", l):
+                end = i
+                while end > i0 + 1 and not lines[end - 1].strip():
+                    end -= 1
+                return end
+    return len(lines)
+
+
+def regex_symbols(lines, lang):
+    family = REGEX_FAMILY.get(lang, "py")
+    pats = [re.compile(p) for p in REGEX_SYMBOLS[family]]
+    items = []
+    for i, l in enumerate(lines):
+        if len(l) > 300 or l.strip().startswith(("new ", "return ", "else", "throw ", "//", "#", "*")):
+            continue
+        for p in pats:
+            mt = p.match(l)
+            if not mt:
+                continue
+            name = mt.group(1)
+            if name in NOT_NAMES:
+                break
+            end = brace_end(lines, i) if family in BRACE_FAMILIES else None
+            if end is None:
+                end = indent_end(lines, i, len(l) - len(l.lstrip()), family)
+            items.append({"start": i + 1, "end": max(end, i + 1), "title": clip(l.strip(), 110), "name": name})
+            break
+    return items
+
+
+def py_symbols(text):
+    tree = ast.parse(text)
+    items, imports = [], []
+
+    def visit(body, prefix, depth):
+        for n in body:
+            if depth == 0 and isinstance(n, ast.Import):
+                imports.extend(a.name for a in n.names)
+            elif depth == 0 and isinstance(n, ast.ImportFrom):
+                imports.append(n.module or ".")
+            if not isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                continue
+            start = min([n.lineno] + [d.lineno for d in n.decorator_list])
+            if isinstance(n, ast.ClassDef):
+                bases = ", ".join(ast.unparse(b) for b in n.bases)
+                sig = f"class {n.name}({bases})" if bases else f"class {n.name}"
+            else:
+                sig = f"{'async ' if isinstance(n, ast.AsyncFunctionDef) else ''}def {n.name}({ast.unparse(n.args)})"
+                if n.returns is not None:
+                    sig += f" -> {ast.unparse(n.returns)}"
+            doc = (ast.get_docstring(n) or "").strip().split("\n")[0]
+            items.append({"start": start, "end": n.end_lineno, "title": clip(sig, 110),
+                          "name": prefix + n.name, "doc": clip(doc, 80)})
+            if depth < 3:
+                visit(n.body, prefix + n.name + ".", depth + 1)
+
+    visit(tree.body, "", 0)
+    return items, imports, (ast.get_docstring(tree) or "").strip()
+
+
+TS_DEF = re.compile(r"(function|method|class|struct|interface|trait|impl|enum|module|namespace|type)_(definition|declaration|item|specifier|spec)$")
+TS_NAMES = {"csharp": ["csharp", "c_sharp"], "bash": ["bash"], "tsx": ["tsx"]}
+
+
+def ts_symbols(text, lang):
+    from tree_sitter_language_pack import get_parser
+    parser = None
+    for cand in TS_NAMES.get(lang, [lang]):
+        try:
+            parser = get_parser(cand)
+            break
+        except Exception:
+            continue
+    if parser is None:
+        raise RuntimeError("no tree-sitter grammar")
+    src = text.encode("utf-8")
+    tree = parser.parse(src)
+    items = []
+
+    def name_of(node):
+        n = node.child_by_field_name("name")
+        if n is None:
+            queue = [c for c in (node.child_by_field_name("declarator"), node.child_by_field_name("type")) if c]
+            seen = 0
+            while queue and seen < 30:
+                cur = queue.pop(0)
+                seen += 1
+                if cur.type in ("identifier", "field_identifier", "type_identifier", "qualified_identifier"):
+                    n = cur
+                    break
+                queue.extend(cur.children)
+        return src[n.start_byte:n.end_byte].decode("utf-8", "replace") if n is not None else None
+
+    def walk(node, prefix, depth, hops):
+        for ch in node.children:
+            if TS_DEF.search(ch.type):
+                nm = name_of(ch)
+                if nm:
+                    first = src[ch.start_byte:ch.end_byte].split(b"\n", 1)[0].decode("utf-8", "replace")
+                    items.append({"start": ch.start_point[0] + 1, "end": ch.end_point[0] + 1,
+                                  "title": clip(first.strip(), 110), "name": prefix + nm})
+                    if depth < 3:
+                        walk(ch, prefix + nm + ".", depth + 1, 0)
+                    continue
+            if hops < 4 and ch.child_count:
+                walk(ch, prefix, depth, hops + 1)
+
+    walk(tree.root_node, "", 0, 0)
+    return items
+
+
+def build_code(data, name, tools):
+    text = decode(data)
+    lines = split_lines(text)
+    ext = os.path.splitext(name)[1].lower()
+    lang = CODE_LANG.get(ext, "python")
+    m = {"notes": [], "lang": lang}
+    items, imports, sure, moddoc = None, [], True, ""
+    if lang == "python":
+        try:
+            items, imports, moddoc = py_symbols(text)
+            tools.append("ast")
+        except (SyntaxError, ValueError):
+            items = None
+    if items is None:
+        try:
+            items = ts_symbols(text, lang)
+            tools.append("tree-sitter")
+        except Exception:
+            items = None
+    if items is None:
+        items = regex_symbols(lines, lang)
+        sure = False
+        tools.append("regex")
+    if not imports:
+        for l in lines[:400]:
+            im = re.match(r"\s*(?:import|from|#include|use|require|using)\s+[\"'<]?([\w./:@-]+)", l)
+            if im:
+                imports.append(im.group(1))
+    if imports:
+        uniq = list(dict.fromkeys(imports))
+        m["notes"].append("imports: " + ", ".join(uniq[:15]) + (f" (+{len(uniq) - 15})" if len(uniq) > 15 else ""))
+    if moddoc:
+        m["opening"] = clip(moddoc.split("\n\n")[0], 220)
+    nodes = nest(items, sure=sure)
+    by_id = {nd["id"]: nd for nd in nodes}
+    for nd in nodes:
+        if "." not in nd["name"] and nd["parent"]:
+            nd["name"] = by_id[nd["parent"]]["name"] + "." + nd["name"]
+    idc = Counter(IDENT_RX.findall(text))
+    for nd in nodes:
+        nd["refs"] = max(0, idc[nd["name"].split(".")[-1]] - 1)
+    m["nodes"] = nodes
+    m["edges"] = code_edges(nodes, lines)
+    return text, m
+
+
+def code_edges(nodes, lines):
+    by_short = defaultdict(list)
+    for nd in nodes:
+        short = nd["name"].split(".")[-1]
+        if len(short) >= 3 and not short.startswith("__"):
+            by_short[short].append(nd["id"])
+    targets = {k: v for k, v in by_short.items() if len(v) <= 3}
+    parents = {nd["parent"] for nd in nodes if nd["parent"]}
+    edges = {}
+    for nd in nodes:
+        if nd["id"] in parents:
+            continue
+        idents = set(IDENT_RX.findall("\n".join(lines[nd["start"]:nd["end"]])))
+        out = []
+        for w in idents & targets.keys():
+            for t in targets[w]:
+                if t != nd["id"] and not t.startswith(nd["id"] + ".") and not nd["id"].startswith(t + "."):
+                    out.append(t)
+        if out:
+            edges[nd["id"]] = sorted(set(out))[:30]
+    return edges
+
+
+# ------------------------------------------------------------ json / jsonl / table
+
+def jtype(v):
+    if isinstance(v, bool):
+        return "bool"
+    if v is None:
+        return "null"
+    return {dict: "object", list: "array", str: "str", int: "int", float: "float"}.get(type(v), "?")
+
+
+def array_desc(arr, limit=200):
+    sample = arr[:limit]
+    types = Counter(jtype(x) for x in sample)
+    if types.get("object", 0) >= 0.8 * len(sample):
+        objs = [x for x in sample if isinstance(x, dict)]
+        keys, ktypes = Counter(), defaultdict(Counter)
+        for o in objs:
+            for k, v in o.items():
+                keys[k] += 1
+                ktypes[k][jtype(v)] += 1
+        parts = []
+        for k, c in keys.most_common(12):
+            t = "|".join(t for t, _ in ktypes[k].most_common(2))
+            pct = "" if c == len(objs) else f" {100 * c // len(objs)}%"
+            parts.append(f"{k}:{t}{pct}")
+        more = f", +{len(keys) - 12} keys" if len(keys) > 12 else ""
+        return f"array[{len(arr)}] of object {{{', '.join(parts)}{more}}}"
+    return f"array[{len(arr)}] of " + "|".join(t for t, _ in types.most_common(3))
+
+
+def build_json(data, name, tools):
+    sys.setrecursionlimit(20000)
+    obj = json.loads(decode(data))
+    out, items = [], []
+    ident = re.compile(r"^[A-Za-z_]\w*$")
+
+    def emit(v, path, indent, prefix, trailing, depth, record):
+        pad = "  " * indent
+        start = len(out) + 1
+        if isinstance(v, dict) and v:
+            out.append(pad + prefix + "{")
+            kv = list(v.items())
+            for j, (k, x) in enumerate(kv):
+                sub = f"{path}.{k}" if ident.match(k) else f"{path}[{json.dumps(k, ensure_ascii=False)}]"
+                emit(x, sub, indent + 1, json.dumps(k, ensure_ascii=False) + ": ",
+                     "," if j < len(kv) - 1 else "", depth + 1, record)
+            out.append(pad + "}" + trailing)
+            desc = f"object {{{len(v)} keys: {', '.join(list(v)[:8])}{', ...' if len(v) > 8 else ''}}}"
+        elif isinstance(v, list) and v:
+            out.append(pad + prefix + "[")
+            for j, x in enumerate(v):
+                emit(x, f"{path}[{j}]", indent + 1, "", "," if j < len(v) - 1 else "", depth + 1, record and j < 2)
+            out.append(pad + "]" + trailing)
+            desc = array_desc(v)
+        else:
+            out.append(pad + prefix + json.dumps(v, ensure_ascii=False) + trailing)
+            return
+        if record and depth <= 3 and len(items) < 2000:
+            items.append({"start": start, "end": len(out), "title": f"{path}  {desc}", "name": path})
+
+    emit(obj, "$", 0, "", "", 0, True)
+    m = {"notes": ["lines refer to the pretty-printed JSON stored in the cache"]}
+    m["nodes"] = nest(items, sure=True)
+    return "\n".join(out) + "\n", m
+
+
+def build_jsonl(data, name, tools):
+    text = decode(data)
+    lines = split_lines(text)
+    recs, bad = [], 0
+    for l in lines[:2000]:
+        if not l.strip():
+            continue
+        try:
+            recs.append(json.loads(l))
+        except ValueError:
+            bad += 1
+    m = {"notes": [f"{sum(1 for l in lines if l.strip()):,} records (one JSON value per line)"], "nodes": []}
+    if recs:
+        m["notes"].append("schema (first 2000 records): " + array_desc(recs))
+    if bad:
+        m["notes"].append(f"{bad} unparseable lines in the first 2000")
+    return text, m
+
+
+def build_table(data, name, tools):
+    text = decode(data)
+    ext = os.path.splitext(name)[1].lower()
+    try:
+        delim = "\t" if ext == ".tsv" else csv.Sniffer().sniff(text[:65536], delimiters=",;\t|").delimiter
+    except csv.Error:
+        delim = ","
+    reader = csv.reader(io.StringIO(text), delimiter=delim)
+    header = next(reader, [])
+    ncol = len(header)
+    stats = [{"nonnull": 0, "num": 0, "int": 0, "min": None, "max": None, "distinct": set(),
+              "top": Counter(), "over": False, "date": 0} for _ in header]
+    rows = 0
+    for row in reader:
+        rows += 1
+        if rows > 200_000:
+            continue
+        for j in range(min(ncol, len(row))):
+            v = row[j].strip()
+            if not v or v.lower() in ("null", "na", "n/a", "none", "nan"):
+                continue
+            st = stats[j]
+            st["nonnull"] += 1
+            try:
+                x = float(v.replace(",", "")) if delim != "," else float(v)
+                st["num"] += 1
+                st["int"] += re.fullmatch(r"-?\d+", v) is not None
+                st["min"] = x if st["min"] is None else min(st["min"], x)
+                st["max"] = x if st["max"] is None else max(st["max"], x)
+            except ValueError:
+                st["date"] += re.match(r"\d{4}-\d{2}-\d{2}", v) is not None
+            if not st["over"]:
+                st["distinct"].add(v)
+                st["top"][v] += 1
+                if len(st["distinct"]) > 1000:
+                    st["over"], st["top"] = True, Counter()
+    sampled = min(rows, 200_000)
+    cols = []
+    for h, st in zip(header, stats):
+        nn = st["nonnull"] or 1
+        if st["num"] == st["nonnull"] and st["nonnull"]:
+            typ = "int" if st["int"] == st["num"] else "float"
+        elif st["date"] >= 0.9 * nn:
+            typ = "date"
+        else:
+            typ = "str"
+        col = {"name": h, "type": typ, "fill": round(100 * st["nonnull"] / max(1, sampled)),
+               "distinct": "1000+" if st["over"] else len(st["distinct"])}
+        if typ in ("int", "float") and st["min"] is not None:
+            col["range"] = [st["min"], st["max"]]
+        if not st["over"] and st["top"] and len(st["distinct"]) <= 50:
+            col["top"] = [[v, round(100 * c / nn)] for v, c in st["top"].most_common(3)]
+        cols.append(col)
+    m = {"notes": [f"{ncol} columns x {rows:,} rows, delimiter {delim!r}" +
+                   (" (stats from first 200,000 rows)" if rows > 200_000 else "")],
+         "nodes": [], "columns": cols}
+    return text, m
+
+
+# ------------------------------------------------------------ logs
+
+LEVEL_RX = re.compile(r"\b(FATAL|CRITICAL|CRIT|ERROR|ERR|WARNING|WARN|NOTICE|INFO|DEBUG|TRACE)\b")
+SEVERE = {"FATAL", "CRITICAL", "CRIT", "ERROR", "ERR", "WARNING", "WARN"}
+MASKS = [
+    (TS_ANY, "<TS>"),
+    (re.compile(r"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b"), "<UUID>"),
+    (re.compile(r"\b\d{1,3}(?:\.\d{1,3}){3}(?::\d+)?\b"), "<IP>"),
+    (re.compile(r"\b0x[0-9a-fA-F]+\b|\b[0-9a-fA-F]{12,}\b"), "<HEX>"),
+    (re.compile(r'"[^"\n]{0,200}"'), "<STR>"),
+    (re.compile(r"(?<![A-Za-z<])[-+]?\d+(?:\.\d+)?(?:ms|s|kb|mb|gb|%)?\b"), "<NUM>"),
+]
+
+
+def mask_line(l: str) -> str:
+    for rx, rep in MASKS:
+        l = rx.sub(rep, l)
+    return clip(l, 200)
+
+
+def mine_templates(lines, tools):
+    keyfn, miner = mask_line, None
+    try:
+        import logging
+        from drain3 import TemplateMiner
+        logging.getLogger("drain3").setLevel(logging.ERROR)
+        miner = TemplateMiner()
+    except Exception:
+        miner = None
+    recs = {}
+    for i, l in enumerate(lines, 1):
+        if not l.strip():
+            continue
+        if miner is not None:
+            try:
+                key = miner.add_log_message(TS_ANY.sub("", l, count=1).strip())["cluster_id"]
+            except Exception:
+                miner, recs = None, {}
+                return mine_templates_fallback(lines, tools)
+        else:
+            key = keyfn(l)
+        rec = recs.get(key)
+        if rec is None:
+            if len(recs) >= MAX_TEMPLATES:
+                key = "<other templates>"
+                rec = recs.get(key)
+            if rec is None:
+                rec = recs[key] = {"key": key, "n": 0, "first": i, "last": i, "lines": [], "levels": Counter()}
+        rec["n"] += 1
+        rec["last"] = i
+        if len(rec["lines"]) < 200:
+            rec["lines"].append(i)
+        lv = LEVEL_RX.search(l[:120])
+        if lv:
+            rec["levels"][lv.group(1)] += 1
+    if miner is not None:
+        by_id = {c.cluster_id: c.get_template() for c in miner.drain.clusters}
+        for rec in recs.values():
+            rec["t"] = by_id.get(rec["key"], str(rec["key"]))
+        tools.append("drain3")
+    else:
+        for rec in recs.values():
+            rec["t"] = rec["key"]
+        tools.append("mask-templates")
+    return recs
+
+
+def mine_templates_fallback(lines, tools):
+    recs = {}
+    for i, l in enumerate(lines, 1):
+        if not l.strip():
+            continue
+        key = mask_line(l)
+        rec = recs.setdefault(key, {"key": key, "t": key, "n": 0, "first": i, "last": i,
+                                    "lines": [], "levels": Counter()})
+        rec["n"] += 1
+        rec["last"] = i
+        if len(rec["lines"]) < 200:
+            rec["lines"].append(i)
+        lv = LEVEL_RX.search(l[:120])
+        if lv:
+            rec["levels"][lv.group(1)] += 1
+    tools.append("mask-templates")
+    return recs
+
+
+def build_log(data, name, tools):
+    text = decode(data)
+    lines = split_lines(text)
+    recs = mine_templates(lines, tools)
+    ordered = sorted(recs.values(), key=lambda r: (-r["n"], r["first"]))
+    templates, levels = [], Counter()
+    for k, r in enumerate(ordered, 1):
+        levels.update(r["levels"])
+        templates.append({"id": f"L{k}", "t": clip(str(r["t"]), 180), "n": r["n"], "first": r["first"],
+                          "last": r["last"], "lines": r["lines"],
+                          "level": r["levels"].most_common(1)[0][0] if r["levels"] else ""})
+    first_ts = last_ts = None
+    for l in lines[:5000]:
+        mt = TS_ANY.search(l[:80])
+        if mt:
+            first_ts = mt.group(0)
+            break
+    for l in reversed(lines[-5000:]):
+        mt = TS_ANY.search(l[:80])
+        if mt:
+            last_ts = mt.group(0)
+            break
+    notes = [f"{len(templates):,} distinct message templates"]
+    if first_ts:
+        notes.append(f"time range: {first_ts} -> {last_ts}")
+    if levels:
+        tot = sum(levels.values())
+        notes.append("levels: " + ", ".join(f"{k} {100 * v / tot:.1f}%" if v >= tot / 1000 else f"{k} x{v}"
+                                            for k, v in levels.most_common(6)))
+    return text, {"notes": notes, "nodes": [], "templates": templates[:1000]}
+
+
+def build_binary(data, name, tools):
+    return "", {"notes": [f"binary content ({fmt_bytes(len(data))}); no text map. Try: file, strings | head, xxd | head"],
+                "nodes": []}
+
+
+BUILDERS = {"text": build_text, "markdown": build_markdown, "html": build_html, "pdf": build_pdf,
+            "code": build_code, "json": build_json, "jsonl": build_jsonl, "table": build_table,
+            "log": build_log, "binary": build_binary}
+KW_KINDS = {"text", "markdown", "html", "pdf", "jsonl", "code"}
+TOPIC_KINDS = {"text", "markdown", "html", "pdf", "jsonl"}
+ENTITY_KINDS = {"text", "markdown", "html", "pdf"}
+REGION_KINDS = {"log", "jsonl", "table"}
+
+
+# ------------------------------------------------------------ segments, terms, topics
+
+def pack(lt, strength, target):
+    """Greedy packing of lines into ~target-token spans, cutting at the strongest boundary."""
+    n, out, s = len(lt), [], 0
+    while s < n:
+        acc, e, best, bs = 0.0, s, None, -1
+        while e < n:
+            if acc + lt[e] > target and e > s:
+                break
+            acc += lt[e]
+            e += 1
+            if e < n:
+                if strength[e] >= 6 and acc >= 0.35 * target:
+                    best, bs = e, 99
+                    break
+                if acc >= 0.6 * target and strength[e] >= bs:
+                    best, bs = e, strength[e]
+        if e >= n:
+            out.append((s, n))
+            break
+        cut = best if best is not None and best > s else e
+        out.append((s, cut))
+        s = cut
+    return out
+
+
+def term_counts(text: str, code: bool = False) -> Counter:
+    stops = CODE_STOP if code else STOP
+    c, prev = Counter(), None
+    for mt in TERM_BREAK_RX.finditer(text):
+        if mt.group(1) is None:
+            prev = None
+            continue
+        w = mt.group(1).lower()
+        if len(w) > 2 and CJK_RX.match(w):
+            for j in range(len(w) - 1):
+                c[w[j:j + 2]] += 1
+            prev = None
+            continue
+        if len(w) > 2 and w not in stops:
+            c[w] += 1
+            if prev and not code:
+                c[prev + " " + w] += 1
+            prev = w
+        else:
+            prev = None
+    if len(c) > 400:
+        c = Counter(dict(c.most_common(400)))
+    return c
+
+
+def top_terms(weights: dict, k: int) -> list[str]:
+    out = []
+    for t, _ in heapq.nlargest(60, weights.items(), key=lambda x: (x[1], x[0])):
+        words = set(t.split())
+        if any(words & set(o.split()) for o in out):
+            continue
+        out.append(t)
+        if len(out) == k:
+            break
+    return out
+
+
+def normalize(w: dict) -> dict:
+    s = math.sqrt(sum(v * v for v in w.values())) or 1.0
+    return {t: v / s for t, v in w.items()}
+
+
+def dot(a: dict, b: dict) -> float:
+    if len(a) > len(b):
+        a, b = b, a
+    return sum(v * b.get(t, 0.0) for t, v in a.items())
+
+
+def kmeans(vecs, k, eligible, iters=15):
+    n = len(vecs)
+    idx = [i for i in range(n) if eligible[i]] or list(range(n))
+    cents = [vecs[idx[0]]]
+    best = [dot(v, cents[0]) for v in vecs]
+    while len(cents) < min(k, len(idx)):
+        i = min(idx, key=lambda j: best[j])
+        if best[i] >= 0.98:
+            break
+        cents.append(vecs[i])
+        best = [max(best[j], dot(vecs[j], vecs[i])) for j in range(n)]
+    assign = None
+    for _ in range(iters):
+        new = [max(range(len(cents)), key=lambda c: dot(v, cents[c])) for v in vecs]
+        if new == assign:
+            break
+        assign = new
+        for c in range(len(cents)):
+            acc = Counter()
+            for i in range(n):
+                if assign[i] == c:
+                    acc.update(vecs[i])
+            if acc:
+                cents[c] = normalize(dict(heapq.nlargest(120, acc.items(), key=lambda x: x[1])))
+    return assign, cents
+
+
+def lead_of(lines: list[str], kind: str, width: int = 140) -> str:
+    para, fence = [], False
+    for l in lines:
+        s = l.strip()
+        if s.startswith(("```", "~~~")) and kind in ("markdown", "html"):
+            fence = not fence
+            if para:
+                break
+            continue
+        if fence:
+            continue
+        if not para and (not s or s.startswith("=== page ") or re.match(r"#{1,6}\s", s)
+                         or re.fullmatch(r"[-=_*#~`|]{3,}", s)
+                         or (kind in ENTITY_KINDS and len(s) <= 70 and s[-1] not in ".!?:" and
+                             (NUM_H.match(s) or s.upper() == s))):
+            continue
+        if not s or len(" ".join(para)) > 400:
+            break
+        para.append(s)
+        if kind in ("code", "log", "table", "json", "jsonl"):
+            break
+    text = " ".join(para)
+    if kind not in ("code", "log", "table", "json", "jsonl"):
+        mt = re.search(r"^(.{30,}?[.!?\u3002\uff01\uff1f])(\s|$)", text)
+        if mt:
+            text = mt.group(1)
+    return clip(text, width)
+
+
+def extract_entities(seg_texts, skip_lines=frozenset()):
+    lower_seen = Counter()
+    for t in seg_texts:
+        for w in re.findall(r"\b[^\W\d_]+\b", t):
+            if w[0].islower():
+                lower_seen[w.lower()] += 1
+    count, where, mid_cap = Counter(), defaultdict(set), Counter()
+    word_rx = re.compile(r"[^\W_][\w&'\u2019-]*")
+    solo = set()
+    for si, t in enumerate(seg_texts):
+        for line in t.split("\n"):
+            if (len(line) > 20 and line.upper() == line) or line.strip() in skip_lines:
+                continue
+            run, prev_end = [], None
+
+            def close(run):
+                if not run or len(run) > 5:
+                    return
+                words = [w for w, _ in run]
+                if run[0][1] and (words[0].lower() in STOP or lower_seen[words[0].lower()] > 0):
+                    words = words[1:]
+                while words and words[0].lower() in STOP:
+                    words = words[1:]
+                while words and words[-1].lower() in ("of", "and", "for", "de", "&"):
+                    words = words[:-1]
+                if not words:
+                    return
+                if len(words) == 1:
+                    w = words[0]
+                    acronym = w.isupper() and 2 <= len(w) <= 8
+                    if not acronym and (len(w) < 3 or w.lower() in STOP or lower_seen[w.lower()] > 1):
+                        return
+                    solo.add(w)
+                phrase = " ".join(words)
+                count[phrase] += 1
+                where[phrase].add(si)
+
+            for mt in word_rx.finditer(line):
+                w = mt.group(0)
+                gap = line[prev_end:mt.start()] if prev_end is not None else ""
+                sent_start = prev_end is None or re.search(r"[.!?:\u2022\-]\s*$|^\s*$", line[:mt.start()]) is not None
+                connector = w.lower() in ("of", "and", "for", "de", "&") and run
+                if w[0].isupper() and not sent_start:
+                    mid_cap[w] += 1
+                if (w[0].isupper() or connector) and (not run or gap == " "):
+                    run.append((w, sent_start and not run))
+                else:
+                    close(run)
+                    run = [(w, sent_start)] if w[0].isupper() else []
+                prev_end = mt.end()
+            close(run)
+    scored = []
+    for p, c in count.items():
+        if p in solo and mid_cap[p] < max(2, 0.2 * c) and not (p.isupper() and len(p) <= 8):
+            continue
+        df = len(where[p])
+        if df >= 2 or (len(seg_texts) == 1 and c >= 3):
+            scored.append((df * (1 + math.log(c)), p))
+    scored.sort(reverse=True)
+    kept = []
+    for _, p in scored:
+        if len(kept) >= 15:
+            break
+        if " " not in p and any(p in k["t"].split() and count[p] <= 1.3 * count[k["t"]] for k in kept):
+            continue
+        kept.append({"t": p, "n": count[p], "df": len(where[p]), "segs": sorted(where[p])[:300], "type": "name"})
+    return kept
+
+
+def finalize(m: dict, lines: list[str]):
+    kind, n, nodes = m["kind"], len(lines), m["nodes"]
+    lt = [est_tokens(l) + 0.3 for l in lines]
+    cum = [0.0]
+    for t in lt:
+        cum.append(cum[-1] + t)
+    m["lines"], m["tokens"] = n, round(cum[-1])
+    for nd in nodes:
+        nd["end"] = min(nd["end"], n) if n else nd["end"]
+        nd["tok"] = round(cum[min(nd["end"], n)] - cum[min(nd["start"] - 1, n)])
+    strength = [5] + [1] * n
+    for i in range(1, n):
+        p, c = lines[i - 1].rstrip(), lines[i].strip()
+        if not p or not c:
+            strength[i] = 5
+        elif p.endswith(SENT_END):
+            strength[i] = 3
+    for nd in nodes:
+        i = nd["start"] - 1
+        if 0 < i < n:
+            strength[i] = max(strength[i], 8 - min(nd["depth"], 3))
+    if kind == "pdf":
+        for i, l in enumerate(lines):
+            if l.startswith("=== page "):
+                strength[i] = max(strength[i], 6)
+    spans = pack(lt, strength, SEG_TOKENS) if n else []
+    seg_texts = ["\n".join(lines[s:e]) for s, e in spans]
+    segs = []
+    for i, (s, e) in enumerate(spans):
+        nd = deepest(nodes, s + 1)
+        segs.append({"id": f"g{i}", "start": s + 1, "end": e, "tok": round(cum[e] - cum[s]),
+                     "node": nd["id"] if nd else None, "lead": lead_of(lines[s:e], kind), "kw": []})
+    m["segments"] = segs
+    if not m.get("opening") and kind in ENTITY_KINDS:
+        m["opening"] = lead_of(lines[:300], kind, 220)
+
+    weights = []
+    if kind in KW_KINDS and segs:
+        code = kind == "code"
+        counters = [term_counts(t, code) for t in seg_texts]
+        df = Counter()
+        for c in counters:
+            df.update(c.keys())
+        N = len(counters)
+
+        def idf(t):
+            return math.log((N + 1) / (df[t] + 0.5))
+
+        for sg, c in zip(segs, counters):
+            w = {t: tf * idf(t) * (1.3 if " " in t else 1.0) for t, tf in c.items()}
+            weights.append(w)
+            sg["kw"] = top_terms(w, 4)
+        if kind != "code":
+            for nd in nodes:
+                if nd["tok"] < SEG_TOKENS * 0.5:
+                    c = term_counts("\n".join(lines[nd["start"] - 1:nd["end"]]))
+                    w = {t: tf * idf(t) * (1.3 if " " in t else 1.0) for t, tf in c.items()}
+                else:
+                    w = Counter()
+                    for sg, sw in zip(segs, weights):
+                        ov = min(sg["end"], nd["end"]) - max(sg["start"], nd["start"]) + 1
+                        if ov >= 0.5 * (sg["end"] - sg["start"] + 1):
+                            w.update(sw)
+                nd["kw"] = top_terms(w, 3)
+
+    coverage = sum(nd["end"] - nd["start"] + 1 for nd in nodes if nd["depth"] == 1) / max(1, n)
+    if segs and (kind in REGION_KINDS or not nodes or coverage < 0.3):
+        per = math.ceil(len(segs) / 10)
+        regions = []
+        for r, i0 in enumerate(range(0, len(segs), per)):
+            group = segs[i0:i0 + per]
+            w = Counter()
+            for i in range(i0, i0 + len(group)):
+                if weights:
+                    w.update(weights[i])
+            regions.append({"id": f"R{r + 1}", "start": group[0]["start"], "end": group[-1]["end"],
+                            "tok": sum(g["tok"] for g in group), "segs": [i0, i0 + len(group) - 1],
+                            "kw": top_terms(w, 4) if w else [], "lead": group[0]["lead"]})
+        m["regions"] = regions
+
+    if kind in TOPIC_KINDS and len(segs) >= 6 and weights:
+        vecs = [normalize(dict(heapq.nlargest(60, w.items(), key=lambda x: x[1]))) for w in weights]
+        k = max(2, min(12, round(math.sqrt(len(vecs) / 2))))
+        assign, cents = kmeans(vecs, k, [sg["tok"] >= 0.3 * SEG_TOKENS for sg in segs])
+        topics = []
+        for c in range(len(cents)):
+            mem = [i for i, a in enumerate(assign) if a == c]
+            if not mem:
+                continue
+            rep = max(mem, key=lambda i: dot(vecs[i], cents[c]))
+            topics.append({"label": top_terms(cents[c], 3), "segs": mem, "rep": rep,
+                           "tok": sum(segs[i]["tok"] for i in mem), "lead": segs[rep]["lead"],
+                           "coh": round(sum(dot(vecs[i], cents[c]) for i in mem) / len(mem), 2)})
+        topics.sort(key=lambda t: -t["tok"])
+        for i, t in enumerate(topics, 1):
+            t["id"] = f"T{i}"
+        m["topics"] = topics
+        short = [normalize(dict(heapq.nlargest(20, v.items(), key=lambda x: x[1]))) for v in vecs]
+        m["segvec"] = [[[t, round(x, 3)] for t, x in sv.items()] for sv in short]
+        pairs = []
+        if len(short) <= 1500:
+            for i in range(len(short)):
+                for j in range(i + 3, len(short)):
+                    if segs[i]["node"] and segs[i]["node"] == segs[j]["node"]:
+                        continue
+                    s = dot(short[i], short[j])
+                    if s >= 0.3:
+                        pairs.append((s, i, j))
+        pairs.sort(reverse=True)
+        links, per_seg = [], Counter()
+        for s, i, j in pairs:
+            if per_seg[i] >= 2 or per_seg[j] >= 2:
+                continue
+            shared = sorted(set(short[i]) & set(short[j]), key=lambda t: -min(short[i][t], short[j][t]))
+            links.append({"a": i, "b": j, "s": round(s, 2), "via": shared[:3]})
+            per_seg[i] += 1
+            per_seg[j] += 1
+            if len(links) >= 10:
+                break
+        m["links"] = links
+
+    heading_lines = frozenset(lines[nd["start"] - 1].strip() for nd in nodes if nd["start"] <= n)
+    terms = extract_entities(seg_texts, heading_lines) if kind in ENTITY_KINDS and segs else []
+    if weights and kind != "code":
+        bdf, btf = Counter(), Counter()
+        where = defaultdict(list)
+        for i, w in enumerate(weights):
+            for t in w:
+                if " " in t:
+                    bdf[t] += 1
+                    where[t].append(i)
+        N = len(weights)
+        name_words = {w for t in terms for w in t["t"].lower().split()}
+        cands = [(d * math.log(1 + d), t) for t, d in bdf.items()
+                 if d >= 3 and d <= max(3, 0.6 * N) and not set(t.split()) & name_words]
+        for _, t in sorted(cands, reverse=True)[:8]:
+            terms.append({"t": t, "n": len(where[t]), "df": len(where[t]), "segs": where[t][:300], "type": "phrase"})
+    m["terms"] = terms
+    return seg_texts
+
+
+# ------------------------------------------------------------ cache build
+
+def write_index(path: str, seg_texts):
+    con = sqlite3.connect(path)
+    fts = True
+    try:
+        try:
+            con.execute("CREATE VIRTUAL TABLE seg USING fts5(body, content='', "
+                        "tokenize='unicode61 remove_diacritics 2')")
+        except sqlite3.OperationalError:
+            con.execute("CREATE VIRTUAL TABLE seg USING fts5(body, content='')")
+    except sqlite3.OperationalError:
+        fts = False
+    if fts:
+        con.executemany("INSERT INTO seg(rowid, body) VALUES (?, ?)", enumerate(seg_texts))
+    con.commit()
+    con.close()
+    return fts
+
+
+RAW_KINDS = {"text", "markdown", "code", "log", "table", "jsonl", "binary"}
+
+
+def derive_text(kind: str, data: bytes, name: str) -> str:
+    """Text whose lines the map addresses: the file itself, or its conversion for pdf/html/json."""
+    if kind in RAW_KINDS:
+        return decode(data) if kind != "binary" else ""
+    return BUILDERS[kind](data, name, [])[0]
+
+
+def source_record(path: str) -> dict:
+    st = os.stat(path)
+    return {"path": path, "size": st.st_size, "mtime_ns": st.st_mtime_ns}
+
+
+def build(data: bytes, name: str, sha: str, src):
+    t0 = time.time()
+    kind = detect_kind(name, data)
+    tools: list[str] = []
+    try:
+        text, m = BUILDERS[kind](data, name, tools)
+    except (ValueError, csv.Error, RecursionError) as e:
+        if kind in ("json", "table", "jsonl", "code"):
+            tools.append(f"fallback-text ({type(e).__name__})")
+            kind = "text"
+            text, m = build_text(data, name, tools)
+        else:
+            raise
+    m["kind"] = kind
+    m.setdefault("nodes", [])
+    m.setdefault("notes", [])
+    lines = split_lines(text)
+    seg_texts = finalize(m, lines)
+    dest = cache_dir(sha)
+    parent = os.path.dirname(dest)
+    os.makedirs(parent, exist_ok=True)
+    tmp = tempfile.mkdtemp(prefix=".build-", dir=parent)
+    try:
+        if not src:
+            with open(os.path.join(tmp, "stdin.bin"), "wb") as f:
+                f.write(data)
+        fts = write_index(os.path.join(tmp, "index.sqlite"), seg_texts)
+        tools.append("sqlite-fts5" if fts else "python-bm25")
+        write_json_atomic(os.path.join(tmp, "map.json"), m)
+        meta = {"version": VERSION, "sha256": sha, "name": name, "kind": kind, "bytes": len(data),
+                "lines": m["lines"], "tokens": m["tokens"], "sources": [source_record(src)] if src else [],
+                "built": time.strftime("%Y-%m-%dT%H:%M:%S"), "build_seconds": round(time.time() - t0, 2),
+                "tools": tools}
+        write_json_atomic(os.path.join(tmp, "meta.json"), meta)
+        if os.path.exists(dest):
+            shutil.rmtree(dest)
+        os.replace(tmp, dest)
+    except BaseException:
+        shutil.rmtree(tmp, ignore_errors=True)
+        raise
+
+
+class Doc:
+    def __init__(self, path: str):
+        self.dir = path
+        with open(os.path.join(path, "meta.json"), encoding="utf-8") as f:
+            self.meta = json.load(f)
+        self.sha = self.meta["sha256"]
+        self.ref = "@" + self.sha[:12]
+        self.display = self.meta["name"]
+        self._map = self._lines = None
+
+    @property
+    def map(self) -> dict:
+        if self._map is None:
+            with open(os.path.join(self.dir, "map.json"), encoding="utf-8") as f:
+                self._map = json.load(f)
+        return self._map
+
+    @property
+    def lines(self) -> list[str]:
+        if self._lines is None:
+            data = self.read_source()
+            self._lines = split_lines(derive_text(self.map["kind"], data, self.meta["name"]))
+        return self._lines
+
+    def sources(self) -> list[dict]:
+        return [x if isinstance(x, dict) else {"path": x, "size": None, "mtime_ns": None}
+                for x in self.meta.get("sources", [])]
+
+    def read_source(self) -> bytes:
+        """Bytes of the original document, verified against the cached sha256."""
+        problems, changed = [], False
+        srcs = self.sources()
+        for rec in srcs:
+            path = rec["path"]
+            try:
+                st = os.stat(path)
+            except OSError:
+                problems.append(f"{path} (missing)")
+                continue
+            with open(path, "rb") as f:
+                data = f.read()
+            if st.st_size == rec["size"] and st.st_mtime_ns == rec["mtime_ns"]:
+                return data
+            if st.st_size == self.meta["bytes"] and hashlib.sha256(data).hexdigest() == self.sha:
+                rec.update(size=st.st_size, mtime_ns=st.st_mtime_ns)   # touched, same content
+                self.meta["sources"] = srcs
+                write_json_atomic(os.path.join(self.dir, "meta.json"), self.meta)
+                return data
+            problems.append(f"{path} (content changed)")
+        stdin_copy = os.path.join(self.dir, "stdin.bin")
+        if os.path.exists(stdin_copy):
+            with open(stdin_copy, "rb") as f:
+                return f.read()
+        detail = "; ".join(problems) if problems else "no source path recorded"
+        die(f"{self.ref}: the original file is not available ({detail}). The map still works "
+            f"(catl {self.ref}); to read content, run catl on the file at its current path.")
+
+    def add_source(self, src: str):
+        """Record a path just verified by hashing; most recent first."""
+        rec, current = source_record(src), self.sources()
+        if current and current[0] == rec:
+            return
+        self.meta["sources"] = ([rec] + [r for r in current if r["path"] != src])[:20]
+        write_json_atomic(os.path.join(self.dir, "meta.json"), self.meta)
+        stdin_copy = os.path.join(self.dir, "stdin.bin")
+        if os.path.exists(stdin_copy):
+            os.remove(stdin_copy)          # a real file now holds this content
+
+    def source_path(self):
+        return next((r["path"] for r in self.sources() if os.path.exists(r["path"])), None)
+
+
+def valid_cache(d: str) -> bool:
+    try:
+        with open(os.path.join(d, "meta.json"), encoding="utf-8") as f:
+            meta = json.load(f)
+        return meta.get("version") == VERSION and all(
+            os.path.exists(os.path.join(d, x)) for x in ("map.json", "index.sqlite"))
+    except (OSError, ValueError):
+        return False
+
+
+def open_doc(target: str, refresh: bool = False):
+    if target.startswith("@"):
+        prefix = target[1:].lower()
+        if len(prefix) < 2 or not re.fullmatch(r"[0-9a-f]+", prefix):
+            die(f"{target}: use @ followed by at least 2 hex digits of the sha256")
+        found = find_cached(prefix)
+        if not found:
+            die(f"{target}: not in cache ({MEMBASE_DIR})")
+        if len(found) > 1:
+            die(f"{target}: ambiguous prefix, matches {len(found)} documents")
+        return Doc(found[0]), "cache"
+    if target == "-":
+        data = sys.stdin.buffer.read()
+        name, src, sha = "<stdin>", None, hashlib.sha256(data).hexdigest()
+    else:
+        if not os.path.exists(target):
+            die(f"{target}: No such file or directory")
+        if os.path.isdir(target):
+            die(f"{target}: Is a directory")
+        data, name, src, sha = None, os.path.basename(target), os.path.abspath(target), sha256_file(target)
+    d = cache_dir(sha)
+    status = "cache hit"
+    if refresh or not valid_cache(d):
+        if data is None:
+            with open(target, "rb") as f:
+                data = f.read()
+        t = time.time()
+        try:
+            build(data, name, sha, src)
+        except Exception as e:
+            die(f"{target}: failed to build map: {e}")
+        status = f"built in {time.time() - t:.1f}s"
+    doc = Doc(d)
+    if src:
+        doc.add_source(src)
+    elif target == "-" and not doc.source_path() and not os.path.exists(os.path.join(d, "stdin.bin")):
+        with open(os.path.join(d, "stdin.bin"), "wb") as f:   # no file holds this content any more
+            f.write(data)
+    doc.display = name
+    return doc, status
+
+
+# ------------------------------------------------------------ map rendering
+
+def fit(title: str, cands, max_tok: float, hint: str):
+    """cands: (priority, order, text). Keep best-priority lines within budget, print in order."""
+    if not cands:
+        return [], 0.0
+    used = est_tokens(title) + 1
+    chosen = []
+    for c in sorted(cands, key=lambda c: c[0]):
+        t = est_tokens(c[2]) + 1
+        if used + t > max_tok and chosen:
+            break
+        chosen.append(c)
+        used += t
+    out = [title] + [c[2] for c in sorted(chosen, key=lambda c: c[1])]
+    if len(chosen) < len(cands):
+        out.append(f"  ... +{len(cands) - len(chosen)} more -> {hint}")
+    return out, used
+
+
+def spread_order(n: int) -> list[int]:
+    """Index order that covers a list evenly: first, last, middle, quarters, ..."""
+    if n <= 2:
+        return list(range(n))
+    order, seen, step = [0, n - 1], {0, n - 1}, n - 1
+    while len(order) < n:
+        step = max(1, step // 2)
+        for i in range(0, n, step):
+            if i not in seen:
+                seen.add(i)
+                order.append(i)
+    return order
+
+
+def sec_outline(doc, full):
+    m = doc.map
+    nodes = m["nodes"]
+    if not nodes:
+        return None
+    kind = m["kind"]
+    sure = sum(nd["sure"] for nd in nodes) >= len(nodes) / 2
+    how = {"code": "symbols", "json": "schema"}.get(kind, "outline").upper()
+    title = f"{how} ({'parsed, exact' if sure else 'layout heuristics, verify'}) - {len(nodes)} nodes"
+    cands = []
+    for i, nd in enumerate(nodes):
+        ind = "  " * (nd["depth"] - 1)
+        mark = "" if nd["sure"] == sure else ("[=] " if nd["sure"] else "[~] ")
+        span = f"L{nd['start']}-{nd['end']}"
+        if kind == "code":
+            txt = f"{ind}[{nd['id']}] {mark}{clip(nd['title'], 90)}  {span}"
+            if nd.get("refs"):
+                txt += f" refs:{nd['refs']}"
+            if nd.get("doc"):
+                txt += f"  # {clip(nd['doc'], 60)}"
+        elif kind == "json":
+            txt = f"{ind}[{nd['id']}] {clip(nd['title'], 150)}  {span} ~{fmt_tok(nd['tok'])}"
+        else:
+            txt = f"{ind}[{nd['id']}] {mark}{clip(nd['title'], 70)}  {span} ~{fmt_tok(nd['tok'])}"
+            if nd.get("kw"):
+                txt += "  kw: " + ", ".join(nd["kw"])
+        cands.append([nd["depth"], i, txt])
+    by_depth = defaultdict(list)
+    for c in cands:
+        by_depth[c[0]].append(c)
+    for depth, group in by_depth.items():
+        order = spread_order(len(group))
+        for rank, pos in enumerate(order):
+            is_type = kind == "code" and re.match(r"(export\s+)?(class|struct|interface|trait|impl|type|enum)\b",
+                                                  nodes[group[pos][1]]["title"]) is not None
+            group[pos][0] = (depth, 0 if is_type else 1, rank)
+    cands = [tuple(c) for c in cands]
+    return title, cands, f"catl {doc.ref} --outline"
+
+
+def sec_regions(doc, full):
+    regs = doc.map.get("regions")
+    if not regs:
+        return None
+    title = "REGIONS (equal slices by position" + ("; no reliable headings)" if not doc.map["nodes"] else ")")
+    cands = []
+    for i, r in enumerate(regs):
+        txt = f"  [{r['id']}] L{r['start']}-{r['end']} ~{fmt_tok(r['tok'])}"
+        if r["kw"]:
+            txt += "  kw: " + ", ".join(r["kw"])
+        if r["lead"]:
+            txt += f'  | "{clip(r["lead"], 110)}"'
+        cands.append((i, i, txt))
+    return title, cands, f"catl {doc.ref} --open R1"
+
+
+def sec_topics(doc, full):
+    tops = doc.map.get("topics")
+    if not tops:
+        return None
+    title = "TOPICS (inferred by clustering segments, hints only)"
+    cands = []
+    for i, t in enumerate(tops):
+        txt = (f"  [{t['id']}] {' / '.join(t['label'])}  ~{fmt_tok(t['tok'])}  {compact_ids('g', t['segs'], 4)}"
+               f'  | "{clip(t["lead"], 100)}"')
+        cands.append((i, i, txt))
+    return title, cands, f"catl {doc.ref} --outline"
+
+
+def sec_terms(doc, full):
+    terms = doc.map.get("terms")
+    if not terms:
+        return None
+    title = "KEY TERMS (recurring names and phrases -> segments)"
+    cands = []
+    for i, t in enumerate(terms):
+        df = t.get("df", len(t["segs"]))
+        spread = f"in {df}/{len(doc.map['segments'])} segments" if df > 12 else compact_ids("g", t["segs"], 6)
+        cands.append((i, i, f"  {t['t']} x{t['n']}  {spread}"))
+    return title, cands, f"catl {doc.ref} --links <term>"
+
+
+def sec_links(doc, full):
+    m = doc.map
+    if m["kind"] == "code":
+        edges = m.get("edges") or {}
+        indeg = defaultdict(list)
+        for src, tgts in edges.items():
+            for t in tgts:
+                indeg[t].append(src)
+        if not indeg:
+            return None
+        by_id = {nd["id"]: nd for nd in m["nodes"]}
+        title = "MOST USED SYMBOLS (<- used by)"
+        cands = []
+        for i, (t, srcs) in enumerate(sorted(indeg.items(), key=lambda x: -len(x[1]))[:40]):
+            if t in by_id:
+                users = ", ".join(sorted(srcs)[:5]) + (f" +{len(srcs) - 5}" if len(srcs) > 5 else "")
+                cands.append((i, i, f"  [{t}] {by_id[t]['name']} <- {users}"))
+        return title, cands, f"catl {doc.ref} --links <symbol>"
+    links = m.get("links")
+    if not links:
+        return None
+    segs = m["segments"]
+    title = "CROSS-LINKS (distant segments with similar vocabulary, verify)"
+    cands = []
+    for i, ln in enumerate(links):
+        a, b = segs[ln["a"]], segs[ln["b"]]
+        where = f" ({a['node']} <-> {b['node']})" if a["node"] and b["node"] else ""
+        dup = "  NEAR-DUPLICATE" if ln["s"] >= 0.95 else ""
+        cands.append((i, i, f"  g{ln['a']} <-> g{ln['b']}  sim {ln['s']}{dup}  via: {', '.join(ln['via'])}{where}"))
+    return title, cands, f"catl {doc.ref} --links g{links[0]['a']}"
+
+
+def sec_columns(doc, full):
+    cols = doc.map.get("columns")
+    if not cols:
+        return None
+    title = "COLUMNS (parsed)"
+    cands = []
+    for i, c in enumerate(cols):
+        txt = f"  {clip(c['name'], 30)}  {c['type']}  fill {c['fill']}%  distinct {c['distinct']}"
+        if c.get("range"):
+            txt += f"  range {c['range'][0]:g}..{c['range'][1]:g}"
+        if c.get("top"):
+            txt += "  top: " + ", ".join(f"{clip(str(v), 20)} {p}%" for v, p in c["top"])
+        cands.append((i, i, txt))
+    return title, cands, f"catl {doc.ref} --outline"
+
+
+def sec_templates(doc, full):
+    tps = doc.map.get("templates")
+    if not tps:
+        return None
+    title = "MESSAGE TEMPLATES by frequency (<NUM> <IP> <TS> <STR> = masked values)"
+    cands = [(i, i, f"  [{t['id']}] x{t['n']:,} {t['level']}  L{t['first']}-{t['last']}  {clip(t['t'], 120)}")
+             for i, t in enumerate(tps)]
+    return title, cands, f"catl {doc.ref} --outline"
+
+
+def sec_severe(doc, full):
+    tps = [t for t in doc.map.get("templates") or [] if t["level"] in SEVERE]
+    if not tps:
+        return None
+    tps.sort(key=lambda t: (t["n"], t["first"]))
+    title = "WARN/ERROR TEMPLATES (rarest first; rare errors are often the story)"
+    cands = [(i, i, f"  [{t['id']}] x{t['n']:,} {t['level']}  first L{t['first']}  {clip(t['t'], 120)}")
+             for i, t in enumerate(tps)]
+    return title, cands, f"catl {doc.ref} --outline"
+
+
+PLANS = {
+    "code": [(sec_outline, 0.75), (sec_links, 0.25), (sec_regions, 0.2)],
+    "json": [(sec_outline, 1.0)],
+    "table": [(sec_columns, 0.7), (sec_regions, 0.3)],
+    "log": [(sec_severe, 0.35), (sec_templates, 0.4), (sec_regions, 0.25)],
+    "jsonl": [(sec_regions, 0.4), (sec_topics, 0.4), (sec_terms, 0.2)],
+    "binary": [],
+}
+DEFAULT_PLAN = [(sec_outline, 0.45), (sec_regions, 0.3), (sec_topics, 0.25), (sec_terms, 0.15), (sec_links, 0.12)]
+
+
+def pick_examples(doc):
+    m = doc.map
+    ex = {}
+    nodes = [nd for nd in m["nodes"] if not nd["title"].startswith("(before")]
+    if m["kind"] == "log" and m.get("templates"):
+        sev = sorted((t for t in m["templates"] if t["level"] in SEVERE), key=lambda t: t["n"])
+        t = (sev or m["templates"])[0]
+        ex["open"], ex["span"] = t["id"], (t["first"], t["first"] + 40)
+    elif nodes:
+        if m["kind"] == "code":
+            nd = max(nodes, key=lambda x: (x.get("refs", 0), -x["depth"]))
+            unique = sum(1 for x in nodes if x["name"] == nd["name"]) == 1
+            ex["open"] = nd["name"] if unique else nd["id"]
+        else:
+            small = [x for x in nodes if x["tok"] <= 0.5 * m["tokens"]] or nodes
+            shallow = min(x["depth"] for x in small)
+            nd = max((x for x in small if x["depth"] == shallow), key=lambda x: x["tok"])
+            ex["open"] = nd["id"]
+        ex["span"] = (nd["start"], min(nd["end"], nd["start"] + 60))
+    elif m.get("regions"):
+        r = m["regions"][min(1, len(m["regions"]) - 1)]
+        ex["open"], ex["span"] = r["id"], (r["start"], r["start"] + 60)
+    else:
+        ex["open"], ex["span"] = "g0", (1, 60)
+    term = None
+    if m.get("terms"):
+        term = m["terms"][0]["t"]
+    elif m["kind"] == "code" and nodes:
+        term = ex["open"].split(".")[-1]
+    elif m.get("segments") and m["segments"][0]["kw"]:
+        term = m["segments"][0]["kw"][0]
+    elif m["kind"] == "json" and nodes:
+        keys = re.findall(r"\.([A-Za-z_]\w*)", nodes[-1]["name"])
+        term = keys[-1] if keys else None
+    elif m.get("columns"):
+        tops = [c["top"][0][0] for c in m["columns"] if c.get("top") and c["type"] == "str"]
+        term = tops[0] if tops else m["columns"][0]["name"]
+    elif m.get("templates"):
+        words = [w for w in re.findall(r"[A-Za-z]{4,}", m["templates"][0]["t"]) if w.upper() not in LEVEL_RX.pattern]
+        term = words[0] if words else None
+    ex["term"] = term or "keyword"
+    return ex
+
+
+def render_footer(doc):
+    m, ref = doc.map, doc.ref
+    if m["kind"] == "binary":
+        return ["", "NEXT: binary file, nothing to read as text -> skip it, or inspect with: file, strings | head"]
+    ex = pick_examples(doc)
+    a, b = ex["span"]
+    term = ex["term"]
+    rx = r"\s+".join(re.escape(p) for p in term.split())
+    ids = {"S": "section" if m["kind"] not in ("code", "json") else ("symbol" if m["kind"] == "code" else "json path"),
+           "R": "region", "T": "topic", "L": "log template", "g": "segment"}
+    present = [f"{k}=" + v for k, v in ids.items()
+               if (k == "S" and m["nodes"]) or (k == "R" and m.get("regions")) or (k == "T" and m.get("topics"))
+               or (k == "L" and m.get("templates")) or (k == "g" and m.get("segments"))]
+    out = ["", "NEXT - the above is a map, not the content. Pick the cheapest step that serves your goal:",
+           "  skip       nothing above matches your goal -> stop; do not read this file",
+           f"  open       catl {ref} --open {q(ex['open'])}   read one node, paged ~{fmt_tok(PAGE_TOKENS)} tok/page"
+           f" ({', '.join(present)}{', or a symbol name' if m['kind'] == 'code' else ''}"
+           f"{', or $.path' if m['kind'] == 'json' else ''})",
+           f"  lines      catl {ref} --lines {a}:{b}   exact line span",
+           f"  search     catl {ref} --search {q(term)}   ranked passages (BM25) for a concept",
+           f"  grep       catl {ref} --grep {q(rx)} -i   exact regex, line numbers; use for counts/completeness",
+           f"  links      catl {ref} --links {q(term if m['kind'] != 'log' else ex['open'])}"
+           f"   where it recurs + neighbouring/related nodes",
+           f"  more map   catl {ref} --outline   (or --budget 5000)"]
+    if m["kind"] == "table":
+        src = (doc.source_path() or "<file>").replace("'", "''")
+        out.append(f"  aggregate  do not read rows for totals/stats; query the file with a tool, e.g. "
+                   + (f"duckdb -c \"SUMMARIZE SELECT * FROM '{src}'\"" if not re.search(r'["$`\\]', src)
+                      else "duckdb -c " + q("SUMMARIZE SELECT * FROM '" + src + "'")))
+    out.append("TRUST: parsed/exact structure is reliable; topics, regions, cross-links and "
+               "'layout heuristics' are hints - confirm with --open or --grep before relying on them.")
+    return out
+
+
+def render_map(doc, status: str, budget: int, full: bool = False) -> str:
+    m, meta = doc.map, doc.meta
+    head = [f"CATL MAP | {doc.display} | {m['kind']}{'/' + m['lang'] if m.get('lang') else ''} | "
+            f"{fmt_bytes(meta['bytes'])} | ~{fmt_tok(m['tokens'])} tok | {m['lines']:,} lines | "
+            f"{doc.ref} ({status})"]
+    if m.get("title"):
+        head.append(f"TITLE: {m['title']}")
+    if m.get("opening"):
+        head.append(f'OPENING: "{m["opening"]}"')
+    head += [f"NOTE: {n}" for n in m["notes"]]
+    footer = render_footer(doc)
+    body = []
+    left = 10 ** 9 if full else budget - est_tokens("\n".join(head + footer))
+    plan = PLANS.get(m["kind"], DEFAULT_PLAN)
+    sections = [(fn(doc, full), share) for fn, share in plan]
+    sections = [(s, share) for s, share in sections if s]
+    for idx, (sec, share) in enumerate(sections):
+        remaining_share = sum(sh for _, sh in sections[idx:])
+        cap = left if full else max(60.0, left * share / remaining_share)
+        lines, used = fit(sec[0], sec[1], cap, sec[2])
+        body += lines
+        left -= used
+    return "\n".join(head + body + footer)
+
+
+# ------------------------------------------------------------ zoom-in commands
+
+def find_node(doc, key: str):
+    m = doc.map
+    for nd in m["nodes"]:
+        if nd["id"] == key:
+            return "node", nd
+    tables = [("R", "regions", "region"), ("T", "topics", "topic"), ("L", "templates", "template")]
+    for prefix, field, kind in tables:
+        if re.fullmatch(prefix + r"\d+", key):
+            for x in m.get(field) or []:
+                if x["id"] == key:
+                    return kind, x
+    if re.fullmatch(r"g\d+", key) and int(key[1:]) < len(m.get("segments", [])):
+        return "segment", m["segments"][int(key[1:])]
+    exact = [nd for nd in m["nodes"] if key in (nd.get("name"), nd["title"])]
+    if not exact:
+        low = key.lower()
+        exact = [nd for nd in m["nodes"] if low in ((nd.get("name") or "").lower(), nd["title"].lower())]
+    if not exact:
+        low = key.lower()
+        exact = [nd for nd in m["nodes"] if low in (nd.get("name") or nd["title"]).lower()]
+    if len(exact) == 1:
+        return "node", exact[0]
+    if len(exact) > 1:
+        opts = ", ".join(f"{nd['id']} ({clip(nd.get('name') or nd['title'], 40)})" for nd in exact[:10])
+        die(f"{key!r} matches {len(exact)} nodes: {opts}")
+    if m["kind"] == "json" and key.startswith("$"):
+        return "jsonpath", key
+    return None, None
+
+
+def page_spans(doc, start: int, end: int, page_tok: int):
+    lines = doc.lines
+    span = lines[start - 1:end]
+    lt = [est_tokens(l[:MAX_LINE_CHARS]) + 2.3 for l in span]
+    starts = {nd["start"]: nd["depth"] for nd in doc.map["nodes"]}
+    strength = [5] * (len(span) + 1)
+    for i in range(1, len(span)):
+        strength[i] = 5 if (not span[i - 1].strip() or not span[i].strip()) else 1
+        if start + i in starts:
+            strength[i] = 8 - min(starts[start + i], 3)
+    return [(start + s, start + e - 1) for s, e in pack(lt, strength, page_tok)]
+
+
+def print_lines(doc, a: int, b: int):
+    width = len(str(b))
+    out = []
+    for i in range(a, b + 1):
+        text = doc.lines[i - 1]
+        if len(text) > MAX_LINE_CHARS:
+            text = text[:MAX_LINE_CHARS] + f" ...[+{len(text) - MAX_LINE_CHARS} chars; catl {doc.ref} --raw]"
+        out.append(f"{i:>{width}}| {text}")
+    return out
+
+
+def nav_hints(doc, nd):
+    nodes = doc.map["nodes"]
+    by_id = {x["id"]: x for x in nodes}
+    sib = [x for x in nodes if x["parent"] == nd["parent"]]
+    k = sib.index(nd)
+    kids = [x for x in nodes if x["parent"] == nd["id"]]
+    parts = []
+    if nd["parent"]:
+        parts.append(f"parent {nd['parent']} {clip(by_id[nd['parent']]['title'], 40)!r}")
+    if k > 0:
+        parts.append(f"prev {sib[k - 1]['id']}")
+    if k + 1 < len(sib):
+        parts.append(f"next {sib[k + 1]['id']} {clip(sib[k + 1]['title'], 40)!r}")
+    if kids:
+        parts.append("children " + ", ".join(x["id"] for x in kids[:8]) + (" ..." if len(kids) > 8 else ""))
+    return parts
+
+
+def cmd_open(doc, key: str, page: int, page_tok: int):
+    kind, x = find_node(doc, key)
+    ref, m = doc.ref, doc.map
+    if kind is None:
+        die(f"{key!r}: no such node. See ids in: catl {ref}   (or try --search / --grep)")
+    if kind == "topic":
+        out = [f"CATL OPEN {ref} [{x['id']}] {' / '.join(x['label'])} | {len(x['segs'])} segments "
+               f"~{fmt_tok(x['tok'])} tok | inferred topic (members in document order)"]
+        for i in x["segs"]:
+            sg = m["segments"][i]
+            out.append(f"  g{i}  L{sg['start']}-{sg['end']}  in {sg['node'] or '-'}  kw: {', '.join(sg['kw'])}"
+                       f'  | "{clip(sg["lead"], 90)}"')
+        out += ["", f"NEXT: read a member -> catl {ref} --open g{x['rep']}   (g{x['rep']} is most central)",
+                f"      related passages -> catl {ref} --search {q(' '.join(x['label']))}"]
+        return "\n".join(out)
+    if kind == "template":
+        nums = x["lines"]
+        shown, used = [], 0.0
+        for ln in nums:
+            t = est_tokens(doc.lines[ln - 1][:MAX_LINE_CHARS]) + 3
+            if used + t > page_tok and shown:
+                break
+            shown.append(ln)
+            used += t
+        out = [f"CATL OPEN {ref} [{x['id']}] x{x['n']:,} {x['level']} | {clip(x['t'], 120)} | "
+               f"showing {len(shown)} of {x['n']:,} occurrences"]
+        for ln in shown:
+            out += print_lines(doc, ln, ln)
+        rx = re.sub(r"(<[A-Z*]+>|<\\\*>)", ".*?", re.escape(x["t"]).replace(r"\<", "<").replace(r"\>", ">"))
+        rx = rx.replace("\\ ", " ")
+        out += ["", f"NEXT: context around first -> catl {ref} --lines {max(1, x['first'] - 10)}:{x['first'] + 30}",
+                f"      all occurrences -> catl {ref} --grep {q(clip(rx, 160))} --max 500"]
+        return "\n".join(out)
+    if kind == "jsonpath":
+        obj = json.loads("\n".join(doc.lines))
+        cur = obj
+        for part in re.findall(r"\.([A-Za-z_]\w*)|\[(\d+)\]|\[(\"(?:[^\"\\]|\\.)*\")\]", key[1:]):
+            name, idx, quoted = part
+            try:
+                cur = cur[name] if name else cur[int(idx)] if idx else cur[json.loads(quoted)]
+            except (KeyError, IndexError, TypeError):
+                die(f"{key}: path not found")
+        text = json.dumps(cur, ensure_ascii=False, indent=2)
+        body = split_lines(text)
+        shown, used = [], 0.0
+        for l in body:
+            used += est_tokens(l) + 1
+            if used > page_tok:
+                break
+            shown.append(l)
+        out = [f"CATL OPEN {ref} {key} | {jtype(cur)} | {len(body):,} lines pretty-printed"] + shown
+        if len(shown) < len(body):
+            out.append(f"... truncated at ~{fmt_tok(page_tok)} tok; open a narrower path, e.g. {key}[0] or {key}.<key>")
+        out += ["", f"NEXT: narrower path -> catl {ref} --open {q(key + ('[0]' if isinstance(cur, list) else '.<key>'))}"
+                    f" | back to map -> catl {ref}"]
+        return "\n".join(out)
+    start, end = x["start"], x["end"]
+    pages = page_spans(doc, start, end, page_tok)
+    page = max(1, min(page, len(pages)))
+    a, b = pages[page - 1]
+    label = x.get("title") or x.get("lead") or ""
+    idl = x["id"]
+    out = [f"CATL OPEN {ref} [{idl}] {clip(label, 80)} | L{start}-{end} ~{fmt_tok(x['tok'])} tok | "
+           f"page {page}/{len(pages)} = L{a}-{b}"]
+    out += print_lines(doc, a, b)
+    nxt = []
+    if page < len(pages):
+        nxt.append(f"next page -> catl {ref} --open {q(key)} --page {page + 1}")
+    if page > 1:
+        nxt.append(f"prev page -> --page {page - 1}")
+    if kind == "node":
+        nxt += nav_hints(doc, x)
+    elif kind == "segment":
+        i = int(idl[1:])
+        if i > 0:
+            nxt.append(f"prev g{i - 1}")
+        if i + 1 < len(m["segments"]):
+            nxt.append(f"next g{i + 1}")
+        if x["node"]:
+            nxt.append(f"inside {x['node']}")
+    elif kind == "region":
+        r = int(idl[1:])
+        if r < len(m["regions"]):
+            nxt.append(f"next R{r + 1}")
+    nxt.append(f"back to map -> catl {ref}")
+    return "\n".join(out + ["", "NEXT: " + " | ".join(nxt)])
+
+
+def cmd_lines(doc, spec: str, page_tok: int):
+    mt = re.fullmatch(r"(\d+)(?:[:-](\d*))?", spec.strip())
+    if not mt:
+        die("--lines expects A:B (1-based, inclusive), A: or A")
+    n = len(doc.lines)
+    a = max(1, int(mt.group(1)))
+    b = int(mt.group(2)) if mt.group(2) else (n if mt.group(2) == "" else a + 60)
+    b = min(b, n)
+    if a > n:
+        die(f"line {a} is past the end ({n} lines)")
+    pages = page_spans(doc, a, b, page_tok)
+    pa, pb = pages[0]
+    nd = deepest(doc.map["nodes"], a)
+    out = [f"CATL LINES {doc.ref} L{pa}-{pb} of {n:,}" + (f" | inside [{nd['id']}] {clip(nd['title'], 60)}" if nd else "")]
+    out += print_lines(doc, pa, pb)
+    nxt = []
+    if pb < b:
+        nxt.append(f"continue -> catl {doc.ref} --lines {pb + 1}:{b}")
+    elif pb < n:
+        nxt.append(f"after -> catl {doc.ref} --lines {pb + 1}:{min(n, pb + 60)}")
+    if nd:
+        nxt.append(f"whole node -> catl {doc.ref} --open {nd['id']}")
+    nxt.append(f"back to map -> catl {doc.ref}")
+    return "\n".join(out + ["", "NEXT: " + " | ".join(nxt)])
+
+
+def seg_snippet(doc, sg, toks) -> str:
+    """Best line of a segment for the query, with matches in [brackets] and its line number."""
+    rx = re.compile("|".join(re.escape(t) for t in toks), re.I)
+    best, best_n = None, 0
+    for ln in range(sg["start"], sg["end"] + 1):
+        found = len(set(x.lower() for x in rx.findall(doc.lines[ln - 1])))
+        if found > best_n:
+            best, best_n = ln, found
+    if best is None:
+        return ""
+    line = doc.lines[best - 1]
+    mt = rx.search(line)
+    start = max(0, mt.start() - 70)
+    piece = ("..." if start else "") + line[start:start + 200] + ("..." if len(line) > start + 200 else "")
+    return f"L{best}: " + rx.sub(lambda x: f"[{x.group(0)}]", " ".join(piece.split()))
+
+
+def cmd_search(doc, query: str, limit: int):
+    m, ref = doc.map, doc.ref
+    toks = [t for t in re.findall(r"\w+", query) if t]
+    if not toks:
+        die("--search needs words")
+    segs = m.get("segments") or []
+    hits = []
+    idx = os.path.join(doc.dir, "index.sqlite")
+    try:
+        con = sqlite3.connect(idx)
+        match = " OR ".join('"' + t.replace('"', "") + '"' for t in toks)
+        rows = con.execute("SELECT rowid, bm25(seg) FROM seg WHERE seg MATCH ? ORDER BY bm25(seg) LIMIT ?",
+                           (match, limit)).fetchall()
+        con.close()
+        hits = [(r[0], -r[1], seg_snippet(doc, segs[r[0]], toks)) for r in rows]
+    except sqlite3.Error:
+        low = [t.lower() for t in toks]
+        texts = ["\n".join(doc.lines[s["start"] - 1:s["end"]]).lower() for s in segs]
+        N = len(texts) or 1
+        avg = sum(len(t) for t in texts) / N or 1
+        df = {t: sum(1 for x in texts if t in x) for t in low}
+        scored = []
+        for i, x in enumerate(texts):
+            sc = 0.0
+            for t in low:
+                tf = x.count(t)
+                if tf:
+                    sc += math.log(1 + (N - df[t] + 0.5) / (df[t] + 0.5)) * tf * 2.2 / (tf + 1.2 * (0.25 + 0.75 * len(x) / avg))
+            if sc > 0:
+                pos = min((x.find(t) for t in low if t in x), default=0)
+                scored.append((i, sc, "..." + " ".join(x[max(0, pos - 60):pos + 100].split()) + "..."))
+        hits = sorted(scored, key=lambda h: -h[1])[:limit]
+    out = [f"CATL SEARCH {ref} {query!r} | {len(hits)} hits (BM25 over ~{fmt_tok(SEG_TOKENS)}-tok segments)"]
+    for k, (i, score, snip) in enumerate(hits, 1):
+        sg = segs[i]
+        nd = next((x for x in m["nodes"] if x["id"] == sg["node"]), None)
+        where = f"in [{nd['id']}] {clip(nd['title'], 40)}" if nd else ""
+        out.append(f"{k:>2}. g{i}  L{sg['start']}-{sg['end']}  score {score:.3g}  {where}")
+        out.append(f"    {clip(snip, 220)}")
+    nxt = []
+    if hits:
+        nxt.append(f"read best -> catl {ref} --open g{hits[0][0]}")
+    rx = "|".join(re.escape(t) for t in toks)
+    nxt += [f"exact matches -> catl {ref} --grep {q(rx)} -i",
+            "no good hit? try synonyms, or the map's KEY TERMS / TOPICS",
+            f"back to map -> catl {ref}"]
+    return "\n".join(out + ["", "NEXT: " + " | ".join(nxt)])
+
+
+def cmd_grep(doc, pattern: str, icase: bool, limit: int):
+    try:
+        rx = re.compile(pattern, re.I if icase else 0)
+    except re.error as e:
+        die(f"bad regex: {e}")
+    m, ref = doc.map, doc.ref
+    hits = [i for i, l in enumerate(doc.lines, 1) if rx.search(l)]
+    out = [f"CATL GREP {ref} /{pattern}/{'i' if icase else ''} | {len(hits):,} matching lines"]
+    width = len(str(hits[-1])) if hits else 1
+    for ln in hits[:limit]:
+        l = doc.lines[ln - 1]
+        mt = rx.search(l)
+        if len(l) > 220:
+            s = max(0, mt.start() - 80)
+            l = ("..." if s else "") + l[s:s + 220] + "..."
+        out.append(f"{ln:>{width}}| {l}")
+    if len(hits) > limit:
+        out.append(f"... {len(hits) - limit:,} more (use --max N)")
+    groups = Counter()
+    top = [nd for nd in m["nodes"] if nd["depth"] == 1]
+    regs = m.get("regions") or []
+    for ln in hits:
+        owner = next((nd["id"] for nd in top if nd["start"] <= ln <= nd["end"]), None)
+        if owner is None:
+            owner = next((r["id"] for r in regs if r["start"] <= ln <= r["end"]), None)
+        if owner:
+            groups[owner] += 1
+    if groups:
+        out.append("DISTRIBUTION: " + ", ".join(f"{k} x{v}" for k, v in groups.most_common(12)))
+    nxt = []
+    if hits:
+        nxt.append(f"context -> catl {ref} --lines {max(1, hits[0] - 5)}:{hits[0] + 25}")
+        if groups:
+            nxt.append(f"densest node -> catl {ref} --open {groups.most_common(1)[0][0]}")
+    else:
+        nxt.append(f"no exact match; try a concept search -> catl {ref} --search {q(pattern)}")
+    nxt.append(f"back to map -> catl {ref}")
+    return "\n".join(out + ["", "NEXT: " + " | ".join(nxt)])
+
+
+def cmd_links(doc, key: str, limit: int):
+    m, ref = doc.map, doc.ref
+    segs = m.get("segments") or []
+    kind, x = find_node(doc, key) if not key.startswith("$") else ("jsonpath", key)
+    out = []
+    if kind in ("node", "segment", "region"):
+        label = x.get("title") or x.get("lead") or ""
+        out.append(f"CATL LINKS {ref} [{x['id']}] {clip(label, 70)} | L{x['start']}-{x['end']}")
+        if kind == "node":
+            out += ["  " + p for p in nav_hints(doc, x)]
+        mine = [i for i, sg in enumerate(segs) if sg["start"] <= x["end"] and sg["end"] >= x["start"]]
+        if m["kind"] == "code" and kind == "node":
+            edges = m.get("edges") or {}
+            by_id = {nd["id"]: nd for nd in m["nodes"]}
+            uses = edges.get(x["id"], [])
+            used_by = sorted(s for s, t in edges.items() if x["id"] in t or any(tt.startswith(x["id"] + ".") for tt in t))
+            if uses:
+                out.append("  uses: " + ", ".join(f"{t} {by_id[t]['name']}" for t in uses[:limit] if t in by_id))
+            if used_by:
+                out.append("  used by: " + ", ".join(f"{s} {by_id[s]['name']}" for s in used_by[:limit] if s in by_id))
+        tops = Counter()
+        for t in m.get("topics") or []:
+            for i in t["segs"]:
+                if i in mine:
+                    tops[t["id"]] += 1
+        if tops:
+            names = {t["id"]: " / ".join(t["label"]) for t in m["topics"]}
+            out.append("  topics: " + ", ".join(f"{k} {names[k]} ({v}/{len(mine)} seg)" for k, v in tops.most_common(5)))
+        vec = m.get("segvec")
+        if vec and mine:
+            agg = Counter()
+            for i in mine:
+                agg.update(dict((t, w) for t, w in vec[i]))
+            agg = normalize(dict(agg))
+            sims = []
+            for j, v in enumerate(vec):
+                if j in mine:
+                    continue
+                s = dot(agg, dict((t, w) for t, w in v))
+                if s >= 0.2:
+                    sims.append((s, j))
+            sims.sort(reverse=True)
+            if sims:
+                out.append("  related elsewhere (vocabulary similarity, verify):")
+                for s, j in sims[:limit]:
+                    sg = segs[j]
+                    out.append(f"    g{j} L{sg['start']}-{sg['end']} sim {s:.2f} in {sg['node'] or '-'}  kw: {', '.join(sg['kw'])}")
+        terms_here = [t for t in m.get("terms") or [] if set(t["segs"]) & set(mine)]
+        if terms_here:
+            out.append("  terms here that recur elsewhere:")
+            for t in terms_here[:limit]:
+                other = [i for i in t["segs"] if i not in mine]
+                if other:
+                    df = t.get("df", len(t["segs"]))
+                    spread = f"in {df}/{len(segs)} segments" if df > 12 else compact_ids("g", other, 6)
+                    out.append(f"    {t['t']} -> {spread}")
+        out += ["", f"NEXT: open -> catl {ref} --open {x['id']} | follow a related segment -> catl {ref} --open <gN>"
+                    f" | back to map -> catl {ref}"]
+        return "\n".join(out)
+    if kind == "template":
+        return cmd_open(doc, key, 1, PAGE_TOKENS)
+    if kind == "topic":
+        return cmd_open(doc, key, 1, PAGE_TOKENS)
+    # free-text term: exact occurrences grouped by node
+    rx = re.compile(r"\s+".join(re.escape(p) for p in key.split()), re.I)
+    hits = [i for i, l in enumerate(doc.lines, 1) if rx.search(l)]
+    out.append(f"CATL LINKS {ref} term {key!r} | {len(hits):,} lines mention it")
+    if not hits:
+        out += [f"NEXT: try a ranked concept search -> catl {ref} --search {q(key)}"]
+        return "\n".join(out)
+    groups, first = Counter(), {}
+    cache = {}
+    for ln in hits:
+        nd = deepest(m["nodes"], ln)
+        owner = nd["id"] if nd else next((r["id"] for r in m.get("regions") or [] if r["start"] <= ln <= r["end"]), "-")
+        groups[owner] += 1
+        first.setdefault(owner, ln)
+    titles = {nd["id"]: nd.get("name") or nd["title"] for nd in m["nodes"]}
+    out.append("  where (node: count, first line):")
+    for k, v in sorted(groups.items(), key=lambda kv: first[kv[0]])[: limit * 2]:
+        out.append(f"    [{k}] {clip(titles.get(k, ''), 50)}: x{v}, first L{first[k]}")
+    if len(groups) > limit * 2:
+        out.append(f"    ... +{len(groups) - limit * 2} more nodes")
+    seg_idx = sorted({next((i for i, sg in enumerate(segs) if sg["start"] <= ln <= sg["end"]), 0) for ln in hits})
+    co = Counter()
+    for t in m.get("terms") or []:
+        if t["t"].lower() != key.lower():
+            ov = len(set(t["segs"]) & set(seg_idx))
+            if ov:
+                co[t["t"]] = ov
+    if co:
+        out.append("  co-occurs with: " + ", ".join(f"{t} ({v} seg)" for t, v in co.most_common(8)))
+    densest = groups.most_common(1)[0][0]
+    out += ["", f"NEXT: densest -> catl {ref} --open {densest} | first mention -> catl {ref} --lines "
+                f"{max(1, hits[0] - 5)}:{hits[0] + 25} | all lines -> catl {ref} --grep {q(rx.pattern)} -i"]
+    return "\n".join(out)
+
+
+# ------------------------------------------------------------ main
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(
+        prog="catl", formatter_class=argparse.RawDescriptionHelpFormatter,
+        description="cat for LLMs: print a compact, cached semantic map of a file, then zoom in.",
+        epilog="examples:\n"
+               "  catl report.txt                      map (or full content if the file is small)\n"
+               "  catl @3fa9c1d2 --open S2.1           read a section by id (paged)\n"
+               "  catl @3fa9c1d2 --lines 400:520       exact line span\n"
+               "  catl @3fa9c1d2 --search 'late delivery penalty'\n"
+               "  catl @3fa9c1d2 --grep 'Vendor\\s+X' -i\n"
+               "  catl @3fa9c1d2 --links 'Vendor X'\n"
+               f"cache: $MEMBASE_DIR (now {MEMBASE_DIR})")
+    ap.add_argument("targets", nargs="*", help="files, '-' for stdin, or @<sha256-prefix> of a cached document")
+    act = ap.add_argument_group("zoom-in actions (one at a time)")
+    act.add_argument("--open", metavar="NODE", help="read a node: S1.2, R3, T2, L5, g17, symbol name, $.json.path")
+    act.add_argument("--lines", metavar="A:B", help="print lines A..B (1-based, inclusive)")
+    act.add_argument("--search", metavar="QUERY", help="ranked full-text search over segments")
+    act.add_argument("--grep", metavar="REGEX", help="exact regex search with line numbers")
+    act.add_argument("--links", metavar="NODE|TERM", help="neighbours, related nodes, or where a term recurs")
+    act.add_argument("--outline", action="store_true", help="the full map with no token budget")
+    act.add_argument("--raw", action="store_true", help="print the cached text content (like cat)")
+    act.add_argument("--json", action="store_true", help="print map.json")
+    act.add_argument("--where", action="store_true", help="print the cache directory")
+    ap.add_argument("--map", action="store_true", help="show a map even for small files")
+    ap.add_argument("--budget", type=int, default=DEFAULT_BUDGET, help=f"map token budget (default {DEFAULT_BUDGET})")
+    ap.add_argument("--page", type=int, default=1, help="page number for --open")
+    ap.add_argument("--page-tokens", type=int, default=PAGE_TOKENS, help=f"tokens per page (default {PAGE_TOKENS})")
+    ap.add_argument("--max", type=int, default=40, help="max results for --grep/--search/--links")
+    ap.add_argument("-i", "--ignore-case", action="store_true", help="case-insensitive --grep")
+    ap.add_argument("--refresh", action="store_true", help="rebuild the cache entry")
+    ap.add_argument("--version", action="version", version=f"catl {VERSION}")
+    args = ap.parse_args(argv)
+
+    targets = args.targets or (["-"] if not sys.stdin.isatty() else [])
+    if not targets:
+        ap.print_help()
+        return 2
+    actions = [a for a in ("open", "lines", "search", "grep", "links", "outline", "raw", "json", "where")
+               if getattr(args, a) not in (None, False)]
+    if len(actions) > 1:
+        die("use one action at a time: " + ", ".join("--" + a for a in actions))
+    if actions and len(targets) != 1:
+        die(f"--{actions[0]} takes exactly one target")
+    action = actions[0] if actions else None
+
+    chunks = []
+    for target in targets:
+        doc, status = open_doc(target, args.refresh)
+        m = doc.map
+        if action == "open":
+            chunks.append(cmd_open(doc, args.open, args.page, args.page_tokens))
+        elif action == "lines":
+            chunks.append(cmd_lines(doc, args.lines, args.page_tokens))
+        elif action == "search":
+            chunks.append(cmd_search(doc, args.search, 10 if args.max == 40 else args.max))
+        elif action == "grep":
+            chunks.append(cmd_grep(doc, args.grep, args.ignore_case, args.max))
+        elif action == "links":
+            chunks.append(cmd_links(doc, args.links, min(args.max, 10) if args.max == 40 else args.max))
+        elif action == "outline":
+            chunks.append(render_map(doc, status, 0, full=True))
+        elif action == "raw":
+            sys.stdout.write("\n".join(doc.lines) + ("\n" if doc.lines else ""))
+        elif action == "json":
+            chunks.append(json.dumps(m, ensure_ascii=False, indent=1))
+        elif action == "where":
+            chunks.append(doc.dir)
+        elif m["tokens"] <= SMALL_FILE_TOKENS and not args.map and m["kind"] != "binary":
+            chunks.append(f"CATL FULL | {doc.display} | {m['kind']} | ~{fmt_tok(m['tokens'])} tok | "
+                          f"{m['lines']:,} lines | {doc.ref} ({status}) | small file: complete content below\n"
+                          + "\n".join(doc.lines)
+                          + f"\n\nNEXT: this is the whole file; nothing more to read. "
+                            f"(map anyway: catl {doc.ref} --map)")
+        else:
+            chunks.append(render_map(doc, status, args.budget))
+    if chunks:
+        sys.stdout.write("\n\n".join(chunks) + "\n")
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except BrokenPipeError:
+        sys.stderr.close()
+        sys.exit(0)
+    except KeyboardInterrupt:
+        sys.exit(130)

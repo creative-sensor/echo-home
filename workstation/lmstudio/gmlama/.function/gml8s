@@ -1,0 +1,330 @@
+#!/bin/bash
+# gml8s - llama-server router (multi-model) launcher for opencode LlamaCPP provider
+#
+# Generates a --models-preset INI from gml.${HOSTNAME}.yson and starts
+# llama-server in router mode on :8080 so opencode can use it as:
+#
+#   provider "local" (npm @ai-sdk/openai-compatible, name LlamaCPP)
+#   options.baseURL = http://localhost:8080/v1
+#
+# Usage:
+#   gml8s [--port 8080] [--models-max 4] [--no-autoload] [--include-missing]
+#         [--print-ini|--print-opencode] [ID ...]
+#
+#   No IDs  -> expose ALL usable entries from the yson (skip comments/#, ---- lines)
+#   ID ...  -> expose only those yson line numbers (same numbering as gml8w: grep -n '^.*:')
+#             e.g. gml8s 1 4 5
+#
+# Notes:
+#   - Section name in the INI == model id returned by GET /v1/models == opencode models key.
+#     Alias is derived from the describe field: first `Agent*` token, else last
+#     path component of describe, else model basename. Duplicates get -2/-3 suffix.
+#   - Per-model --port/--host/--alias are stripped (router manages them).
+#   - Binary: $LOCAL_BIN/gmlama/llama-server (router-capable, >=b11493).
+#     Falls back to gmlama-vulkan dir like gml8w when GPU/ describe + Vulkan dev.
+
+set -u
+MODEL_IDS=()
+PORT=8080
+MODELS_MAX=4
+AUTOLOAD="--models-autoload"
+PRINT_INI=0
+PRINT_OPENCODE=0
+INCLUDE_MISSING=0
+GMLBASE=${GMLBASE:-~/.lmstudio/models}
+GMLBASE=$(eval echo "$GMLBASE")
+PROPERD=~/echo-home/workstation/lmstudio/gmlama/.properd
+GML_YSON=$PROPERD/gml.${HOSTNAME}.yson
+test -r "$GML_YSON" || { echo "missing $GML_YSON" >&2; exit 1; }
+
+while test $# -gt 0; do
+  case "$1" in
+    --port) PORT=$2; shift 2;;
+    --models-max) MODELS_MAX=$2; shift 2;;
+    --no-autoload) AUTOLOAD="--no-models-autoload"; shift;;
+    --include-missing) INCLUDE_MISSING=1; shift;;
+    --print-ini) PRINT_INI=1; shift;;
+    --print-opencode) PRINT_OPENCODE=1; shift;;
+    -h|--help)
+      sed -n '1,30p' "$0"; echo; echo "YSON: $GML_YSON"
+      grep --color -n '^.*:' "$GML_YSON" || true
+      exit 0;;
+    --) shift; break;;
+    -*) echo "unknown flag $1" >&2; exit 1;;
+    *)  if [[ "$1" =~ ^[0-9]+$ ]]; then MODEL_IDS+=("$1"); else echo "ID must be numeric (yson line no), got: $1" >&2; exit 1; fi; shift;;
+  esac
+done
+
+# ---- select llama-server binary (router-capable) ----
+LLAMA_BIN="$LOCAL_BIN/gmlama-vulkan/llama-server"
+if ! test -x "$LLAMA_BIN"; then
+  # fallback: newest versioned dir, same layout as gml8w
+  CAND=$(ls -d "$LOCAL_BIN"/gmlama/* "$LOCAL_BIN"/gmlama-vulkan/* 2>/dev/null | grep 'llama-server$' | head -n 1)
+  test -n "${CAND:-}" && LLAMA_BIN=$CAND
+fi
+test -x "$LLAMA_BIN" || { echo "llama-server not found/executable: $LLAMA_BIN" >&2; exit 1; }
+
+PRESET_TMP=${TMPDIR:-/tmp}/gml8s-${HOSTNAME:-local}.ini
+IDS_CSV=""
+if test "${#MODEL_IDS[@]}" -gt 0; then IDS_CSV=$(IFS=,; echo "${MODEL_IDS[*]}"); fi
+
+# ---- yson -> router preset INI (embedded python, no extra deps) ----
+IDS="$IDS_CSV" YSON="$GML_YSON" GMLBASE="$GMLBASE" OUT="$PRESET_TMP" INCLUDE_MISSING="$INCLUDE_MISSING" python - <<'PYEOF'
+import os, re, shlex, sys
+
+yson = os.environ["YSON"]
+gmlbase = os.environ["GMLBASE"]
+out = os.environ["OUT"]
+ids_raw = os.environ.get("IDS", "").strip()
+wanted = set(int(x) for x in ids_raw.split(",") if x.strip().isdigit()) if ids_raw else None
+
+# short flag -> long INI key (llama.cpp common_arg names, dashes omitted in INI)
+SHORT2LONG = {
+  "m": "model", "c": "ctx-size", "n": "n-predict", "b": "batch-size",
+  "ub": "ubatch-size", "t": "threads", "tb": "threads-batch",
+  "ctk": "cache-type-k", "ctv": "cache-type-v",
+  "ctkd": "spec-draft-type-k", "ctvd": "spec-draft-type-v",
+  "fa": "flash-attn", "ngl": "n-gpu-layers", "sm": "split-mode",
+  "ts": "tensor-split", "mg": "main-gpu", "dev": "device",
+  "md": "model-draft", "a": "alias", "l": "logit-bias",
+  "s": "seed", "j": "json-schema",
+}
+# flags that take no value (boolean). Unknown flags without value -> boolean on.
+NO_VALUE = {
+  "embedding", "embeddings", "rerank", "reranking", "jinja", "no-jinja",
+  "flash-attn", "mlock", "no-mmap", "mmap", "cache-prompt", "no-cache-prompt",
+  "slots", "no-slots", "metrics", "props", "verbose", "no-perf", "perf",
+  "escape", "no-escape", "offline", "webui-mcp-proxy",
+}
+# router-managed control args: must NOT appear in preset (router warns + drops)
+CONTROL = {
+  "port", "host", "alias", "api-key", "api-key-file",
+  "model", "mmproj", "hf-repo", "hf-file",
+  "models-dir", "models-max", "models-preset", "models-autoload", "no-models-autoload",
+}
+
+def winfix(p: str) -> str:
+  # same conversion as gml8w: C:\foo -> /c/foo, backslash -> slash
+  p = re.sub(r'([A-Z]):\\\\', lambda m: '/' + m.group(1).lower() + '/', p)
+  return p.replace('\\', '/')
+
+def expand(s: str) -> str:
+  s = os.path.expandvars(os.path.expanduser(s))
+  return winfix(s)
+
+def alias_for(describe: str, model_path: str, used: set) -> str:
+  agents = re.findall(r'Agent[A-Za-z0-9_.-]*', describe or "")
+  if agents:
+    base = agents[0]
+  elif describe and describe.strip() not in ("", "null"):
+    base = (describe.strip().strip("/").split("/")[-1] or "").strip()
+    base = re.sub(r'[^A-Za-z0-9_.-]+', '-', base).strip("-") or "model"
+  else:
+    base = os.path.splitext(os.path.basename(model_path.strip()))[0]
+    base = re.sub(r'[^A-Za-z0-9_.-]+', '-', base).strip("-") or "model"
+  cand, i = base, 2
+  while cand in used:
+    cand = f"{base}-{i}"; i += 1
+  used.add(cand)
+  return cand
+
+def parse_yson_line(line: str):
+  # line form:  model/path.gguf: ["describe", "params", ...]
+  m = re.match(r'^\s*(.+?)\s*:\s*\[(.*)\]\s*$', line)
+  if not m:
+    return None
+  model = m.group(1).strip().strip('"').strip("'")
+  inner = m.group(2)
+  # yson uses double-quoted strings for describe/params; grab them in order
+  vals = re.findall(r'"((?:[^"\\]|\\.)*)"', inner)
+  if len(vals) < 2:
+    # fallback: single-quoted
+    vals = re.findall(r"'((?:[^'\\]|\\.)*)'", inner)
+  describe = vals[0] if len(vals) > 0 else ""
+  params = vals[1] if len(vals) > 1 else ""
+  if describe == "null":
+    describe = ""
+  if params == "null":
+    params = ""
+  return model, describe, params
+
+def cli_to_ini(params: str):
+  """Convert a llama-cli/server CLI fragment to [(key, value)] for preset INI."""
+  if not params or not params.strip():
+    return []
+  toks = shlex.split(params, posix=True)
+  pairs, i = [], 0
+  while i < len(toks):
+    t = toks[i]
+    if t == "--":
+      i += 1; continue
+    if t.startswith("--"):
+      kv = t[2:]
+      if "=" in kv:
+        k, v = kv.split("=", 1)
+      else:
+        k, v = kv, None
+      kl = k.strip()
+      if kl in CONTROL or kl in ("port",):
+        # skip value too if it takes one
+        if v is None and i + 1 < len(toks) and not toks[i+1].startswith("-"):
+          i += 2
+        else:
+          i += 1
+        continue
+      if v is None:
+        if kl in NO_VALUE or True:
+          # peek: if next token is a value (not a flag), consume it
+          if i + 1 < len(toks) and not toks[i+1].startswith("-"):
+            # heuristic: known value-taking flags consume; pure booleans don't.
+            # flush: embeddings/pooling mean etc -> pooling takes value.
+            if kl in NO_VALUE and kl in ("embeddings", "embedding", "reranking", "rerank",
+                                         "jinja", "mlock", "offline", "verbose",
+                                         "webui-mcp-proxy", "cache-prompt", "slots",
+                                         "metrics", "props", "no-slots"):
+              pairs.append((kl, "on") if not kl.startswith("no-") else (kl, "on"))
+              i += 1; continue
+            v = toks[i+1]; i += 2
+          else:
+            pairs.append((kl, "on"))
+            i += 1; continue
+        else:
+          i += 1; continue
+      else:
+        i += 1
+      pairs.append((kl, expand(v) if v is not None else "on"))
+    elif t.startswith("-") and len(t) > 1 and not re.match(r'^-\d', t):
+      # short cluster: only handle single flags with separate value (-c 8192, -md path)
+      # (combined booleans like -st are expanded char by char as on)
+      body = t[1:]
+      if body in SHORT2LONG:
+        kl = SHORT2LONG[body]
+        if kl in CONTROL:
+          if i + 1 < len(toks) and not toks[i+1].startswith("-"):
+            i += 2
+          else:
+            i += 1
+          continue
+        if i + 1 < len(toks):
+          pairs.append((kl, expand(toks[i+1]))); i += 2
+        else:
+          pairs.append((kl, "on")); i += 1
+      else:
+        # try long match (e.g. -ctk) else expand cluster chars
+        if body in SHORT2LONG:
+          kl = SHORT2LONG[body]; i += 1
+          pairs.append((kl, "on"))
+        else:
+          matched = False
+          for k in sorted(SHORT2LONG, key=len, reverse=True):
+            if body == k:
+              kl = SHORT2LONG[k]
+              if i + 1 < len(toks) and not toks[i+1].startswith("-"):
+                pairs.append((kl, expand(toks[i+1]))); i += 2
+              else:
+                pairs.append((kl, "on")); i += 1
+              matched = True; break
+          if not matched:
+            # e.g. -st -> s? t? 's' takes value (seed) but here means
+            # -s (logit?) legacy: treat cluster of single-char booleans as on.
+            # To avoid misparsing seed, only expand known boolean chars.
+            consumed = False
+            if all(ch in ("s", "t") for ch in body):
+              pass  # ambiguous; keep raw note as comment downstream
+            # stash raw for operator visibility
+            pairs.append((f"; raw-cluster-{body}", toks[i] if i < len(toks) else ""))
+            i += 1
+    else:
+      i += 1  # stray positional
+  # drop INI-unsafe comment keys from control set, keep order, last wins
+  seen = {}
+  for k, v in pairs:
+    if k.startswith(";"):
+      continue
+    seen[k] = v
+  return list(seen.items())
+
+with open(yson) as f:
+  lines = f.readlines()
+
+used, sections, ctx_map = set(), [], {}
+lineno = 0
+for raw in lines:
+  lineno += 1
+  s = raw.strip()
+  if not s or s.startswith("#") or s.startswith("----"):
+    continue
+  if wanted is not None and lineno not in wanted:
+    continue
+  parsed = parse_yson_line(s)
+  if not parsed:
+    continue
+  model_path, describe, params = parsed
+  if not model_path or model_path.startswith("#"):
+    continue
+  abs_model = model_path if os.path.isabs(expand(model_path)) else os.path.join(gmlbase, expand(model_path))
+  if os.environ.get("INCLUDE_MISSING", "0") != "1" and not os.path.exists(abs_model):
+    print(f"  [skip] yson:{lineno} {describe} (not found: {abs_model})", file=sys.stderr)
+    continue
+  al = alias_for(describe, model_path, used)
+  kvs = cli_to_ini(expand(params))
+  # ctx-size for opencode limits
+  for k, v in kvs:
+    if k == "ctx-size":
+      try: ctx_map[al] = int(str(v).strip())
+      except ValueError: pass
+  sections.append((al, abs_model, describe, kvs, lineno))
+
+if not sections:
+  raise SystemExit("no usable yson entries (check IDs / comments)")
+
+with open(out, "w") as f:
+  f.write("; generated by gml8s from %s (ids=%s)\n" % (yson, ids_raw or "all"))
+  f.write("; model id == INI section == opencode models key == GET /v1/models id\n\n")
+  for al, abs_model, describe, kvs, ln in sections:
+    f.write(f"[{al}]\n")
+    f.write(f"model = {abs_model}\n")
+    f.write(f"; yson:{ln} describe={describe}\n")
+    for k, v in kvs:
+      f.write(f"{k} = {v}\n")
+    f.write("\n")
+
+print(f"preset: {out} ({len(sections)} models)", file=sys.stderr)
+for al, abs_model, describe, kvs, ln in sections:
+  print(f"  [{al}] yson:{ln} {describe} -> {abs_model}", file=sys.stderr)
+PYEOF
+
+test -s "$PRESET_TMP" || { echo "preset generation failed" >&2; exit 1; }
+
+if test "$PRINT_INI" = "1"; then cat "$PRESET_TMP"; exit 0; fi
+
+if test "$PRINT_OPENCODE" = "1"; then
+  python - "$PRESET_TMP" <<'PYEOF'
+import re, sys, json
+sections, ctx = [], {}
+cur = None
+for line in open(sys.argv[1]):
+  line = line.strip()
+  m = re.match(r'^\[(.+)\]$', line)
+  if m: cur = m.group(1); sections.append(cur); continue
+  m = re.match(r'^ctx-size\s*=\s*(\d+)', line)
+  if m and cur: ctx[cur] = int(m.group(1))
+models = {}
+for s in sections:
+  c = ctx.get(s, 32768)
+  models[s] = {"name": s, "limit": {"context": c, "output": 65536}}
+cfg = {"$schema": "https://opencode.ai/config.json",
+       "provider": {"local": {"npm": "@ai-sdk/openai-compatible", "name": "LlamaCPP",
+                              "options": {"baseURL": "http://localhost:8080/v1"},
+                              "models": models}}}
+print(json.dumps(cfg, indent=2))
+PYEOF
+  exit 0
+fi
+
+echo "--- preset INI: $PRESET_TMP ---"
+cat "$PRESET_TMP"
+echo "--- starting router: $LLAMA_BIN --port $PORT --models-preset \$PRESET --models-max $MODELS_MAX $AUTOLOAD ---"
+echo "--- opencode provider snippet: gml8s --print-opencode ---"
+set -x
+exec "$LLAMA_BIN" --port "$PORT" --models-preset "$PRESET_TMP" --models-max "$MODELS_MAX" $AUTOLOAD
