@@ -1,2 +1,2 @@
 unzip -o $ARTIFACT_DIR/$name-$ARTIFACT_VERSION.zip -d $LOCAL_BIN/
-cd $(GIT_ROOT)/.config/opencode && .function/dotconfig
+cd $(git_root)/.config/opencode && .function/dotconfig
