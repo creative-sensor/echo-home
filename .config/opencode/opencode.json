@@ -1,6 +1,22 @@
 {
   "$schema": "~/echo-home/.config/opencode/opencode.ai/config.json",
   "provider": {
+    "LMS": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "LMS_8912",
+      "options": {
+        "baseURL": "http://localhost:8912/v1"
+      },
+      "models": {
+        "Agent8912": {
+          "name": "gemma-4-12b-it-qat-q4_0.gguf",
+          "limit": {
+            "context": 32768,
+            "output": 65536
+          }
+        }
+      }
+    },
     "local": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "LlamaCPP",
