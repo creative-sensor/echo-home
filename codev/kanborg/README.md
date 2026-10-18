@@ -46,8 +46,9 @@
 - [datum/2026/TODO/CORTA-36.md](datum/2026/TODO/CORTA-36.md)   ```# stable-diffusion : cpp```
 - [datum/2026/TODO/CORTA-37.md](datum/2026/TODO/CORTA-37.md)   ```# diffusion : llama cpp```
 - [datum/2026/TODO/CORTA-39.md](datum/2026/TODO/CORTA-39.md)   ```# aider-chat : gemma 4```
-- [datum/2026/TODO/CORTA-44.md](datum/2026/TODO/CORTA-44.md)   ```# opencode agent: artefact-manager```
 - [datum/2026/TODO/CORTA-4.md](datum/2026/TODO/CORTA-4.md)   ```# pytorch : start```
+- [datum/2026/TODO/CORTA-44.md](datum/2026/TODO/CORTA-44.md)   ```# opencode agent: artefact-manager```
+- [datum/2026/TODO/CORTA-45.md](datum/2026/TODO/CORTA-45.md)   ```# abacus : skills```
 - [datum/2026/TODO/CORTA-5.md](datum/2026/TODO/CORTA-5.md)   ```# tensorflow : start```
 - [datum/2026/TODO/DBMS-1.md](datum/2026/TODO/DBMS-1.md)   ```# Vector : Search```
 - [datum/2026/TODO/DROID-4.md](datum/2026/TODO/DROID-4.md)   ```# APK : pgp tools```
@@ -55,10 +56,10 @@
 - [datum/2026/TODO/GGPU-2.md](datum/2026/TODO/GGPU-2.md)   ```# Intel : XeSS```
 - [datum/2026/TODO/GGPU-7.md](datum/2026/TODO/GGPU-7.md)   ```# ISSUE :```
 - [datum/2026/TODO/KBG-3.md](datum/2026/TODO/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
+- [datum/2026/TODO/KITE-2.md](datum/2026/TODO/KITE-2.md)   ```# Gitlab :```
 - [datum/2026/TODO/KITE-24.md](datum/2026/TODO/KITE-24.md)   ```# AttentionFlash: HF```
 - [datum/2026/TODO/KITE-27.md](datum/2026/TODO/KITE-27.md)   ```# langchain : agent development```
 - [datum/2026/TODO/KITE-29.md](datum/2026/TODO/KITE-29.md)   ```# openrouter.ai : remote llm```
-- [datum/2026/TODO/KITE-2.md](datum/2026/TODO/KITE-2.md)   ```# Gitlab :```
 - [datum/2026/TODO/KITE-31.md](datum/2026/TODO/KITE-31.md)   ```# kiro-cli : q```
 - [datum/2026/TODO/KITE-4.md](datum/2026/TODO/KITE-4.md)   ```# Facebook :```
 - [datum/2026/TODO/KITE-5.md](datum/2026/TODO/KITE-5.md)   ```# Sendgrid :```
@@ -107,13 +108,13 @@
 - [datum/2026/DONE/CORTA-27.md](datum/2026/DONE/CORTA-27.md)   ```# lmsh : nodejs cliner```
 - [datum/2026/DONE/CORTA-28.md](datum/2026/DONE/CORTA-28.md)   ```# lmsh : powershell cliner```
 - [datum/2026/DONE/CORTA-29.md](datum/2026/DONE/CORTA-29.md)   ```# lmsh : python cliner```
+- [datum/2026/DONE/CORTA-3.md](datum/2026/DONE/CORTA-3.md)   ```# lmstudio : cli```
 - [datum/2026/DONE/CORTA-30.md](datum/2026/DONE/CORTA-30.md)   ```# lmsh : craneum```
 - [datum/2026/DONE/CORTA-31.md](datum/2026/DONE/CORTA-31.md)   ```# lmsh : hesman```
 - [datum/2026/DONE/CORTA-32.md](datum/2026/DONE/CORTA-32.md)   ```# lmsh : fiberon```
 - [datum/2026/DONE/CORTA-33.md](datum/2026/DONE/CORTA-33.md)   ```# lmsh : FBI```
 - [datum/2026/DONE/CORTA-35.md](datum/2026/DONE/CORTA-35.md)   ```# memory : uvian```
 - [datum/2026/DONE/CORTA-38.md](datum/2026/DONE/CORTA-38.md)   ```# lmsh : memphix```
-- [datum/2026/DONE/CORTA-3.md](datum/2026/DONE/CORTA-3.md)   ```# lmstudio : cli```
 - [datum/2026/DONE/CORTA-40.md](datum/2026/DONE/CORTA-40.md)   ```# lmsh : memphia```
 - [datum/2026/DONE/CORTA-43.md](datum/2026/DONE/CORTA-43.md)   ```# mtp : speculative decoding```
 - [datum/2026/DONE/CORTA-6.md](datum/2026/DONE/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
