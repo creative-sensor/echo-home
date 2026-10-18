@@ -1,0 +1,5 @@
+#!/bin/bash
+set -x
+mkdir -p ~/.abacus
+cp -rf  skills   ~/.abacus
+
