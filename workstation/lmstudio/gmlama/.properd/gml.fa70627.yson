@@ -22,3 +22,31 @@ lmstudio-community/gemma-4-E2B-it-QAT-GGUF/gemma-4-E2B-it-QAT-Q4_0.gguf: ["Agent
 lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["Agent8901" , "-b 768 -ub 768 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8901 -nkvo --embeddings --pooling mean"]
 #
 #
+# --------
+lmstudio-community/gemma-4-E2B-it-QAT-GGUF/gemma-4-E2B-it-QAT-Q4_0.gguf: ["AgentGXC" , "-b 768 -ub 768 -c 16384 -ctk q4_0 -ctv q4_0 -fa on --port 8080 -nkvo --embeddings --pooling mean"]
+#
+#
+#
+#
+#
+#
+#
+#
+#
+lmstudio-community/gemma-4-E2B-it-QAT-GGUF/gemma-4-E2B-it-QAT-Q4_0.gguf: ["Agent8090" , "-b 768 -ub 768 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8090 -nkvo --embeddings --pooling mean"]
+#
+#
+#
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["Agent8901" , "-b 768 -ub 768 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8901 -nkvo --embeddings --pooling mean"]
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+---- TEST ----
+---- TEST.end ----
