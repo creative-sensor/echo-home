@@ -1,4 +1,4 @@
-# ISSUE :
+# opencode agent: artefact-manager
 --------------------------------
 ### 0 DESCRIPTION
 
