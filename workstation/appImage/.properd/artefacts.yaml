@@ -7,5 +7,6 @@ vscodium: [ 1.102.04606 , "https://github.com/VSCodium/vscodium/releases/downloa
 lmstudio: [ 0.4.1 , "https://installers.lmstudio.ai/linux/x64/0.4.1-1/LM-Studio-0.4.1-1-x64.AppImage", {"suffix":"appImage"} ]
 textstudio: [ 4.9.2 , "https://github.com/texstudio-org/texstudio/releases/download/4.9.2/texstudio-4.9.2-x86_64.AppImage", {"suffix":"appImage"} ]
 nvtop: [ 4.9.2 , "https://github.com/Syllo/nvtop/releases/download/3.3.2/nvtop-3.3.2-x86_64.AppImage", {"suffix":"appImage"} ]
+opencode_desktop: [ 1.19.3 , "https://github.com/anomalyco/opencode/releases/download/v1.19.3/opencode-desktop-linux-x86_64.AppImage", {"suffix":"appImage"} ]
 
 
