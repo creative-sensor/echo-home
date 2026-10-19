@@ -1,11 +1,33 @@
 #!/usr/bin/env bash
 
-find datum/$(date +%Y) | awk -F/ '
+withtitle=0
+for arg in "$@"; do
+    [ "$arg" = "--title" ] && withtitle=1
+done
+
+find datum/$(date +%Y) | awk -F/ -v withtitle="$withtitle" '
 /\/(BACKLOG|TODO|HOLD|WIP|DONE)\// {
     status = $3
     file   = $4
+
+    cell = file
+    if (withtitle) {
+        title = ""
+        lines = 0
+        while ((getline line < $0) > 0 && lines < 20) {
+            lines++
+            if (line ~ /^# +/) {
+                sub(/^# +/, "", line)
+                title = line
+                break
+            }
+        }
+        close($0)
+        if (title != "") cell = file " `" title "`"
+    }
+
     row = ++count[status]
-    data[status, row] = file
+    data[status, row] = cell
     if (row > maxrows) maxrows = row
 }
 
