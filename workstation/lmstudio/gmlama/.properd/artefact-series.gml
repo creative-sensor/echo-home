@@ -23,3 +23,4 @@ google/gemma-4-12B-it-qat-q4_0-gguf/gemma-4-12b-it-qat-q4_0.gguf
 google/gemma-4-26B-A4B-it-qat-q4_0-gguf/gemma-4-26B_q4_0-it.gguf
 google/gemma-4-31B-it-qat-q4_0-gguf/gemma-4-31B_q4_0-it.gguf
 llmfan46/gemma-4-12B-coder-fable5-composer2.5-v1-uncensored-heretic-GGUF/gemma-4-12B-coder-fable5-composer2.5-v1-uncensored-heretic-Q8_0.gguf
+lmstudio-community/Qwen3.8-27B-GGUF/Qwen3.8-27B-Q8_0.gguf
