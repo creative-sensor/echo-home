@@ -33,7 +33,8 @@
 | 8911  | `Agent8911`/gemma-4-26B_q4_0-it.gguf                                                      |
 | 8912  | `Agent8912`/gemma-4-12B_q4_0-it.gguf                                                      |
 | 8913  | `Agent8913`/gemma-4-31B_q4_0-it.gguf                                                      |
-| 8914  | `Agent8914`/Qwen3.8-27B-Q8_0.gguf                                                      |
+| 8914  | `Agent8914`/Qwen3.8-27B-Q8_0.gguf                                                         |
+| 8915  | `Agent8915`/OpenJev-Q8_0.gguf                                                             |
 | ...   | ...                                                                                       |
 | 8998  |                                                                                           |
 | 8999  | [Service Placeholder]                                                                     |

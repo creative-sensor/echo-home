@@ -1,0 +1,164 @@
+
+#!/usr/bin/env bash
+set -euo pipefail
+
+PORT=${STM1_PORT:-8915}
+HOST=${STM1_HOST:-localhost}
+URL="http://${HOST}:${PORT}/v1/systemone"
+MODEL="your-decision-model"
+
+SHOW_PATH=0
+JSON_ONLY=0
+
+usage() {
+  cat <<EOF
+Usage: $0 [-p] [-j] [-u endpoint] [-m model] [-h]
+
+Options:
+  -p          Show decision path as a tree
+  -j          Print pure JSON only
+  -u endpoint API endpoint
+  -m model    Model name
+  -h          Show this help
+EOF
+}
+
+while getopts ":pju:m:h" opt; do
+  case "$opt" in
+    p) SHOW_PATH=1 ;;
+    j) JSON_ONLY=1 ;;
+    u) URL="$OPTARG" ;;
+    m) MODEL="$OPTARG" ;;
+    h) usage; exit 0 ;;
+    :)
+      echo "Error: option -$OPTARG requires an argument" >&2
+      usage >&2
+      exit 2
+      ;;
+    \?)
+      echo "Error: unknown option -$OPTARG" >&2
+      usage >&2
+      exit 2
+      ;;
+  esac
+done
+
+REQUEST=$(cat <<EOF
+{
+  "model": "$MODEL",
+  "state": "Customer message: I was charged twice for my order last week and nobody has replied. My bank account has been frozen without a balance update. What a bad day!!!",
+  "questions": {
+    "route": {
+      "type": "choice",
+      "instructions": "Which team should handle this request?",
+      "criteria": {
+        "billing": "Payments, duplicate charges, invoices, refunds",
+        "shipping": "Delivery, tracking, lost parcels",
+        "technical": "Software bugs, login issues, errors"
+      }
+    },
+    "angry": {
+      "type": "noul",
+      "instructions": "Is the customer expressing anger?"
+    },
+    "urgency": {
+      "type": "choice",
+      "instructions": "How urgently should support respond?",
+      "criteria": {
+        "Low": "Charge amount under \$100",
+        "Medium": "Order placed at night",
+        "High": "Delivery got lost",
+        "Critical": "Suspicious cyberattack activities"
+      }
+    }
+  }
+}
+EOF
+)
+
+# Call the API
+RESPONSE=$(curl -sS --fail-with-body \
+  "$URL" \
+  -H "Content-Type: application/json" \
+  -d "$REQUEST") || {
+    echo "Error: API request failed: $URL" >&2
+    exit 1
+  }
+
+# Validate JSON
+if ! jq -e 'type == "object"' >/dev/null 2>&1 <<<"$RESPONSE"; then
+  echo "Error: server returned invalid JSON" >&2
+  printf '%s\n' "$RESPONSE" >&2
+  exit 1
+fi
+
+# JSON-only mode: no headings, logs, or tree output on stdout
+if [[ "$JSON_ONLY" -eq 1 ]]; then
+  if ! jq -e '.answers | type == "object"' >/dev/null 2>&1 <<<"$RESPONSE"; then
+    echo "Error: response does not contain a valid .answers object" >&2
+    jq . <<<"$RESPONSE" >&2
+    exit 1
+  fi
+
+  jq . <<<"$RESPONSE"
+  exit 0
+fi
+
+# Validate the expected response structure
+if ! jq -e '.answers | type == "object"' >/dev/null 2>&1 <<<"$RESPONSE"; then
+  echo "Error: response does not contain a valid .answers object" >&2
+  jq . <<<"$RESPONSE" >&2
+  exit 1
+fi
+
+echo "Decision results"
+echo "================"
+
+jq -r '
+  .answers | to_entries[] |
+  if .value.type == "choice" then
+    "Choice: \(.key) = \(.value.choice // "unknown")"
+  elif .value.type == "noul" then
+    "Yes/no: \(.key) = \(.value.noul // "unknown")"
+  elif .value.type == "score" then
+    "Score: \(.key) = \(.value.score // "unknown")"
+  else
+    "\(.key) = \(.value)"
+  end
+' <<<"$RESPONSE"
+
+# Optional tree output
+if [[ "$SHOW_PATH" -eq 1 ]]; then
+  echo
+  echo "Decision path"
+  echo "-------------"
+
+  jq -r '
+    .answers as $a |
+    "Input",
+    "└── Customer message",
+    "    └── Decision model",
+    (
+      if ($a.route.choice // null) != null then
+        "        ├── Route → \($a.route.choice)"
+      else
+        "        ├── Route → unknown"
+      end
+    ),
+    (
+      if ($a.angry.noul // null) != null then
+        "        ├── Angry → \($a.angry.noul)"
+      else
+        "        ├── Angry → unknown"
+      end
+    ),
+    (
+      if ($a.urgency.choice // null) != null then
+        "        └── Urgency → \($a.urgency.choice)"
+      else
+        "        └── Urgency → unknown"
+      end
+    )
+  ' <<<"$RESPONSE"
+fi
+
