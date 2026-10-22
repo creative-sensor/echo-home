@@ -1,16 +1,27 @@
 #!/usr/bin/env bash
 
 withtitle=0
+withcolor=0
 for arg in "$@"; do
     [ "$arg" = "--title" ] && withtitle=1
+    { [ "$arg" = "-c" ] || [ "$arg" = "--color" ]; } && withcolor=1
 done
 
-find datum/$(date +%Y) | awk -F/ -v withtitle="$withtitle" '
+find datum/$(date +%Y) | awk -F/ -v withtitle="$withtitle" -v withcolor="$withcolor" '
+BEGIN {
+    cc["BACKLOG"] = "\033[31m"
+    cc["TODO"]    = "\033[33m"
+    cc["HOLD"]    = "\033[35m"
+    cc["WIP"]     = "\033[36m"
+    cc["DONE"]    = "\033[32m"
+    reset = "\033[0m"
+}
 /\/(BACKLOG|TODO|HOLD|WIP|DONE)\// {
     status = $3
     file   = $4
 
     cell = file
+    t = ""
     if (withtitle) {
         title = ""
         lines = 0
@@ -23,11 +34,15 @@ find datum/$(date +%Y) | awk -F/ -v withtitle="$withtitle" '
             }
         }
         close($0)
-        if (title != "") cell = file " `" title "`"
+        if (title != "") {
+            t = title
+            cell = file " `" t "`"
+        }
     }
 
     row = ++count[status]
     data[status, row] = cell
+    tt[status, row] = t
     if (row > maxrows) maxrows = row
 }
 
@@ -42,7 +57,9 @@ END {
     for (c = 1; c <= 5; c++) {
         w[c] = length(cols[c])
         for (r = 1; r <= count[cols[c]]; r++) {
-            l = length(data[cols[c], r])
+            clean = data[cols[c], r]
+            gsub(/\x1b\[[0-9;]*m/, "", clean)
+            l = length(clean)
             if (l > w[c]) w[c] = l
         }
     }
@@ -64,8 +81,20 @@ END {
     # Rows
     for (r = 1; r <= maxrows; r++) {
         printf "|"
-        for (c = 1; c <= 5; c++)
-            printf " %-" w[c] "s |", data[cols[c], r]
+        for (c = 1; c <= 5; c++) {
+            cell = data[cols[c], r]
+            if (withcolor && tt[cols[c], r] != "") {
+                p = index(cell, "`")
+                lead = substr(cell, 1, p)
+                L = length(cell)
+                pad = w[c] - L
+                colored = lead cc[cols[c]] tt[cols[c], r] reset "`"
+                padstr = sprintf("%*s", pad, "")
+                printf " %s%s |", colored, padstr
+            } else {
+                printf " %-*s |", w[c], cell
+            }
+        }
         print ""
     }
 }'
