@@ -10,6 +10,7 @@
 - [datum/2026/WIP/ARTE-21.md](datum/2026/WIP/ARTE-21.md)   ```# node_modules : flattening```
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
 - [datum/2026/WIP/CORTA-21.md](datum/2026/WIP/CORTA-21.md)   ```# vllm : library```
+- [datum/2026/WIP/CORTA-46.md](datum/2026/WIP/CORTA-46.md)   ```# javelin : fire and forget```
 - [datum/2026/WIP/MEMR-1.md](datum/2026/WIP/MEMR-1.md)   ```# llamark : prompt memory```
 - [datum/2026/WIP/VIM-31.md](datum/2026/WIP/VIM-31.md)   ```# vimpage : vllm```
 
