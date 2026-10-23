@@ -1,0 +1,2 @@
+sudo apt-get install --download-only     --reinstall     -o Dir::Cache::archives="$PWD/artefacts"     git=1:2.53.0-1ubuntu1.1
+sudo apt-get install --download-only     --reinstall     -o Dir::Cache::archives="$PWD/artefacts"     curl=8.18.0-1ubuntu2.8
