@@ -1,4 +1,4 @@
-# ISSUE :
+# ubuntu : desktop 2026
 --------------------------------
 ### 0 DESCRIPTION
 
