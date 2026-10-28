@@ -83,19 +83,107 @@ function FgXp(pattern)
 endfunction
 command! -nargs=* FgXp call FgXp(<q-args>)
 
+function CardTitle(path)
+    " first markdown H1 is used as card title
+    if !filereadable(a:path)
+        return ''
+    endif
+    for line in readfile(a:path, '', 20)
+        if line =~# '^#\s\+'
+            return substitute(line, '^#\s\+', '', '')
+        endif
+    endfor
+    return ''
+endfunction
+
+
+function CardRelative(path)
+    " strip datum/<YEAR>/ prefix to keep column entries compact
+    let path = a:path
+    let prefix = g:cycle_dir.'/'
+    let dotprefix = './'.prefix
+    if stridx(path, dotprefix) == 0
+        return path[strlen(dotprefix):]
+    elseif stridx(path, prefix) == 0
+        return path[strlen(prefix):]
+    endif
+    return path
+endfunction
+
+
+function CardDisplay(path)
+    " TODO/CARD.md `TITLE`
+    let rel = CardRelative(a:path)
+    let title = CardTitle(a:path)
+    return title ==# '' ? rel : rel.' `'.title.'`'
+endfunction
+
+
+function CardPath(name)
+    " turn a compact column entry back into a real card path
+    let name = trim(a:name)
+    let name = substitute(name, '\s\+`.*$', '', '')
+    if name !~# '^/'
+                \ && stridx(name, g:cycle_dir.'/') != 0
+                \ && stridx(name, './'.g:cycle_dir.'/') != 0
+        let name = g:cycle_dir.'/'.name
+    endif
+    return name
+endfunction
+
+
+function AppendCard(path)
+    let text = CardDisplay(a:path)
+    if line('$') == 1 && getline(1) ==# ''
+        call setline(1, text)
+    else
+        call append(line('$'), text)
+    endif
+endfunction
+
+
+function KanborgHighlightTitle(column_name)
+    " color the `TITLE` part per column (same palette as .function/show -c)
+    let groups = {
+                \ 'BACKLOG': ['KanborgBacklogTitle', '1', '#dc322f'],
+                \ 'TODO':    ['KanborgTodoTitle',    '3', '#b58900'],
+                \ 'HOLD':    ['KanborgHoldTitle',    '5', '#d33682'],
+                \ 'WIP':     ['KanborgWipTitle',     '6', '#2aa198'],
+                \ 'DONE':    ['KanborgDoneTitle',    '2', '#859900'],
+                \ }
+    let spec = get(groups, a:column_name, ['KanborgCardTitle', '4', '#268bd2'])
+    exec 'highlight default '.spec[0].' ctermfg='.spec[1].' guifg='.spec[2].' cterm=bold gui=bold'
+    call clearmatches()
+    call matchadd(spec[0], '`\zs[^`]*\ze`\s*$')
+endfunction
+
+
+function LoadColumn(column_name)
+    let dir = g:cycle_dir.'/'.a:column_name
+    let lines = ['----'.a:column_name.'----']
+    for path in systemlist('find '.shellescape(dir).' -type f | sort')
+        call add(lines, CardDisplay(path))
+    endfor
+    silent %delete _
+    call setline(1, lines)
+    setlocal filetype=markdown
+    call KanborgHighlightTitle(a:column_name)
+endfunction
+
+
 function Kolumns()
     exec 'file '.g:VIEW.' | read HELP.md | setlocal filetype=markdown'
         "vim: read file into buffer 
     exec 'new '.g:BACKLOG
-    exec 'silent read ! echo "----BACKLOG----"; find '.g:cycle_dir.'/BACKLOG -type f | sort '
+    call LoadColumn('BACKLOG')
     exec 'vnew '.g:TODO
-    exec 'silent read ! echo "----TODO----"; find '.g:cycle_dir.'/TODO -type f | sort '
+    call LoadColumn('TODO')
     exec 'vnew '.g:HOLD
-    exec 'silent read ! echo "----HOLD----"; find '.g:cycle_dir.'/HOLD -type f | sort '
+    call LoadColumn('HOLD')
     exec 'vnew '.g:WIP
-    exec 'silent read ! echo "----WIP----"; find '.g:cycle_dir.'/WIP -type f | sort '
+    call LoadColumn('WIP')
     exec 'vnew '.g:DONE
-    exec 'silent read ! echo "----DONE----"; find '.g:cycle_dir.'/DONE -type f | sort ' 
+    call LoadColumn('DONE')
 endfunction
 
 
@@ -103,45 +191,44 @@ function XCard(xname)
     let column_name = fnamemodify(bufname(),':e')
         " vim: extract file extension
     let yname = g:cycle_dir.'/'.column_name.'/'.a:xname.'.md'
-    exec 'silent !cp CARD.md '.yname
-    exec 'silent !git add '.yname
-    exec 'silent read ! echo '.yname
+    exec 'silent !cp CARD.md '.shellescape(yname)
+    exec 'silent !git add '.shellescape(yname)
+    call AppendCard(yname)
 endfunction
 command! -nargs=* XCard call XCard(<q-args>)
 
 
 function ViewCard(name)
     "cursor is presumed being at VIEW window already
-    let xname = trim(a:name)
+    let xname = CardPath(a:name)
     exec "%delete"
-    exec "silent read ! echo '>>>> Viewing for '".xname
-    exec "silent read ".xname
+    call setline(1, '>>>> Viewing for '.CardRelative(xname))
+    exec "silent read ".fnameescape(xname)
     exec "setlocal filetype=markdown"
 endfunction
 
 
 function EditCard(name)
-    let xname = trim(a:name)
-    exec 'tabnew '.xname
+    let xname = CardPath(a:name)
+    exec 'tabnew '.fnameescape(xname)
     exec "setlocal filetype=markdown"
 endfunction
 
 
 function MoveCard(name)
-    let xname = trim(a:name)
+    let xname = CardPath(a:name)
     let column_name = fnamemodify(bufname(),':e')
         " vim: extract file extension
     let card_short_name = fnamemodify(xname,':t')
         " vim: extract base name
     let yname = g:cycle_dir.'/'.column_name.'/'.card_short_name
-    exec 'silent !set -x ; git mv '.xname.' '.yname
-    exec 'silent read ! echo '.yname
+    exec 'silent !set -x ; git mv '.shellescape(xname).' '.shellescape(yname)
+    call AppendCard(yname)
 endfunction
 
 function RefreshColumn()
     let column_name = fnamemodify(bufname(),':e')
-    exec "%delete"
-    exec 'silent read ! echo "----'.column_name.'----"; find '.g:cycle_dir.'/'.column_name.' -type f | sort'
+    call LoadColumn(column_name)
 endfunction
 
 
