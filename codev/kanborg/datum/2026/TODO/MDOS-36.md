@@ -1,4 +1,4 @@
-# ISSUE :
+# env : replicate gitbash to powershell
 --------------------------------
 ### 0 DESCRIPTION
 

@@ -11,16 +11,18 @@
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
 - [datum/2026/WIP/CORTA-21.md](datum/2026/WIP/CORTA-21.md)   ```# vllm : library```
 - [datum/2026/WIP/CORTA-46.md](datum/2026/WIP/CORTA-46.md)   ```# javelin : fire and forget```
+- [datum/2026/WIP/KITE-25.md](datum/2026/WIP/KITE-25.md)   ```# cli : mistral-vibe```
+- [datum/2026/WIP/MDOS-22.md](datum/2026/WIP/MDOS-22.md)   ```# lang runtime : lua```
 - [datum/2026/WIP/MEMR-1.md](datum/2026/WIP/MEMR-1.md)   ```# llamark : prompt memory```
 - [datum/2026/WIP/VIM-31.md](datum/2026/WIP/VIM-31.md)   ```# vimpage : vllm```
 
 ### 2 ON HOLD
 
+- [datum/2026/HOLD/ASML-6.md](datum/2026/HOLD/ASML-6.md)   ```# heada : agent dispatcher```
 - [datum/2026/HOLD/DROID-3.md](datum/2026/HOLD/DROID-3.md)   ```# android : studio```
 - [datum/2026/HOLD/KUBEX-3.md](datum/2026/HOLD/KUBEX-3.md)   ```# ISSUE : log query dashboard```
 - [datum/2026/HOLD/KUBEX-5.md](datum/2026/HOLD/KUBEX-5.md)   ```# jaeger : tracing system```
 - [datum/2026/HOLD/LEAF-30.md](datum/2026/HOLD/LEAF-30.md)   ```# Jupyter :```
-- [datum/2026/HOLD/MDOS-22.md](datum/2026/HOLD/MDOS-22.md)   ```# lang runtime : lua```
 - [datum/2026/HOLD/NJS-2.md](datum/2026/HOLD/NJS-2.md)   ```# GLORIA: run objectory```
 
 ### 3 TO DO
@@ -35,7 +37,6 @@
 - [datum/2026/TODO/ASML-3.md](datum/2026/TODO/ASML-3.md)   ```# Agentic : Workflows```
 - [datum/2026/TODO/ASML-4.md](datum/2026/TODO/ASML-4.md)   ```# Foldable : DNS```
 - [datum/2026/TODO/ASML-5.md](datum/2026/TODO/ASML-5.md)   ```# ptrm : short-range service discovery```
-- [datum/2026/TODO/ASML-6.md](datum/2026/TODO/ASML-6.md)   ```# heada : agent dispatcher```
 - [datum/2026/TODO/CMW-2.md](datum/2026/TODO/CMW-2.md)   ```# commonwealth : vault function```
 - [datum/2026/TODO/CORTA-13.md](datum/2026/TODO/CORTA-13.md)   ```# tinygrad : pytorch distribute```
 - [datum/2026/TODO/CORTA-22.md](datum/2026/TODO/CORTA-22.md)   ```# gemma4 : nvfp4```
@@ -43,9 +44,9 @@
 - [datum/2026/TODO/CORTA-36.md](datum/2026/TODO/CORTA-36.md)   ```# stable-diffusion : cpp```
 - [datum/2026/TODO/CORTA-37.md](datum/2026/TODO/CORTA-37.md)   ```# diffusion : llama cpp```
 - [datum/2026/TODO/CORTA-39.md](datum/2026/TODO/CORTA-39.md)   ```# aider-chat : gemma 4```
+- [datum/2026/TODO/CORTA-4.md](datum/2026/TODO/CORTA-4.md)   ```# pytorch : start```
 - [datum/2026/TODO/CORTA-44.md](datum/2026/TODO/CORTA-44.md)   ```# opencode agent: artefact-manager```
 - [datum/2026/TODO/CORTA-45.md](datum/2026/TODO/CORTA-45.md)   ```# abacus : skills```
-- [datum/2026/TODO/CORTA-4.md](datum/2026/TODO/CORTA-4.md)   ```# pytorch : start```
 - [datum/2026/TODO/CORTA-5.md](datum/2026/TODO/CORTA-5.md)   ```# tensorflow : start```
 - [datum/2026/TODO/DBMS-1.md](datum/2026/TODO/DBMS-1.md)   ```# Vector : Search```
 - [datum/2026/TODO/DROID-4.md](datum/2026/TODO/DROID-4.md)   ```# APK : pgp tools```
@@ -53,10 +54,10 @@
 - [datum/2026/TODO/GGPU-2.md](datum/2026/TODO/GGPU-2.md)   ```# Intel : XeSS```
 - [datum/2026/TODO/GGPU-7.md](datum/2026/TODO/GGPU-7.md)   ```# ISSUE :```
 - [datum/2026/TODO/KBG-3.md](datum/2026/TODO/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
+- [datum/2026/TODO/KITE-2.md](datum/2026/TODO/KITE-2.md)   ```# Gitlab :```
 - [datum/2026/TODO/KITE-24.md](datum/2026/TODO/KITE-24.md)   ```# AttentionFlash: HF```
 - [datum/2026/TODO/KITE-27.md](datum/2026/TODO/KITE-27.md)   ```# langchain : agent development```
 - [datum/2026/TODO/KITE-29.md](datum/2026/TODO/KITE-29.md)   ```# openrouter.ai : remote llm```
-- [datum/2026/TODO/KITE-2.md](datum/2026/TODO/KITE-2.md)   ```# Gitlab :```
 - [datum/2026/TODO/KITE-31.md](datum/2026/TODO/KITE-31.md)   ```# kiro-cli : q```
 - [datum/2026/TODO/KITE-4.md](datum/2026/TODO/KITE-4.md)   ```# Facebook :```
 - [datum/2026/TODO/KITE-5.md](datum/2026/TODO/KITE-5.md)   ```# Sendgrid :```
@@ -67,6 +68,7 @@
 - [datum/2026/TODO/LEAF-7.md](datum/2026/TODO/LEAF-7.md)   ```# SSH : pipe as filesystem attachment```
 - [datum/2026/TODO/MDOS-27.md](datum/2026/TODO/MDOS-27.md)   ```# wsli : WSL Windows interface```
 - [datum/2026/TODO/MDOS-35.md](datum/2026/TODO/MDOS-35.md)   ```# fancontrol : winring0```
+- [datum/2026/TODO/MDOS-36.md](datum/2026/TODO/MDOS-36.md)   ```# env : replicate gitbash to powershell```
 - [datum/2026/TODO/MONO-1.md](datum/2026/TODO/MONO-1.md)   ```# Apache : NiFi```
 - [datum/2026/TODO/MONO-7.md](datum/2026/TODO/MONO-7.md)   ```# ULI : Unified Linux Interface```
 - [datum/2026/TODO/NJS-1.md](datum/2026/TODO/NJS-1.md)   ```# KANBORG : ELECTRON UI```
@@ -107,6 +109,7 @@
 - [datum/2026/DONE/CORTA-27.md](datum/2026/DONE/CORTA-27.md)   ```# lmsh : nodejs cliner```
 - [datum/2026/DONE/CORTA-28.md](datum/2026/DONE/CORTA-28.md)   ```# lmsh : powershell cliner```
 - [datum/2026/DONE/CORTA-29.md](datum/2026/DONE/CORTA-29.md)   ```# lmsh : python cliner```
+- [datum/2026/DONE/CORTA-3.md](datum/2026/DONE/CORTA-3.md)   ```# lmstudio : cli```
 - [datum/2026/DONE/CORTA-30.md](datum/2026/DONE/CORTA-30.md)   ```# lmsh : craneum```
 - [datum/2026/DONE/CORTA-31.md](datum/2026/DONE/CORTA-31.md)   ```# lmsh : hesman```
 - [datum/2026/DONE/CORTA-32.md](datum/2026/DONE/CORTA-32.md)   ```# lmsh : fiberon```
@@ -114,7 +117,6 @@
 - [datum/2026/DONE/CORTA-34.md](datum/2026/DONE/CORTA-34.md)   ```# lmsh : hemisphere```
 - [datum/2026/DONE/CORTA-35.md](datum/2026/DONE/CORTA-35.md)   ```# memory : uvian```
 - [datum/2026/DONE/CORTA-38.md](datum/2026/DONE/CORTA-38.md)   ```# lmsh : memphix```
-- [datum/2026/DONE/CORTA-3.md](datum/2026/DONE/CORTA-3.md)   ```# lmstudio : cli```
 - [datum/2026/DONE/CORTA-40.md](datum/2026/DONE/CORTA-40.md)   ```# lmsh : memphia```
 - [datum/2026/DONE/CORTA-41.md](datum/2026/DONE/CORTA-41.md)   ```# singletron : inspector```
 - [datum/2026/DONE/CORTA-42.md](datum/2026/DONE/CORTA-42.md)   ```# singletron : design mode```
@@ -129,7 +131,6 @@
 - [datum/2026/DONE/GGPU-4.md](datum/2026/DONE/GGPU-4.md)   ```# gpustack : distributed inference```
 - [datum/2026/DONE/GGPU-5.md](datum/2026/DONE/GGPU-5.md)   ```# Geminide : Left and Right```
 - [datum/2026/DONE/GGPU-6.md](datum/2026/DONE/GGPU-6.md)   ```# ssh config : by dhcp```
-- [datum/2026/DONE/KITE-25.md](datum/2026/DONE/KITE-25.md)   ```# cli : mistral-vibe```
 - [datum/2026/DONE/KITE-26.md](datum/2026/DONE/KITE-26.md)   ```# cli : gemini```
 - [datum/2026/DONE/KITE-28.md](datum/2026/DONE/KITE-28.md)   ```# github : copilot cli```
 - [datum/2026/DONE/KITE-30.md](datum/2026/DONE/KITE-30.md)   ```# claude: code```
