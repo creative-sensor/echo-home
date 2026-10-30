@@ -4,6 +4,7 @@
 - ```mmm``` move card to the right
 - ```bbb``` move card to the left
 - ```rr``` refresh content of cursored column
+- ```mis``` insert media from local storage into current card
 - ```Ctrl w   =``` resize all windows to equal size
 
 ### MARK GUIDE

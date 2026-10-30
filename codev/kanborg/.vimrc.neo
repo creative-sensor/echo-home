@@ -205,6 +205,7 @@ function ViewCard(name)
     call setline(1, '>>>> Viewing for '.CardRelative(xname))
     exec "silent read ".fnameescape(xname)
     exec "setlocal filetype=markdown"
+    let b:kanborg_card = xname
 endfunction
 
 
@@ -254,6 +255,13 @@ fun! Terminator()
 endfun
 command! -nargs=0 Terminator call Terminator()
 
+
+
+"-------- [MEDIA] --------
+let s:kanborg_media = expand('<sfile>:p:h').'/.function/media.lua'
+if filereadable(s:kanborg_media)
+    exec 'luafile '.fnameescape(s:kanborg_media)
+endif
 
 
 "-------- [AUTOCMD] --------
@@ -322,6 +330,9 @@ nnoremap  bbb   dd  <C-w><Left>  :call MoveCard('<C-R>"') <CR>
 
 nnoremap  rr  :call RefreshColumn() <CR>
     " REFRESH CONTENT OF CURSORED COLUMN
+
+nnoremap <silent> mis :InsertMedia<CR>
+    " INSERT MEDIA FROM LOCAL STORAGE INTO CURRENT CARD
 
 
 "-------- [POST-INIT] --------
