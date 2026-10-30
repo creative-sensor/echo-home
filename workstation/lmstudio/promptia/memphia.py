@@ -82,7 +82,7 @@ def parse_llm_json(raw_text: str) -> dict:
 parser = argparse.ArgumentParser(description="Memphia: Interactive LLM Agent with Uvian Memory & ChromaDB.")
 parser.add_argument('--port', type=int, default=8080, help='Port number of the local LLM server')
 parser.add_argument('--host', type=str, default='localhost', help='Hostname of the local LLM server')
-parser.add_argument('--chunk-size', type=int, default=8192, help='Max characters before Map-Reduce is triggered')
+parser.add_argument('--chunk-size', type=int, default=32768, help='Max characters before Map-Reduce is triggered')
 parser.add_argument('--uvian-dir', type=str, default='~/echo-home/memory/uvian', help='Root directory for uvian storage')
 parser.add_argument('--summary', type=str, default=None, help='YAML file containing uvian summaries (Default: <uvian-dir>/summer.yaml)')
 args = parser.parse_args()
@@ -407,7 +407,7 @@ class VRAMOptimizedMapReduceAgent:
         consolidated_context = "\n\n".join(chunk_results)
         if not consolidated_context.strip():
             return "Map-Reduce resulted in no relevant findings."
-
+        print(f"\n\033[35m{consolidated_context}\033[0m")
         reduce_system_prompt = "You are a synthesis agent. Consolidate extracted terminal outputs into a final summary."
         return self.llm_call(reduce_system_prompt, f"Task: {task_description}\n\nFindings:\n{consolidated_context}")
 

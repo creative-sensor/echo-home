@@ -55,7 +55,7 @@ new_card: set_workdir
 ```makefile
 show_kanborg: set_workdir
     # Description: display full kanban board of all cards
-    # Command: `.function/show`
+    # Command: `.function/show --title -c`
     # Success: output in markdown table
     # Failure: any error
 ```
