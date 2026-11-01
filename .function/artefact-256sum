@@ -1,0 +1,34 @@
+#!/bin/bash
+source $(dirname $0)/context_overrider
+
+NAME=${1:-all}
+ARTIFACT_DIR=artefacts
+INV_FILE=.properd/artefacts.yaml
+CHECKSUM=.properd/artefact.sha256sum
+
+mkdir -p $ARTIFACT_DIR
+cd $ARTIFACT_DIR
+
+register() {
+    local target=$1
+    local FILE=$(ls -t "${target}"* | head -n 1)
+    if [ -f "$FILE" ]; then
+        local HASH=$(sha256sum "$FILE" | awk '{print $1}')
+        local ENTRY="$HASH  ./$FILE"
+        if ! grep -qxF "$ENTRY" "../$CHECKSUM"; then
+            echo "$ENTRY" >> "../$CHECKSUM"
+            echo "[Entry appended] $ENTRY"
+        else
+            echo "[Entry found]: $ENTRY"
+        fi
+    fi
+}
+
+if [[ "$NAME" == "all" ]]; then
+    KEYS=$(cat ../$INV_FILE | yq 'keys' | awk -F ' ' '{print $2}')
+    for k in $KEYS; do
+        register "$k"
+    done
+else
+    register "$NAME"
+fi
