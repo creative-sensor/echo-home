@@ -11,6 +11,7 @@
 | memphis.py       |           |          |
 | memphix.py       |           |          |
 | memphia.py       |           |          |
+| memphiu.py       |           |          |
 | neos.py          |           |          |
 | node-cliner.js   |           |          |
 | ps-cliner.ps1    |           |          |
@@ -24,7 +25,7 @@
 
 - `lmshs`: save console to workspace
 
-- `lmsh1`: activate `sh7t`
+- `lmsh1`: activate `memphia`
 
 - `lmsh2`: activate `python-cliner`
 
