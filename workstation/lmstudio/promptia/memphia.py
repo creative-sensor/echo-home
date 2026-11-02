@@ -230,17 +230,32 @@ class UvianMemoryManager:
 
         # Search for any single word match across documents
         for doc_id, doc_text in zip(ids, documents):
-            matching_lines = [
-                line.strip() for line in doc_text.splitlines() 
-                if any(p.search(line) for p in patterns)
-            ]
-            if matching_lines:
+            output_lines = []
+            has_match = False
+            
+            for line in doc_text.splitlines():
+                clean_line = line.strip()
+                is_match = any(p.search(clean_line) for p in patterns)
+                # Check the original 'line' for depth 1 or 2 headers at the exact start
+                is_header = bool(re.match(r'^#{1,2}\s+', line))
+                
+                if is_match:
+                    has_match = True
+                
+                if is_match or is_header:
+                    output_lines.append((clean_line, is_match, is_header))
+
+            if has_match:
                 candidate_map[doc_id] = doc_text
                 yaml_lines.append(f"{doc_id}: |")
                 yaml_lines_stdout.append(f"\033[48;5;54m\033[38;5;177m{doc_id}\033[0m: |")
-                for line in matching_lines:
-                    yaml_lines.append(f"    {line}")
-                    yaml_lines_stdout.append(f"    \033[38;5;177m{line}\033[0m")
+                
+                for line_text, is_match, is_header in output_lines:
+                    yaml_lines.append(f"    {line_text}")
+                    if is_header and not is_match:
+                        yaml_lines_stdout.append(f"    \033[38;5;146m{line_text}\033[0m")
+                    else:
+                        yaml_lines_stdout.append(f"    \033[38;5;177m{line_text}\033[0m")
 
         if not candidate_map or not yaml_lines:
             print("🔍 Text matching found no candidates in memory.")
@@ -717,14 +732,25 @@ if __name__ == "__main__":
                 yaml_lines = []
                 
                 for doc_id, doc_text in zip(ids, documents):
-                    matching_lines = [
-                        line.strip() for line in doc_text.splitlines() 
-                        if any(p.search(line) for p in patterns)
-                    ]
-                    if matching_lines:
+                    matching_lines = []
+                    has_match = False
+                    
+                    for line in doc_text.splitlines():
+                        clean_line = line.strip()
+                        is_match = any(p.search(clean_line) for p in patterns)
+                        # Check the original 'line' for depth 1 or 2 headers at the exact start
+                        is_header = bool(re.match(r'^#{1,2}\s+', line))
+                        
+                        if is_match:
+                            has_match = True
+                            
+                        if is_match or is_header:
+                            output_lines.append(clean_line)
+                            
+                    if has_match:
                         yaml_lines.append(f"\033[44m\033[97m{doc_id}\033[0m: |")
-                        for line in matching_lines:
-                            yaml_lines.append(f"    {line}")
+                        for line_text in output_lines:
+                            yaml_lines.append(f"    {line_text}")
                 
                 if yaml_lines:
                     print("```yaml")
