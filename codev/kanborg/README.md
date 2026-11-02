@@ -11,6 +11,9 @@
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
 - [datum/2026/WIP/CORTA-21.md](datum/2026/WIP/CORTA-21.md)   ```# vllm : library```
 - [datum/2026/WIP/CORTA-46.md](datum/2026/WIP/CORTA-46.md)   ```# javelin : fire and forget```
+- [datum/2026/WIP/CORTA-47.md](datum/2026/WIP/CORTA-47.md)   ```# memphia: text matching```
+- [datum/2026/WIP/CORTA-48.md](datum/2026/WIP/CORTA-48.md)   ```# memphiu : advanced TUI for memphiX```
+- [datum/2026/WIP/KBG-9.md](datum/2026/WIP/KBG-9.md)   ```# ISSUE :```
 - [datum/2026/WIP/KITE-25.md](datum/2026/WIP/KITE-25.md)   ```# cli : mistral-vibe```
 - [datum/2026/WIP/MDOS-22.md](datum/2026/WIP/MDOS-22.md)   ```# lang runtime : lua```
 - [datum/2026/WIP/MEMR-1.md](datum/2026/WIP/MEMR-1.md)   ```# llamark : prompt memory```
