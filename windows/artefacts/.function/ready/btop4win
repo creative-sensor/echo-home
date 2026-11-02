@@ -1,0 +1,15 @@
+# btop4win loads btop.conf and themes/*.theme from the directory containing btop4win.exe.
+# Deploy the exe directly into $LOCAL_BIN and place its assets alongside it.
+TMP_DIR="$ARTIFACT_DIR/.tmp-$name"
+rm -rf "$TMP_DIR"
+unzip -q -o "$ARTIFACT_DIR/$name-$ARTIFACT_VERSION.${ARTIFACT_SUFFIX}" -d "$TMP_DIR"
+
+mkdir -p "$LOCAL_BIN/themes"
+cp -f "$TMP_DIR/btop4win/btop4win.exe" "$LOCAL_BIN/btop4win.exe"
+cp -f "$TMP_DIR/btop4win/themes/"*.theme "$LOCAL_BIN/themes/"
+
+# keep an existing (user-modified) config on re-deploy
+[ -f "$LOCAL_BIN/btop.conf" ] || cp -f "$TMP_DIR/btop4win/btop.conf" "$LOCAL_BIN/btop.conf"
+
+rm -rf "$TMP_DIR"
+btop4win.exe -v
