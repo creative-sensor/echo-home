@@ -7,7 +7,7 @@ This document show how to use Kanborg which is a kanban board using git underlyi
 - **Working directory**: `~/echo-home.kanborg/codev/kanborg`
 
 ## 2. Instructions
-- Complete part or full of DAG (makefile) to meet user intent
+- Complete part or full of DAG (defined by makefile, do not run with `make` tool) to meet user intent
 - Only run a target using **Command** if no dependency found
 - If a target has dependencies, make sure all of its dependency targets completed
 - If target got failure, do not execute its parent target

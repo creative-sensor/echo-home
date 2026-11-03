@@ -1,0 +1,11 @@
+#!/bin/bash
+# Override for btop readiness
+if [[ -z "$LOCAL_BIN" ]]; then
+  export LOCAL_BIN="${HOME}/.local/bin"
+fi
+mkdir -p "$LOCAL_BIN"
+EXTRACT_DIR=$(mktemp -d -t btop_XXXXXX)
+tar -xf "./artefacts/btop-$ARTIFACT_VERSION.$ARTIFACT_SUFFIX" -C "$EXTRACT_DIR"
+cp "$EXTRACT_DIR/btop/bin/btop" "$LOCAL_BIN/btop"
+chmod +x "$LOCAL_BIN/btop"
+rm -rf "$EXTRACT_DIR"

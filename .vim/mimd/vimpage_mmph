@@ -1,0 +1,14 @@
+let g:memphia_args = ['--port', LMSH_PORT]
+let g:memphia_args = ['--memgraph-uri', 'bolt://127.0.0.1:7444', '--memgraph-user', 'memphia']
+
+
+map mmph1 : silent source ~/echo-home/.vim/mimd/memphia/memphia.lua<CR>
+map mmphi : exec 'Memphia --port '.LMSH_PORT.' --no-memgraph'<CR>
+map mmphg : exec 'Memphia --port '.LMSH_PORT.' --memgraph-uri bolt://127.0.0.1:7687 '<CR>
+map mmphq : MemphiaQuit <CR>
+
+"HELP:
+"- Interrupt the LLM: Ctrl-X instead of Esc, so Esc still leaves insert mode.
+"- Quit: :MemphiaQuit or Ctrl-Q.
+"- Jump to the input line: i, a or Enter while in an output pane.
+"- g:memphia_python sets which Python to use (default python3). Calling require("memphia") from your config loads the commands without opening the UI.
