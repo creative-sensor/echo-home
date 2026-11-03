@@ -1,0 +1,28 @@
+services:
+  memgraph:
+    image: memgraph/memgraph-mage:latest
+    container_name: memgraph
+    ports:
+      - "7687:7687"   # Bolt
+      - "7444:7444"   # Logs
+    command: ["--log-level=INFO", "--schema-info-enabled=True"]
+    volumes:
+      - mg_lib:/var/lib/memgraph
+      - mg_log:/var/log/memgraph
+    restart: unless-stopped
+
+  lab:
+    image: memgraph/lab:latest
+    container_name: memgraph-lab
+    ports:
+      - "3000:3000"   # Memgraph Lab UI
+    environment:
+      - QUICK_CONNECT_MG_HOST=memgraph
+      - QUICK_CONNECT_MG_PORT=7687
+    depends_on:
+      - memgraph
+    restart: unless-stopped
+
+volumes:
+  mg_lib:
+  mg_log:
