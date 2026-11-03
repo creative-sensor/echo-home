@@ -895,6 +895,8 @@ HELP_TEXT = """\033[1mMemphia commands\033[0m
   ===l              pin the last used uuid          ====      unpin + clear all queues
   =-= <keywords>    search the uvian folder         ===p <uuid|#>  pin a uuid or search result
   ===g [uuid]       show graph neighbours           ===k <a> <b>   link two entries manually
+  ===a <#|uuid>...  load GRAPH entry # (or a uuid) into the LLM context at the next turn
+  ===a! <#|uuid>... same, interrupting the current LLM generation so it applies now
   ===c              recompute clusters (MAGE community detection)
   ===q              show queues                     ===x      cancel the running task
   ===h              this help                       exit / quit"""
@@ -907,6 +909,7 @@ class MemphiaAgent:
         self.lock = threading.RLock()
         self.tasks: deque = deque()
         self.steering: deque = deque()
+        self.attachments: deque = deque()  # uuids the user asked to load into the LLM context
         self.wake = threading.Event()
         self.cancel_event = threading.Event()
         self.interrupt_event = threading.Event()
@@ -918,6 +921,7 @@ class MemphiaAgent:
         self.last_uuid: Optional[str] = None
         self.approval: Optional[dict] = None
         self.last_search: List[dict] = []
+        self.last_graph: List[str] = []  # numbered entries of the latest GRAPH pane listing
         self.mr = MapReduceSummarizer(standard_llm_call, ARGS.chunk_size,
                                       cancel_check=self.cancel_event.is_set)
 
@@ -935,11 +939,24 @@ class MemphiaAgent:
             self.interrupt_event.set()
         _REDRAW()
 
-    def clear_queues(self) -> Tuple[int, int]:
+    def attach(self, uid: str, interrupt: bool = False) -> bool:
+        """Load a Uvian entry into the LLM context at the next turn (or the next task when idle).
+        Returns False when it is already queued."""
         with self.lock:
-            n = (len(self.steering), len(self.tasks))
+            if uid in self.attachments:
+                return False
+            self.attachments.append(uid)
+        if interrupt:
+            self.interrupt_event.set()
+        _REDRAW()
+        return True
+
+    def clear_queues(self) -> Tuple[int, int, int]:
+        with self.lock:
+            n = (len(self.steering), len(self.tasks), len(self.attachments))
             self.steering.clear()
             self.tasks.clear()
+            self.attachments.clear()
         _REDRAW()
         return n
 
@@ -1105,11 +1122,18 @@ class MemphiaAgent:
         for r in ranked:
             r["preview"] = self.store.describe(r["uuid"])
         if ranked:
-            gb = BUFFERS["graph"]
-            gb.writeln(f"\033[1m🧭 Suggestions around {anchor or '(search)'}\033[0m")
-            for r in ranked:
-                gb.writeln(f"  \033[38;5;177m{r['uuid']}\033[0m  {r['why']}\n    {r['preview']}")
+            self.show_graph_entries(f"🧭 Suggestions around {anchor or '(search)'}",
+                                    [(r["uuid"], r["why"], r["preview"]) for r in ranked])
         return ranked
+
+    def show_graph_entries(self, title: str, entries: List[Tuple[str, str, str]]):
+        """Numbered GRAPH pane listing; `===a <#>` loads entry # into the LLM context."""
+        with self.lock:
+            self.last_graph = [e[0] for e in entries]
+        gb = BUFFERS["graph"]
+        gb.writeln(f"\033[1m{title}\033[0m  \033[90m(===a <#> loads into LLM context)\033[0m")
+        for i, (uid, why, preview) in enumerate(entries, 1):
+            gb.writeln(f"  \033[1m[{i}]\033[0m \033[38;5;177m{uid}\033[0m  {why}\n      {preview}")
 
     @staticmethod
     def format_suggestions(anchor: Optional[str], sugg: List[dict]) -> str:
@@ -1134,6 +1158,35 @@ class MemphiaAgent:
         err = self.mr.run(intent, res["stderr"], f"uvian {uid} stderr") if res["stderr"] else ""
         return (f"\n\n[UVIAN ENTRY {uid}] executed via '{res['engine']}', exit code {res['exit_code']}\n"
                 f"Stdout: {out}\nStderr: {err}")
+
+    def load_into_context(self, uid: str, intent: str, target: Optional[str], loaded: List[str],
+                          suggested_ids: set, kind: str) -> str:
+        """Run/summarize uid, link it in the graph and return the message content for the LLM."""
+        anchor = target or (loaded[-1] if loaded else None)
+        ctx = self.load_uvian_context(uid, intent)
+        if anchor:
+            self.graph.link(anchor, uid, kind, 1.0)
+        loaded.append(uid)
+        more = [s for s in self.collect_suggestions(uid, [], set(loaded)) if s["uuid"] not in suggested_ids]
+        suggested_ids.update(s["uuid"] for s in more)
+        return ctx.strip() + self.format_suggestions(uid, more)
+
+    def apply_attachments(self, intent: str, target: Optional[str], loaded: List[str],
+                          suggested_ids: set, messages: List[dict]):
+        with self.lock:
+            uids = list(self.attachments)
+            self.attachments.clear()
+        for uid in uids:
+            self._check_cancel()
+            if uid in loaded:
+                log(f"ℹ️ {uid} is already in the LLM context.")
+                continue
+            if not self.store.exists(uid):
+                log(f"❌ Uvian entry {uid} no longer exists.")
+                continue
+            log(f"\033[38;5;177m📎 [MANUAL LOAD]\033[0m {uid}  {self.store.describe(uid)}")
+            content = self.load_into_context(uid, intent, target, loaded, suggested_ids, "manual_load")
+            messages.append({"role": "user", "content": "The user manually loaded this Uvian entry for you:\n" + content})
 
     # ---------- the agentic loop ----------
     def stream_llm(self, messages: List[dict]) -> Tuple[str, bool]:
@@ -1210,6 +1263,7 @@ class MemphiaAgent:
                 for s in steers:
                     log(f"\033[35m[STEERED]\033[0m {s}")
                     messages.append({"role": "user", "content": f"User Steering Update: {s}"})
+                self.apply_attachments(intent, target, loaded, suggested_ids, messages)
                 self.interrupt_event.clear()
 
                 raw, interrupted = self.stream_llm(messages)
@@ -1270,16 +1324,8 @@ class MemphiaAgent:
                         log("🚫 Uvian load denied.")
                         messages.append({"role": "user", "content": f"Loading Uvian entry {uid} was DENIED by user."})
                         continue
-                    anchor = loaded[-1] if loaded else None
-                    ctx = self.load_uvian_context(uid, intent)
-                    if target:
-                        self.graph.link(target, uid, "co_loaded", 1.0)
-                    elif anchor:
-                        self.graph.link(anchor, uid, "co_loaded", 1.0)
-                    loaded.append(uid)
-                    more = [s for s in self.collect_suggestions(uid, [], set(loaded)) if s["uuid"] not in suggested_ids]
-                    suggested_ids.update(s["uuid"] for s in more)
-                    messages.append({"role": "user", "content": ctx.strip() + self.format_suggestions(uid, more)})
+                    content = self.load_into_context(uid, intent, target, loaded, suggested_ids, "co_loaded")
+                    messages.append({"role": "user", "content": content})
                     continue
 
                 log(f"\033[31m❌ Unknown action type: {kind}\033[0m")
@@ -1354,17 +1400,19 @@ class CommandRouter:
                 a.pinned_uuid = None
             else:
                 log("ℹ️ No memory file is currently pinned.")
-            s, t = a.clear_queues()
-            log(f"🧹 Cleared {s} steering message(s) and {t} queued task(s).")
+            s, t, n = a.clear_queues()
+            log(f"🧹 Cleared {s} steering message(s), {t} queued task(s) and {n} pending load(s).")
         elif cmd == "===x":
             a.cancel() if a.busy else log("ℹ️ Nothing is running.")
         elif cmd == "===q":
             with a.lock:
-                log(f"Queues: {len(a.steering)} steering, {len(a.tasks)} tasks")
+                log(f"Queues: {len(a.steering)} steering, {len(a.tasks)} tasks, {len(a.attachments)} loads")
                 for s in a.steering:
                     log(f"  STEER {s}")
                 for t in a.tasks:
                     log(f"  TASK  {t}")
+                for u in a.attachments:
+                    log(f"  LOAD  {u}")
         elif cmd.startswith("=-="):
             q = cmd[3:].strip()
             if not q:
@@ -1381,6 +1429,24 @@ class CommandRouter:
                 log(f"✅ Memory {uid} pinned! Used for subsequent prompts until '===='.")
             else:
                 log(f"❌ UUID '{arg}' not found.")
+        elif cmd.startswith("===a"):
+            interrupt = cmd.startswith("===a!")
+            args = cmd[5 if interrupt else 4:].split()
+            if not args:
+                log("ℹ️ Usage: ===a <#|uuid> ... (# = number in the GRAPH pane); ===a! also interrupts the LLM")
+                return
+            with a.lock:
+                listing = list(a.last_graph)
+            for arg in args:
+                ref = arg.lstrip("#")
+                uid = listing[int(ref) - 1] if ref.isdigit() and 1 <= int(ref) <= len(listing) else arg
+                if not a.store.exists(uid):
+                    log(f"❌ '{arg}' is not a GRAPH entry number or an existing uuid.")
+                    continue
+                if not a.attach(uid, interrupt=interrupt and a.busy):
+                    continue
+                when = "now" if interrupt and a.busy else "at the next turn" if a.busy else "into the next task"
+                log(f"\033[38;5;177m📎 [LOAD QUEUED]\033[0m {uid} → LLM context {when}")
         elif cmd.startswith("===g"):
             uid = cmd[4:].strip() or a.pinned_uuid or a.last_uuid
             if not uid:
@@ -1420,14 +1486,15 @@ class CommandRouter:
 
     def _show_graph(self, uid: str):
         self.focus_tab("graph")
-        gb = BUFFERS["graph"]
-        gb.writeln(f"\033[1m🧭 neighbours of {uid}\033[0m  ({self.agent.graph.status()})")
-        rel = self.agent.graph.related(uid, limit=20)
+        a = self.agent
+        rel = a.graph.related(uid, limit=20)
         if not rel:
-            gb.writeln("  (no related entries recorded)")
-        for r in rel:
-            gb.writeln(f"  \033[38;5;177m{r['uuid']}\033[0m  score {r['score']:.2f}  {r['why']}\n"
-                       f"    {self.agent.store.describe(r['uuid'])}")
+            BUFFERS["graph"].writeln(f"\033[1m🧭 neighbours of {uid}\033[0m  ({a.graph.status()})\n"
+                                     "  (no related entries recorded)")
+            return
+        a.show_graph_entries(f"🧭 neighbours of {uid}  ({a.graph.status()})",
+                             [(r["uuid"], f"score {r['score']:.2f}  {r['why']}", a.store.describe(r["uuid"]))
+                              for r in rel])
 
 
 # ==========================================

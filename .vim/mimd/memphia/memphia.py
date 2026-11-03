@@ -158,15 +158,18 @@ class MemphiaTUI:
     def _queue_text(self):
         a = self.agent
         with a.lock:
-            steer, tasks = list(a.steering), list(a.tasks)
+            steer, tasks, loads = list(a.steering), list(a.tasks), list(a.attachments)
         frags = []
+        for u in loads[:3]:
+            frags.append(("class:q.load", " LOAD  "))
+            frags.append(("", f" {u}  {a.store.describe(u)[:150]}\n"))
         for s in steer[:3]:
             frags.append(("class:q.steer", " STEER "))
             frags.append(("", f" {s[:200]}\n"))
         for t in tasks[:3]:
             frags.append(("class:q.task", " TASK  "))
             frags.append(("", f" {t[:200]}\n"))
-        hidden = len(steer) + len(tasks) - min(3, len(steer)) - min(3, len(tasks))
+        hidden = sum(len(x) - min(3, len(x)) for x in (steer, tasks, loads))
         if hidden > 0:
             frags.append(("class:q.more", f" … {hidden} more queued\n"))
         return frags
@@ -174,8 +177,9 @@ class MemphiaTUI:
     def _queue_height(self):
         a = self.agent
         with a.lock:
-            n = min(3, len(a.steering)) + min(3, len(a.tasks))
-            more = (len(a.steering) + len(a.tasks)) > n
+            queues = (a.steering, a.tasks, a.attachments)
+            n = sum(min(3, len(q)) for q in queues)
+            more = sum(len(q) for q in queues) > n
         return D.exact(n + (1 if more else 0))
 
     def _status(self):
@@ -226,6 +230,7 @@ class MemphiaTUI:
             "queue": "bg:#121212",
             "q.steer": "bg:#5f00af fg:#ffffff bold",
             "q.task": "bg:#005f87 fg:#ffffff bold",
+            "q.load": "bg:#875f87 fg:#ffffff bold",
             "q.more": "fg:#888888 italic",
             "status": "bg:#303030 fg:#d0d0d0",
             "st.idle": "bg:#005f00 fg:#ffffff bold",

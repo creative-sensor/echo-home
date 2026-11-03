@@ -33,7 +33,8 @@ sys.stdout = sys.stderr
 import memphia_core as core  # noqa: E402
 
 KEYS_HELP = """\033[1mKeys\033[0m  F1-F6/Tab: right pane │ wheel, PgUp/PgDn, Shift-↑/↓ (from input): scroll │ Ctrl-O: scroll target │ F12: follow
-      Ctrl-T: hide/show agent pane │ Ctrl-L: clear right pane │ Ctrl-X: interrupt LLM │ Ctrl-C: cancel task │ :MemphiaQuit"""
+      Ctrl-T: hide/show agent pane │ Ctrl-L: clear right pane │ Ctrl-X: interrupt LLM │ Ctrl-C: cancel task │ :MemphiaQuit
+      Enter on a GRAPH [#] / UVIAN #n entry: load it into the LLM context (Shift-Enter: and interrupt)"""
 
 _SGR = re.compile(r"\x1b\[([0-9;]*)m")
 _BASIC = ["#000000", "#cd0000", "#00cd00", "#cdcd00", "#0000ee", "#cd00cd", "#00cdcd", "#e5e5e5"]
@@ -182,10 +183,11 @@ class Bridge:
         a = self.agent
         with a.lock:
             steer, tasks, ap = list(a.steering), list(a.tasks), a.approval
+            loads = [f"{u}  {a.store.describe(u)}" for u in a.attachments]
         return {
             "t": "state", "busy": a.busy, "phase": a.phase, "model": core.MODEL_NAME,
             "graph": a.graph.enabled, "pinned": a.pinned_uuid, "cwd": core.to_bash_path(core.CURRENT_CWD),
-            "steer": steer, "tasks": tasks,
+            "steer": steer, "tasks": tasks, "loads": loads,
             "approval": {"kind": ap["kind"], "detail": ap["detail"], "editing": ap["editing"]} if ap else None,
         }
 

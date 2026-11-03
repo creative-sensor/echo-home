@@ -11,6 +11,7 @@
 --
 -- Layout (same as the TUI)
 --   AGENT pane | right pane (LLM / STDOUT / STDERR / UVIAN / MAP-REDUCE / GRAPH)
+--     <CR> on a GRAPH/UVIAN entry loads it into the LLM context (<S-CR>: and interrupt)
 --   queue panel (steering messages and queued tasks, only while non-empty)
 --   status bar + input line (always active, even while the agent is running)
 --
@@ -47,6 +48,7 @@ local function define_highlights()
     MemphiaQueue = { bg = "#121212" },
     MemphiaQSteer = { bg = "#5f00af", fg = "#ffffff", bold = true },
     MemphiaQTask = { bg = "#005f87", fg = "#ffffff", bold = true },
+    MemphiaQLoad = { bg = "#875f87", fg = "#ffffff", bold = true },
     MemphiaQMore = { fg = "#888888", italic = true },
     MemphiaStatus = { bg = "#303030", fg = "#d0d0d0" },
     MemphiaStIdle = { bg = "#005f00", fg = "#ffffff", bold = true },
@@ -255,10 +257,12 @@ local function render_queue()
       hls[#hls + 1] = { #lines - 1, #tag, hl }
     end
   end
-  local steer, tasks = st.steer or {}, st.tasks or {}
+  local steer, tasks, loads = st.steer or {}, st.tasks or {}, st.loads or {}
+  add(" LOAD  ", "MemphiaQLoad", loads)
   add(" STEER ", "MemphiaQSteer", steer)
   add(" TASK  ", "MemphiaQTask", tasks)
-  local hidden = #steer + #tasks - math.min(3, #steer) - math.min(3, #tasks)
+  local hidden = 0
+  for _, q in ipairs({ steer, tasks, loads }) do hidden = hidden + #q - math.min(3, #q) end
   if hidden > 0 then
     lines[#lines + 1] = " … " .. hidden .. " more queued"
     hls[#hls + 1] = { #lines - 1, #lines[#lines], "MemphiaQMore" }
@@ -583,7 +587,21 @@ local function set_keymaps()
       vim.cmd("startinsert!")
     end
   end
-  for _, lhs in ipairs({ "i", "a", "I", "A", "o", "<CR>" }) do map("n", lhs, to_input, out) end
+  for _, lhs in ipairs({ "i", "a", "I", "A", "o" }) do map("n", lhs, to_input, out) end
+
+  -- Enter on a GRAPH "[#] uuid" or UVIAN " #n uuid" line loads that entry into the LLM context
+  -- (Shift-Enter also interrupts the current generation); elsewhere it jumps to the input line.
+  local function load_entry(interrupt)
+    return function()
+      local row = api.nvim_win_get_cursor(0)[1]
+      local text = api.nvim_buf_get_lines(0, row - 1, row, false)[1] or ""
+      local uid = text:match("^%s*%[%d+%]%s+(%S+)") or text:match("^%s*#%d+%s+(%S+)")
+      if not uid or not S.job then return to_input() end
+      send({ t = "input", text = (interrupt and "===a! " or "===a ") .. uid })
+    end
+  end
+  map("n", "<CR>", load_entry(false), out)
+  map("n", "<S-CR>", load_entry(true), out)
 end
 
 local function set_autocmds()
