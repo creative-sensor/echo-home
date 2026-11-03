@@ -10,8 +10,6 @@
 - [datum/2026/WIP/ARTE-21.md](datum/2026/WIP/ARTE-21.md)   ```# node_modules : flattening```
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
 - [datum/2026/WIP/CORTA-21.md](datum/2026/WIP/CORTA-21.md)   ```# vllm : library```
-- [datum/2026/WIP/CORTA-46.md](datum/2026/WIP/CORTA-46.md)   ```# javelin : fire and forget```
-- [datum/2026/WIP/CORTA-47.md](datum/2026/WIP/CORTA-47.md)   ```# memphia: text matching```
 - [datum/2026/WIP/CORTA-48.md](datum/2026/WIP/CORTA-48.md)   ```# memphiu : advanced TUI for memphiX```
 - [datum/2026/WIP/KITE-25.md](datum/2026/WIP/KITE-25.md)   ```# cli : mistral-vibe```
 - [datum/2026/WIP/MDOS-22.md](datum/2026/WIP/MDOS-22.md)   ```# lang runtime : lua```
@@ -124,6 +122,8 @@
 - [datum/2026/DONE/CORTA-41.md](datum/2026/DONE/CORTA-41.md)   ```# singletron : inspector```
 - [datum/2026/DONE/CORTA-42.md](datum/2026/DONE/CORTA-42.md)   ```# singletron : design mode```
 - [datum/2026/DONE/CORTA-43.md](datum/2026/DONE/CORTA-43.md)   ```# mtp : speculative decoding```
+- [datum/2026/DONE/CORTA-46.md](datum/2026/DONE/CORTA-46.md)   ```# javelin : fire and forget```
+- [datum/2026/DONE/CORTA-47.md](datum/2026/DONE/CORTA-47.md)   ```# memphia: text matching```
 - [datum/2026/DONE/CORTA-6.md](datum/2026/DONE/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
 - [datum/2026/DONE/CORTA-7.md](datum/2026/DONE/CORTA-7.md)   ```# gmlama```
 - [datum/2026/DONE/CORTA-8.md](datum/2026/DONE/CORTA-8.md)   ```# llama.cpp : aka gmlala```
