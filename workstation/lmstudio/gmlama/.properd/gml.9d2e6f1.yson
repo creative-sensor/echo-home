@@ -70,3 +70,51 @@ lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q8_0.gguf: ["GPU/Agent8900
 lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["GPU/Agent8901" , "-c 131072 -ctk q4_0 -ctv q4_0 -fa on --port 8901 --embeddings --pooling mean"]
 lmstudio-community/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-GGUF/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-Q4_K_M.gguf: ["GPU/Agent8903" , "-c 65636 -ctk q4_0 -ctv q4_0 -fa on --port 8903"]
 
+# --------
+lmstudio-community/gemma-4-E2B-it-QAT-GGUF/gemma-4-E2B-it-QAT-Q4_0.gguf: ["GPU/AgentGXC" , " -c 16384 -ctk q4_0 -ctv q4_0 -fa on -ngl all -kvo -lm none --port 8080  --slot-save-path $HOME/echo-home/memory/llamark/gemma-4-E2B-it-QAT-Q4_0"]
+#
+lmstudio-community/gemma-4-26B-A4B-it-GGUF/gemma-4-26B-A4B-it-Q4_K_M.gguf: ["Agent8082" , "-b 4096 -ub 4096 -c 8192 -ctk q4_0 -ctv q4_0 -fa on -nkvo --port 8082 --embeddings --pooling mean"]
+ggml-org/gemma-4-E4B-it-GGUF/gemma-4-e4b-it-Q4_K_M.gguf: ["GPU/Agent8083" , "-c 131072 -ctk q4_0 -ctv q4_0 -fa on --port 8083 --embeddings --pooling mean"]
+#
+#
+#
+lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/gemma-4-26B-A4B-it-QAT-Q4_0.gguf: ["GPU/Agent8087" , "-c 16384 -ctk q4_0 -ctv q4_0  -ngl 3 -kvo -lm none --port 8087 --slot-save-path $HOME/echo-home/memory/llamark/gemma-4-26B-A4B-it-QAT-Q4_0"] #### prefill_ngl4: 18tps ,decode_cpu: 8tps
+#
+lmstudio-community/gemma-4-E4B-it-QAT-GGUF/gemma-4-E4B-it-QAT-Q4_0.gguf: ["GPU/Agent8089" , "-c 16384 -ctk q4_0 -ctv q4_0 -fa on -ngl 15 -kvo --port 8089 --slot-save-path $HOME/echo-home/memory/llamark/gemma-4-E4B-it-QAT-Q4_0"]
+lmstudio-community/gemma-4-E2B-it-QAT-GGUF/gemma-4-E2B-it-QAT-Q4_0.gguf: ["GPU/Agent8090" , "-b 768 -ub 768   -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8090 --embeddings --pooling mean"]
+#
+#
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q8_0.gguf: ["GPU/Agent8900" , "-b 4096 -ub 4096 -c 8192 -ctk q8_0 -ctv q8_0 -fa on -ngl 15 --port 8900 -kvo "]
+lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf: ["GPU/Agent8901" , "-b 4096 -ub 4096 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8901 -ngl 29 -kvo --embeddings --pooling mean"]
+lmstudio-community/Qwen3.6-35B-A3B-GGUF/Qwen3.6-35B-A3B-Q4_K_M.gguf: ["GPU/Agent8906" , "-c 16384 -ctk q4_0 -ctv q4_0 -fa on -ngl 3 -kvo --port 8906 --slot-save-path $HOME/echo-home/memory/llamark/Qwen3.6-35B-A3B-Q4_K_M"]
+#
+ggml-org/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-GGUF/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-Q4_0.gguf: ["GPU/Agent8910" , "-c 16384 -ctk q4_0 -ctv q4_0 -fa on -ngl 0 -kvo -lm none --port 8910 --slot-save-path $HOME/echo-home/memory/llamark/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-Q4_0"]
+#
+#
+#
+#
+#
+#
+#
+---- TEST ----
+lmstudio-community/Ministral-3-3B-Instruct-2512-GGUF/Ministral-3-3B-Instruct-2512-Q4_K_M.gguf: ["GPU/AgentTEST" , " -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8079 --embeddings --pooling mean"]
+empero-ai/Qwen3.8-2B-Distill-GGUF/Qwen3.8-2B-Q8_0.gguf: ["GPU/AgentTEST" , "  -c 4096 -ctk q8_0 -ctv q8_0 -fa on --port 8079 --embeddings --pooling mean"]
+empero-ai/Qwen3.8-4B-Distill-GGUF/Qwen3.8-4B-Q4_K_M.gguf: ["GPU/AgentTEST" , "-b 768 -ub 768 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8090 --embeddings --pooling mean"]
+empero-ai/Qwen3.8-2B-Distill-GGUF/Qwen3.8-2B-Q4_K_M.gguf: ["GPU/AgentTEST" , "-b 768 -ub 768 -c 8192 -ctk q4_0 -ctv q4_0 -fa on --port 8090 --embeddings --pooling mean"]
+empero-ai/Qwen3.8-2B-Distill-GGUF/Qwen3.8-2B-Q8_0.gguf: ["GPU/AgentTEST" , " -b 768 -ub 768 -c 8192 -ctk q8_0 -ctv q8_0 -fa on --port 8090 --embeddings --pooling mean"]
+
+ggml-org/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-GGUF/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-Q4_0.gguf: ["GPU/Agent8910" , "-c 16384 -ctk q4_0 -ctv q4_0 -fa on -ngl 0 -kvo -lm none --port 8910 --slot-save-path $HOME/echo-home/memory/llamark/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-Q4_0"] #### prefill_gpu,decode_cpu: 7tps
+lmstudio-community/Qwen3.6-35B-A3B-GGUF/Qwen3.6-35B-A3B-Q4_K_M.gguf: ["GPU/Agent8906" , "-c 16384 -ctk q4_0 -ctv q4_0 -fa on -ngl 3 -kvo --port 8906 --repeat-penalty 1.1 --repeat-last-n 4096 --slot-save-path $HOME/echo-home/memory/llamark/Qwen3.6-35B-A3B-Q4_K_M"] #### prefill_gpu,decode_cpu: 8tps
+
+google/gemma-4-26B-A4B-it-qat-q4_0-gguf/gemma-4-26B_q4_0-it.gguf: ["Agent8082" , "-c 16384 -ctk q4_0 -ctv q4_0 -fa on -nkvo --port 8082 "]
+
+lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/gemma-4-26B-A4B-it-QAT-Q4_0.gguf: ["GPU/Agent8087" , "-c 8192 -ctk q4_0 -ctv q4_0  -ngl 0 -kvo -lm none --port 8087"] #### prefill_gpu,decode_cpu: 8tps
+lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/gemma-4-26B-A4B-it-QAT-Q4_0.gguf: ["Agent8087" , "-c 8192 -ctk q4_0 -ctv q4_0  -nkvo -lm none --port 8087"] #### cpu: tps
+lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/gemma-4-26B-A4B-it-QAT-Q4_0.gguf: ["GPU/Agent8087" , "-c 16384 -ctk q4_0 -ctv q4_0  -ngl 4 -kvo -lm none --port 8087 --slot-save-path $HOME/echo-home/memory/llamark/gemma-4-26B-A4B-it-QAT-Q4_0"] #### prefill_ngl4,decode_cpu: 8tps
+lmstudio-community/gemma-4-26B-A4B-it-QAT-GGUF/gemma-4-26B-A4B-it-QAT-Q4_0.gguf: ["GPU/Agent8087" , "-c 16384 -ctk q4_0 -ctv q4_0  -ngl 3 -kvo -lm none --port 8087 --slot-save-path $HOME/echo-home/memory/llamark/gemma-4-26B-A4B-it-QAT-Q4_0"] #### prefill_ngl4: 18tps ,decode_cpu: 8tps
+
+lmstudio-community/gemma-4-E2B-it-QAT-GGUF/gemma-4-E2B-it-QAT-Q4_0.gguf: ["GPU/Agent8090" , "-b 768 -ub 768   -c 8192 -ctk q4_0 -ctv q4_0  -kvo -lm none --port 8090 --embeddings --pooling mean"]
+lmstudio-community/Bonsai-27B-GGUF/Bonsai-27B-Q1_0.gguf: ["GPU/AgentBonsai" , " -c 16384 -ctk q4_0 -ctv q4_0 -fa on -ngl 0 -kvo -lm none --port 8080  --slot-save-path $HOME/echo-home/memory/llamark/.bin"]
+
+lmstudio-community/gemma-4-E4B-it-QAT-GGUF/gemma-4-E4B-it-QAT-Q4_0.gguf: ["GPU/Agent8089" , "-c 16384 -ctk q4_0 -ctv q4_0 -fa on -ngl 15 -kvo --port 8089 --slot-save-path $HOME/echo-home/memory/llamark/gemma-4-E4B-it-QAT-Q4_0"] #### prefill_gpu: 90tps, decode_cpu: 7tps
+---- TEST.end ----

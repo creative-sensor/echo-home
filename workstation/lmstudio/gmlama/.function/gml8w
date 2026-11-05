@@ -46,7 +46,7 @@ fi
 [[ "$llamacpp_version" =~ 'null' ]] && unset llamacpp_version
 if echo $gml_describe | grep -q '^GPU/' ; then
     if gmlvk-dev | grep -i "  $GML_DEV: NVIDIA" ; then
-        GPU_TYPE=CUDA
+        GPU_TYPE=vulkan
     fi
     set -x
     cd $LOCAL_BIN/gmlama-$GPU_TYPE/${llamacpp_version} ; ./llama-server -m $GMLBASE/$gml_model $gml_params $gpu_dev

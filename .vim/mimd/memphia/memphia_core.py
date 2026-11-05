@@ -515,8 +515,19 @@ def llamark_load(path: str, slot: int, phase: Callable[[str], None]) -> bool:
     phase("llamark restore" if os.path.isfile(bin_hint) else "llamark building cache (first time)")
     env = dict(os.environ, LLAMARK_URL=f"http://{ARGS.host}:{ARGS.port}")
     t0 = time.time()
-    proc = subprocess.run(["bash", script, "load", sha, path, str(slot)], env=env,
-                          capture_output=True, text=True)
+    # stdin=DEVNULL: never hand the child our stdin — under memphia_nvim it is the nvim protocol
+    # pipe, and on Windows/Git Bash the child blocks reading it (hang until the user hits Enter).
+    timeout = float(os.environ.get("LLAMARK_TIMEOUT", "900"))  # a first-time build prefills the whole file
+    try:
+        proc = subprocess.run(["bash", script, "load", sha, path, str(slot)], env=env,
+                              stdin=subprocess.DEVNULL, capture_output=True, text=True,
+                              encoding="utf-8", errors="replace", timeout=timeout)
+    except subprocess.TimeoutExpired:
+        log(f"⚠️ llamark load timed out after {timeout:.0f}s (LLAMARK_TIMEOUT); falling back to normal load")
+        return False
+    except OSError as e:
+        log(f"⚠️ llamark could not start bash ({e}); falling back to normal load")
+        return False
     msg = (proc.stderr or proc.stdout).strip().splitlines()
     if proc.returncode != 0:
         log(f"⚠️ llamark load failed ({msg[-1] if msg else proc.returncode}); falling back to normal load")

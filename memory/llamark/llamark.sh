@@ -21,6 +21,10 @@
 #      LLAMARK_DIR  exact bin dir (= the server's --slot-save-path); overrides HOME/<model_name>
 #      If no model name comes back from $LLAMARK_URL/props, bins go in $LLAMARK_HOME/.bin
 set -euo pipefail
+# Never read the caller's stdin (e.g. a parent's protocol pipe): on Git Bash a stray read
+# there blocks until a newline arrives. Only explicit pipes below (`... | curl -d @-`) feed stdin.
+exec </dev/null
+curl() { command curl --connect-timeout "${LLAMARK_CONNECT_TIMEOUT:-5}" "$@"; }  # fail fast if server is down
 
 URL=${LLAMARK_URL:-http://localhost:8080}
 HOME_DIR=${LLAMARK_HOME:-$HOME/echo-home/memory/llamark}
