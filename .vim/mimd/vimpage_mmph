@@ -1,3 +1,4 @@
+let g:memphia_python = 'python'
 let g:memphia_args = ['--port', LMSH_PORT]
 let g:memphia_args = ['--memgraph-uri', 'bolt://127.0.0.1:7444', '--memgraph-user', 'memphia']
 

@@ -30,7 +30,32 @@ _PROTO = os.fdopen(os.dup(1), "w", encoding="utf-8", buffering=1)
 os.dup2(2, 1)
 sys.stdout = sys.stderr
 
-import memphia_core as core  # noqa: E402
+
+def _script_dir() -> str:
+    """Directory of this file, as a native path (Git Bash/MSYS gives /c/... on Windows)."""
+    d = os.path.dirname(os.path.abspath(__file__))
+    if os.name == "nt":
+        m = re.match(r"^[\\/]([a-zA-Z])(?:[\\/]|$)(.*)", d)  # \c\Users\... or /c/Users/...
+        if m and not os.path.isdir(d):
+            d = m.group(1).upper() + ":\\" + m.group(2)
+        d = os.path.normpath(d)
+    return d
+
+
+_HERE = _script_dir()
+if _HERE not in sys.path:
+    sys.path.insert(0, _HERE)
+
+try:
+    import memphia_core as core  # noqa: E402
+except ImportError as e:
+    print(f"memphia_nvim: cannot import memphia_core: {e!r}\n"
+          f"  python   : {sys.executable} {sys.version.split()[0]}\n"
+          f"  __file__ : {__file__}\n"
+          f"  script dir: {_HERE} (exists={os.path.isdir(_HERE)}, "
+          f"core={os.path.isfile(os.path.join(_HERE, 'memphia_core.py'))})\n"
+          f"  sys.path : {sys.path[:4]}", file=sys.stderr)
+    raise
 
 KEYS_HELP = """\033[1mKeys\033[0m  F1-F6/Tab: right pane │ wheel, PgUp/PgDn, Shift-↑/↓ (from input): scroll │ Ctrl-O: scroll target │ F12: follow
       Ctrl-T: hide/show agent pane │ Ctrl-L: clear right pane │ Ctrl-X: interrupt LLM │ Ctrl-C: cancel task │ :MemphiaQuit
