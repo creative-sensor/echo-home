@@ -19,6 +19,7 @@ Input routing
 Commands: type ===h inside the TUI.
 """
 import argparse
+import hashlib
 import json
 import os
 import platform
@@ -495,11 +496,41 @@ class MemgraphLinker:
 # ==========================================
 # 5. LLM & MAP-REDUCE
 # ==========================================
+def aux_slot_body() -> dict:
+    """With llamark on, keep helper calls (selector, map-reduce) off the slot holding the cached entry."""
+    return {"id_slot": ARGS.aux_slot} if ARGS.llamark else {}
+
+
+def llamark_load(path: str, slot: int, phase: Callable[[str], None]) -> bool:
+    """Ask llamark.sh to restore <sha256>.bin of `path` into `slot` (it builds the bin on a miss).
+    Returns True when the slot now holds the file as the system-turn prefix."""
+    script = resolve_path(ARGS.llamark_script)
+    if not os.path.isfile(script):
+        log(f"⚠️ llamark script not found: {script}")
+        return False
+    with open(path, "rb") as f:
+        sha = hashlib.sha256(f.read()).hexdigest()
+    model_dir = os.path.splitext(os.path.basename(MODEL_NAME))[0]
+    bin_hint = os.path.join(os.path.dirname(script), model_dir, f"{sha}.bin")
+    phase("llamark restore" if os.path.isfile(bin_hint) else "llamark building cache (first time)")
+    env = dict(os.environ, LLAMARK_URL=f"http://{ARGS.host}:{ARGS.port}")
+    t0 = time.time()
+    proc = subprocess.run(["bash", script, "load", sha, path, str(slot)], env=env,
+                          capture_output=True, text=True)
+    msg = (proc.stderr or proc.stdout).strip().splitlines()
+    if proc.returncode != 0:
+        log(f"⚠️ llamark load failed ({msg[-1] if msg else proc.returncode}); falling back to normal load")
+        return False
+    log(f"⚡ [LLAMARK] {sha[:12]}… in slot {slot} ({time.time() - t0:.1f}s) {msg[-1] if msg else ''}")
+    return True
+
+
 def standard_llm_call(system_prompt: str, user_prompt: str) -> str:
     response = CLIENT.chat.completions.create(
         model=MODEL_NAME,
         messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}],
         temperature=0.0,
+        extra_body=aux_slot_body(),
     )
     text = response.choices[0].message.content or ""
     text = re.sub(r"<\|channel>thought.*?<channel\|>", "", text, flags=re.DOTALL)
@@ -922,7 +953,8 @@ class MemphiaAgent:
         self.approval: Optional[dict] = None
         self.last_search: List[dict] = []
         self.last_graph: List[str] = []  # numbered entries of the latest GRAPH pane listing
-        self.mr = MapReduceSummarizer(standard_llm_call, ARGS.chunk_size,
+        self.llm_slot: Optional[int] = None  # llama-server slot pinned for the agent loop (llamark)
+        self.mr =MapReduceSummarizer(standard_llm_call, ARGS.chunk_size,
                                       cancel_check=self.cancel_event.is_set)
 
     # ---------- queue API (called from the UI thread) ----------
@@ -1088,6 +1120,7 @@ class MemphiaAgent:
             resp = CLIENT.chat.completions.create(
                 model=MODEL_NAME, temperature=0.0, response_format={"type": "json_object"},
                 messages=[{"role": "system", "content": SELECT_SYSTEM_PROMPT}, {"role": "user", "content": user}],
+                extra_body=aux_slot_body(),
             )
             parsed = parse_llm_json(resp.choices[0].message.content or "") or {}
         except Exception as e:
@@ -1159,6 +1192,26 @@ class MemphiaAgent:
         return (f"\n\n[UVIAN ENTRY {uid}] executed via '{res['engine']}', exit code {res['exit_code']}\n"
                 f"Stdout: {out}\nStderr: {err}")
 
+    def llamark_doc(self, uid: str) -> Optional[str]:
+        """Return the raw text of a static (non-#!) entry after llamark put its KV cache in the
+        agent slot, or None to use the normal execute/summarize path."""
+        path = self.store.path_for(uid)
+        try:
+            with open(path, "rb") as f:
+                raw = f.read()
+            text = raw.decode("utf-8")
+        except (OSError, UnicodeDecodeError):
+            return None
+        if text.startswith("#!") or len(raw) > self.store.max_file_bytes:
+            return None  # executable entries produce fresh output each run; not cacheable
+        if not llamark_load(path, ARGS.llamark_slot, self.set_phase):
+            return None
+        ub = BUFFERS["uvian"]
+        ub.writeln(f"\033[48;5;54m\033[38;5;177m ⚡ {uid} \033[0m via 'llamark' (KV cache, slot {ARGS.llamark_slot})")
+        ub.writeln(text.rstrip("\n"))
+        ub.writeln("\033[90m── end ──\033[0m")
+        return text
+
     def load_into_context(self, uid: str, intent: str, target: Optional[str], loaded: List[str],
                           suggested_ids: set, kind: str) -> str:
         """Run/summarize uid, link it in the graph and return the message content for the LLM."""
@@ -1192,7 +1245,9 @@ class MemphiaAgent:
     def stream_llm(self, messages: List[dict]) -> Tuple[str, bool]:
         lb = BUFFERS["llm"]
         self.set_phase("thinking")
-        response = CLIENT.chat.completions.create(model=MODEL_NAME, messages=messages, temperature=0.0, stream=True)
+        extra = {"id_slot": self.llm_slot, "cache_prompt": True} if self.llm_slot is not None else {}
+        response = CLIENT.chat.completions.create(model=MODEL_NAME, messages=messages, temperature=0.0,
+                                                  stream=True, extra_body=extra)
         output, interrupted, in_reasoning = "", False, False
         try:
             for chunk in response:
@@ -1236,9 +1291,18 @@ class MemphiaAgent:
 
         loaded: List[str] = []
         context = ""
+        cached_doc = None  # target file text, when served from a llamark KV cache
+        self.llm_slot = ARGS.llamark_slot if ARGS.llamark else None
+        if target and ARGS.llamark:
+            cached_doc = self.llamark_doc(target)
         if target:
             self.last_uuid = target
-            context += self.load_uvian_context(target, intent)
+            if cached_doc is not None:
+                self.graph.touch(target, self.store.describe(target))
+                context += (f"\n\n[UVIAN ENTRY {target}] is loaded verbatim at the start of the system prompt "
+                            f"(before the END MEMORY marker).")
+            else:
+                context += self.load_uvian_context(target, intent)
             loaded.append(target)
             for r in related:
                 self.graph.link(target, r, "co_relevant", 0.5)
@@ -1248,8 +1312,12 @@ class MemphiaAgent:
             log(f"🧭 {len(suggested)} related entr{'y' if len(suggested) == 1 else 'ies'} suggested to the LLM (see GRAPH pane).")
         context += self.format_suggestions(target, suggested)
 
+        # llamark: the entry must be the very first bytes of the system turn — that is the
+        # prefix stored in <sha256>.bin, so the server reuses it instead of re-prefilling.
+        system = SYSTEM_PROMPT if cached_doc is None else (
+            f"{cached_doc}\n\n=== END MEMORY {target} ===\n\n{SYSTEM_PROMPT}")
         messages = [
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": system},
             {"role": "user", "content": f"User Intent: {intent}{get_os_env_context()}{context}"},
         ]
         try:
@@ -1527,6 +1595,11 @@ def parse_args(argv=None) -> argparse.Namespace:
     p.add_argument("--no-memgraph", action="store_true", help="Disable the relation graph")
     p.add_argument("--related-limit", type=int, default=8, help="Max related entries suggested to the LLM")
     p.add_argument("--max-candidates", type=int, default=12, help="Max text-search candidates sent to the selector LLM")
+    p.add_argument("--llamark", action="store_true",
+                   help="Serve the selected uvian entry from a saved KV cache (<sha256>.bin) via llamark.sh")
+    p.add_argument("--llamark-script", type=str, default="~/echo-home/memory/llamark/llamark.sh")
+    p.add_argument("--llamark-slot", type=int, default=0, help="llama-server slot for the agent loop + cache")
+    p.add_argument("--aux-slot", type=int, default=1, help="slot for selector/map-reduce calls when --llamark is on")
     p.add_argument("--max-turns", type=int, default=13)
     p.add_argument("--cmd-timeout", type=int, default=30, help="Seconds before a shell/uvian command is killed")
     return p.parse_args(argv)
