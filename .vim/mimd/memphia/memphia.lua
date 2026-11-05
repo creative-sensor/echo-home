@@ -24,6 +24,12 @@ local api, fn = vim.api, vim.fn
 local uv = vim.uv or vim.loop
 
 local SCRIPT_DIR = fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h")
+if fn.has("win32") == 1 then
+  -- Git Bash/MSYS hands nvim paths like /c/Users/..; native Windows python needs C:/Users/..
+  local drive, rest = SCRIPT_DIR:match("^[/\\]([a-zA-Z])[/\\](.*)$")
+  if drive and fn.isdirectory(SCRIPT_DIR) == 0 then SCRIPT_DIR = drive:upper() .. ":/" .. rest end
+  SCRIPT_DIR = SCRIPT_DIR:gsub("\\", "/")
+end
 local RIGHT_TABS = { "llm", "stdout", "stderr", "uvian", "mapreduce", "graph" }
 local TITLES = {
   agent = "AGENT", llm = "LLM", stdout = "STDOUT", stderr = "STDERR",
@@ -676,7 +682,9 @@ function M.start(args)
     set_autocmds()
   end
   S.partial = ""
-  local cmd = { vim.g.memphia_python or "python3", "-u", SCRIPT_DIR .. "/memphia_nvim.py" }
+  -- On Windows "python3" is often the Microsoft Store stub; prefer "python" there.
+  local py = vim.g.memphia_python or (fn.has("win32") == 1 and fn.executable("python") == 1 and "python" or "python3")
+  local cmd = { py, "-u", SCRIPT_DIR .. "/memphia_nvim.py" }
   vim.list_extend(cmd, args)
   S.job = fn.jobstart(cmd, {
     cwd = fn.getcwd(), on_stdout = on_stdout, on_stderr = on_stderr, on_exit = on_exit,
