@@ -501,6 +501,17 @@ def aux_slot_body() -> dict:
     return {"id_slot": ARGS.aux_slot} if ARGS.llamark else {}
 
 
+def find_bash() -> str:
+    """The bash for EVERY subprocess (shell tool, uvian #! entries, llamark.sh). On Windows use Git's
+    bash by full path: a bare "bash" picks WSL's System32\\bash.exe, which can't see C:/ paths."""
+    if is_windows():
+        git_bash_path = r"C:\Program Files\Git\bin\bash.exe"
+        if os.path.exists(git_bash_path):
+            return git_bash_path
+        log("⚠️ [WARNING] Standard Git Bash path not found. Falling back to system PATH.")
+    return "bash"
+
+
 def llamark_load(path: str, slot: int, phase: Callable[[str], None]) -> bool:
     """Ask llamark.sh to restore <sha256>.bin of `path` into `slot` (it builds the bin on a miss).
     Returns True when the slot now holds the file as the system-turn prefix."""
@@ -518,19 +529,21 @@ def llamark_load(path: str, slot: int, phase: Callable[[str], None]) -> bool:
     # stdin=DEVNULL: never hand the child our stdin — under memphia_nvim it is the nvim protocol
     # pipe, and on Windows/Git Bash the child blocks reading it (hang until the user hits Enter).
     timeout = float(os.environ.get("LLAMARK_TIMEOUT", "900"))  # a first-time build prefills the whole file
+    bash = find_bash()
     try:
-        proc = subprocess.run(["bash", script, "load", sha, path, str(slot)], env=env,
+        proc = subprocess.run([bash, script, "load", sha, path.replace("\\", "/"), str(slot)], env=env,
                               stdin=subprocess.DEVNULL, capture_output=True, text=True,
                               encoding="utf-8", errors="replace", timeout=timeout)
     except subprocess.TimeoutExpired:
         log(f"⚠️ llamark load timed out after {timeout:.0f}s (LLAMARK_TIMEOUT); falling back to normal load")
         return False
     except OSError as e:
-        log(f"⚠️ llamark could not start bash ({e}); falling back to normal load")
+        log(f"⚠️ llamark could not start {bash} ({e}); set LLAMARK_BASH to Git's bash.exe")
         return False
     msg = (proc.stderr or proc.stdout).strip().splitlines()
     if proc.returncode != 0:
-        log(f"⚠️ llamark load failed ({msg[-1] if msg else proc.returncode}); falling back to normal load")
+        log(f"⚠️ llamark load failed ({msg[-1] if msg else proc.returncode}) [bash={bash} script={script}]"
+            f"; falling back to normal load")
         return False
     log(f"⚡ [LLAMARK] {sha[:12]}… in slot {slot} ({time.time() - t0:.1f}s) {msg[-1] if msg else ''}")
     return True
@@ -823,10 +836,9 @@ def execute_shell_command(command: str, cancel_event: threading.Event) -> Dict:
     with tempfile.NamedTemporaryFile(mode="w", delete=False) as tf:
         cwd_file = tf.name
     wrapped = f"trap 'pwd > \"{to_bash_path(cwd_file)}\"' EXIT\n{command}"
-    execbin = r"C:\Program Files\Git\bin\bash.exe" if os.environ.get("OS") == "Windows_NT" else None
     try:
-        rc, out, err = run_process(["bash", "-c", wrapped], CURRENT_CWD, ARGS.cmd_timeout,
-                                   out_b, err_b, cancel_event, executable=execbin)
+        rc, out, err = run_process([find_bash(), "-c", wrapped], CURRENT_CWD, ARGS.cmd_timeout,
+                                   out_b, err_b, cancel_event)
         try:
             with open(cwd_file, "r", encoding="utf-8") as f:
                 captured = f.read().strip()
@@ -862,15 +874,12 @@ def execute_uvian_entry(store: UvianStore, uid: str, cancel_event: threading.Eve
     if first_line.startswith("#!"):
         low = first_line.lower()
         if "python" in low:
-            engine = "python3" if shutil.which("python3") else "python"
+            # Windows: "python3" is often the Microsoft Store stub; reuse the running interpreter.
+            engine = sys.executable if is_windows() else ("python3" if shutil.which("python3") else "python")
         elif "node" in low:
             engine = "node"
         else:
-            engine = "bash"
-            if is_windows():
-                git_bash = r"C:\Program Files\Git\bin\bash.exe"
-                if os.path.exists(git_bash):
-                    engine = git_bash
+            engine = find_bash()
     else:
         engine = "cat"
         if is_windows() and not shutil.which("cat"):
