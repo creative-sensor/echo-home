@@ -11,10 +11,10 @@
 - [datum/2026/WIP/ARTE-25.md](datum/2026/WIP/ARTE-25.md)   ```# fedora workstation : 42```
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
 - [datum/2026/WIP/CORTA-21.md](datum/2026/WIP/CORTA-21.md)   ```# vllm : library```
-- [datum/2026/WIP/CORTA-48.md](datum/2026/WIP/CORTA-48.md)   ```# memphiu : advanced TUI for memphiX```
 - [datum/2026/WIP/KITE-25.md](datum/2026/WIP/KITE-25.md)   ```# cli : mistral-vibe```
 - [datum/2026/WIP/MDOS-22.md](datum/2026/WIP/MDOS-22.md)   ```# lang runtime : lua```
 - [datum/2026/WIP/MDOS-37.md](datum/2026/WIP/MDOS-37.md)   ```# mmph : memphia adapt```
+- [datum/2026/WIP/MEMR-2.md](datum/2026/WIP/MEMR-2.md)   ```# llamark : restore on cache miss```
 - [datum/2026/WIP/VIM-31.md](datum/2026/WIP/VIM-31.md)   ```# vimpage : vllm```
 
 ### 2 ON HOLD
@@ -124,6 +124,7 @@
 - [datum/2026/DONE/CORTA-43.md](datum/2026/DONE/CORTA-43.md)   ```# mtp : speculative decoding```
 - [datum/2026/DONE/CORTA-46.md](datum/2026/DONE/CORTA-46.md)   ```# javelin : fire and forget```
 - [datum/2026/DONE/CORTA-47.md](datum/2026/DONE/CORTA-47.md)   ```# memphia: text matching```
+- [datum/2026/DONE/CORTA-48.md](datum/2026/DONE/CORTA-48.md)   ```# memphiu : advanced TUI for memphiX```
 - [datum/2026/DONE/CORTA-6.md](datum/2026/DONE/CORTA-6.md)   ```# huggingface: Llama-3.1-405B-Instruct```
 - [datum/2026/DONE/CORTA-7.md](datum/2026/DONE/CORTA-7.md)   ```# gmlama```
 - [datum/2026/DONE/CORTA-8.md](datum/2026/DONE/CORTA-8.md)   ```# llama.cpp : aka gmlala```
