@@ -1,0 +1,45 @@
+# --------
+lmstudio-community/gemma-4-E4B-it-QAT-GGUF/gemma-4-E4B-it-QAT-Q4_0.gguf: ["GPU/AgentGXC" , "-c 32768  -ctk q4_0 -ctv q4_0 -fa on -ngl all -kvo -lm none --port 8080 --slot-save-path $HOME/echo-home/memory/llamark/gemma-4-E4B-it-QAT-Q4_0","","$GML_RX_VEGAM"] #### 20tps
+#
+#
+#
+#
+#
+#
+#
+#
+lmstudio-community/gemma-4-E4B-it-QAT-GGUF/gemma-4-E4B-it-QAT-Q4_0.gguf: ["GPU/Agent8089" , "-b 1024 -ub 1024 -c 8192  -ctk q4_0 -ctv q4_0 -fa on -ngl all -kvo --no-mmap --port 8089 --embeddings --pooling mean"]
+lmstudio-community/gemma-4-E2B-it-QAT-GGUF/gemma-4-E2B-it-QAT-Q4_0.gguf: ["GPU/AgentGXC" , " -c 32768 -ctk q4_0 -ctv q4_0 -fa on -ngl all -kvo -lm none --port 8080 --embeddings --pooling mean  --slot-save-path $HOME/echo-home/memory/llamark/gemma-4-E2B-it-QAT-Q4_0"]
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+google/gemma-4-12B-it-qat-q4_0-gguf/gemma-4-12b-it-qat-q4_0.gguf: []
+google/gemma-4-26B-A4B-it-qat-q4_0-gguf/gemma-4-26B_q4_0-it.gguf: []
+#
+#
+---- TEST ----
+lmstudio-community/gemma-4-E4B-it-QAT-GGUF/gemma-4-E4B-it-QAT-Q4_0.gguf: ["GPU/Agent8089" , "-b 1024 -ub 1024 -c 8192  -ctk q4_0 -ctv q4_0 -fa on -ngl 10 -kvo --no-mmap --port 8089 --embeddings --pooling mean"] #### 7tps
+lmstudio-community/gemma-4-E4B-it-QAT-GGUF/gemma-4-E4B-it-QAT-Q4_0.gguf: ["GPU/Agent8089" , "-c 32768  -ctk q4_0 -ctv q4_0 -fa on -ngl all -kvo -lm none --port 8089 --slot-save-path $HOME/echo-home/memory/llamark/gemma-4-E4B-it-QAT-Q4_0","","Vulkan1"] #### 20tps
+lmstudio-community/gemma-4-E4B-it-QAT-GGUF/gemma-4-E4B-it-QAT-Q4_0.gguf: ["GPU/Agent8089" , "-c 8192  -ctk q4_0 -ctv q4_0 -fa on -ngl 55 -kvo -lm none --port 8089 --slot-save-path $HOME/echo-home/memory/llamark/gemma-4-E4B-it-QAT-Q4_0","","Vulkan1"] #### 20tps
+lmstudio-community/gemma-4-E4B-it-QAT-GGUF/gemma-4-E4B-it-QAT-Q4_0.gguf: ["GPU/Agent8089" , "-c 8192  -ctk q4_0 -ctv q4_0 -fa on -ngl 45 -kvo -lm none --port 8089 --slot-save-path $HOME/echo-home/memory/llamark/gemma-4-E4B-it-QAT-Q4_0","","Vulkan1"] #### 20tps
+
+lmstudio-community/gemma-4-E4B-it-QAT-GGUF/gemma-4-E4B-it-QAT-Q4_0.gguf: ["GPU/Agent8089" , " -c 8192  -ctk q4_0 -ctv q4_0 -fa on -ngl all -kvo --no-mmap --port 8089 --embeddings --pooling mean","","Vulkan2"] #### RX56: 35tps
+lmstudio-community/gemma-4-E2B-it-QAT-GGUF/gemma-4-E2B-it-QAT-Q4_0.gguf: ["GPU/Agent8090" , "-b 1024 -ub 1024 -c 32768 -ctk q4_0 -ctv q4_0 -fa on -ngl all -kvo --no-mmap --port 8090 --embeddings --pooling mean","","Vulkan2"] #### RX56: 20tps
+
+google/gemma-4-12B-it-qat-q4_0-gguf/gemma-4-12b-it-qat-q4_0.gguf: ["GPU/Agent8089" , " -c 8192  -ctk q4_0 -ctv q4_0 -fa on -ngl all -kvo --no-mmap --port 8089 --embeddings --pooling mean","","Vulkan2"] #### RX56: 14tps
+google/gemma-4-26B-A4B-it-qat-q4_0-gguf/gemma-4-26B_q4_0-it.gguf: ["Agent8911" , "  -ctk q4_0 -ctv q4_0  -nkvo --no-mmap --repeat-penalty 1.1 --repeat-last-n 4096 --port 8911 --embeddings --pooling mean"] #### CPU: 4tps
+google/gemma-4-26B-A4B-it-qat-q4_0-gguf/gemma-4-26B_q4_0-it.gguf: ["GPU/Agent8911" , " -c 16384  -ctk q4_0 -ctv q4_0  -ngl 5 -kvo --no-mmap --repeat-penalty 1.1 --repeat-last-n 4096 --port 8911 --embeddings --pooling mean"] #### GCPU: 2tps
+ibm-granite/granite-4.2-3b-GGUF/granite-4.2-3b-Q4_0.gguf: ["GPU/Agent8079" , " -c 16384  -ctk q4_0 -ctv q4_0  -ngl all -kvo  --no-mmap --repeat-penalty 1.1 --repeat-last-n 4096 --port 8079 --embeddings --pooling mean"] #### 
+
+Qwen/Qwen3-4B-GGUF/Qwen3-4B-Q5_0.gguf: ["GPU/Agent8079" , " -c 16384  -ctk q4_0 -ctv q4_0  -ngl all -kvo  --no-mmap --repeat-penalty 1.1 --repeat-last-n 4096 --port 8079 --embeddings --pooling mean"] #### 12tps 
+Qwen/Qwen3-4B-GGUF/Qwen3-4B-Q4_K_M.gguf: ["GPU/Agent8079" , " -c 16384  -ctk q4_0 -ctv q4_0  -ngl all -kvo  --no-mmap  --port 8079 --embeddings --pooling mean"] #### 
+
+
+---- TEST.end ----
