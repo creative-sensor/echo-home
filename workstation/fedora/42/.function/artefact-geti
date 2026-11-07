@@ -1,0 +1,27 @@
+#!/bin/bash  
+source $(dirname $0)/context_overrider
+
+NAME=${1:-all}
+ARTIFACT_DIR=./artefacts
+ARTIFACT_YSON=.properd/artefacts.yaml
+
+function download (){
+	local name=$1
+	local ARTIFACT_VERSION=$(cat $ARTIFACT_YSON | yq -r ".${name}[0]")
+	local ARTIFACT_URL=$(cat $ARTIFACT_YSON | yq -r ".${name}[1]")
+	local ARTIFACT_SUFFIX=$(cat $ARTIFACT_YSON | yq -r ".${name}[2].suffix")
+	set -x
+	test -r "$ARTIFACT_DIR/.function/geti/$name" && source $ARTIFACT_DIR/.function/geti/$name && return
+	[[ "$ARTIFACT_SUFFIX" =~ "null" ]] && dnf download --destdir $ARTIFACT_DIR $ARTIFACT_URL
+	set +x
+}
+
+mkdir -p $ARTIFACT_DIR
+if [[ "$NAME" =~ "all" ]] ; then
+	LIST=$(cat $ARTIFACT_YSON | yq 'keys' | awk -F ' ' '{print $2}')
+	for i in $LIST ; do
+		download $i
+	done
+	exit
+fi
+download $NAME
