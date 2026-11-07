@@ -8,7 +8,6 @@
 - [datum/2026/WIP/APLE-8.md](datum/2026/WIP/APLE-8.md)   ```# macos: ntfs-3g```
 - [datum/2026/WIP/ARTE-20.md](datum/2026/WIP/ARTE-20.md)   ```# uv : package```
 - [datum/2026/WIP/ARTE-21.md](datum/2026/WIP/ARTE-21.md)   ```# node_modules : flattening```
-- [datum/2026/WIP/ARTE-25.md](datum/2026/WIP/ARTE-25.md)   ```# fedora workstation : 42```
 - [datum/2026/WIP/CORTA-16.md](datum/2026/WIP/CORTA-16.md)   ```# gemini-cli : localm```
 - [datum/2026/WIP/CORTA-21.md](datum/2026/WIP/CORTA-21.md)   ```# vllm : library```
 - [datum/2026/WIP/KITE-25.md](datum/2026/WIP/KITE-25.md)   ```# cli : mistral-vibe```
@@ -95,6 +94,7 @@
 - [datum/2026/DONE/ARTE-19.md](datum/2026/DONE/ARTE-19.md)   ```# rust : cargo```
 - [datum/2026/DONE/ARTE-22.md](datum/2026/DONE/ARTE-22.md)   ```# lmsh: abacus```
 - [datum/2026/DONE/ARTE-23.md](datum/2026/DONE/ARTE-23.md)   ```# pythonxnv : venv shell```
+- [datum/2026/DONE/ARTE-25.md](datum/2026/DONE/ARTE-25.md)   ```# fedora workstation : 42```
 - [datum/2026/DONE/CORTA-10.md](datum/2026/DONE/CORTA-10.md)   ```# gml : profile override by host```
 - [datum/2026/DONE/CORTA-11.md](datum/2026/DONE/CORTA-11.md)   ```# gml8 : custom params```
 - [datum/2026/DONE/CORTA-12.md](datum/2026/DONE/CORTA-12.md)   ```# llama.cpp : specific version```
