@@ -523,7 +523,9 @@ def llamark_load(path: str, slot: int, phase: Callable[[str], None]) -> bool:
         sha = hashlib.sha256(f.read()).hexdigest()
     model_dir = os.path.splitext(os.path.basename(MODEL_NAME))[0]
     bin_hint = os.path.join(os.path.dirname(script), model_dir, f"{sha}.bin")
-    phase("llamark restore" if os.path.isfile(bin_hint) else "llamark building cache (first time)")
+    # Only a hint: with a remote llama-server the bins live on that host, so a miss here
+    # doesn't mean a build — llamark.sh always tries the server-side restore first.
+    phase("llamark restore" if os.path.isfile(bin_hint) else "llamark restore (builds cache on first use)")
     env = dict(os.environ, LLAMARK_URL=f"http://{ARGS.host}:{ARGS.port}")
     t0 = time.time()
     # stdin=DEVNULL: never hand the child our stdin — under memphia_nvim it is the nvim protocol

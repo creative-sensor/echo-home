@@ -85,17 +85,28 @@ load() {  # sha [file] [slot]
   sha=$(printf '%s' "$1" | tr 'A-F' 'a-f'); sha=${sha%.bin}
   [[ $sha =~ ^[0-9a-f]{64}$ ]] || die "not a sha256: $1"
   [ -z "$file" ] || [ "$(sha_of "$file")" = "$sha" ] || die "sha256 of $file does not match $sha"
-  dir=$(model_dir)
-  if [ -f "$dir/$sha.bin" ]; then
-    if out=$(slot_call restore "$slot" "$sha.bin"); then
-      printf '%s\n' "$out" | jq -c '{restored:.filename, tokens:.n_restored, restore_s:((.timings.restore_ms/10|round)/100)}' >&2
-      return
-    fi
-    [ -n "$file" ] || die "restore of $sha.bin rejected; pass the file to rebuild it (debug: $0 debug $sha $slot)"
+  # Always ask the server first. The bins live in the *server's* --slot-save-path; when
+  # llama-server runs on another host that dir is invisible here, so a local `-f` check
+  # would always miss and rebuild (overwriting the good bin on the server) every time.
+  # slot_call writes nothing to stderr on success, so 2>&1 only captures errors.
+  if out=$(slot_call restore "$slot" "$sha.bin" 2>&1); then
+    printf '%s\n' "$out" | jq -c '{restored:.filename, tokens:.n_restored, restore_s:((.timings.restore_ms/10|round)/100)}' >&2
+    return
+  fi
+  if [ -z "$file" ]; then
+    printf '%s\n' "$out" >&2
+    die "restore of $sha.bin failed; pass the file to (re)build it (debug: $0 debug $sha $slot)"
+  fi
+  case $out in
+    *"not reachable"*) printf '%s\n' "$out" >&2; exit 1 ;;   # server down: building would fail too
+  esac
+  dir=$(model_dir 2>/dev/null)
+  if [ -f "$dir/$sha.bin" ]; then   # only meaningful when the server is local
     echo "llamark: restore rejected (bin from another machine/config?) — rebuilding" >&2
+    printf '%s\n' "$out" | head -1 >&2
     echo "llamark: to investigate: $0 debug $file $slot" >&2
   else
-    [ -n "$file" ] || die "no $sha.bin in $dir (pass the file to build it)"
+    echo "llamark: $sha.bin not restorable on server (first use?) — building" >&2
   fi
   build "$file" "$slot" >/dev/null
 }
@@ -152,6 +163,7 @@ case "${1:-}" in
   load) [ $# -ge 2 ] || die "usage: load <sha256> [file] [slot]"; load "$2" "${3:-}" "${4:-0}" ;;
   build) [ $# -ge 2 ] || die "usage: build <file> [slot]"; build "$2" "${3:-0}" ;;
   sha)   [ $# -ge 2 ] || die "usage: sha <file>"; sha_of "$2" ;;
-  ls)    ls -lh "$(model_dir)"/*.bin 2>/dev/null || echo "(none)" ;;
+  ls)    d=$(model_dir)
+         ls -lh "$d"/*.bin 2>/dev/null || echo "(none in $d — if llama-server is on another host, list its --slot-save-path there)" ;;
   *)     sed -n '2,20p' "$0"; exit 1 ;;
 esac
