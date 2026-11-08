@@ -1,0 +1,30 @@
+let g:neos_python = 'python'
+let g:neos_args = ['--port', get(g:, 'LMSH_PORT', 8080)]
+let g:neos_layout = 'center'
+"let g:neos_toggle_key = '<M-n>'
+
+
+map neos1 : silent source ~/echo-home/.vim/mimd/neos/neos.lua<CR>
+map neosi : exec 'Neos --port '.get(g:, 'LMSH_PORT', 8080)<CR>
+map neosa : exec 'Neos --port '.get(g:, 'LMSH_PORT', 8080).' --auto'<CR>
+map neost : NeosToggle<CR>
+map neosu : NeosUvian<CR>
+map neosd : NeosDoc<CR>
+map neosq : NeosQuit<CR>
+
+"HELP:
+"- Recall the chat from anywhere (normal/insert/terminal): Alt-n. In visual mode Alt-n attaches the selected lines.
+"- Ask without opening the float: :NeosAsk <text>, or :'<,'>NeosAsk <text> to attach a range.
+"- In the float: Enter sends, Up/Down history, Ctrl-X interrupts the LLM, Ctrl-C cancels, F2 raw LLM log, q hides.
+"- Float position: Alt-h/j/k/l docks it left/bottom/top/right so the windows behind stay visible, Alt-c center, Alt-f full,
+"  Alt-b peek (translucent; needs termguicolors). :NeosLayout <name> or g:neos_layout picks one.
+"- Approvals: y yes, n no, a yes + always, e edit. neosa (or --auto) skips approvals.
+"- Scope: anything native runs (built-in Ex commands incl. :!cmd/:terminal, built-in functions, Neovim Lua API) plus the
+"  functions/commands in ~/.vimrc.neo. Out-of-scope code (plugins, other user code, os/io) asks first with a red
+"  OUT OF SCOPE prompt; 'a' allows it for the session; autopilot.yaml  neos: { excmd: "approved" }  runs it freely.
+"- Memory: only requests that ended in SUCCESS are remembered (with the actions that worked); ===r forgets them.
+"- Position: each task is anchored to the window you asked from, even if you move away mid-task; Neos sees every
+"  tab/window/terminal by winid and can act in one, move you there (focus) or type into a terminal (terminal_send).
+"- Uvian memory is off unless you ask: neosu (:NeosUvian [keywords]) searches it and loads the top hits into your next question;
+"  Enter on any other #n line adds that entry too.
+"- Neos answers "how do I ..." from your own keymaps: :NeosDoc rebuilds agent_doc.md from ~/.vimrc.neo + mini modules.
