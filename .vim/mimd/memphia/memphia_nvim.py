@@ -9,13 +9,15 @@ backend -> nvim
   {"t":"style","id":N,"fg":"#rrggbb"|null,"bg":...,"bold":b,"italic":b,"underline":b,"reverse":b}
   {"t":"w","b":<buffer key>,"s":[[text, style id (0 = default)], ...]}   append to a buffer
   {"t":"clear","b":<buffer key>}
-  {"t":"state", busy, phase, model, graph, pinned, cwd, steer:[..], tasks:[..], approval:{kind,detail,editing}|null}
+  {"t":"state", busy, phase, model, graph, pinned, cwd, steer:[..], tasks:[..], approval:{kind,detail,editing}|null,
+   iface:{joined,connected,name,hub,state,members}|null}
   {"t":"focus","tab":<right tab key>}
   {"t":"input","text":...}            put text in the input line (approval edit mode)
   {"t":"exit"}
 
 nvim -> backend
   {"t":"input","text":...} | {"t":"interrupt"} | {"t":"cancel"} | {"t":"clear","b":key} | {"t":"quit"}
+  {"t":"net","op":"join","name","purpose","hub","network"} | {"t":"net","op":"leave"}   (from the inet.lua driver)
 """
 import json
 import os
@@ -58,7 +60,7 @@ except ImportError as e:
     raise
 
 KEYS_HELP = """\033[1mKeys\033[0m  F1-F6/Tab: right pane │ wheel, PgUp/PgDn, Shift-↑/↓ (from input): scroll │ Ctrl-O: scroll target │ F12: follow
-      Ctrl-T: hide/show agent pane │ Ctrl-L: clear right pane │ Ctrl-X: interrupt LLM │ Ctrl-C: cancel task │ :MemphiaQuit
+      Ctrl-T: hide/show agent pane │ F8: hide/show IFACE pane │ Ctrl-L: clear right pane │ Ctrl-X: interrupt LLM │ Ctrl-C: cancel task │ :MemphiaQuit
       Enter on a GRAPH [#] / UVIAN #n entry: load it into the LLM context (Shift-Enter: and interrupt)"""
 
 _SGR = re.compile(r"\x1b\[([0-9;]*)m")
@@ -214,6 +216,7 @@ class Bridge:
             "graph": a.graph.enabled, "pinned": a.pinned_uuid, "cwd": core.to_bash_path(core.CURRENT_CWD),
             "steer": steer, "tasks": tasks, "loads": loads,
             "approval": {"kind": ap["kind"], "detail": ap["detail"], "editing": ap["editing"]} if ap else None,
+            "iface": a.iface.summary() if a.iface else None,
         }
 
     def flush(self):
@@ -256,6 +259,12 @@ class Bridge:
                 a.interrupt()
             elif t == "cancel":
                 a.cancel()
+            elif t == "net" and a.iface:
+                if msg.get("op") == "join":
+                    a.iface.join(msg.get("name") or None, msg.get("purpose") or None,
+                                 msg.get("hub") or None, msg.get("network") or None)
+                elif msg.get("op") == "leave":
+                    a.iface.leave()
             elif t == "clear" and msg.get("b") in core.BUFFERS:
                 core.BUFFERS[msg["b"]].clear()
             elif t == "quit":

@@ -1,0 +1,43 @@
+"-------- [INET] Intelligence Network --------
+" The network where AI agents and humans meet. Driver: ~/echo-home/.vim/mimd/inet (inet.lua).
+let g:inet_python = 'python'
+
+" The default network: its name is shown in every room and agent pane.
+let g:inet_network = {'name': 'echo-net', 'host': '127.0.0.1', 'port': 7788}
+" More named networks (pick one with :InetUp <name>, :InetRoom <name>, :InetJoin <agent> net=<name>)
+"let g:inet_networks = {
+"  \ 'lab': {'host': '127.0.0.1', 'port': 7789},
+"  \ 'office': {'host': '192.168.1.20', 'port': 7788},
+"  \ }
+
+let g:inet_user = 'bee'      " your name in the rooms
+let g:inet_watch = 1         " 1: also see agents' point-to-point exchanges (dimmed)
+"let g:inet_hub_detach = 1   " keep networks running after this Neovim exits
+
+" Join profiles: how each agent presents itself. Override per join: :InetJoin memphia scout net=lab purpose=...
+let g:inet_agents = {
+  \ 'memphia': {'name': 'memphia', 'purpose': 'shell operator with Uvian memory: investigates on this machine by running commands'},
+  \ }
+
+
+map inet1 : silent source ~/echo-home/.vim/mimd/inet/inet.lua<CR>
+map inetu : InetUp<CR>
+map inetr : InetRoom<CR>
+map inetj : InetJoin memphia<CR>
+map inetl : InetLeave memphia<CR>
+map inets : InetStatus<CR>
+map inetq : InetRoomQuit<CR>
+map inetd : InetDown<CR>
+
+"HELP:
+"- inet1 loads the driver (memphia.lua loads it too). inetu brings the default network up (starts inet_hub.py;
+"  any room or join also starts it on demand). inetd stops a network this Neovim started.
+"- inetr opens the room as its own tab: plain text = broadcast, @name = point-to-point, @all = everyone,
+"  <Tab> completes names, <CR> on a roster member starts a message to them, /who /clear /quit.
+"  :InetRoom lab [name] opens another network's room in another tab.
+"- inetj plugs Memphia in with its g:inet_agents profile (starts Memphia if it is not running; g:memphia_args apply).
+"  :InetJoin memphia scout purpose=watches the CI logs  joins under another name/purpose.
+"  The agent gets an IFACE pane (F8) showing what it hears, decides (ignore/reply/think/reject) and shares.
+"- inets lists networks, agents and rooms. Agents not loaded yet: source their frontend first (mmph1).
+"- New agents: register with require'inet'.register_agent(key, {join, leave, status}) in Lua and connect the
+"  backend with inet/inet_client.py (InetClient) using inet.agent_args(profile).

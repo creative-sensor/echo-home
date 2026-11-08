@@ -7,10 +7,15 @@
 --   :Memphia [--port 8080 ...]        open/focus the UI, starting the backend with these args
 --   :MemphiaQuit                      stop the backend and close the UI tab
 --
+-- Intelligence Network: this file registers the "memphia" agent with the shared driver
+-- (mimd/inet/inet.lua, configured in mimd/vimpage_inet). :InetJoin memphia [name] [purpose…]
+-- plugs the running agent in with its profile (g:inet_agents.memphia), starting it if needed.
+--
 -- Options: vim.g.memphia_python (default "python3"), vim.g.memphia_args (list or string).
 --
 -- Layout (same as the TUI)
 --   AGENT pane | right pane (LLM / STDOUT / STDERR / UVIAN / MAP-REDUCE / GRAPH)
+--   IFACE pane  (under AGENT while the agent is joined to the Intelligence Network; F8 toggles)
 --     <CR> on a GRAPH/UVIAN entry loads it into the LLM context (<S-CR>: and interrupt)
 --   queue panel (steering messages and queued tasks, only while non-empty)
 --   status bar + input line (always active, even while the agent is running)
@@ -33,7 +38,7 @@ end
 local RIGHT_TABS = { "llm", "stdout", "stderr", "uvian", "mapreduce", "graph" }
 local TITLES = {
   agent = "AGENT", llm = "LLM", stdout = "STDOUT", stderr = "STDERR",
-  uvian = "UVIAN", mapreduce = "MAP-REDUCE", graph = "GRAPH",
+  uvian = "UVIAN", mapreduce = "MAP-REDUCE", graph = "GRAPH", iface = "IFACE",
 }
 local MAX_LINES = 5000
 local WHEEL_LINES = 3
@@ -43,6 +48,7 @@ local NS_PROMPT = api.nvim_create_namespace("memphia_prompt")
 local SPINNER = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
 
 local S -- session state; nil when nothing is running
+local sync_iface_win -- defined in the layout section
 
 -- ---------------------------------------------------------------- highlights
 local function define_highlights()
@@ -61,6 +67,7 @@ local function define_highlights()
     MemphiaStBusy = { bg = "#af5f00", fg = "#ffffff", bold = true },
     MemphiaStOn = { bg = "#5f00af", fg = "#ffffff" },
     MemphiaStOff = { bg = "#444444", fg = "#999999" },
+    MemphiaStNet = { bg = "#005f5f", fg = "#ffffff" },
     MemphiaLlm = { bg = "#c4c408", fg = "#000000", bold = true },
     MemphiaPSteer = { bg = "#5f00af", fg = "#ffffff", bold = true },
     MemphiaPHint = { fg = "#808080" },
@@ -85,6 +92,7 @@ local function right_key() return RIGHT_TABS[S.right] end
 
 local function key_of_win(win)
   if win == S.wins.agent then return "agent" end
+  if win == S.wins.iface then return "iface" end
   if win == S.wins.right then return right_key() end
 end
 
@@ -99,6 +107,7 @@ end
 
 local function scroll_target_win()
   if S.target == "agent" and valid_win(S.wins.agent) then return S.wins.agent end
+  if S.target == "iface" and valid_win(S.wins.iface) then return S.wins.iface end
   return S.wins.right
 end
 
@@ -144,6 +153,15 @@ local function update_prompt()
   end
 end
 
+local function net_status(st)
+  local i = st.iface
+  if not i or not i.joined then return "" end
+  if i.connected then
+    return "%#MemphiaStNet# 🌐 " .. esc(i.network) .. " @" .. esc(i.name) .. " " .. esc(i.state) .. " "
+  end
+  return "%#MemphiaStOff# 🌐 " .. esc(i.state ~= "" and i.state or "connecting") .. " "
+end
+
 local function status_bar()
   local st = S.state
   local spin = st.busy and SPINNER[math.floor(uv.hrtime() / 2.5e8) % #SPINNER + 1] or "●"
@@ -151,6 +169,7 @@ local function status_bar()
     st.busy and "%#MemphiaStBusy#" or "%#MemphiaStIdle#", " ", spin, " ", esc(st.phase or "starting"), " ",
     "%#MemphiaStatus# ", esc(st.model or "-"), " ",
     st.graph and "%#MemphiaStOn# graph " or "%#MemphiaStOff# graph off ",
+    net_status(st),
     "%#MemphiaStatus# 📌 ", esc(st.pinned or "-"), " │ cwd ", esc(st.cwd or ""), " │ ===h help %=",
     S.job and "" or "%#MemphiaPApprove# backend stopped ",
   })
@@ -179,6 +198,13 @@ function refresh_bars()
     local rk = right_key()
     vim.wo[w.right].winbar = table.concat(parts) .. (S.follow[rk] and "" or " ⏸ scrolled")
       .. (S.target == "right" and " ◀" or "")
+  end
+  if valid_win(w.iface) then
+    local i = S.state.iface or {}
+    vim.wo[w.iface].winbar = "%#MemphiaTabActive# IFACE %#MemphiaHeader# @" .. esc(i.name) .. " · "
+      .. esc(i.state) .. " · " .. esc(i.network ~= "" and i.network or "network") .. " (" .. esc(i.hub) .. ") · "
+      .. tostring(i.members or 0) .. " members"
+      .. (S.follow.iface and "" or "  ⏸ scrolled") .. (S.target == "iface" and " ◀" or "")
   end
   if valid_win(w.input) then vim.wo[w.input].winbar = status_bar() end
 end
@@ -237,7 +263,7 @@ local function append(key, segs)
     shown = true
     if S.follow[key] then api.nvim_win_set_cursor(win, { total, 0 }) end
   end
-  if not shown and key ~= "agent" and not S.unread[key] then
+  if not shown and key ~= "agent" and key ~= "iface" and not S.unread[key] then
     S.unread[key] = true
     refresh_bars()
   end
@@ -309,6 +335,7 @@ local function on_message(msg)
     local was_approval = S.state.approval ~= nil
     S.state = msg
     render_queue()
+    sync_iface_win()
     update_prompt()
     refresh_bars()
     if msg.approval and not was_approval and valid_win(S.wins.input) then
@@ -456,6 +483,25 @@ local function open_agent_win()
   if S.follow.agent then api.nvim_win_set_cursor(w.agent, { api.nvim_buf_line_count(S.bufs.agent), 0 }) end
 end
 
+-- The IFACE pane exists while the agent is joined to the network (and F8 hasn't hidden it).
+function sync_iface_win()
+  local w = S.wins
+  local want = S.show_iface and S.state.iface and S.state.iface.joined and valid_win(w.right)
+  if want and not valid_win(w.iface) then
+    local anchor = valid_win(w.agent) and w.agent or w.right
+    local h = math.max(6, math.floor(api.nvim_win_get_height(anchor) * 0.45))
+    w.iface = api.nvim_open_win(S.bufs.iface, false, { split = "below", win = anchor, height = h })
+    setup_output_win(w.iface)
+    if S.follow.iface then api.nvim_win_set_cursor(w.iface, { api.nvim_buf_line_count(S.bufs.iface), 0 }) end
+    refresh_bars()
+  elseif not want and valid_win(w.iface) then
+    api.nvim_win_close(w.iface, true)
+    w.iface = nil
+    if S.target == "iface" then S.target = "right" end
+    refresh_bars()
+  end
+end
+
 local function build_layout()
   local w = S.wins
   vim.cmd("tabnew")
@@ -472,8 +518,10 @@ local function build_layout()
   wo.winfixheight, wo.number, wo.relativenumber, wo.signcolumn = true, false, false, "no"
   wo.wrap, wo.cursorline, wo.foldcolumn = true, false, "0"
   wo.statusline = "%#MemphiaPHint# F1-F6/Tab pane │ C-o scroll target │ PgUp/PgDn S-↑/↓ wheel scroll │ "
-    .. "C-x interrupt │ C-c cancel │ C-t agent pane │ ===h help"
+    .. "C-x interrupt │ C-c cancel │ C-t agent pane │ F8 iface pane │ ===n network │ ===h help"
   if S.show_agent then open_agent_win() end
+  S.wins.iface = nil
+  sync_iface_win()
   S.wins.queue = nil
   render_queue()
   refresh_bars()
@@ -507,13 +555,23 @@ local function cycle_tab(delta) M.select_tab((S.right - 1 + delta) % #RIGHT_TABS
 
 local function toggle_agent_pane()
   S.show_agent = not S.show_agent
+  -- re-create IFACE afterwards so it stays docked under AGENT (or under the right pane)
+  if valid_win(S.wins.iface) then api.nvim_win_close(S.wins.iface, true) end
+  S.wins.iface = nil
   if S.show_agent then
     if valid_win(S.wins.right) and not valid_win(S.wins.agent) then open_agent_win() end
   else
     if valid_win(S.wins.agent) then api.nvim_win_close(S.wins.agent, true) end
     S.wins.agent = nil
-    S.target = "right"
+    if S.target == "agent" then S.target = "right" end
   end
+  sync_iface_win()
+  refresh_bars()
+end
+
+local function toggle_iface_pane()
+  S.show_iface = not S.show_iface
+  sync_iface_win()
   refresh_bars()
 end
 
@@ -538,13 +596,13 @@ local function wheel(dir)
   local pos = fn.getmousepos()
   local win = pos.winid
   local key = valid_win(win) and key_of_win(win)
-  if key then S.target = key == "agent" and "agent" or "right" end
+  if key then S.target = (key == "agent" or key == "iface") and key or "right" end
   if valid_win(win) then scroll_win(win, WHEEL_LINES .. (dir < 0 and "<C-y>" or "<C-e>")) end
   refresh_bars()
 end
 
 local function set_keymaps()
-  local out = { S.bufs.agent, S.bufs.queue }
+  local out = { S.bufs.agent, S.bufs.queue, S.bufs.iface }
   for _, key in ipairs(RIGHT_TABS) do out[#out + 1] = S.bufs[key] end
   local ib = S.bufs.input
   local function map(modes, lhs, rhs, bufs)
@@ -560,8 +618,14 @@ local function set_keymaps()
   map({ "n", "i" }, "<C-t>", toggle_agent_pane, all)
   map({ "n", "i" }, "<C-l>", function() send({ t = "clear", b = right_key() }) end, all)
   map({ "n", "i" }, "<C-q>", M.quit, all)
+  map({ "n", "i" }, "<F8>", toggle_iface_pane, all)
   map({ "n", "i" }, "<C-o>", function()
-    S.target = S.target == "right" and S.show_agent and "agent" or "right"
+    local order = { "right" }
+    if valid_win(S.wins.agent) then order[#order + 1] = "agent" end
+    if valid_win(S.wins.iface) then order[#order + 1] = "iface" end
+    local cur = 1
+    for i, k in ipairs(order) do if k == S.target then cur = i end end
+    S.target = order[cur % #order + 1]
     refresh_bars()
   end, all)
   map({ "n", "i" }, "<ScrollWheelUp>", function() wheel(-1) end, all)
@@ -616,7 +680,7 @@ local function set_autocmds()
     group = group,
     callback = function()
       if not S then return end
-      for _, win in ipairs({ S.wins.agent, S.wins.right }) do
+      for _, win in ipairs({ S.wins.agent, S.wins.right, S.wins.iface }) do
         if valid_win(win) then
           local key = key_of_win(win)
           local f = last_visible(win)
@@ -673,7 +737,7 @@ function M.start(args)
   local fresh = S == nil
   if fresh then
     S = {
-      bufs = create_buffers(), wins = {}, right = 1, target = "right", show_agent = true,
+      bufs = create_buffers(), wins = {}, right = 1, target = "right", show_agent = true, show_iface = true,
       follow = {}, unread = {}, state = { phase = "starting" }, prompt = "", partial = "",
       history = load_history(),
     }
@@ -730,6 +794,32 @@ api.nvim_create_user_command("Memphia", function(o) M.start(#o.fargs > 0 and o.f
 api.nvim_create_user_command("MemphiaQuit", M.quit, { desc = "Stop Memphia and close its UI" })
 
 package.loaded.memphia = M
+
+-- ---------------------------------------------------------------- Intelligence Network
+-- Plug into the shared driver (mimd/inet, or vim.g.inet_dir) as the agent "memphia".
+do
+  local dir = vim.g.inet_dir and fn.expand(vim.g.inet_dir) or (fn.fnamemodify(SCRIPT_DIR, ":h") .. "/inet")
+  local ok, inet = pcall(function() return package.loaded.inet or dofile(dir .. "/inet.lua") end)
+  if ok and type(inet) == "table" then
+    inet.register_agent("memphia", {
+      join = function(p)
+        if S and S.job then
+          send({ t = "net", op = "join", name = p.name, purpose = p.purpose, hub = p.hub, network = p.network.name })
+          if not layout_alive() then M.start() end
+        else -- not running yet: start the backend already plugged in
+          M.start(vim.list_extend(vim.deepcopy(normalize_args(nil)), inet.agent_args(p)))
+        end
+      end,
+      leave = function()
+        if S and S.job then send({ t = "net", op = "leave" }) end
+      end,
+      status = function() return S and S.job and S.state.iface or nil end,
+    })
+  elseif not ok then
+    vim.notify("Memphia: Intelligence Network driver not loaded (" .. dir .. "/inet.lua): " .. tostring(inet),
+      vim.log.levels.WARN)
+  end
+end
 
 -- `:source memphia.lua` opens the UI right away; `require("memphia")` from a config does not.
 if MODNAME == nil and not vim.g.memphia_no_autostart then M.start() end
