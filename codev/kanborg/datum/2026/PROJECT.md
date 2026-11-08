@@ -17,7 +17,7 @@ CMW : {"description":"Common Wealth","last_id":4,"related":""}
 DOCS : {"description":"Documentation","last_id":1,"related":""}
 GRTH : {"description":"Graph Theory","last_id":0,"related":""}
 TSQA : {"description":"Test and Quality","last_id":0,"related":""}
-VIM : {"description":"VIM Editor","last_id":33,"related":""}
+VIM : {"description":"VIM Editor","last_id":34,"related":""}
 MONO : {"description":"Standalone docker container","last_id":7,"related":""}
 ASML : {"description":"System Assembly","last_id":6,"related":""}
 OBSR : {"description":"Observability","last_id":4,"related":""}
@@ -32,5 +32,5 @@ AIVE : {"description":"AI Vertex Eyes","last_id":0,"related":""}
 ADOBE : {"description":"Adobe house","last_id":1,"related":""}
 WGI : {"description":"Web Graphic Interface","last_id":0,"related":""}
 GGPU : {"description":"Graphics Processing and Gaming","last_id":7,"related":""}
-MEMR : {"description":"Memory Slot","last_id":2,"related":""}
+MEMR : {"description":"Memory Slot","last_id":3,"related":""}
 ```
