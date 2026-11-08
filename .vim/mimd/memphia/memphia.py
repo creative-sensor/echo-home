@@ -6,6 +6,7 @@ and a full-screen multi-buffer TUI. The engine lives in memphia_core.py; memphia
 
 Layout
   left pane   : agent log (always visible, toggle with Ctrl-T)
+                + IFACE pane below it while joined to the Intelligence Network (toggle with F8)
   right pane  : one of LLM / STDOUT / STDERR / UVIAN / MAP-REDUCE / GRAPH (F1..F6 or Tab)
   queue panel : pending steering messages and queued tasks
   input line  : always active, even while the agent loop is running
@@ -42,7 +43,7 @@ import memphia_core as core
 from memphia_core import BUFFERS, HISTORY_FILE, RIGHT_TABS, CommandRouter, MemphiaAgent
 
 KEYS_HELP = """\033[1mKeys\033[0m  F1-F6/Tab: right pane │ PgUp/PgDn, Shift-↑/↓, wheel: scroll │ Ctrl-O: scroll target │ End(F12): follow
-      Ctrl-T: hide/show agent pane │ Ctrl-L: clear right pane │ Esc: interrupt LLM │ Ctrl-C: cancel task │ Ctrl-Q: quit"""
+      Ctrl-T: hide/show agent pane │ F8: hide/show IFACE pane │ Ctrl-L: clear right pane │ Esc: interrupt LLM │ Ctrl-C: cancel task │ Ctrl-Q: quit"""
 
 
 class BufferView:
@@ -99,6 +100,7 @@ class MemphiaTUI:
         self.agent = agent
         self.right = 0
         self.show_agent_pane = True
+        self.show_iface = True
         self.scroll_target = "right"
         self.router = CommandRouter(agent, focus_tab=self._focus_tab, keys_help=KEYS_HELP)
 
@@ -137,6 +139,18 @@ class MemphiaTUI:
         mark = "" if b.following else "  ⏸ scrolled"
         tgt = " ◀" if self.scroll_target == "agent" else ""
         return [("class:tab.active", " AGENT "), ("class:header", f"{mark}{tgt}")]
+
+    def _iface_visible(self) -> bool:
+        i = self.agent.iface
+        return bool(self.show_iface and i and i.joined)
+
+    def _iface_header(self):
+        i = self.agent.iface
+        b = BUFFERS["iface"]
+        mark = "" if b.following else "  ⏸ scrolled"
+        tgt = " ◀" if self.scroll_target == "iface" else ""
+        net = f" @{i.name} · {i.state or '-'} · {i.hub_str()} " if i else ""
+        return [("class:tab.active", " IFACE "), ("class:header", f"{net}{mark}{tgt}")]
 
     def _right_header(self):
         frags = []
@@ -191,8 +205,17 @@ class MemphiaTUI:
             (state, f" {spin} {a.phase} "),
             ("class:status", f" {core.MODEL_NAME} "),
             (g, " graph " if a.graph.enabled else " graph off "),
+            *self._net_status(),
             ("class:status", f" 📌 {a.pinned_uuid or '-'} │ cwd {core.to_bash_path(core.CURRENT_CWD)} │ ===h help "),
         ]
+
+    def _net_status(self):
+        i = self.agent.iface
+        if not i or not i.joined:
+            return []
+        if i.connected:
+            return [("class:st.net", f" 🌐 @{i.name} {i.state} ")]
+        return [("class:st.off", f" 🌐 {i.state or 'connecting'} ")]
 
     def _prompt(self):
         a = self.agent
@@ -206,10 +229,15 @@ class MemphiaTUI:
 
     def _build_layout(self):
         agent_pane = self._pane(lambda: "agent", self._agent_header, "agent")
+        iface_pane = self._pane(lambda: "iface", self._iface_header, "iface")
         right_pane = self._pane(self.right_key, self._right_header, "right")
+        left_on = Condition(lambda: self.show_agent_pane or self._iface_visible())
         body = VSplit([
-            ConditionalContainer(HSplit([agent_pane]), filter=Condition(lambda: self.show_agent_pane)),
-            ConditionalContainer(Window(width=1, char="│", style="class:sep"), filter=Condition(lambda: self.show_agent_pane)),
+            ConditionalContainer(HSplit([
+                ConditionalContainer(agent_pane, filter=Condition(lambda: self.show_agent_pane)),
+                ConditionalContainer(iface_pane, filter=Condition(self._iface_visible)),
+            ]), filter=left_on),
+            ConditionalContainer(Window(width=1, char="│", style="class:sep"), filter=left_on),
             right_pane,
         ])
         queue = Window(FormattedTextControl(self._queue_text), height=self._queue_height, style="class:queue")
@@ -237,6 +265,7 @@ class MemphiaTUI:
             "st.busy": "bg:#af5f00 fg:#ffffff bold",
             "st.on": "bg:#5f00af fg:#ffffff",
             "st.off": "bg:#444444 fg:#999999",
+            "st.net": "bg:#005f5f fg:#ffffff",
             "llm": "bg:#c4c408 fg:#000000 bold",
             "prompt": "bg:#000000 fg:#c4c408",
             "p.steer": "bg:#5f00af fg:#ffffff bold",
@@ -246,7 +275,11 @@ class MemphiaTUI:
 
     # ----- keys -----
     def _scroll_buf(self) -> core.OutputBuffer:
-        return BUFFERS["agent"] if self.scroll_target == "agent" and self.show_agent_pane else self.right_buf()
+        if self.scroll_target == "agent" and self.show_agent_pane:
+            return BUFFERS["agent"]
+        if self.scroll_target == "iface" and self._iface_visible():
+            return BUFFERS["iface"]
+        return self.right_buf()
 
     def _bindings(self):
         kb = KeyBindings()
@@ -303,7 +336,13 @@ class MemphiaTUI:
 
         @kb.add("c-o")
         def _(event):
-            self.scroll_target = "agent" if self.scroll_target == "right" else "right"
+            order = ["right"] + (["agent"] if self.show_agent_pane else []) + (["iface"] if self._iface_visible() else [])
+            cur = order.index(self.scroll_target) if self.scroll_target in order else 0
+            self.scroll_target = order[(cur + 1) % len(order)]
+
+        @kb.add("f8")
+        def _(event):
+            self.show_iface = not self.show_iface
 
         @kb.add("c-t")
         def _(event):
