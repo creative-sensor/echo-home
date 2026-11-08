@@ -6,6 +6,12 @@ Frontends
   memphia.py                    full-screen prompt_toolkit TUI
   memphia.lua + memphia_nvim.py the same TUI inside Neovim
 
+Intelligence Network (optional; the shared driver lives in mimd/inet, set up by mimd/vimpage_inet)
+  inet/inet_hub.py              the network: the chat room where agents and humans meet
+  inet/inet_client.py           reusable agent connection (memphia_iface.py builds on it)
+  inet/inet.lua, inet_room.lua  Neovim driver (:InetUp/:InetJoin/:InetRoom) and the room tab
+  memphia_iface.py              Memphia's network interface (own loop, IFACE pane)
+
 A frontend calls bootstrap(), registers a redraw hook with set_redraw(), renders BUFFERS
 (OutputBuffer.subscribe() for push updates) and feeds input lines to CommandRouter.accept().
 
@@ -111,6 +117,10 @@ def set_redraw(fn: Callable[[], None]):
     """Frontend hook called whenever buffers or agent state change."""
     global _REDRAW
     _REDRAW = fn
+
+
+def redraw():
+    _REDRAW()
 
 
 _NON_SGR_CSI = re.compile(r"\x1b\[[0-9;?]*[@-ln-~]")
@@ -236,6 +246,7 @@ BUFFERS: Dict[str, OutputBuffer] = {
     "uvian": OutputBuffer("uvian", "UVIAN"),
     "mapreduce": OutputBuffer("mapreduce", "MAP-REDUCE"),
     "graph": OutputBuffer("graph", "GRAPH"),
+    "iface": OutputBuffer("iface", "IFACE"),  # network interface pane (shown while joined)
 }
 RIGHT_TABS = ["llm", "stdout", "stderr", "uvian", "mapreduce", "graph"]
 
@@ -918,7 +929,9 @@ RULES:
 3. [RELATED MEMORY SUGGESTIONS] lists Uvian entries linked to the selected entry in the knowledge graph.
    They are NOT loaded. Load one (action_type "load_uvian") only when its preview suggests it is needed for the intent.
 4. Messages starting with "User Steering Update" come from the user mid-task. Follow them; they override earlier plans.
-5. Output ONLY valid JSON. No markdown. No explanations.
+5. A task starting with "[Network request from @name]" was relayed by your network interface from another member of the
+   Intelligence Network. Do the work as usual and put what the requester should learn in "answer"; the interface decides what is shared.
+6. Output ONLY valid JSON. No markdown. No explanations.
 
 OUTPUT SCHEMA:
 {
@@ -926,7 +939,8 @@ OUTPUT SCHEMA:
   "command": "<shell command> or null",
   "uuid": "<uuid to load> or null",
   "status": "SUCCESS" or "FAILED" or null,
-  "reason": "<short explanation of this step or the result>"
+  "reason": "<short explanation of this step or the result>",
+  "answer": "<declare_result only: the findings/answer for whoever asked, or null>"
 }
 """
 
@@ -952,6 +966,7 @@ HELP_TEXT = """\033[1mMemphia commands\033[0m
   ===a! <#|uuid>... same, interrupting the current LLM generation so it applies now
   ===c              recompute clusters (MAGE community detection)
   ===q              show queues                     ===x      cancel the running task
+  ===n              network interface (iFace): ===nj join, ===nl leave, ===ns say, ===n help
   ===h              this help                       exit / quit"""
 
 
@@ -976,6 +991,9 @@ class MemphiaAgent:
         self.last_search: List[dict] = []
         self.last_graph: List[str] = []  # numbered entries of the latest GRAPH pane listing
         self.llm_slot: Optional[int] = None  # llama-server slot pinned for the agent loop (llamark)
+        self.last_result: Optional[dict] = None  # {intent, status, reason, answer, trail} of the running/last task
+        self.task_listeners: List[Callable[[str, dict], None]] = []  # fn(task, result) after every task
+        self.iface = None  # memphia_iface.IFace, set by bootstrap()
         self.mr =MapReduceSummarizer(standard_llm_call, ARGS.chunk_size,
                                       cancel_check=self.cancel_event.is_set)
 
@@ -1102,6 +1120,8 @@ class MemphiaAgent:
             self.cancel_event.clear()
             self.interrupt_event.clear()
             self.busy, self.current_task = True, task
+            self.last_result = None
+            outcome = None
             _REDRAW()
             try:
                 found = self.run_task(task)
@@ -1110,11 +1130,22 @@ class MemphiaAgent:
                     log(f"✅ Auto-pinned memory UUID {found} for the rest of this session. Type '====' to unpin.")
             except Cancelled:
                 log("\033[33m🛑 Task cancelled.\033[0m")
+                outcome = ("CANCELLED", "cancelled by the operator")
             except Exception as e:
                 log(f"\033[31m❌ [AGENT ERROR]\033[0m {type(e).__name__}: {e}")
+                outcome = ("ERROR", f"{type(e).__name__}: {e}")
             finally:
+                result = self.last_result or {"intent": str(task), "status": "ERROR", "reason": "",
+                                              "answer": None, "trail": []}
+                if outcome:
+                    result["status"], result["reason"] = outcome
                 self.busy, self.current_task = False, ""
                 self.set_phase("idle")
+                for fn in list(self.task_listeners):
+                    try:
+                        fn(task, result)
+                    except Exception as e:
+                        log(f"\033[31m❌ task listener failed:\033[0m {type(e).__name__}: {e}")
 
     # ---------- memory selection ----------
     def select_uuid(self, intent: str) -> Tuple[Optional[str], List[str]]:
@@ -1301,6 +1332,8 @@ class MemphiaAgent:
         return output, interrupted
 
     def run_task(self, intent: str) -> Optional[str]:
+        self.last_result = res = {"intent": str(intent), "status": "INCOMPLETE",
+                                  "reason": "max turns reached", "answer": None, "trail": []}
         log(f"\n\033[1;36m▶ TASK:\033[0m {intent}")
         BUFFERS["llm"].writeln(f"\033[1;36m▶ TASK:\033[0m {intent}")
         target, related = None, []
@@ -1373,11 +1406,16 @@ class MemphiaAgent:
                 kind = action.get("action_type")
                 if action.get("reason"):
                     log(f"\033[90m💭 {action['reason']}\033[0m")
+                if kind != "declare_result":
+                    res["trail"].append(f"{kind}: {action.get('command') or action.get('uuid') or ''} — {action.get('reason') or ''}"[:400])
 
                 if kind == "declare_result":
                     status = action.get("status")
                     colour = "\033[32m" if status == "SUCCESS" else "\033[31m"
                     log(f"{colour}❇  [FINAL RESULT] {status}\033[0m\n🧠 [REASON] {action.get('reason')}")
+                    if action.get("answer"):
+                        log(f"📝 [ANSWER] {action['answer']}")
+                    res.update(status=status or "UNKNOWN", reason=action.get("reason") or "", answer=action.get("answer"))
                     return target
 
                 if kind == "run_command":
@@ -1389,16 +1427,17 @@ class MemphiaAgent:
                         continue
                     self.set_phase("running command")
                     log(f"\033[38;5;112m$ {command}\033[0m  (live output in STDOUT/STDERR panes)")
-                    res = execute_shell_command(command, self.cancel_event)
+                    out_res = execute_shell_command(command, self.cancel_event)
                     self._check_cancel()
-                    log(f"\033[32m[EXIT CODE]\033[0m {res['exit_code']}  stdout {len(res['stdout'])} chars, stderr {len(res['stderr'])} chars")
+                    log(f"\033[32m[EXIT CODE]\033[0m {out_res['exit_code']}  stdout {len(out_res['stdout'])} chars, stderr {len(out_res['stderr'])} chars")
+                    res["trail"].append(f"  ran `{command[:200]}` → exit {out_res['exit_code']}")
                     self.set_phase("summarizing output")
-                    out = self.mr.run(intent, res["stdout"], f"stdout of `{command[:80]}`")
-                    err = self.mr.run(intent, res["stderr"], f"stderr of `{command[:80]}`")
+                    out = self.mr.run(intent, out_res["stdout"], f"stdout of `{command[:80]}`")
+                    err = self.mr.run(intent, out_res["stderr"], f"stderr of `{command[:80]}`")
                     messages.append({"role": "user", "content": (
                         f"Command Executed: {command}\n"
                         f"Current Working Directory: {to_bash_path(CURRENT_CWD)}\n"
-                        f"Exit Code: {res['exit_code']}\nstdout: {out}\nstderr: {err}")})
+                        f"Exit Code: {out_res['exit_code']}\nstdout: {out}\nstderr: {err}")})
                     continue
 
                 if kind == "load_uvian":
@@ -1550,6 +1589,11 @@ class CommandRouter:
                 return
             threading.Thread(target=a.graph.link, args=(parts[0], parts[1], "manual", 2.0), daemon=True).start()
             log(f"🔗 Linked {parts[0]} ⇄ {parts[1]} (manual)")
+        elif cmd.startswith("===n"):
+            if a.iface is None:
+                log("ℹ️ iFace is not available.")
+            else:
+                a.iface.command(cmd[4:])
         elif cmd == "===c":
             def run():
                 log(f"🧩 {a.graph.recluster()}")
@@ -1624,6 +1668,15 @@ def parse_args(argv=None) -> argparse.Namespace:
     p.add_argument("--aux-slot", type=int, default=1, help="slot for selector/map-reduce calls when --llamark is on")
     p.add_argument("--max-turns", type=int, default=13)
     p.add_argument("--cmd-timeout", type=int, default=30, help="Seconds before a shell/uvian command is killed")
+    g = p.add_argument_group("Intelligence Network (iFace)")
+    g.add_argument("--net-hub", type=str, default=os.environ.get("MEMPHIA_NET_HUB", "127.0.0.1:7788"),
+                   help="host:port of the network (inet/inet_hub.py; env MEMPHIA_NET_HUB)")
+    g.add_argument("--net-network", type=str, default="", help="name of the network (shown until the hub announces its own)")
+    g.add_argument("--net-name", type=str, default="", help="join the network at startup under this name")
+    g.add_argument("--net-purpose", type=str, default="", help="why this agent is on the network (steers what it answers)")
+    g.add_argument("--net-max-depth", type=int, default=4, help="ignore agent messages deeper than this in a reply chain")
+    g.add_argument("--net-rate", type=int, default=6, help="max own messages per minute before ignoring other agents")
+    g.add_argument("--net-no-autoshare", action="store_true", help="never consider sharing results of local tasks")
     return p.parse_args(argv)
 
 
@@ -1640,7 +1693,10 @@ def bootstrap(argv=None) -> Optional[MemphiaAgent]:
     store = UvianStore(ARGS.uvian_dir)
     graph = MemgraphLinker(None if ARGS.no_memgraph else ARGS.memgraph_uri,
                            ARGS.memgraph_user, ARGS.memgraph_password)
-    return MemphiaAgent(store, graph)
+    agent = MemphiaAgent(store, graph)
+    import memphia_iface  # late import: it imports this module
+    agent.iface = memphia_iface.IFace(agent)
+    return agent
 
 
 def announce(agent: MemphiaAgent, quit_hint: str):
@@ -1650,3 +1706,7 @@ def announce(agent: MemphiaAgent, quit_hint: str):
     log(f"🕸  {agent.graph.status()}")
     log(f"🖥️  {get_os_env_context().strip()}")
     log(f"🚀 Memphia ready. Type a task; type while it runs to steer. ===h for help, {quit_hint} to quit.")
+    if ARGS.net_name:
+        agent.iface.join()
+    else:
+        log(f"🌐 Intelligence Network: ===nj <name> [purpose] to plug in the iFace (hub {ARGS.net_hub}).")
