@@ -6,3 +6,4 @@ memphiu:
   allow: yes
 neos:
   allow: yes
+#  excmd: "approved"

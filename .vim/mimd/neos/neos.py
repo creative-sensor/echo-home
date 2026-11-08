@@ -652,7 +652,9 @@ SCOPE (enforced before anything runs) — you are free to use anything native to
 - every built-in function (system(), jobstart(), getline(), ...) and the Neovim Lua API (vim.api, vim.fn, vim.cmd,
   vim.system, vim.uv, vim.o/bo/wo, vim.keymap, ...),
 - the functions and commands listed in [VIMRC] (defined in the user's ~/.vimrc.neo).
-Rejected: plugin or other user commands/functions not in [VIMRC], require() of plugin modules, plain-Lua os./io./dofile/load.
+Out of scope (plugin or other user commands/functions not in [VIMRC], require() of plugin modules, plain-Lua
+os./io./dofile/load) is not forbidden but needs the user's explicit approval — prefer native means; use it only when
+nothing native does the job, and expect a denial.
 
 RULES:
 1. You operate in a loop: each turn run ONE action, then read its result.
@@ -673,8 +675,8 @@ RULES:
 5. Avoid commands that block waiting for input inside your call (confirm flags, input()); never quit Neovim.
 6. If the intent is a question, answer it right away with "declare_result".
    Shell work goes through native means (":!cmd" output comes back to you; ":terminal" opens an interactive one).
-   Do not confuse look-alikes (":ls" is Vim's buffer list, not the shell). If the intent needs a plugin that is not in
-   [VIMRC], declare_result FAILED and say so. In "reply", claim only what the action results actually show.
+   Do not confuse look-alikes (":ls" is Vim's buffer list, not the shell). If the intent truly needs a plugin that is
+   not in [VIMRC], you may call it (the user will be asked); if they deny it, declare_result FAILED and say so. In "reply", claim only what the action results actually show.
 7. When the user asks how to do something, prefer THEIR [VIMRC] function/command or [USER VIM SETUP] mapping
    (exact keys) over stock advice; "vim_doc" searches their setup further.
 8. [SUCCESSFUL EARLIER REQUESTS] shows what already worked in this session; reuse those approaches.
@@ -714,7 +716,8 @@ HELP_TEXT = """\033[1mNeos commands\033[0m
 \033[1mKeys\033[0m (in the float)  C-x interrupt │ C-c cancel/clear │ F2 log view │ M-h/j/k/l dock, M-c center, M-f full, M-b peek │ q/Esc hide │ ↑/↓ history
   approvals: y yes │ n no │ a yes + always │ e edit the command/code
   scope: anything native (built-in Ex commands/functions, Neovim Lua API) + ~/.vimrc.neo functions/commands;
-         plugin/user code outside ~/.vimrc.neo is rejected
+         out-of-scope code (plugins, other user code, os/io) asks first — 'a' allows it for the session,
+         ~/echo-home/autopilot.yaml  neos: { excmd: "approved" }  runs it freely
   memory: only requests that ended in SUCCESS are remembered for later questions"""
 
 ALIASES = {
@@ -731,15 +734,25 @@ class Cancelled(Exception):
     pass
 
 
-def autopilot_allows() -> bool:
+def autopilot_neos() -> dict:
+    """The `neos:` section of ~/echo-home/autopilot.yaml (re-read every time, so edits apply at once)."""
     try:
         with open(os.path.expanduser("~/echo-home/autopilot.yaml"), "r", encoding="utf-8") as f:
             cfg = yaml.safe_load(f) or {}
-        v = (cfg.get("neos") or {}).get("allow", False)
-        return v is True or str(v).strip().lower() in ("yes", "true", "1", "y")
+        return cfg.get("neos") or {}
     except Exception:
-        return False
+        return {}
 
+
+def autopilot_allows() -> bool:
+    """neos.allow: yes -> skip approval for in-scope actions."""
+    v = autopilot_neos().get("allow", False)
+    return v is True or str(v).strip().lower() in ("yes", "true", "1", "y")
+
+
+def autopilot_excmd() -> bool:
+    """neos.excmd: "approved" -> out-of-scope commands run freely, no prompt."""
+    return str(autopilot_neos().get("excmd", "")).strip().lower() == "approved"
 
 class NeosAgent:
     def __init__(self, uvian: Optional[Uvian], vimdoc: Optional[VimDoc] = None, policy: Optional[Policy] = None):
@@ -757,6 +770,7 @@ class NeosAgent:
         self.busy = False
         self.phase = "idle"
         self.auto = bool(ARGS.auto)
+        self.scope_ok = False  # 'a' on an out-of-scope approval
         self.approval: Optional[dict] = None
         self.last_search: List[dict] = []
         self.recent: deque = deque(maxlen=8)  # only requests that ended in SUCCESS
@@ -836,15 +850,23 @@ class NeosAgent:
                 self.approval = None
             BRIDGE.mark_dirty()
 
-    def request_approval(self, kind: str, detail: str, editable: bool) -> Tuple[bool, str]:
-        if self.auto or autopilot_allows():
+    def request_approval(self, kind: str, detail: str, editable: bool, scope_err: Optional[str] = None) -> Tuple[bool, str]:
+        """scope_err set = out-of-scope action: always asked unless neos.excmd is "approved" (or 'a' this session)."""
+        if scope_err:
+            if autopilot_excmd() or self.scope_ok:
+                chat(dim(f"  ⛔→✓ out of scope, allowed ({'autopilot neos.excmd' if autopilot_excmd() else 'this session'}): {scope_err}"))
+                return True, detail
+        elif self.auto or autopilot_allows():
             return True, detail
-        req = {"kind": kind, "detail": detail, "editable": editable, "editing": False,
+        req = {"kind": kind, "detail": detail, "editable": editable, "editing": False, "scope": bool(scope_err),
                "event": threading.Event(), "answer": None}
         with self.lock:
             self.approval = req
         BRIDGE.emit({"t": "show"})
         shown = detail if len(detail) < 600 else detail[:600] + "…"
+        if scope_err:
+            chat(f"\033[41;97m ⛔ OUT OF SCOPE \033[0m \033[33m{scope_err}\033[0m")
+            chat(dim("  (a = allow out-of-scope for this session; autopilot.yaml neos.excmd: \"approved\" = always)"))
         chat(f"\033[31m⚠ allow {kind}?\033[0m\n\033[1m{shown}\033[0m")
         chat(dim("  y yes │ n no │ a yes + always │ e edit" if editable else "  y yes │ n no │ a yes + always"))
         self.set_phase("waiting approval")
@@ -868,8 +890,12 @@ class NeosAgent:
         elif low in ("n", "no"):
             req["answer"] = (False, req["detail"])
         elif low in ("a", "always"):
-            self.auto = True
-            chat(dim("  auto-approve ON for this session (===a to turn off)"))
+            if req.get("scope"):
+                self.scope_ok = True
+                chat(dim("  out-of-scope actions allowed for this session (===a resets)"))
+            else:
+                self.auto = True
+                chat(dim("  auto-approve ON for this session (===a to turn off)"))
             req["answer"] = (True, req["detail"])
         elif low == "e" and req["editable"]:
             req["editing"] = True
@@ -1066,28 +1092,22 @@ class NeosAgent:
             cmd = str(act.get("command") or "").strip().lstrip(":")
             if not cmd:
                 return "System: 'run_command' needs a non-empty \"command\"."
-            if err := self.reject(cmd, self.policy.check_ex(cmd) if self.policy else None):
-                return err
-            ok, cmd = self.request_approval("ex command", cmd, editable=True)
-            if ok and (err := self.reject(cmd, self.policy.check_ex(cmd) if self.policy else None)):
-                return err
+            scope_err = self.policy.check_ex(cmd) if self.policy else None
+            ok, cmd = self.request_approval("ex command", cmd, editable=True, scope_err=scope_err)
             chat(f"  \033[38;5;112m⚙ :{cmd}\033[0m" + ("" if ok else dim("  (denied)")))
             if not ok:
-                return f"The user DENIED the Ex command: {cmd}"
+                return self.denied(f"the Ex command :{cmd}", scope_err)
             self.set_phase("running ex")
             return self._evidence(f"Ex command :{cmd}", self.nvim("ex", command=cmd, win=act.get("win")), record=f":{cmd}")
         if kind == "lua":
             code = str(act.get("code") or "")
             if not code.strip():
                 return "System: 'run_lua' needs non-empty \"code\"."
-            if err := self.reject(code, self.policy.check_lua(code) if self.policy else None):
-                return err
-            ok, code = self.request_approval("lua", code, editable=True)
-            if ok and (err := self.reject(code, self.policy.check_lua(code) if self.policy else None)):
-                return err
+            scope_err = self.policy.check_lua(code) if self.policy else None
+            ok, code = self.request_approval("lua", code, editable=True, scope_err=scope_err)
             chat(f"  \033[38;5;112m⚙ lua\033[0m {code.strip().splitlines()[0][:100]}" + ("" if ok else dim("  (denied)")))
             if not ok:
-                return "The user DENIED running this Lua code."
+                return self.denied("this Lua code", scope_err)
             self.set_phase("running lua")
             return self._evidence("Lua chunk", self.nvim("lua", code=code, win=act.get("win")), record="lua: " + " ".join(code.split())[:160])
         if kind == "focus":
@@ -1149,14 +1169,13 @@ class NeosAgent:
         return (f"System: unknown action_type '{kind}'. Use run_command, run_lua, read_lines, edit_lines, "
                 f"focus, terminal_send, vim_doc or declare_result.")
 
-    def reject(self, what: str, err: Optional[str]) -> Optional[str]:
-        if not err:
-            return None
-        first = what.strip().splitlines()[0][:100] if what.strip() else what
-        chat(f"  \033[33m⛔ out of scope:\033[0m {first}\n" + dim(f"     {err}"))
-        logw(f"[POLICY] rejected: {what}\n  reason: {err}")
-        return (f"System: REJECTED by scope policy — {err}. Use built-in Ex commands, the Neovim Lua API "
-                f"or the [VIMRC] functions/commands instead.")
+    @staticmethod
+    def denied(what: str, scope_err: Optional[str]) -> str:
+        if scope_err:
+            logw(f"[SCOPE] denied out-of-scope: {what} — {scope_err}")
+            return (f"The user DENIED {what}: it is out of scope ({scope_err}). Prefer built-in Ex commands, the "
+                    f"Neovim Lua API or the [VIMRC] functions/commands.")
+        return f"The user DENIED {what}."
 
     def _evidence(self, what: str, res: dict, show: bool = True, record: str = "") -> str:
         if res.get("ok"):
@@ -1317,6 +1336,7 @@ class Router:
             chat(dim(f"cleared {s} steering, {t} task(s), {n} load(s)"))
         elif cmd == "===a":
             a.auto = not a.auto
+            a.scope_ok = False
             BRIDGE.mark_dirty()
             chat(dim(f"auto-approve {'ON' if a.auto else 'OFF'}"))
         elif cmd == "===r":
