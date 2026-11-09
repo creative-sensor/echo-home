@@ -12,7 +12,7 @@
 - [datum/2026/WIP/CORTA-21.md](datum/2026/WIP/CORTA-21.md)   ```# vllm : library```
 - [datum/2026/WIP/KITE-25.md](datum/2026/WIP/KITE-25.md)   ```# cli : mistral-vibe```
 - [datum/2026/WIP/MDOS-22.md](datum/2026/WIP/MDOS-22.md)   ```# lang runtime : lua```
-- [datum/2026/WIP/MEMR-2.md](datum/2026/WIP/MEMR-2.md)   ```# llamark : restore on cache miss```
+- [datum/2026/WIP/MEMR-3.md](datum/2026/WIP/MEMR-3.md)   ```# uvian : rank cell against free text input```
 - [datum/2026/WIP/VIM-31.md](datum/2026/WIP/VIM-31.md)   ```# vimpage : vllm```
 - [datum/2026/WIP/VIM-35.md](datum/2026/WIP/VIM-35.md)   ```# vimpage_inet: intelligence network```
 
@@ -69,7 +69,6 @@
 - [datum/2026/TODO/MDOS-27.md](datum/2026/TODO/MDOS-27.md)   ```# wsli : WSL Windows interface```
 - [datum/2026/TODO/MDOS-35.md](datum/2026/TODO/MDOS-35.md)   ```# fancontrol : winring0```
 - [datum/2026/TODO/MDOS-36.md](datum/2026/TODO/MDOS-36.md)   ```# env : replicate gitbash to powershell```
-- [datum/2026/TODO/MEMR-3.md](datum/2026/TODO/MEMR-3.md)   ```# uvian : rank cell against free text input```
 - [datum/2026/TODO/MONO-1.md](datum/2026/TODO/MONO-1.md)   ```# Apache : NiFi```
 - [datum/2026/TODO/MONO-7.md](datum/2026/TODO/MONO-7.md)   ```# ULI : Unified Linux Interface```
 - [datum/2026/TODO/NJS-1.md](datum/2026/TODO/NJS-1.md)   ```# KANBORG : ELECTRON UI```
@@ -152,6 +151,7 @@
 - [datum/2026/DONE/MDOS-34.md](datum/2026/DONE/MDOS-34.md)   ```# ssh : pubkey auth```
 - [datum/2026/DONE/MDOS-37.md](datum/2026/DONE/MDOS-37.md)   ```# mmph : memphia adapt```
 - [datum/2026/DONE/MEMR-1.md](datum/2026/DONE/MEMR-1.md)   ```# llamark : prompt memory```
+- [datum/2026/DONE/MEMR-2.md](datum/2026/DONE/MEMR-2.md)   ```# llamark : restore on cache miss```
 - [datum/2026/DONE/SPEC-3.md](datum/2026/DONE/SPEC-3.md)   ```# Foldable : system ```
 - [datum/2026/DONE/SPEC-4.md](datum/2026/DONE/SPEC-4.md)   ```# objectory : re-define```
 - [datum/2026/DONE/SPEC-5.md](datum/2026/DONE/SPEC-5.md)   ```# yson : re-define```
