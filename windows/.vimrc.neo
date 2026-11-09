@@ -482,5 +482,7 @@ colorscheme gruvbox
 exec 'source '.g:MIMD_BASE."/vimpage_ptrm"
 exec 'source '.g:MIMD_BASE."/vimpage_lmsh"
 exec 'source '.g:MIMD_BASE."/vimpage_mmph"
+exec 'source '.g:MIMD_BASE."/vimpage_neos"
+exec 'source '.g:MIMD_BASE."/vimpage_inet"
 
 
