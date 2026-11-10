@@ -53,6 +53,7 @@
 - [datum/2026/TODO/GGPU-1.md](datum/2026/TODO/GGPU-1.md)   ```# video : codecs```
 - [datum/2026/TODO/GGPU-2.md](datum/2026/TODO/GGPU-2.md)   ```# Intel : XeSS```
 - [datum/2026/TODO/GGPU-7.md](datum/2026/TODO/GGPU-7.md)   ```# ISSUE :```
+- [datum/2026/TODO/KBG-10.md](datum/2026/TODO/KBG-10.md)   ```# vimpage : knbg```
 - [datum/2026/TODO/KBG-3.md](datum/2026/TODO/KBG-3.md)   ```# ISSUE : apply yson to PROJECT.md```
 - [datum/2026/TODO/KITE-2.md](datum/2026/TODO/KITE-2.md)   ```# Gitlab :```
 - [datum/2026/TODO/KITE-24.md](datum/2026/TODO/KITE-24.md)   ```# AttentionFlash: HF```
