@@ -1,10 +1,8 @@
 let g:memphia_python = 'python'
-let g:memphia_args = ['--port', LMSH_PORT]
-let g:memphia_args = ['--memgraph-uri', 'bolt://127.0.0.1:7444', '--memgraph-user', 'memphia']
+let g:memphia_no_autostart = v:true
 
 
 map mmph1 : silent source ~/echo-home/.vim/mimd/memphia/memphia.lua<CR>
-map mmphi : exec 'Memphia --port '.LMSH_PORT.' --no-memgraph'<CR>
 map mmphg : exec 'Memphia --port '.LMSH_PORT.' --memgraph-uri bolt://127.0.0.1:7687 --llamark'<CR>
 map mmphq : MemphiaQuit <CR>
 
