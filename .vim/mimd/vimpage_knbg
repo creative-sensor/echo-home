@@ -1,0 +1,32 @@
+"-------- [KNBG] Kanborg operator agent --------
+" knbg operates the kanborg tool (~/echo-home/codev/kanborg) on behalf of the user: project manager of the board,
+" Vim hands in this editor, coordinator on the Intelligence Network. Code: ~/echo-home/.vim/mimd/knbg
+" Boundary: the tool never loads knbg; knbg uses only the tool's CLI (and the TUI's Lua API when the TUI runs here).
+let g:knbg_python = 'python'
+let g:knbg_args = ['--port', get(g:, 'LMSH_PORT', 8080)]
+"let g:knbg_args = ['--port', get(g:, 'LMSH_PORT', 8080), '--net-readonly']   " the network may read the board, not change it
+" board = the directory you are in when knbg is loaded (knbg1), i.e. the folder holding ./datum. Override:
+"let g:knbg_root = '~/echo-home/codev/kanborg'
+" kanborg CLI = <board>/.function/kanborg.py, else ~/echo-home/codev/kanborg/.function/kanborg.py. Override:
+"let g:knbg_tool = '~/echo-home/codev/kanborg/.function/kanborg.py'
+let g:knbg_no_autostart = 1
+
+
+map knbg1 : silent source ~/echo-home/.vim/mimd/knbg/knbg.lua<CR>
+map knbgi : Knbg<CR>
+map knbga : exec 'Knbg --port '.get(g:, 'LMSH_PORT', 8080).' --auto'<CR>
+map knbgj : InetJoin knbg<CR>
+map knbgl : InetLeave knbg<CR>
+map knbgx : KnbgCancel<CR>
+map knbgq : KnbgQuit<CR>
+
+"HELP:
+"- knbg1 loads knbg (and the inet driver, registering 'knbg' there); knbgi opens/toggles its float; knbga starts it auto-approving.
+"- Ask for status/progress/blocked/timelines, or to create, move, link, date, journal cards. Changes are git-staged
+"  (not committed) by the kanborg CLI; if the kanborg TUI runs in this Neovim its columns/views refresh at once.
+"- To drive the TUI itself: start the TUI (.function/startn), then :source ~/echo-home/.vim/mimd/vimpage_knbg and knbg1 there.
+"- Vim hands: opening views/cards needs no approval; Ex/Lua actions ask y/n/a (knbga or autopilot.yaml  knbg: allow: yes  skips).
+"- Float: <CR> send · <C-c> cancel · F8 chat ⇄ IFACE pane · q hide · ===h help · ===a auto-approve toggle.
+"- Intelligence Network: knbgj joins with g:inet_agents.knbg (vimpage_inet) as @kanborg. As coordinator it answers board
+"  questions from the room, records reported work on cards and asks experts (@memphia ...) while working.
+"  ===nj/===nl/===ns <text> inside the float join/leave/speak by hand.

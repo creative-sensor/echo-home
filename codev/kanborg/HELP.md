@@ -6,6 +6,12 @@
 - ```rr``` refresh content of cursored column
 - ```Ctrl w   =``` resize all windows to equal size
 
+### TOOLS & VIEWS  (```,?``` full help)
+- ```,e``` edit fields (dates, progress, owner, links)  ```,n``` new card  ```,m``` move
+- ```,l``` link  ```,u``` unlink  ```,j``` journal  ```,x``` toggle [ ]/[x]
+- ```,o``` portfolio  ```,b``` board  ```,w``` lanes  ```,r``` related
+- ```,p``` progress  ```,d``` dependencies  ```,t``` timeline  ```,V``` legacy
+
 ### MARK GUIDE
 
 - insert media
