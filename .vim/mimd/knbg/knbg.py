@@ -250,6 +250,12 @@ def normalize_action(act: dict) -> dict:
 
 
 # ---------------------------------------------------------------- kanborg tool client
+def default_cli(root: str) -> str:
+    """The board's own .function/kanborg.py, else the reference tool in ~/echo-home/codev/kanborg."""
+    own = os.path.join(root, ".function", "kanborg.py")
+    return own if os.path.isfile(own) else resolve_path("~/echo-home/codev/kanborg/.function/kanborg.py")
+
+
 VIEWS = ["lanes", "board", "related", "progress", "deps", "timeline"]
 
 
@@ -261,9 +267,9 @@ class Kanborg:
     """The kanborg tool seen from outside: its CLI (<root>/.function/kanborg.py), text or --json.
     Nothing of the tool is imported, so a tool change cannot crash this process and the agent cannot alter the tool."""
 
-    def __init__(self, root: str, python: str):
-        self.root = root
-        self.cli = resolve_path(os.path.join(root, ".function", "kanborg.py"))
+    def __init__(self, root: str, python: str, cli: str = ""):
+        self.root = root  # the board (folder holding ./datum); the CLI may live elsewhere
+        self.cli = resolve_path(cli or default_cli(root))
         self.python = python
 
     def available(self) -> bool:
@@ -309,7 +315,7 @@ class Agent:
     def __init__(self, args):
         self.args = args
         self.llm = LLM(args.host, args.port)
-        self.tool = Kanborg(args.root, args.tool_python)
+        self.tool = Kanborg(args.root, args.tool_python, args.tool)
         self.running = True
         self.tasks: "queue.Queue" = queue.Queue()
         self.pending = 0
@@ -751,7 +757,10 @@ def reader(agent: Agent):
 def main():
     global ARGS
     p = argparse.ArgumentParser(description="knbg: the Kanborg operator agent (backend of knbg.lua)")
-    p.add_argument("--root", default=os.environ.get("KANBORG_ROOT", "~/echo-home/codev/kanborg"), help="kanborg tool folder")
+    p.add_argument("--root", default=os.environ.get("KANBORG_ROOT") or os.getcwd(),
+                   help="the board: folder holding ./datum (default: current directory)")
+    p.add_argument("--tool", default=os.environ.get("KANBORG_CLI", ""),
+                   help="kanborg CLI (default: <root>/.function/kanborg.py, else ~/echo-home/codev/kanborg)")
     p.add_argument("--tool-python", default=os.environ.get("KANBORG_PYTHON") or sys.executable or "python",
                    help="python that runs the kanborg CLI (default: the one running knbg)")
     p.add_argument("--journal-as", default="knbg", help="author of the journal entries the agent writes")
@@ -776,12 +785,17 @@ def main():
     agent = Agent(ARGS)
     threading.Thread(target=agent.worker, daemon=True).start()
     if not agent.tool.available():
-        chat(f"❌ kanborg tool not found at {agent.tool.cli} (set g:knbg_root or --root)", "ErrorMsg")
+        chat(f"❌ kanborg CLI not found at {agent.tool.cli} (set g:knbg_tool or --tool)", "ErrorMsg")
     else:
+        if not os.path.isdir(os.path.join(ARGS.root, "datum")) and not os.path.isfile(
+                os.path.join(ARGS.root, ".properd", "VARSET")):
+            chat(f"⚠️ no ./datum in {ARGS.root}: load knbg from your board folder, or set g:knbg_root", "WarningMsg")
         try:
             ids = agent.tool.json("ids")
             chat(f"knbg · Kanborg operator · board {ARGS.root} · {len(ids.get('projects') or [])} projects, "
                  f"{len(ids.get('cards') or [])} cards", "Title")
+            if os.path.normpath(os.path.dirname(os.path.dirname(agent.tool.cli))) != os.path.normpath(ARGS.root):
+                chat(f"   kanborg CLI: {agent.tool.cli}", "Comment")
         except ToolError as e:
             chat(f"⚠️ kanborg CLI: {e}", "ErrorMsg")
     llm_ok = agent.llm.ensure()

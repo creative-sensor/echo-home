@@ -5,7 +5,10 @@
 let g:knbg_python = 'python'
 let g:knbg_args = ['--port', get(g:, 'LMSH_PORT', 8080)]
 "let g:knbg_args = ['--port', get(g:, 'LMSH_PORT', 8080), '--net-readonly']   " the network may read the board, not change it
+" board = the directory you are in when knbg is loaded (knbg1), i.e. the folder holding ./datum. Override:
 "let g:knbg_root = '~/echo-home/codev/kanborg'
+" kanborg CLI = <board>/.function/kanborg.py, else ~/echo-home/codev/kanborg/.function/kanborg.py. Override:
+"let g:knbg_tool = '~/echo-home/codev/kanborg/.function/kanborg.py'
 let g:knbg_no_autostart = 1
 
 

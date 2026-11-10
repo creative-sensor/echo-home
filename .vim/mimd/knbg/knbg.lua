@@ -56,8 +56,25 @@ api.nvim_set_decoration_provider(NS_PROMPT, {
 
 local function notify(msg, level) vim.notify("knbg: " .. msg, level or vim.log.levels.INFO) end
 
+-- The board knbg works on: g:knbg_root if set, else the directory Neovim was in when knbg was loaded (knbg1),
+-- i.e. the folder holding ./datum. :Knbg --root <dir> overrides both for one start.
+local LOAD_CWD = fn.getcwd()
+
+local function clean_dir(d)
+  return (native(fn.fnamemodify(fn.expand(d), ":p")):gsub("[/\\]$", ""))
+end
+
 local function root()
-  return native(fn.fnamemodify(fn.expand(vim.g.knbg_root or "~/echo-home/codev/kanborg"), ":p"):gsub("[/\\]$", ""))
+  return clean_dir(vim.g.knbg_root or LOAD_CWD)
+end
+
+--- The kanborg CLI that runs the board: g:knbg_tool, else the board's own .function/kanborg.py,
+--- else the reference tool in ~/echo-home/codev/kanborg.
+local function tool_cli(board)
+  if vim.g.knbg_tool then return native(fn.fnamemodify(fn.expand(vim.g.knbg_tool), ":p")) end
+  local own = board .. "/.function/kanborg.py"
+  if fn.filereadable(own) == 1 then return own end
+  return native(fn.expand("~/echo-home/codev/kanborg/.function/kanborg.py"))
 end
 
 --- The kanborg TUI's public Lua API, only if the user runs the TUI in this Neovim (never loaded by knbg).
@@ -391,17 +408,23 @@ function M.start(args)
   if S and S.job then return M.toggle() end
   local script = SCRIPT_DIR .. "/knbg.py"
   args = normalize_args(args)
-  local has_root = vim.tbl_contains(args, "--root")
+  local board = root()
+  for i, a in ipairs(args) do
+    if a == "--root" and args[i + 1] then board = clean_dir(args[i + 1]) end
+  end
   -- On Windows "python3" is often the Microsoft Store stub; prefer "python" there (as memphia does).
   local py = vim.g.knbg_python or (fn.has("win32") == 1 and fn.executable("python") == 1 and "python" or "python3")
   local cmd = { py, "-u", script }
-  if not has_root then vim.list_extend(cmd, { "--root", root() }) end
-  vim.list_extend(cmd, args)
+  vim.list_extend(cmd, { "--root", board })
+  if not vim.tbl_contains(args, "--tool") then vim.list_extend(cmd, { "--tool", tool_cli(board) }) end
+  for i = 1, #args do -- --root already resolved above
+    if not (args[i] == "--root" or args[i - 1] == "--root") then cmd[#cmd + 1] = args[i] end
+  end
   local bufs = S and S.bufs or create_buffers()
   S = { bufs = bufs, pane = "chat", state = {}, anchor = api.nvim_get_current_win() }
   -- tell the backend where the inet driver lives, as a clean native path (Git Bash: /c/.. -> C:/..)
   local inet_dir = native(vim.g.inet_dir and fn.expand(vim.g.inet_dir) or (fn.fnamemodify(SCRIPT_DIR, ":h") .. "/inet"))
-  S.job = fn.jobstart(cmd, { cwd = root(), env = { INET_DIR = inet_dir, PYTHONIOENCODING = "utf-8" },
+  S.job = fn.jobstart(cmd, { cwd = board, env = { INET_DIR = inet_dir, PYTHONIOENCODING = "utf-8" },
     on_stdout = on_stdout, on_stderr = on_stderr, on_exit = on_exit })
   if S.job <= 0 then
     S.job = nil
