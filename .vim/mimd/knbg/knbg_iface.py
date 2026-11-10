@@ -15,16 +15,98 @@ skimming broadcasts when the inbox backs up.
 """
 import os
 import queue
+import re
 import sys
 import threading
 import time
 from collections import deque
 from typing import List, Optional
 
-_INET_DIR = os.environ.get("INET_DIR") or os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "inet")
-if os.path.normpath(_INET_DIR) not in sys.path:
-    sys.path.insert(0, os.path.normpath(_INET_DIR))
-from inet_client import InetClient, clip  # noqa: E402
+def _path_forms(d: str) -> List[str]:
+    """Every spelling of a folder a Windows/Git Bash/MSYS/Cygwin python might understand."""
+    s = d.replace("\\", "/")
+    forms = [d, s]
+    m = re.match(r"^/(?:cygdrive/)?([a-zA-Z])(?:/|$)(.*)", s)
+    if m:  # /c/Users/.. or /cygdrive/c/Users/.. -> C:/Users/..
+        forms.append(f"{m.group(1).upper()}:/{m.group(2)}")
+    m = re.match(r"^([a-zA-Z]):/?(.*)", s)
+    if m:  # C:/Users/.. -> /c/Users/.. (MSYS python) and /cygdrive/c/Users/.. (Cygwin python)
+        forms += [f"/{m.group(1).lower()}/{m.group(2)}", f"/cygdrive/{m.group(1).lower()}/{m.group(2)}"]
+    out = []
+    for f in forms:
+        f = os.path.normpath(f)
+        if f not in out:
+            out.append(f)
+    return out
+
+
+def _find_inet():
+    """(folder holding inet_client.py or None, folders tried). INET_DIR (set by knbg.lua) first, then ../inet."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    seeds = [os.environ.get("INET_DIR"), os.path.join(here, "..", "inet"),
+             os.path.join(os.path.dirname(__file__) or ".", "..", "inet")]
+    tried = []
+    for seed in filter(None, seeds):
+        for d in _path_forms(seed):
+            if d in tried:
+                continue
+            tried.append(d)
+            if os.path.isfile(os.path.join(d, "inet_client.py")):
+                return d, tried
+    return None, tried
+
+
+INET_DIR, INET_TRIED = _find_inet()
+INET_ERROR = ""
+if INET_DIR and INET_DIR not in sys.path:
+    sys.path.insert(0, INET_DIR)
+try:
+    from inet_client import InetClient, clip  # noqa: E402
+except ImportError as _e:  # no network library: knbg keeps working on the board, offline
+    InetClient = None
+    INET_ERROR = f"{type(_e).__name__}: {_e}. inet_client.py not found in: " + " | ".join(INET_TRIED)
+
+    def clip(s, n: int = 300) -> str:
+        s = " ".join(str(s or "").split())
+        return s if len(s) <= n else s[: n - 1] + "…"
+
+
+class _OfflineNet:
+    """Stands in for InetClient when the inet driver cannot be imported: never connects, explains why."""
+
+    def __init__(self, name, purpose, log, **_):
+        self.name, self.purpose, self.log = name, purpose, log
+        self.network, self.joined, self.connected, self.state = "", False, False, ""
+        self.members, self.transcript = {}, deque(maxlen=1)
+
+    def hub_str(self):
+        return "unavailable"
+
+    def join(self, **_):
+        self.log(f"⚠️ cannot join: Intelligence Network driver not loaded — {INET_ERROR}")
+
+    def leave(self):
+        pass
+
+    close = leave
+
+    def configure(self, **_):
+        pass
+
+    def say(self, *a, **k):
+        return False
+
+    def set_status(self, state):
+        return False
+
+    def addressing(self, msg):
+        return False, False
+
+    def who(self):
+        return "nobody (offline)"
+
+    def context(self, *a, **k):
+        return "(offline)"
 
 ATTEND_SYSTEM_PROMPT = """You are the network interface (iFace) of Kanborg, the project manager and coordinator agent of a git-based kanban board (projects, cards, dependencies, progress, timelines), connected to the Intelligence Network, a chat room shared by AI agents and humans.
 You decide how Kanborg reacts to ONE incoming chat message. Kanborg has a private mind that can read and change the board (create/move/link cards, set dates and progress, write journal entries, report progress, dependencies and timelines) and can consult other expert agents while doing so.
@@ -53,7 +135,7 @@ class IFace:
         self.inbox: "queue.Queue" = queue.Queue()
         self.waiters: dict = {}  # agent name (lower) -> queue of their messages while the mind waits on them
         self.wlock = threading.Lock()
-        self.net = InetClient(
+        self.net = (InetClient or _OfflineNet)(
             name=args.net_name or "kanborg",
             purpose=args.net_purpose or ("project manager & coordinator: tracks projects, cards, dependencies, "
                                          "progress and timelines on the kanborg board; ask me for status or to record work"),
@@ -81,6 +163,8 @@ class IFace:
 
     # ---------------------------------------------------------------- lifecycle
     def join(self, name=None, purpose=None, hub=None, network=None):
+        if InetClient is None:
+            return self.net.join()  # logs why it cannot
         was = self.net.joined
         self.net.join(name=name, purpose=purpose, hub=hub, network=network)
         if not was:
@@ -236,7 +320,7 @@ class IFace:
 
     def ask(self, to: str, text: str, wait: float, cancel: threading.Event, re=None) -> str:
         if not self.connected:
-            return "System: not connected to the Intelligence Network (join with :InetJoin kanborg)."
+            return "System: not connected to the Intelligence Network (join with knbgj or :InetJoin knbg)."
         who = self.member(to)
         if not who:
             return f"System: @{to} is not on the network. Members: {self.net.who()}"

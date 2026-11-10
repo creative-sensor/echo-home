@@ -435,7 +435,8 @@ class Board:
     # ----- git
     def git(self, *args):
         try:
-            r = subprocess.run(["git", *args], cwd=self.root, capture_output=True, text=True, timeout=30)
+            r = subprocess.run(["git", *args], cwd=self.root, stdin=subprocess.DEVNULL, capture_output=True,
+                               text=True, timeout=30)
             return r.returncode == 0
         except (OSError, subprocess.SubprocessError):
             return False
@@ -1082,6 +1083,11 @@ def run(argv, out=print):
 
 
 def main():
+    for stream in (sys.stdout, sys.stderr):  # board text has ▶ █ ⛔; Windows consoles default to cp1252
+        try:
+            stream.reconfigure(encoding="utf-8")
+        except (AttributeError, ValueError):
+            pass
     try:
         sys.exit(run(sys.argv[1:]))
     except KbError as e:

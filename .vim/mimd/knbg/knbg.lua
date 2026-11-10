@@ -19,7 +19,16 @@ local MODNAME = ...
 local M = {}
 local api, fn = vim.api, vim.fn
 
-local SCRIPT_DIR = fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h")
+--- Git Bash/MSYS hands nvim paths like /c/Users/..; native Windows python needs C:/Users/.. (as in memphia.lua).
+local function native(path)
+  if fn.has("win32") == 1 and path then
+    local drive, rest = path:match("^[/\\]([a-zA-Z])[/\\](.*)$")
+    if drive and fn.isdirectory(path) == 0 and fn.filereadable(path) == 0 then path = drive:upper() .. ":/" .. rest end
+    path = path:gsub("\\", "/")
+  end
+  return path
+end
+local SCRIPT_DIR = native(fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h"))
 local NS = api.nvim_create_namespace("knbg")
 local PROMPT = "KanBorg ▶ "
 local S -- session; nil when not running
@@ -48,8 +57,7 @@ api.nvim_set_decoration_provider(NS_PROMPT, {
 local function notify(msg, level) vim.notify("knbg: " .. msg, level or vim.log.levels.INFO) end
 
 local function root()
-  if vim.g.knbg_root then return fn.expand(vim.g.knbg_root) end
-  return fn.expand("~/echo-home/codev/kanborg")
+  return native(fn.fnamemodify(fn.expand(vim.g.knbg_root or "~/echo-home/codev/kanborg"), ":p"):gsub("[/\\]$", ""))
 end
 
 --- The kanborg TUI's public Lua API, only if the user runs the TUI in this Neovim (never loaded by knbg).
@@ -384,12 +392,17 @@ function M.start(args)
   local script = SCRIPT_DIR .. "/knbg.py"
   args = normalize_args(args)
   local has_root = vim.tbl_contains(args, "--root")
-  local cmd = { vim.g.knbg_python or "python", script }
+  -- On Windows "python3" is often the Microsoft Store stub; prefer "python" there (as memphia does).
+  local py = vim.g.knbg_python or (fn.has("win32") == 1 and fn.executable("python") == 1 and "python" or "python3")
+  local cmd = { py, "-u", script }
   if not has_root then vim.list_extend(cmd, { "--root", root() }) end
   vim.list_extend(cmd, args)
   local bufs = S and S.bufs or create_buffers()
   S = { bufs = bufs, pane = "chat", state = {}, anchor = api.nvim_get_current_win() }
-  S.job = fn.jobstart(cmd, { cwd = root(), on_stdout = on_stdout, on_stderr = on_stderr, on_exit = on_exit })
+  -- tell the backend where the inet driver lives, as a clean native path (Git Bash: /c/.. -> C:/..)
+  local inet_dir = native(vim.g.inet_dir and fn.expand(vim.g.inet_dir) or (fn.fnamemodify(SCRIPT_DIR, ":h") .. "/inet"))
+  S.job = fn.jobstart(cmd, { cwd = root(), env = { INET_DIR = inet_dir, PYTHONIOENCODING = "utf-8" },
+    on_stdout = on_stdout, on_stderr = on_stderr, on_exit = on_exit })
   if S.job <= 0 then
     S.job = nil
     return notify("cannot start " .. table.concat(cmd, " "), vim.log.levels.ERROR)

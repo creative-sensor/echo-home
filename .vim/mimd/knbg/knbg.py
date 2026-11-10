@@ -35,8 +35,30 @@ _PROTO = os.fdopen(os.dup(1), "w", encoding="utf-8", buffering=1)
 os.dup2(2, 1)
 sys.stdout = sys.stderr
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
+def resolve_path(path_str: str) -> str:
+    """~ and Git Bash/MSYS paths (/c/Users/..) to native ones (C:/Users/..), as memphia_core.resolve_path."""
+    if not path_str:
+        return path_str
+    if path_str.startswith("~"):
+        path_str = os.path.join(os.environ.get("HOME", os.path.expanduser("~")), path_str[1:].lstrip("/\\"))
+    if os.name == "nt" or os.environ.get("MSYSTEM"):
+        m = re.match(r"^[\\/]([a-zA-Z])(?:[\\/]|$)(.*)", path_str)
+        if m and not os.path.exists(path_str):
+            path_str = f"{m.group(1).upper()}:/{m.group(2)}"
+    if not re.match(r"^[a-zA-Z]:", path_str):
+        path_str = os.path.abspath(path_str)
+    return os.path.normpath(path_str).replace("\\", "/")
+
+
+HERE = resolve_path(os.path.dirname(os.path.abspath(__file__)))
+for _d in (os.path.dirname(os.path.abspath(__file__)), HERE):
+    if _d not in sys.path:
+        sys.path.insert(0, _d)
+for _stream in (sys.stdin, sys.stderr):  # the protocol is UTF-8 whatever the Windows code page is
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
 
 ARGS = None
 
@@ -241,7 +263,7 @@ class Kanborg:
 
     def __init__(self, root: str, python: str):
         self.root = root
-        self.cli = os.path.join(root, ".function", "kanborg.py")
+        self.cli = resolve_path(os.path.join(root, ".function", "kanborg.py"))
         self.python = python
 
     def available(self) -> bool:
@@ -251,7 +273,11 @@ class Kanborg:
         import subprocess
         cmd = [self.python, self.cli, "--root", self.root] + (["--json"] if as_json else []) + [str(x) for x in args]
         try:
-            r = subprocess.run(cmd, cwd=self.root, capture_output=True, text=True, timeout=60)
+            env = dict(os.environ, PYTHONIOENCODING="utf-8", PYTHONUTF8="1")  # board text has ▶ █ ⛔ ...
+            # stdin=DEVNULL: never hand the child our stdin (the nvim protocol pipe). On Windows a child that
+            # inherits a pipe another thread is blocked reading hangs at startup (same rule as memphia_core).
+            r = subprocess.run(cmd, cwd=self.root, stdin=subprocess.DEVNULL, capture_output=True, text=True, encoding="utf-8",
+                               errors="replace", env=env, timeout=60)
         except (OSError, subprocess.SubprocessError) as e:
             raise ToolError(f"kanborg CLI failed to run: {e}")
         if r.returncode != 0:
@@ -726,7 +752,8 @@ def main():
     global ARGS
     p = argparse.ArgumentParser(description="knbg: the Kanborg operator agent (backend of knbg.lua)")
     p.add_argument("--root", default=os.environ.get("KANBORG_ROOT", "~/echo-home/codev/kanborg"), help="kanborg tool folder")
-    p.add_argument("--tool-python", default=os.environ.get("KANBORG_PYTHON", "python3"), help="python that runs the kanborg CLI")
+    p.add_argument("--tool-python", default=os.environ.get("KANBORG_PYTHON") or sys.executable or "python",
+                   help="python that runs the kanborg CLI (default: the one running knbg)")
     p.add_argument("--journal-as", default="knbg", help="author of the journal entries the agent writes")
     p.add_argument("--port", type=int, default=8080, help="port of the local LLM server")
     p.add_argument("--host", default="localhost")
@@ -744,7 +771,7 @@ def main():
     g.add_argument("--net-rate", type=int, default=6)
     g.add_argument("--net-readonly", action="store_true", help="network requests may read the board but not change it")
     ARGS = p.parse_args()
-    ARGS.root = os.path.abspath(os.path.expanduser(ARGS.root))
+    ARGS.root = resolve_path(ARGS.root)
 
     agent = Agent(ARGS)
     threading.Thread(target=agent.worker, daemon=True).start()
@@ -762,6 +789,13 @@ def main():
          "Comment" if llm_ok else "WarningMsg")
     chat("Ask me about the board or tell me what to change. ===h help · F8 network pane", "Comment")
     iface_log("IFACE — Intelligence Network traffic and decisions (F8 back to chat)", "Title")
+    import knbg_iface
+    if knbg_iface.INET_ERROR:
+        iface_log("⚠️ Intelligence Network driver not loaded; knbg works on the board but cannot join.", "ErrorMsg")
+        iface_log("   " + knbg_iface.INET_ERROR, "ErrorMsg")
+        chat("⚠️ network driver not found (details: F8). Board work is unaffected.", "WarningMsg")
+    else:
+        iface_log(f"   inet driver: {knbg_iface.INET_DIR}", "Comment")
     if ARGS.net_name:
         agent.iface.join()
     agent.emit_state()

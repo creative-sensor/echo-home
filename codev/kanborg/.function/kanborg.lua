@@ -22,7 +22,16 @@
 local M = {}
 local api, fn = vim.api, vim.fn
 
-local SCRIPT_DIR = fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h")
+--- Git Bash/MSYS hands nvim paths like /c/Users/..; native Windows python needs C:/Users/.. (as in memphia.lua).
+local function native(path)
+  if fn.has("win32") == 1 and path then
+    local drive, rest = path:match("^[/\\]([a-zA-Z])[/\\](.*)$")
+    if drive and fn.isdirectory(path) == 0 and fn.filereadable(path) == 0 then path = drive:upper() .. ":/" .. rest end
+    path = path:gsub("\\", "/")
+  end
+  return path
+end
+local SCRIPT_DIR = native(fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h"))
 M.root = fn.fnamemodify(SCRIPT_DIR, ":h")
 M.core = SCRIPT_DIR .. "/kanborg.py"
 local STATUSES = { "BACKLOG", "TODO", "HOLD", "WIP", "DONE" }
@@ -32,6 +41,7 @@ local NS = api.nvim_create_namespace("kanborg")
 
 local function python()
   if vim.g.kanborg_python then return vim.g.kanborg_python end
+  if fn.has("win32") == 1 and fn.executable("python") == 1 then return "python" end -- python3 may be the Store stub
   return fn.executable("python3") == 1 and "python3" or "python"
 end
 
