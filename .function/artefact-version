@@ -1,0 +1,42 @@
+#!/bin/bash
+source $(dirname $0)/context_overrider
+set -euo pipefail
+
+
+#!/usr/bin/env bash
+set -euo pipefail
+
+FILE=".properd/artefacts.yaml"
+
+if [[ $# -ne 2 ]]; then
+    echo "Usage: $0 <package_name> <version>"
+    exit 1
+fi
+
+PACKAGE="$1"
+VERSION="${2#v}"
+
+if ! command -v yq >/dev/null 2>&1; then
+    echo "Error: yq (Mike Farah) is required."
+    exit 1
+fi
+
+if [[ ! -f "$FILE" ]]; then
+    echo "Error: $FILE not found."
+    exit 1
+fi
+
+export PACKAGE VERSION
+
+if ! yq -e 'has(strenv(PACKAGE)) and (.[strenv(PACKAGE)] | tag == "!!seq")' "$FILE" >/dev/null; then
+    echo "Error: Package '$PACKAGE' not found or has invalid format."
+    exit 1
+fi
+
+yq -i '
+    .[strenv(PACKAGE)][0] = strenv(VERSION) |
+    .[strenv(PACKAGE)][1] |= sub("v?[0-9]+\\.[0-9]+\\.[0-9]+", "v" + strenv(VERSION))
+' "$FILE"
+
+sed -i 's/\r$//' "$FILE"
+echo "Updated $PACKAGE to $VERSION"

@@ -1,0 +1,60 @@
+# Workflow: artefact-ready [v2]
+
+How to manage artefact packages using artefact-ready facility
+
+## 2. Instructions
+- Complete part or full of DAG (defined by pseudo makefile, do not run with `make` tool) to meet user intent
+- If target got failure, hold execution of its parent target. Instead make sure all of its dependency targets completed
+
+## Inventory Directory
+
+| OS Context | Path                            |
+| ---------- | ------------------------------- |
+| Windows    | `~/echo-home/windows`           |
+| Mac OS     | `~/echo-home/workstation/macos` |
+| Linux      | `~/echo-home`                   |
+
+## Workflow 
+
+```Makefile
+inventory:
+    # Description: check if <package> exists in inventory
+    # Command: `cd <inventory_path>; cat .properd/artefacts.yaml | grep <package>`
+    # Success: output show `package` name
+    # Failure: output show no `package` name, workflow can be aborted immediately
+    # Output: <package_name> , <package_version>
+
+download: inventory
+    # Description: download package
+    # Command: `.function/artefact-geti <package>`
+    # Success: no error found in output
+    # Failure: error found in output 
+    # Input: <package_name>
+    # Retry: once only
+
+update_version: inventory
+    # Description: update new version for a specific package
+    # Command: `artefact-version <package_name> <new_version>`
+    # Success: output `Updated`
+    # Failure: error found in output 
+    # Input: <package_name>, <new_version>
+    # Retry: once only
+
+register_checksum: download
+    # Description: append sha256sum entries in `.properd/artefact.sha256sum` when new version of package is updated
+    # Command: `artefact-256sum <package_name>`
+    # Success: output with `[Entry appended]`
+    # Failure: you might have to run download to make package available at local
+
+check_sum: inventory download
+    # Description: verify package integrity 
+    # Command: `.function/artefacts <package_name>`
+    # Success: output with `<package_name>-<package_version>.*: OK`
+    # Failure: output without `<package_name>-<package_version>.*: OK`
+deploy: check_sum
+    # Description: install package into system
+    # Command: `.function/artefact-readi <package>`
+    # Success: no error found in output
+    # Failure: error found in output
+    # Input: check_sum must be OK and match current version found in inventory
+```
