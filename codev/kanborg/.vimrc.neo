@@ -264,6 +264,22 @@ if filereadable(s:kanborg_media)
 endif
 
 
+"-------- [KANBORG TOOLS & VIEWS] --------
+" card editing, links, progress/deps/timeline views  (,? for help)
+"let g:kanborg_prefix = ','
+let s:kanborg_tools = expand('<sfile>:p:h').'/.function/kanborg.lua'
+if has('nvim') && filereadable(s:kanborg_tools)
+    exec 'luafile '.fnameescape(s:kanborg_tools)
+endif
+
+" optional: keymaps for knbg, the Kanborg operator agent (knbg1 loads it). Only the vimpage is sourced here;
+" no agent code runs until you ask for it, and the tool starts normally when the file is absent.
+let s:knbg_page = expand('~/echo-home/.vim/mimd/vimpage_knbg')
+if has('nvim') && filereadable(s:knbg_page)
+    exec 'source '.fnameescape(s:knbg_page)
+endif
+
+
 "-------- [AUTOCMD] --------
 autocmd FileType yaml  : set tabstop=2
 autocmd VimEnter * silent call Kolumns()
