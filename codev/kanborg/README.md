@@ -12,8 +12,8 @@
 - [datum/2026/WIP/CORTA-21.md](datum/2026/WIP/CORTA-21.md)   ```# vllm : library```
 - [datum/2026/WIP/KITE-25.md](datum/2026/WIP/KITE-25.md)   ```# cli : mistral-vibe```
 - [datum/2026/WIP/MDOS-22.md](datum/2026/WIP/MDOS-22.md)   ```# lang runtime : lua```
+- [datum/2026/WIP/MEMR-4.md](datum/2026/WIP/MEMR-4.md)   ```# uvian cell: revision 2```
 - [datum/2026/WIP/VIM-31.md](datum/2026/WIP/VIM-31.md)   ```# vimpage : vllm```
-- [datum/2026/WIP/VIM-35.md](datum/2026/WIP/VIM-35.md)   ```# vimpage_inet: intelligence network```
 
 ### 2 ON HOLD
 
@@ -170,6 +170,7 @@
 - [datum/2026/DONE/VIM-3.md](datum/2026/DONE/VIM-3.md)   ```# monitor : TUI dashboard```
 - [datum/2026/DONE/VIM-33.md](datum/2026/DONE/VIM-33.md)   ```# vimpage_mmph : VTUI for memphia ```
 - [datum/2026/DONE/VIM-34.md](datum/2026/DONE/VIM-34.md)   ```# vimpage : neos```
+- [datum/2026/DONE/VIM-35.md](datum/2026/DONE/VIM-35.md)   ```# vimpage_inet: intelligence network```
 - [datum/2026/DONE/VIM-4.md](datum/2026/DONE/VIM-4.md)   ```# rc : container x-ray```
 
 ### 5 BACKLOG
