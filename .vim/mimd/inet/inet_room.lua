@@ -13,6 +13,7 @@ end
 local I = package.loaded.inet
 local R = {}
 local api, fn = vim.api, vim.fn
+local Logixa = dofile(I.dir .. "/inet_logixa.lua")
 
 local NS = api.nvim_create_namespace("inet_room")
 local NS_PROMPT = api.nvim_create_namespace("inet_room_prompt")
@@ -21,7 +22,7 @@ local ROSTER_WIDTH = 34
 local PALETTE = { "#5fafff", "#87d787", "#ff875f", "#d787ff", "#5fd7d7", "#ffaf5f", "#ff5f87", "#afd75f",
   "#87afff", "#d7af87" }
 local STATE_ICON = { deliberating = "🤔", thinking = "💭", listening = "👂", offline = "✖" }
-local HELP = "plain text → room │ @name → point-to-point │ @all → everyone │ <Tab> complete @name │ /who /clear /quit"
+local HELP = "plain text → room │ @name → point-to-point │ @all → everyone │ <Tab> complete @name │ L#<n> quote │ /who /theme /clear /quit"
 
 local rooms = {} -- network name -> room
 
@@ -39,6 +40,7 @@ local function define_highlights()
     InetWhisper = { fg = "#af87d7", italic = true },
     InetDim = { fg = "#808080" },
     InetPrompt = { bg = "#005f5f", fg = "#ffffff", bold = true },
+    InetQuote = { fg = "#ccd5ae", bg = "#e9edc9", italic = true },
     InetHint = { fg = "#808080" },
   }
   for name, spec in pairs(hl) do
@@ -83,6 +85,7 @@ local function chat_append(r, lines, hls)
   for _, h in ipairs(hls) do
     pcall(api.nvim_buf_set_extmark, buf, NS, start + h[1], h[2], { end_col = h[3], hl_group = h[4], priority = h[5] or 100 })
   end
+  if r.logixa then r.logixa:append(lines) end
   local total = api.nvim_buf_line_count(buf)
   if total > MAX_LINES then
     api.nvim_buf_set_lines(buf, 0, total - MAX_LINES, false, {})
@@ -126,6 +129,9 @@ local function render_msg(r, m)
       if whisper then hls[#hls + 1] = { row, name_e, name_e + #arrow, "InetWhisper" } end
     end
     if whisper then hls[#hls + 1] = { row, #prefix, #prefix + #l, "InetWhisper" } end
+    if l:match("^> ") then
+      hls[#hls + 1] = { row, #prefix, #prefix + #l, "InetQuote", 150 }
+    end
     local s = 1
     while true do
       local a, b, who = l:find("@([%w_%.%-]+)", s)
@@ -232,6 +238,29 @@ local function on_submit(r, text)
       api.nvim_buf_set_lines(r.bufs.chat, 0, -1, false, {})
       api.nvim_buf_clear_namespace(r.bufs.chat, NS, 0, -1)
       vim.bo[r.bufs.chat].modifiable = false
+    elseif cmd == "theme" then
+      if r.logixa then
+        local arg = text:match("^/%S+%s+(.+)$")
+        if arg then
+          arg = vim.trim(arg)
+          local saved = r.logixa:set_theme(arg)
+          vim.bo[r.bufs.chat].modifiable = true
+          api.nvim_buf_set_lines(r.bufs.chat, 0, -1, false, saved)
+          api.nvim_buf_clear_namespace(r.bufs.chat, NS, 0, -1)
+          vim.bo[r.bufs.chat].modifiable = false
+          r.follow = true
+          local n = api.nvim_buf_line_count(r.bufs.chat)
+          if valid_win(r.wins.chat) then pcall(api.nvim_win_set_cursor, r.wins.chat, { n, 0 }) end
+          sys(r, "theme: " .. (r.logixa.theme or os.date("%Y-%m-%d")) .. " — log: " .. r.logixa:path())
+        else
+          sys(r, "theme: " .. (r.logixa.theme or "(date: " .. os.date("%Y-%m-%d") .. ")")
+            .. " — log: " .. r.logixa:path() .. " (" .. r.logixa:count() .. " lines)")
+        end
+      end
+    elseif cmd == "log" then
+      if r.logixa then
+        sys(r, "log: " .. r.logixa:path() .. " (" .. r.logixa:count() .. " lines)")
+      end
     elseif cmd == "quit" or cmd == "leave" then
       vim.schedule(function() R.quit(r.key) end)
     else
@@ -240,6 +269,23 @@ local function on_submit(r, text)
     return
   end
   if not r.client.connected then return sys(r, "not connected — :InetRoom " .. r.key .. " to reconnect", "InetErr") end
+  if r.logixa then
+    text = text:gsub("L#(%d+),(%d+)", function(a, b)
+      a, b = tonumber(a), tonumber(b)
+      if a > b then a, b = b, a end
+      local out = {}
+      for i = a, b do
+        local line = r.logixa:line(i)
+        if line then out[#out + 1] = "> " .. vim.trim(line) end
+      end
+      return #out > 0 and ("\n" .. table.concat(out, "\n") .. "\n") or ("L#" .. a .. "," .. b)
+    end)
+    text = text:gsub("L#(%d+)", function(n)
+      local line = r.logixa:line(tonumber(n))
+      return line and ("\n> " .. vim.trim(line) .. "\n") or ("L#" .. n)
+    end)
+    text = text:gsub("^\n+", ""):gsub("\n+$", ""):gsub("\n\n+", "\n")
+  end
   r.client:say(text)
 end
 
@@ -408,7 +454,12 @@ api.nvim_create_autocmd("WinScrolled", {
 })
 api.nvim_create_autocmd("VimLeavePre", {
   group = group,
-  callback = function() for _, r in pairs(rooms) do r.client:send({ t = "bye" }) end end,
+  callback = function()
+    for _, r in pairs(rooms) do
+      r.client:send({ t = "bye" })
+      if r.logixa then r.logixa:close() end
+    end
+  end,
 })
 
 -- ---------------------------------------------------------------- public API
@@ -430,8 +481,23 @@ function R.open(opts)
     watch = cfg.watch, on_message = function(c, msg) on_message(r, c, msg) end })
   rooms[r.key] = r
   r.bufs = create_buffers(r)
+  r.logixa = Logixa.new()
+  if opts.theme or vim.g.inet_theme then
+    r.logixa.theme = tostring(opts.theme or vim.g.inet_theme)
+  end
+  local saved = r.logixa:open()
+  if #saved > 0 then
+    vim.bo[r.bufs.chat].modifiable = true
+    api.nvim_buf_set_lines(r.bufs.chat, 0, -1, false, saved)
+    vim.bo[r.bufs.chat].modifiable = false
+    r.seen_history = true
+  end
   set_keymaps(r)
   build_layout(r)
+  if r.seen_history and valid_win(r.wins.chat) then
+    local n = api.nvim_buf_line_count(r.bufs.chat)
+    pcall(api.nvim_win_set_cursor, r.wins.chat, { n, 0 })
+  end
   r.client:connect()
 end
 
@@ -444,6 +510,7 @@ function R.quit(key)
   end
   if not r then return I.notify("no room " .. (key and ("'" .. key .. "' ") or "in this tab")) end
   rooms[r.key] = nil
+  if r.logixa then r.logixa:close() end
   r.client:close()
   if r.tab and api.nvim_tabpage_is_valid(r.tab) and #api.nvim_list_tabpages() > 1 then
     pcall(vim.cmd, "tabclose " .. api.nvim_tabpage_get_number(r.tab))

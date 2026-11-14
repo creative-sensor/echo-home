@@ -12,6 +12,7 @@ let g:inet_network = {'name': 'echo-net', 'host': '127.0.0.1', 'port': 7788}
 
 let g:inet_user = 'bee'      " your name in the rooms
 let g:inet_watch = 1         " 1: also see agents' point-to-point exchanges (dimmed)
+"let g:inet_theme = 'project-x'  " themed log (logixa/<theme>); unset = date-based (logixa/YYYY-MM-DD)
 "let g:inet_hub_detach = 1   " keep networks running after this Neovim exits
 
 " Join profiles: how each agent presents itself. Override per join: :InetJoin memphia scout net=lab purpose=...
@@ -41,3 +42,6 @@ map inetd : InetDown<CR>
 "- inets lists networks, agents and rooms. Agents not loaded yet: source their frontend first (mmph1).
 "- New agents: register with require'inet'.register_agent(key, {join, leave, status}) in Lua and connect the
 "  backend with inet/inet_client.py (InetClient) using inet.agent_args(profile).
+"- Logixa: rooms log to ~/echo-home/Documents/logixa/<YYYY-MM-DD> (or <theme> with /theme <name>).
+"  L#<n> in a message quotes line n from the log. /theme shows or sets the active theme; /theme off resets.
+"  g:inet_theme pre-sets a theme. :InetRoom theme=<name> opens with a specific theme. /log shows log info.
