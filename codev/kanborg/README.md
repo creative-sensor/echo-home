@@ -12,8 +12,8 @@
 - [datum/2026/WIP/CORTA-21.md](datum/2026/WIP/CORTA-21.md)   ```# vllm : library```
 - [datum/2026/WIP/KITE-25.md](datum/2026/WIP/KITE-25.md)   ```# cli : mistral-vibe```
 - [datum/2026/WIP/MDOS-22.md](datum/2026/WIP/MDOS-22.md)   ```# lang runtime : lua```
-- [datum/2026/WIP/MEMR-4.md](datum/2026/WIP/MEMR-4.md)   ```# uvian cell: revision 2```
 - [datum/2026/WIP/VIM-31.md](datum/2026/WIP/VIM-31.md)   ```# vimpage : vllm```
+- [datum/2026/WIP/VIM-36.md](datum/2026/WIP/VIM-36.md)   ```# inet: logixa```
 
 ### 2 ON HOLD
 
@@ -153,6 +153,7 @@
 - [datum/2026/DONE/MEMR-1.md](datum/2026/DONE/MEMR-1.md)   ```# llamark : prompt memory```
 - [datum/2026/DONE/MEMR-2.md](datum/2026/DONE/MEMR-2.md)   ```# llamark : restore on cache miss```
 - [datum/2026/DONE/MEMR-3.md](datum/2026/DONE/MEMR-3.md)   ```# uvian : rank cell against free text input```
+- [datum/2026/DONE/MEMR-4.md](datum/2026/DONE/MEMR-4.md)   ```# uvian cell: revision 2```
 - [datum/2026/DONE/SPEC-3.md](datum/2026/DONE/SPEC-3.md)   ```# Foldable : system ```
 - [datum/2026/DONE/SPEC-4.md](datum/2026/DONE/SPEC-4.md)   ```# objectory : re-define```
 - [datum/2026/DONE/SPEC-5.md](datum/2026/DONE/SPEC-5.md)   ```# yson : re-define```
