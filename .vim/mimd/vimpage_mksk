@@ -3,7 +3,7 @@ let g:mksk_args = ['--port', get(g:, 'LMSH_PORT', 8080)]
 let g:mksk_layout = 'right'
 "let g:mksk_toggle_key = '<M-m>'
 " plan folder = the current directory when mksk starts. Override:
-"let g:mksk_dir = '~/echo-home/Documents/plans'
+"let g:mksk_dir = '~/echo-home/Documents/mksk'
 " plan opened at start = the most up-to-date mksk--<plan>--YYYY-MM-DD.md in the folder, else a zero plan. Override:
 "let g:mksk_plan = 'db-migration'
 
@@ -32,7 +32,8 @@ map mkskq : MkskQuit<CR>
 "- Nothing is written without you: edits are staged and shown as a diff. y applies, n drops, v opens saved | proposed side
 "  by side (mkskd any time), any other text tells it what to change. Approved changes always go to today's file (the
 "  first one of a day creates it from the newest); older files are never written. Suggestions: pick numbers (1,3), all,
-"  none, or answer in your own words; Enter on an option line picks it.
+"  none, w (skip them and go straight to the diff of what is staged), or answer in your own words; Enter on an option
+"  line picks it.
 "- Memory: the whole chat stays in its context from start to quit (mkskq); ===r forgets it. ===s shows where the plan stands.
 "- Intelligence Network: task assignment exists only once mksk joins it. mkskj joins echo-net as @mksk (name/purpose:
 "  g:inet_agents.mksk in vimpage_inet, optional). Then "assign dump_restore to memphia" records the agent and sends it

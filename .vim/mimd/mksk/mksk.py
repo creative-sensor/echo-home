@@ -486,7 +486,8 @@ HELP_TEXT = f"""{BOLD}mksk commands{RST}
   ===n            network status   ===nj [name] [purpose] join   ===nl leave   ===ns <text> say   ===nw who
 {BOLD}Answers{RST}
   staged edits:   y apply │ n drop │ v side by side │ or type what to change
-  suggestions:    numbers (1,3) │ all │ none │ or answer in your own words  (<CR> on an option line picks it)
+  suggestions:    numbers (1,3) │ all │ none │ w skip them and write what is staged │ or answer in your own words
+                  (<CR> on an option line picks it)
 {BOLD}Keys{RST} (in the float)  C-x interrupt │ C-c cancel/clear │ F2 log │ F8 network │ M-h/j/k/l dock, M-c center, M-f full, M-b peek │ q/Esc hide │ ↑/↓ history"""
 
 EDITS = {"add_sub", "set_overview", "add_target", "edit_target", "set_weights", "note", "remove_target"}
@@ -549,6 +550,7 @@ class MkskAgent:
         self.history: List[dict] = []         # the conversation since startup: {"role", "content", "k"}
         self.trim_told = False
         self.ops: List[Tuple[str, dict]] = []  # edits staged by the running request (replayable)
+        self.write_now = False                 # the user answered a PICK with w
         self.deferred: deque = deque()         # changes made for the network, waiting for the user
         self.plan_info: dict = {}              # last P.state()
         from mksk_iface import IFace
@@ -952,6 +954,7 @@ class MkskAgent:
                 continue
             self.cancel_event.clear()
             self.interrupt_event.clear()
+            self.write_now = False
             with self.lock:
                 self.busy, self.current = True, task
             BRIDGE.mark_dirty()
@@ -1105,12 +1108,7 @@ class MkskAgent:
                     self.note(f"The user did not approve the staged edits yet and answered: {detail}\n"
                               "Adjust the edits (they are still staged), then declare_result again.", "res")
                     continue
-                if outcome == "saved":
-                    self.note(f"System: the user APPROVED the staged edits: {detail}.")
-                elif outcome == "discarded":
-                    self.note("System: the user REJECTED the staged edits; they were dropped and the file is unchanged.")
-                elif outcome == "deferred":
-                    self.note("System: the staged edits were queued for the user's approval; they are NOT in the file yet.")
+                self.settled(outcome, detail)
                 return status, reply, outcome
 
             label = " ".join(f"{k}={short(v if isinstance(v, str) else json.dumps(v, ensure_ascii=False), 60)}"
@@ -1135,6 +1133,11 @@ class MkskAgent:
             else:
                 chat(dim(f"    → {short(first, 240)}{more}"))
             self.note(f"[RESULT of {kind}]\n{clip(evidence, ARGS.max_output)}", "res")
+            if self.write_now:  # "w" at a PICK: no more LLM turns, straight to the write approval
+                self.write_now = False
+                done = self.write_staged(origin)
+                if done:
+                    return done
         chat(f"{YELLOW}⚠ max turns reached{RST}")
         self.note(f"System: the request stopped after {ARGS.max_turns} steps; nothing staged was saved.")
         return "FAILED", f"Stopped after {ARGS.max_turns} steps without a result.", "none"
@@ -1191,6 +1194,43 @@ class MkskAgent:
             return "posted" if self.iface.say(str(a.get("text") or ""), to=to) else "System: not sent (not connected or empty)."
         return f"Error: unknown action_type '{kind}'. Use one of: {', '.join(ACTION_NAMES)}"
 
+    def settled(self, outcome: str, detail: str):
+        """Tell the LLM how the staged edits of this request ended."""
+        if outcome == "saved":
+            self.note(f"System: the user APPROVED the staged edits: {detail}.")
+        elif outcome == "discarded":
+            self.note("System: the user REJECTED the staged edits; they were dropped and the file is unchanged.")
+        elif outcome == "deferred":
+            self.note("System: the staged edits were queued for the user's approval; they are NOT in the file yet.")
+
+    def write_staged(self, origin: Optional[dict]) -> Optional[Tuple[str, str, str]]:
+        """The user answered a PICK with w: add none of the suggestions and settle what is staged right away.
+        Returns the request's result, or None when the LLM must act first (name the plan, or revise the edits)."""
+        if not self.ops:
+            reply = "Suggestions skipped; nothing is staged, so nothing was written."
+            chat(f"\033[1;32m◆{RST} {reply}")
+            self.history.append({"role": "assistant", "k": "final", "content": json.dumps(
+                {"action_type": "declare_result", "status": "SUCCESS", "reply": reply}, ensure_ascii=False)})
+            return "SUCCESS", reply, "none"
+        if not self.plan_state().get("name"):
+            chat(dim("  ↪ the plan needs a name before it can be saved"))
+            self.note("System: the user wants to write now, but the plan has no name yet. Call name_plan with a short "
+                      "kebab-case name taken from its goal, then declare_result.", "res")
+            return None
+        chat(f"\033[1;32m◆{RST} suggestions skipped: writing what is staged")
+        outcome, detail = self.review(origin)
+        if outcome == "revise":
+            self.note(f"The user did not approve the staged edits yet and answered: {detail}\n"
+                      "Adjust the edits (they are still staged), then declare_result again.", "res")
+            return None
+        reply = {"saved": f"Suggestions skipped; {detail}.",
+                 "discarded": "Suggestions skipped; the staged edits were dropped.",
+                 "deferred": "Suggestions skipped; the change waits for approval."}.get(outcome, "Suggestions skipped; nothing changed.")
+        self.history.append({"role": "assistant", "k": "final", "content": json.dumps(
+            {"action_type": "declare_result", "status": "SUCCESS", "reply": reply}, ensure_ascii=False)})
+        self.settled(outcome, detail)
+        return "SUCCESS", reply, outcome
+
     def suggest(self, a: dict, origin: Optional[dict]) -> str:
         """Offer options and let the user choose; nothing is staged here."""
         if origin:
@@ -1201,9 +1241,12 @@ class MkskAgent:
         if not opts:
             return f"The user answered: {self.ask_user('question', 'ANSWER', f'{BOLD}❔ {question}{RST}')}"
         listing = "\n".join(f"   {i}. {o}" for i, o in enumerate(opts, 1))
-        ans = self.ask_user("choice", "PICK 1,3/all/none", f"{BOLD}❔ {question}{RST}\n{listing}\n"
-                            + dim("   pick numbers (1,3) · all · none · or answer in your own words"))
+        ans = self.ask_user("choice", "PICK 1,3/all/none/w", f"{BOLD}❔ {question}{RST}\n{listing}\n"
+                            + dim("   pick numbers (1,3) · all · none · w skip and write what is staged · or answer in your own words"))
         low = ans.lower()
+        if low in ("w", "write"):
+            self.write_now = True
+            return "The user chose w: skip the suggestions (add none of them) and write what is staged now."
         if low in ("all", "a", "*", "y", "yes"):
             chosen = list(range(len(opts)))
         elif low in ("none", "n", "no", "0", "-", ""):
