@@ -77,6 +77,7 @@
 - [datum/2026/TODO/VIM-27.md](datum/2026/TODO/VIM-27.md)   ```# GML : talk```
 - [datum/2026/TODO/VIM-30.md](datum/2026/TODO/VIM-30.md)   ```# lmsh : console page```
 - [datum/2026/TODO/VIM-32.md](datum/2026/TODO/VIM-32.md)   ```# lmsh : instant promptia```
+- [datum/2026/TODO/VIM-37.md](datum/2026/TODO/VIM-37.md)   ```# vimpage_mksk: make-sketch```
 
 ### 4 DONE
 
