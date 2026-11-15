@@ -1,7 +1,8 @@
 -- mksk_plan.lua: the built-in plan functions of mksk (requires Neovim >= 0.10).
 --
 -- Reads, edits and writes plan files in the make-sketch format (~/echo-home/Documents/specs/make-sketch.md):
---   mksk--<plan_name>--YYYY-MM-DD.md, sub-documents separated by '---', each with  # overview  # targets  # DAG.
+--   mksk--<plan_name>--YYYY-MM-DD.md, sub-documents separated by '---', each with  # OVERVIEW  # TARGET  # DAG.
+--   (Headers are read case-insensitively, "# targets" too, and always written in upper case.)
 --
 -- Everything works on a staged working copy. Edit functions change the copy only; P.diff() / P.show_diff()
 -- show what would change; P.commit() writes TODAY's snapshot (created from the newest one when the day changed;
@@ -25,6 +26,7 @@ local uv = vim.uv or vim.loop
 local vdiff = (vim.text and vim.text.diff) or vim.diff
 
 local STD_COLS = { "Wx", "target", "description", "status", "agent" }
+local TITLES = { overview = "OVERVIEW", targets = "TARGET", dag = "DAG" } -- section headers as written to the file
 local STD = { target = true, description = true, status = true, agent = true }
 local STATUS = { TODO = true, WIP = true, DONE = true }
 local NAME_PAT = "^[%w_%.%-]+$"
@@ -227,7 +229,8 @@ local function parse_sub(lines)
     local title = not fence and l:match("^#%s+(.-)%s*$")
     if title then
       local k = title:lower()
-      cur = { title = title, kind = (k == "overview" or k == "targets" or k == "dag") and k or "other", lines = {} }
+      local kind = (k == "overview" or k == "dag") and k or (k == "target" or k == "targets") and "targets" or "other"
+      cur = { title = title, kind = kind, lines = {} }
       sub.sections[#sub.sections + 1] = cur
     elseif cur then
       cur.lines[#cur.lines + 1] = l
@@ -263,7 +266,7 @@ local function sec(sub, kind, create)
     if s.kind == kind then return s end
   end
   if not create then return nil end
-  local s = { kind = kind, title = kind == "dag" and "DAG" or kind, lines = {} }
+  local s = { kind = kind, title = TITLES[kind], lines = {} }
   if kind == "targets" then
     s.pre, s.rows, s.post, s.cols = {}, {}, {}, vim.deepcopy(STD_COLS)
   elseif kind == "dag" then
@@ -465,7 +468,7 @@ local function render(doc)
     end
     for j, s in ipairs(sub.sections) do
       if j > 1 then out[#out + 1] = "" end
-      out[#out + 1] = "# " .. s.title
+      out[#out + 1] = "# " .. (TITLES[s.kind] or s.title)
       if s.kind == "targets" then
         extend(s.pre)
         render_table(s, out)
@@ -764,7 +767,7 @@ function P.validate()
     if names[sn] then warn("sub-document name is used twice") end
     names[sn] = true
     for _, kind in ipairs({ "overview", "targets", "dag" }) do
-      if not sec(sub, kind) then warn("section # " .. (kind == "dag" and "DAG" or kind) .. " is missing") end
+      if not sec(sub, kind) then warn("section # " .. TITLES[kind] .. " is missing") end
     end
     if not ov_get(sub, "name") then warn("overview has no name:") end
     if (ov_get(sub, "resume") or "") == "" then warn("overview has no resume: line") end
@@ -857,7 +860,7 @@ function P.add_sub(a)
     end
     local sub = { head = {}, sections = {} }
     doc.subs[#doc.subs + 1] = sub
-    sec(sub, "overview", true).title = "overview"
+    sec(sub, "overview", true)
     ov_set(sub, "name", name)
     ov_set(sub, "goal", a.goal or "")
     ov_set(sub, "resume", a.resume or "nothing started")

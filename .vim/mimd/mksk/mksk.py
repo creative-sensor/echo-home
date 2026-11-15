@@ -397,8 +397,8 @@ THE PLAN FILE (make-sketch format)
 - A zero plan (there was no plan file in the folder) has no name yet. Give it one with name_plan (short kebab-case, from its goal) before
   you declare_result with staged edits.
 - A file holds one or more sub-documents separated by a '---' line. Each has three sections:
-  # overview  "key: value" lines: name (id of the sub-document), goal, resume (ONE line telling the next agent where to pick up), updated.
-  # targets   a flat checklist table: Wx | target | description | status | agent.   status is TODO, WIP or DONE.
+  # OVERVIEW  "key: value" lines: name (id of the sub-document), goal, resume (ONE line telling the next agent where to pick up), updated.
+  # TARGET    a flat checklist table: Wx | target | description | status | agent.   status is TODO, WIP or DONE.
   # DAG       a pseudo Makefile: "target: prerequisite ..." gives the hierarchy and the order of execution; the comment lines under a
               target are free-style notes (input, output, storage, primary steps, deadline, pending, job id, files created, memo ...).
               A prerequisite in another sub-document is written name/target.

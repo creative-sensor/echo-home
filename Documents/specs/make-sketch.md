@@ -11,12 +11,12 @@ completion). It is kept simple so an agent taking over can spot where to resume.
   file (created from the newest one on the first change of the day), never to an older one.
 - **Sub-documents:** each file holds one or more, separated by a `---` line with a blank line
   above and below.
-- **Sections:** every sub-document has exactly three, in this order: `# overview`, `# targets`,
-  `# DAG`.
+- **Sections:** every sub-document has exactly three, in this order: `# OVERVIEW`, `# TARGET`,
+  `# DAG`. Headers are written in upper case.
 
 ## Sections
 
-### overview
+### OVERVIEW
 
 A few `key: value` lines. Free-form, but these four are expected:
 
@@ -27,7 +27,7 @@ A few `key: value` lines. Free-form, but these four are expected:
 | resume  | one line telling the next agent where to pick up                     |
 | updated | date and agent of the last edit                                      |
 
-### targets
+### TARGET
 
 A flat checklist as a markdown table with five columns:
 
@@ -77,13 +77,13 @@ A pseudo Makefile in a fenced `Makefile` block. It is the oversight map of the p
 ## Template
 
 ````markdown
-# overview
+# OVERVIEW
 name: schema-migration
 goal: move the orders db from pg13 to pg16 with under 5 min downtime
 resume: dump_restore is WIP; dump finished, restore not started (see DAG)
 updated: 2026-11-15 by agent-kilo
 
-# targets
+# TARGET
 | Wx     | target       | description                          | status | agent      |
 |--------|--------------|--------------------------------------|--------|------------|
 | [10,1] | verifier     | run regression suite, get sign-off   | TODO   |            |
@@ -118,13 +118,13 @@ verifier: cutover
 
 ---
 
-# overview
+# OVERVIEW
 name: client-rollout
 goal: ...
 resume: nothing started; blocked until schema-migration/cutover is DONE
 updated: 2026-11-15 by agent-kilo
 
-# targets
+# TARGET
 | Wx | target | description | status | agent |
 |----|--------|-------------|--------|-------|
 
