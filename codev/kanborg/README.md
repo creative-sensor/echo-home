@@ -77,7 +77,7 @@
 - [datum/2026/TODO/VIM-27.md](datum/2026/TODO/VIM-27.md)   ```# GML : talk```
 - [datum/2026/TODO/VIM-30.md](datum/2026/TODO/VIM-30.md)   ```# lmsh : console page```
 - [datum/2026/TODO/VIM-32.md](datum/2026/TODO/VIM-32.md)   ```# lmsh : instant promptia```
-- [datum/2026/TODO/VIM-37.md](datum/2026/TODO/VIM-37.md)   ```# vimpage_mksk: make-sketch```
+- [datum/2026/TODO/VIM-38.md](datum/2026/TODO/VIM-38.md)   ```# mksk: relayout```
 
 ### 4 DONE
 
@@ -174,6 +174,7 @@
 - [datum/2026/DONE/VIM-33.md](datum/2026/DONE/VIM-33.md)   ```# vimpage_mmph : VTUI for memphia ```
 - [datum/2026/DONE/VIM-34.md](datum/2026/DONE/VIM-34.md)   ```# vimpage : neos```
 - [datum/2026/DONE/VIM-35.md](datum/2026/DONE/VIM-35.md)   ```# vimpage_inet: intelligence network```
+- [datum/2026/DONE/VIM-37.md](datum/2026/DONE/VIM-37.md)   ```# vimpage_mksk: make-sketch```
 - [datum/2026/DONE/VIM-4.md](datum/2026/DONE/VIM-4.md)   ```# rc : container x-ray```
 
 ### 5 BACKLOG
