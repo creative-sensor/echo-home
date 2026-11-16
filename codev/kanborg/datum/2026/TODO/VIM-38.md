@@ -1,4 +1,4 @@
-# vimpage_mksk: make-sketch
+# mksk: relayout
 --------------------------------
 ### 0 DESCRIPTION
 
