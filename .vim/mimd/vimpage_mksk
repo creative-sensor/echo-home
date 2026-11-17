@@ -12,6 +12,7 @@ map mkski : exec 'Mksk --port '.get(g:, 'LMSH_PORT', 8080)<CR>
 map mkskt : MkskToggle<CR>
 map mkskd : MkskDiff<CR>
 map mkskf : MkskFile<CR>
+map mkskp : MkskReview<CR>
 map mkskj : InetJoin mksk<CR>
 map mkskl : InetLeave mksk<CR>
 map mkskq : MkskQuit<CR>
@@ -40,6 +41,16 @@ map mkskq : MkskQuit<CR>
 "- Intelligence Network: task assignment exists only once mksk joins it. mkskj joins echo-net as @mksk (name/purpose:
 "  g:inet_agents.mksk in vimpage_inet, optional). Then "assign dump_restore to memphia" records the agent and sends it
 "  the target's brief, after your y.
-"  Progress agents report to @mksk is staged and queued; ===p reviews the queue (y/n each). The network never writes the file.
+"  Progress agents report to @mksk is staged and queued for you; the network never writes the file. The queued changes
+"  show in the REVIEW pane right of the plan file (only while something waits): who reported it, the report, its edits
+"  and its diff against the saved plan. There: y applies it, n drops it, v (or Enter) shows saved | with it side by side,
+"  ]] / [[ jump between changes. ===p in the chat or mkskp goes to the pane. Applying waits for the running request;
+"  the reporter is told the verdict.
+"  An agent asking to give a target to an agent ("@mksk assign define_requirements to memphia") is queued the same way:
+"  the pane shows the edits (agent column, "assigned" note) and "✉ y also sends @memphia the brief of ...". y saves it
+"  and sends the brief; n drops it and nothing is sent. If that agent is off the network, y saves nothing and the
+"  change stays with a warning: y again once it is back.
+"- While mksk serves a network request (prompt badge QUEUE: what you type becomes your next request), it cannot ask you
+"  anything: a "suggest" it tries is denied, and it decides from the plan or says what is unclear in its answer.
 "- The plan functions are plain Lua (mksk_plan.lua): :lua require('mksk').plan.edit_target{target='cutover', status='WIP'}
 "  then :MkskDiff and :lua require('mksk').plan.commit()  (or .discard()).

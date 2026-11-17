@@ -3,9 +3,10 @@
 -- Cloned from neos.lua (one persistent chat buffer, the same prompt line, raw LLM log, steering and input history),
 -- trimmed to planning, with an IFACE pane for the network. mksk lives in a tab of its own:
 --
---   ┌───────────────────────────────────────────────────────┐
---   │ plan file (the plan mksk works on)                    │
---   ├──────────────────────┬──────────────────┬─────────────┤
+--   ┌──────────────────────────────────┬────────────────────┐
+--   │ plan file (the plan mksk works on)│ REVIEW             │  REVIEW: only while changes reported on the
+--   │                                  │                    │  network wait for you (y apply, n drop, v diff)
+--   ├──────────────────────┬───────────┴──────┬─────────────┤
 --   │ chat (input: last    │ raw LLM log      │ IFACE       │  IFACE: only while mksk is on the network
 --   │ line)                │                  │             │
 --   └──────────────────────┴──────────────────┴─────────────┘
@@ -26,6 +27,7 @@
 --   :[range]MkskAsk [text]           send text (with the range as [SELECTION]) without typing in the chat
 --   :MkskDiff                        saved | proposed plan, side by side in a tab (q closes it)
 --   :MkskFile                        focus the plan pane (and show the plan file there again if you left it)
+--   :MkskReview                      focus the REVIEW pane (also ===p in the chat)
 --   :MkskQuit                        stop the backend, wipe the chat and close the mksk tab
 --   :InetJoin mksk / :InetLeave mksk join / leave the Intelligence Network (profile g:inet_agents.mksk, optional)
 --
@@ -36,7 +38,11 @@
 -- In the chat pane: the last line is the input (a prompt buffer). Everything above is the transcript —
 -- normal-mode motions, search and yank work as usual.
 --   <CR> send │ ↑/↓ history │ C-x interrupt LLM │ C-c cancel request / clear line │ q (normal) back to the previous tab
---   <CR> (normal) on a numbered option picks it │ i/a/o (normal, also in the log and IFACE panes) go to the input
+--   <CR> (normal) on a numbered option picks it │ i/a/o (normal, also in the other panes) go to the input
+-- In the REVIEW pane (each change: who reported it, the report, its edits, and its diff against the saved plan):
+--   y apply it to the plan file │ n drop it │ v or <CR> saved | with it, side by side │ ]] / [[ next / previous change
+--   (applying waits for the running request; the reporter is told the verdict; an assignment asked on the network
+--   shows "✉ y also sends @agent the brief of <target>": y saves it and sends the brief)
 -- By hand: :lua require("mksk").plan.<function>{...}   (see mksk_plan.lua)
 
 local MODNAME = ...
@@ -50,7 +56,6 @@ end
 
 local M = {}
 local api, fn = vim.api, vim.fn
-local uv = vim.uv or vim.loop
 
 --- Git Bash/MSYS hands nvim paths like /c/Users/..; native Windows python needs C:/Users/.. (as in knbg.lua).
 local function native(path)
@@ -70,12 +75,15 @@ local HISTORY_FILE = fn.stdpath("data") .. "/mksk_history"
 local MAX_LINES = 10000
 local NS = api.nvim_create_namespace("mksk")
 local NS_PROMPT = api.nvim_create_namespace("mksk_prompt")
-local SPINNER = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
-local PANES = { "chat", "log", "iface" } -- the panes mksk owns (the plan pane above them shows the plan file)
-local PANE_TITLE = { chat = " MKSK ", log = " MKSK · LOG ", iface = " MKSK · IFACE " }
+local NS_REVIEW = api.nvim_create_namespace("mksk_review")
+local PANES = { "chat", "log", "iface", "queue" } -- the panes mksk owns (the plan pane shows the plan file)
+local PANE_TITLE = { chat = " MKSK ", log = " MKSK · LOG ", iface = " MKSK · IFACE ", queue = " MKSK · REVIEW " }
 local BOTTOM = 0.45 -- share of the tab height the chat row gets when the tab is laid out
+local REVIEW_WIDTH = 0.38 -- share of the tab width the REVIEW pane gets
+local REVIEW_DIFF = 14 -- diff lines shown per change in the REVIEW pane (v shows everything)
 
 local S -- session state; nil when nothing is running
+local render_queue -- the REVIEW pane (defined below)
 
 -- ---------------------------------------------------------------- highlights
 local function define_highlights()
@@ -89,6 +97,7 @@ local function define_highlights()
     MkskApprove = { bg = "#af0000", fg = "#ffffff", bold = true },
     MkskUser = { fg = "#5fd7ff", bold = true },
     MkskAttach = { bg = "#005f87", fg = "#ffffff" },
+    MkskReviewHead = { fg = "#ffd75f", bold = true },
   }
   for name, spec in pairs(hl) do
     spec.default = true
@@ -121,11 +130,9 @@ local function in_tab(w) return valid_win(w) and tab_valid() and api.nvim_win_ge
 --- The mksk tab is the current tab.
 local function shown() return S ~= nil and tab_valid() and api.nvim_get_current_tabpage() == S.tab end
 
---- w shows the chat, the log or the IFACE (not the plan pane).
-local function is_pane(w)
-  local b = api.nvim_win_get_buf(w)
-  return b == S.bufs.chat or b == S.bufs.log or b == S.bufs.iface
-end
+--- b is the chat, the log, the IFACE or the REVIEW buffer (not the plan).
+local function is_pane_buf(b) return b == S.bufs.chat or b == S.bufs.log or b == S.bufs.iface or b == S.bufs.queue end
+local function is_pane(w) return is_pane_buf(api.nvim_win_get_buf(w)) end
 
 local function target_win()
   if valid_win(S.target) and not is_float(S.target) and not is_pane(S.target) then return S.target end
@@ -158,10 +165,11 @@ local function position(win)
 end
 
 -- ---------------------------------------------------------------- pane status lines
+-- No animation: the bar changes only when the phase does (busy = orange, idle = green). A spinner redrawn on a timer
+-- made the status bars of the bottom panes flicker for as long as the LLM worked.
 local function phase_chunk()
   local st = S.state
-  local spin = st.busy and SPINNER[math.floor(uv.hrtime() / 1e8) % #SPINNER + 1] or "●"
-  return { " " .. spin .. " " .. oneline(st.phase or "starting") .. " ", st.busy and "MkskBusy" or "MkskIdle" }
+  return { " ● " .. oneline(st.phase or "starting") .. " ", st.busy and "MkskBusy" or "MkskIdle" }
 end
 
 local function net_chunk()
@@ -174,6 +182,12 @@ end
 local function pane_chunks(key)
   local st = S.state
   local left, right = { { PANE_TITLE[key], "MkskBadge" } }, {}
+  if key == "queue" then
+    local n = #S.queue
+    left[2] = { (" %d waiting "):format(n), n > 0 and "MkskApprove" or "MkskTitle" }
+    right[1] = { " y apply │ n drop │ v side by side │ ]] next ", "MkskHint" }
+    return left, right
+  end
   if key == "iface" then
     left[2] = net_chunk()
     local net = st.net or {}
@@ -191,7 +205,7 @@ local function pane_chunks(key)
     if st.steer and #st.steer > 0 then q[#q + 1] = #st.steer .. " steer" end
     if st.tasks and #st.tasks > 0 then q[#q + 1] = #st.tasks .. " task" end
     if #q > 0 then right[#right + 1] = { " ⏳ " .. table.concat(q, " · ") .. " ", "MkskSteer" } end
-    if (st.deferred or 0) > 0 then right[#right + 1] = { " ⏸ " .. st.deferred .. " to review: ===p ", "MkskApprove" } end
+    if (st.deferred or 0) > 0 then right[#right + 1] = { " ⏸ " .. st.deferred .. " in REVIEW ", "MkskApprove" } end
     if S.sel then right[#right + 1] = { (" 📎 L%d-%d "):format(S.sel.start, S.sel["end"]), "MkskAttach" } end
     if st.plan then
       right[#right + 1] = { " ▤ " .. oneline(st.plan) .. (st.staged and " · staged" or "") .. " ", "MkskTitle" }
@@ -359,8 +373,12 @@ end
 --- The plan pane shows the plan file on disk, or a placeholder while the plan has no file yet. It is switched only
 --- when the plan file changes (another plan, a new day's snapshot, the first save) or when forced.
 local function show_plan(force)
-  local ok, file = pcall(P.file)
+  local ok, file, stamp = pcall(P.file)
   file = ok and file or nil
+  if ok and stamp ~= S.base_stamp then -- the saved plan changed: the REVIEW diffs are against it
+    S.base_stamp = stamp
+    if #S.queue > 0 then render_queue() end
+  end
   local changed = force or file ~= S.plan_file
   S.plan_file = file
   if not file then
@@ -432,11 +450,12 @@ local function handle_req(msg)
 end
 
 -- ---------------------------------------------------------------- the mksk tab
-local function setup_pane(win)
+--- top: a pane of the top row (its height follows the plan pane's)
+local function setup_pane(win, top)
   local wo = vim.wo[win]
   wo.wrap, wo.linebreak, wo.number, wo.relativenumber = true, true, false, false
   wo.signcolumn, wo.foldcolumn, wo.cursorline, wo.list, wo.spell = "no", "0", false, false, false
-  wo.winfixheight = true
+  wo.winfixheight = not top
   pcall(function() wo.winfixbuf = true end)
 end
 
@@ -466,6 +485,167 @@ local function sync_net()
   if joined then open_iface() else close_iface() end
 end
 
+-- ---------------------------------------------------------------- REVIEW pane
+-- The changes agents reported on the network (S.queue, from mksk.py) wait here for the user: each one with who
+-- reported it, the report, its edits, and its diff against the saved plan (P.preview, nothing is staged by it).
+-- y / n become a verdict for mksk.py, which applies (or drops) the change before any other request.
+
+local function op_text(op)
+  local name, args = tostring(op[1]), op[2] or {}
+  local out = { name }
+  if args.target then out[2] = (args.sub and (args.sub .. "/") or "") .. tostring(args.target) end
+  local keys = vim.tbl_keys(args)
+  table.sort(keys)
+  for _, k in ipairs(keys) do
+    if k ~= "target" and not (k == "sub" and args.target) then
+      local v = args[k]
+      out[#out + 1] = k .. "=" .. oneline(type(v) == "table" and vim.json.encode(v) or tostring(v))
+    end
+  end
+  return table.concat(out, " ")
+end
+
+function render_queue()
+  if not S then return end
+  local b = S.bufs.queue
+  local lines, hls, rows, heads = {}, {}, {}, {}
+  local function add(text, hl, qid)
+    lines[#lines + 1] = text
+    rows[#lines] = qid
+    if hl then hls[#hls + 1] = { #lines - 1, hl } end
+  end
+  if #S.queue == 0 then add("  nothing is waiting for review", "MkskHint") end
+  for k, it in ipairs(S.queue) do
+    local q = it.qid
+    if k > 1 then add("") end
+    local busy = it.state == "applying" and " · ⏳ applying" or it.state == "dropping" and " · ⏳ dropping" or ""
+    add(("▌#%s @%s · %s%s"):format(q, oneline(it.from), oneline(it.at), busy), "MkskReviewHead", q)
+    heads[#heads + 1] = #lines
+    for i, l in ipairs(vim.split(tostring(it.text or ""), "\n", { trimempty = true })) do
+      if i > 4 then
+        add("  …", "MkskHint", q)
+        break
+      end
+      add("  " .. l, nil, q)
+    end
+    if it.error then add("  ⚠ not saved: " .. oneline(it.error), "WarningMsg", q) end
+    for _, op in ipairs(it.ops or {}) do add("  · " .. op_text(op), "MkskHint", q) end
+    for _, s in ipairs(it.sends or {}) do
+      add(("  ✉ y also sends @%s the brief of %s%s"):format(oneline(s.to), oneline(s.target),
+        s.message and s.message ~= vim.NIL and (" + “" .. oneline(s.message) .. "”") or ""), "MkskReviewHead", q)
+    end
+    local ok, d = pcall(P.preview, { ops = it.ops or {} })
+    if not ok then
+      add("  ✗ no longer fits the plan: " .. oneline(d), "ErrorMsg", q)
+    elseif not d.changed then
+      add("  = already in the plan", "MkskHint", q)
+    else
+      -- changed lines only, padding squeezed; left out: "updated:" (changes with every edit), table rules, and
+      -- -/+ pairs that are the same once squeezed (a column got wider, a row moved with its weight)
+      local list, cnt = {}, { ["-"] = {}, ["+"] = {} }
+      for l in d.text:gmatch("[^\n]+") do
+        local sign = l:sub(1, 1)
+        local body = vim.trim((l:sub(2):gsub("%s%s+", " ")))
+        if (sign == "+" or sign == "-") and body ~= "" and not body:match("^updated:") and not body:match("^|[%-|: ]+|$") then
+          list[#list + 1] = { sign, body }
+          cnt[sign][body] = (cnt[sign][body] or 0) + 1
+        end
+      end
+      local skip = { ["-"] = {}, ["+"] = {} }
+      for body, n in pairs(cnt["-"]) do
+        local same = math.min(n, cnt["+"][body] or 0)
+        if same > 0 then skip["-"][body], skip["+"][body] = same, same end
+      end
+      local shown, more = 0, 0
+      for _, e in ipairs(list) do
+        local sign, body = e[1], e[2]
+        if (skip[sign][body] or 0) > 0 then
+          skip[sign][body] = skip[sign][body] - 1
+        elseif shown < REVIEW_DIFF then
+          add("  " .. sign .. " " .. body, sign == "+" and "Added" or "Removed", q)
+          shown = shown + 1
+        else
+          more = more + 1
+        end
+      end
+      if shown == 0 then add("  (only layout changes: v shows them)", "MkskHint", q) end
+      if more > 0 then add(("  … %d more line(s): v shows everything"):format(more), "MkskHint", q) end
+    end
+  end
+  -- keep the cursor on the change it was on
+  local w = S.wins.queue
+  local row, keep
+  if valid_win(w) then
+    row = api.nvim_win_get_cursor(w)[1]
+    keep = S.qrows and S.qrows[row]
+  end
+  vim.bo[b].modifiable = true
+  api.nvim_buf_set_lines(b, 0, -1, false, lines)
+  vim.bo[b].modifiable = false
+  api.nvim_buf_clear_namespace(b, NS_REVIEW, 0, -1)
+  for _, h in ipairs(hls) do
+    pcall(api.nvim_buf_set_extmark, b, NS_REVIEW, h[1], 0, { end_col = #lines[h[1] + 1], hl_group = h[2] })
+  end
+  S.qrows, S.qheads = rows, heads
+  if valid_win(w) then
+    local to = math.min(row, #lines)
+    for _, r in ipairs(heads) do
+      if keep and rows[r] == keep then to = r end
+    end
+    pcall(api.nvim_win_set_cursor, w, { to, 0 })
+  end
+end
+
+local function open_review()
+  local W = S.wins
+  if in_tab(W.queue) or not in_tab(W.plan) then return end
+  W.queue = api.nvim_open_win(S.bufs.queue, false,
+    { split = "right", win = W.plan, width = math.max(40, math.floor(vim.o.columns * REVIEW_WIDTH)) })
+  setup_pane(W.queue, true)
+end
+
+local function close_review()
+  if valid_win(S.wins.queue) then pcall(api.nvim_win_close, S.wins.queue, true) end
+  S.wins.queue = nil
+end
+
+--- The REVIEW pane is shown while something waits for review.
+local function sync_review()
+  if #S.queue > 0 then open_review() else close_review() end
+end
+
+local function queued_at_cursor()
+  local qid = S.qrows and S.qrows[api.nvim_win_get_cursor(0)[1]]
+  for _, it in ipairs(S.queue) do
+    if it.qid == qid then return it end
+  end
+end
+
+local function verdict(op)
+  local it = queued_at_cursor()
+  if not it then return vim.notify("mksk: no queued change under the cursor", vim.log.levels.WARN) end
+  if not S.job then return vim.notify("mksk: the backend is not running (:Mksk restarts it)", vim.log.levels.WARN) end
+  if it.state ~= "waiting" then return end
+  send({ t = "queue", op = op, qid = it.qid })
+end
+
+local function review_side_by_side()
+  local it = queued_at_cursor()
+  if not it then return vim.notify("mksk: no queued change under the cursor", vim.log.levels.WARN) end
+  local ok, err = pcall(P.show_diff, { ops = it.ops or {}, label = "queued-" .. it.qid })
+  if not ok then vim.notify("mksk: " .. tostring(err), vim.log.levels.WARN) end
+end
+
+local function review_jump(dir)
+  local row, heads = api.nvim_win_get_cursor(0)[1], S.qheads or {}
+  local to
+  for _, r in ipairs(heads) do
+    if dir > 0 and r > row and not to then to = r end
+    if dir < 0 and r < row then to = r end
+  end
+  if to then api.nvim_win_set_cursor(0, { to, 0 }) end
+end
+
 --- Lay out the mksk tab (the current tab): the plan on top, chat | log (| IFACE) below. Recreates closed panes.
 local function build()
   local W = S.wins
@@ -490,6 +670,7 @@ local function build()
     to_bottom(W.log, S.bufs.log)
   end
   if S.net then open_iface() end
+  if #S.queue > 0 then open_review() end
   if fresh then
     local total = api.nvim_win_get_height(W.plan) + api.nvim_win_get_height(W.chat) + 1
     pcall(api.nvim_win_set_height, W.chat, math.max(6, math.floor(total * BOTTOM)))
@@ -553,6 +734,18 @@ function M.toggle()
   M.show(true)
 end
 
+--- Go to the REVIEW pane.
+function M.review()
+  if not S then return vim.notify("mksk is not running", vim.log.levels.WARN) end
+  if #S.queue == 0 then return vim.notify("mksk: nothing is waiting for review", vim.log.levels.INFO) end
+  M.show(false)
+  open_review()
+  if in_tab(S.wins.queue) then
+    vim.cmd("stopinsert")
+    api.nvim_set_current_win(S.wins.queue)
+  end
+end
+
 -- ---------------------------------------------------------------- backend messages
 local function on_message(msg)
   local t = msg.t
@@ -572,6 +765,13 @@ local function on_message(msg)
     vim.schedule(function() if S then handle_req(msg) end end)
   elseif t == "clear" then
     clear_buf(msg.b)
+  elseif t == "queue" then
+    S.queue = msg.items or {}
+    render_queue()
+    sync_review()
+    refresh()
+  elseif t == "queue_show" then
+    M.review()
   elseif t == "show" then -- an answer is needed: focus the input, but never pull you out of another tab
     if shown() then
       enter_input()
@@ -700,7 +900,7 @@ function M.toggle_visual()
   vim.cmd('execute "normal! \\<Esc>"')
   if not S or not S.job then M.start() end
   if not S then return end
-  if buf ~= S.bufs.chat and buf ~= S.bufs.log and buf ~= S.bufs.iface then
+  if not is_pane_buf(buf) then
     S.sel = capture_selection(buf, l1, l2)
     if not is_float(win) then S.target = win end
   end
@@ -730,11 +930,16 @@ end
 
 -- ---------------------------------------------------------------- keymaps / autocmds
 local function set_keymaps()
-  local cb, lb, ib = S.bufs.chat, S.bufs.log, S.bufs.iface
+  local cb, lb, ib, qb = S.bufs.chat, S.bufs.log, S.bufs.iface, S.bufs.queue
   local function map(modes, lhs, rhs, bufs)
     for _, b in ipairs(bufs) do vim.keymap.set(modes, lhs, rhs, { buffer = b, nowait = true, silent = true }) end
   end
-  local all = { cb, lb, ib }
+  local all = { cb, lb, ib, qb }
+  map("n", "y", function() verdict("apply") end, { qb })
+  map("n", "n", function() verdict("drop") end, { qb })
+  map("n", "v", review_side_by_side, { qb })
+  map("n", "]]", function() review_jump(1) end, { qb })
+  map("n", "[[", function() review_jump(-1) end, { qb })
   map({ "n", "i" }, "<C-x>", function() send({ t = "interrupt" }) end, all)
   map({ "n", "i" }, "<C-c>", function()
     if S.state.busy then send({ t = "cancel" }) else set_input("") end
@@ -745,6 +950,7 @@ local function set_keymaps()
   for _, lhs in ipairs({ "i", "a", "I", "A", "o" }) do map("n", lhs, enter_input, all) end
   -- <CR> on "  2. option" while mksk waits for a pick answers with that number; elsewhere it goes to the input line
   map("n", "<CR>", function()
+    if api.nvim_get_current_buf() == qb then return review_side_by_side() end
     local row = api.nvim_win_get_cursor(0)[1]
     local text = api.nvim_buf_get_lines(0, row - 1, row, false)[1] or ""
     local num = text:match("^%s+(%d+)%.%s")
@@ -783,6 +989,12 @@ local function set_autocmds()
     group = group,
     callback = function() if S then remember_target() end end,
   })
+  -- a plan file saved by hand: the plan pane and the REVIEW diffs follow it
+  api.nvim_create_autocmd("BufWritePost", {
+    group = group,
+    pattern = "mksk--*.md",
+    callback = function() if S then show_plan() end end,
+  })
   api.nvim_create_autocmd("VimLeavePre", {
     group = group,
     callback = function() if S and S.job then send({ t = "quit" }) end end,
@@ -798,7 +1010,7 @@ local function create_buffers()
   fn.prompt_setinterrupt(cb, function() send({ t = "interrupt" }) end)
   local bufs = { chat = cb }
   -- plan: what the plan pane shows while the plan has no file yet
-  for key, ft in pairs({ log = "mksklog", iface = "mkskiface", plan = "mkskplan" }) do
+  for key, ft in pairs({ log = "mksklog", iface = "mkskiface", plan = "mkskplan", queue = "mkskreview" }) do
     local b = api.nvim_create_buf(false, true)
     pcall(api.nvim_buf_set_name, b, "mksk://" .. key)
     vim.bo[b].bufhidden, vim.bo[b].swapfile, vim.bo[b].modifiable = "hide", false, false
@@ -827,7 +1039,7 @@ function M.start(args)
   if args[1] and args[1]:sub(1, 1) ~= "-" then plan = table.remove(args, 1) end
   if S == nil then
     S = {
-      bufs = create_buffers(), wins = {}, tail = { chat = false, log = true, iface = true },
+      bufs = create_buffers(), wins = {}, tail = { chat = false, log = true, iface = true }, queue = {},
       state = { phase = "starting" }, prompt = "", partial = "", history = load_history(),
     }
     remember_target()
@@ -852,12 +1064,6 @@ function M.start(args)
     return
   end
   update_prompt()
-  if not S.timer then
-    S.timer = uv.new_timer()
-    S.timer:start(150, 150, vim.schedule_wrap(function()
-      if S and S.state.busy and shown() then refresh() end
-    end))
-  end
   M.show(true)
 end
 
@@ -867,10 +1073,6 @@ function M.quit()
     send({ t = "quit" })
     local job = S.job
     vim.defer_fn(function() pcall(fn.jobstop, job) end, 1500)
-  end
-  if S.timer then
-    S.timer:stop()
-    S.timer:close()
   end
   if tab_valid() and #api.nvim_list_tabpages() > 1 then
     if shown() then vim.cmd("stopinsert") end
@@ -909,6 +1111,8 @@ api.nvim_create_user_command("MkskFile", function()
   local ok, out = pcall(open_file, true)
   if not ok then vim.notify("mksk: " .. tostring(out), vim.log.levels.WARN) end
 end, { desc = "Focus the plan pane" })
+api.nvim_create_user_command("MkskReview", function() M.review() end,
+  { desc = "Focus the REVIEW pane (changes reported on the network)" })
 
 local key = vim.g.mksk_toggle_key
 if key == nil then key = "<M-m>" end
