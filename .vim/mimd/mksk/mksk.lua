@@ -1,7 +1,14 @@
 -- mksk.lua: Neovim frontend for mksk, the make-sketch planning agent (requires Neovim >= 0.10).
 --
--- Cloned from neos.lua: ONE floating window over ONE persistent chat buffer, the same prompt line, layouts, peek,
--- raw LLM log (F2), steering and input history. Trimmed to planning, with an IFACE pane (F8) for the network.
+-- Cloned from neos.lua (one persistent chat buffer, the same prompt line, raw LLM log, steering and input history),
+-- trimmed to planning, with an IFACE pane for the network. mksk lives in a tab of its own:
+--
+--   ┌───────────────────────────────────────────────────────┐
+--   │ plan file (the plan mksk works on)                    │
+--   ├──────────────────────┬──────────────────┬─────────────┤
+--   │ chat (input: last    │ raw LLM log      │ IFACE       │  IFACE: only while mksk is on the network
+--   │ line)                │                  │             │
+--   └──────────────────────┴──────────────────┴─────────────┘
 --
 -- The agent runs in mksk.py (next to this file). It plans with you and keeps a plan file in the make-sketch format
 -- (mksk--<plan_name>--YYYY-MM-DD.md, ~/echo-home/Documents/specs/make-sketch.md). At start it opens the most
@@ -10,27 +17,26 @@
 -- request. Edits are staged: nothing is written until you approve the diff, and then only to today's file. The chat
 -- stays in the agent's context from start to quit. Task assignment exists only while mksk is on the network.
 --
---   :source /path/to/mksk.lua        start + open (backend args from vim.g.mksk_args)
---   :Mksk [plan] [--port 8080 ...]   open/focus the float, starting the backend (a plan name overrides the newest plan;
---                                    a new name starts a new plan)
---   :MkskToggle                      show / focus / hide the float (default key <M-m>, also in visual mode:
---                                    attaches the selection to your next message)
---   :[range]MkskAsk [text]           send text (with the range as [SELECTION]) without typing in the float
+--   :source /path/to/mksk.lua        start + open the mksk tab (backend args from vim.g.mksk_args)
+--   :Mksk [plan] [--port 8080 ...]   open the mksk tab and focus the chat, starting the backend (a plan name overrides
+--                                    the newest plan; a new name starts a new plan)
+--   :MkskToggle                      focus the chat / back to the previous tab (default key <M-m>, also in visual
+--                                    mode: attaches the selection to your next message)
+--   :MkskHide                        back to the previous tab
+--   :[range]MkskAsk [text]           send text (with the range as [SELECTION]) without typing in the chat
 --   :MkskDiff                        saved | proposed plan, side by side in a tab (q closes it)
---   :MkskFile                        open the plan file in a tab
---   :MkskLayout center|left|right|top|bottom|full   (no argument: cycle)
---   :MkskQuit                        stop the backend and wipe the chat
+--   :MkskFile                        focus the plan pane (and show the plan file there again if you left it)
+--   :MkskQuit                        stop the backend, wipe the chat and close the mksk tab
 --   :InetJoin mksk / :InetLeave mksk join / leave the Intelligence Network (profile g:inet_agents.mksk, optional)
 --
 -- Options: vim.g.mksk_python (default "python3", "python" on Windows), vim.g.mksk_args (list or string),
---          vim.g.mksk_toggle_key (default "<M-m>", "" = no global map), vim.g.mksk_layout ("right"),
+--          vim.g.mksk_toggle_key (default "<M-m>", "" = no global map),
 --          vim.g.mksk_dir (plan folder; default: the current directory when mksk starts), vim.g.mksk_plan.
 --
--- In the float: the last line is the input (a prompt buffer). Everything above is the transcript —
+-- In the chat pane: the last line is the input (a prompt buffer). Everything above is the transcript —
 -- normal-mode motions, search and yank work as usual.
---   <CR> send │ ↑/↓ history │ C-x interrupt LLM │ C-c cancel request / clear line │ F2 raw LLM log │ F8 network
---   M-h/M-j/M-k/M-l dock left/bottom/top/right │ M-c center │ M-f full │ M-b peek │ q / <Esc> (normal) hide
---   <CR> (normal) on a numbered option picks it
+--   <CR> send │ ↑/↓ history │ C-x interrupt LLM │ C-c cancel request / clear line │ q (normal) back to the previous tab
+--   <CR> (normal) on a numbered option picks it │ i/a/o (normal, also in the log and IFACE panes) go to the input
 -- By hand: :lua require("mksk").plan.<function>{...}   (see mksk_plan.lua)
 
 local MODNAME = ...
@@ -61,19 +67,19 @@ local P = dofile(SCRIPT_DIR .. "/mksk_plan.lua")
 M.plan = P
 
 local HISTORY_FILE = fn.stdpath("data") .. "/mksk_history"
-local LAYOUTS = { "center", "left", "right", "top", "bottom", "full" }
 local MAX_LINES = 10000
 local NS = api.nvim_create_namespace("mksk")
 local NS_PROMPT = api.nvim_create_namespace("mksk_prompt")
 local SPINNER = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
-local VIEW_TITLE = { chat = " MKSK ", log = " MKSK · LOG ", iface = " MKSK · IFACE " }
+local PANES = { "chat", "log", "iface" } -- the panes mksk owns (the plan pane above them shows the plan file)
+local PANE_TITLE = { chat = " MKSK ", log = " MKSK · LOG ", iface = " MKSK · IFACE " }
+local BOTTOM = 0.45 -- share of the tab height the chat row gets when the tab is laid out
 
 local S -- session state; nil when nothing is running
 
 -- ---------------------------------------------------------------- highlights
 local function define_highlights()
   local hl = {
-    MkskBorder = { fg = "#08a4c4" },
     MkskBadge = { bg = "#08a4c4", fg = "#000000", bold = true },
     MkskTitle = { bg = "#303030", fg = "#d0d0d0" },
     MkskIdle = { bg = "#005f00", fg = "#ffffff", bold = true },
@@ -91,23 +97,44 @@ local function define_highlights()
 end
 
 -- ---------------------------------------------------------------- helpers
-local function valid_win(w) return w and api.nvim_win_is_valid(w) end
+local function valid_win(w) return w ~= nil and api.nvim_win_is_valid(w) end
 local function is_float(w) return api.nvim_win_get_config(w).relative ~= "" end
 local function oneline(s) return (tostring(s or ""):gsub("[\r\n]+", " ")) end
 local function clean_dir(d) return (native(fn.fnamemodify(fn.expand(d), ":p")):gsub("[/\\]$", "")) end
+
+local function same_path(a, b)
+  if not a or not b or a == "" or b == "" then return false end
+  a, b = native(fn.fnamemodify(a, ":p")), native(fn.fnamemodify(b, ":p"))
+  if fn.has("win32") == 1 then a, b = a:lower(), b:lower() end
+  return a == b
+end
 
 local function send(msg)
   if S and S.job then pcall(fn.chansend, S.job, vim.json.encode(msg) .. "\n") end
 end
 
-local function float_shown()
-  return S and valid_win(S.win) and api.nvim_win_get_tabpage(S.win) == api.nvim_get_current_tabpage()
+local function tab_valid() return S.tab ~= nil and api.nvim_tabpage_is_valid(S.tab) end
+
+--- w is a window of the mksk tab.
+local function in_tab(w) return valid_win(w) and tab_valid() and api.nvim_win_get_tabpage(w) == S.tab end
+
+--- The mksk tab is the current tab.
+local function shown() return S ~= nil and tab_valid() and api.nvim_get_current_tabpage() == S.tab end
+
+--- w shows the chat, the log or the IFACE (not the plan pane).
+local function is_pane(w)
+  local b = api.nvim_win_get_buf(w)
+  return b == S.bufs.chat or b == S.bufs.log or b == S.bufs.iface
 end
 
 local function target_win()
-  if valid_win(S.target) and not is_float(S.target) then return S.target end
+  if valid_win(S.target) and not is_float(S.target) and not is_pane(S.target) then return S.target end
+  if valid_win(S.wins.plan) then
+    S.target = S.wins.plan
+    return S.target
+  end
   for _, w in ipairs(api.nvim_tabpage_list_wins(0)) do
-    if not is_float(w) then
+    if not is_float(w) and not is_pane(w) then
       S.target = w
       return w
     end
@@ -116,82 +143,85 @@ end
 
 local function remember_target()
   local w = api.nvim_get_current_win()
-  if w ~= S.win and not is_float(w) then S.target = w end
+  if not is_float(w) and not is_pane(w) then S.target = w end
 end
 
---- Where the user is (the last editor window, floats ignored): lets "this target" refer to the plan file there.
+--- Where the user is (the last editor window, mksk's panes ignored): lets "this target" refer to the plan file there.
 local function position(win)
   win = win or target_win()
   if not win then return nil end
   local buf = api.nvim_win_get_buf(win)
+  if buf == S.bufs.plan then return nil end -- the placeholder of a plan with no file yet
   local cur = api.nvim_win_get_cursor(win)
   return { file = native(api.nvim_buf_get_name(buf)), filetype = vim.bo[buf].filetype, line = cur[1], col = cur[2] + 1,
     text = (api.nvim_buf_get_lines(buf, cur[1] - 1, cur[1], false)[1] or ""):sub(1, 300) }
 end
 
--- ---------------------------------------------------------------- float title / footer
-local function title_chunks()
+-- ---------------------------------------------------------------- pane status lines
+local function phase_chunk()
   local st = S.state
   local spin = st.busy and SPINNER[math.floor(uv.hrtime() / 1e8) % #SPINNER + 1] or "●"
-  local t = {
-    { VIEW_TITLE[S.view] or " MKSK ", "MkskBadge" },
-    { " " .. spin .. " " .. oneline(st.phase or "starting") .. " ", st.busy and "MkskBusy" or "MkskIdle" },
-    { " " .. oneline(st.model or "-") .. " ", "MkskTitle" },
-  }
-  if S.peek then t[#t + 1] = { " peek ", "MkskTitle" } end
-  if not S.job then t[#t + 1] = { " backend stopped ", "MkskApprove" } end
-  return t
+  return { " " .. spin .. " " .. oneline(st.phase or "starting") .. " ", st.busy and "MkskBusy" or "MkskIdle" }
 end
 
-local function footer_chunks()
-  local st, f = S.state, {}
-  local q = {}
-  if st.steer and #st.steer > 0 then q[#q + 1] = #st.steer .. " steer" end
-  if st.tasks and #st.tasks > 0 then q[#q + 1] = #st.tasks .. " task" end
-  if #q > 0 then f[#f + 1] = { " ⏳ " .. table.concat(q, " · ") .. " ", "MkskSteer" } end
-  if (st.deferred or 0) > 0 then f[#f + 1] = { " ⏸ " .. st.deferred .. " to review: ===p ", "MkskApprove" } end
-  if S.sel then f[#f + 1] = { (" 📎 L%d-%d "):format(S.sel.start, S.sel["end"]), "MkskAttach" } end
-  if st.plan then f[#f + 1] = { " ▤ " .. oneline(st.plan) .. (st.staged and " · staged" or "") .. " ", "MkskTitle" } end
-  local net = st.net or {}
-  if net.joined then
-    f[#f + 1] = { " 🌐 @" .. oneline(net.name) .. " " .. (net.connected and oneline(net.state) or "connecting") .. " ", "MkskTitle" }
+local function net_chunk()
+  local net = S.state.net or {}
+  if not net.joined then return { " 🌐 off ", "MkskTitle" } end
+  return { " 🌐 @" .. oneline(net.name) .. " " .. (net.connected and oneline(net.state) or "connecting") .. " ", "MkskTitle" }
+end
+
+--- left (the first two chunks are kept when the line is too long), right
+local function pane_chunks(key)
+  local st = S.state
+  local left, right = { { PANE_TITLE[key], "MkskBadge" } }, {}
+  if key == "iface" then
+    left[2] = net_chunk()
+    local net = st.net or {}
+    if net.joined and net.network then
+      right[1] = { " " .. oneline(net.network) .. (net.members and (" · " .. net.members .. " member(s)") or "") .. " ",
+        "MkskTitle" }
+    end
   else
-    f[#f + 1] = { " 🌐 off ", "MkskTitle" }
+    left[2] = phase_chunk()
+    left[3] = { " " .. oneline(st.model or "-") .. " ", "MkskTitle" }
   end
-  f[#f + 1] = { " F2 log │ F8 net │ M-h/j/k/l dock │ M-b peek │ q hide ", "MkskHint" }
-  return f
+  if not S.job then left[#left + 1] = { " backend stopped ", "MkskApprove" } end
+  if key == "chat" then
+    local q = {}
+    if st.steer and #st.steer > 0 then q[#q + 1] = #st.steer .. " steer" end
+    if st.tasks and #st.tasks > 0 then q[#q + 1] = #st.tasks .. " task" end
+    if #q > 0 then right[#right + 1] = { " ⏳ " .. table.concat(q, " · ") .. " ", "MkskSteer" } end
+    if (st.deferred or 0) > 0 then right[#right + 1] = { " ⏸ " .. st.deferred .. " to review: ===p ", "MkskApprove" } end
+    if S.sel then right[#right + 1] = { (" 📎 L%d-%d "):format(S.sel.start, S.sel["end"]), "MkskAttach" } end
+    if st.plan then
+      right[#right + 1] = { " ▤ " .. oneline(st.plan) .. (st.staged and " · staged" or "") .. " ", "MkskTitle" }
+    end
+    right[#right + 1] = net_chunk()
+    right[#right + 1] = { " q hide ", "MkskHint" }
+  end
+  return left, right
 end
 
-local function float_config()
-  local cols = vim.o.columns
-  local rows = vim.o.lines - vim.o.cmdheight - (vim.o.laststatus > 0 and 1 or 0)
-  local layout = LAYOUTS[S.layout]
-  local w, h, r, c
-  if layout == "right" then
-    w = math.max(50, math.floor(cols * 0.42)); h = rows - 2; r = 0; c = cols - w - 2
-  elseif layout == "left" then
-    w = math.max(50, math.floor(cols * 0.42)); h = rows - 2; r = 0; c = 0
-  elseif layout == "top" then
-    w = cols - 2; h = math.max(8, math.floor(rows * 0.4)); r = 0; c = 0
-  elseif layout == "bottom" then
-    w = cols - 2; h = math.max(8, math.floor(rows * 0.4)); r = rows - h - 2; c = 0
-  elseif layout == "full" then
-    w = cols - 2; h = rows - 2; r = 0; c = 0
-  else
-    w = math.floor(cols * 0.72); h = math.floor(rows * 0.72)
-    r = math.floor((rows - h) / 2) - 1; c = math.floor((cols - w) / 2)
+local function sl(chunks, i, j)
+  local out = {}
+  for k = i or 1, j or #chunks do
+    local c = chunks[k]
+    out[#out + 1] = "%#" .. c[2] .. "#" .. (c[1]:gsub("%%", "%%%%"))
   end
-  w, h = math.max(20, math.min(w, cols - 2)), math.max(5, math.min(h, rows - 2))
-  return {
-    relative = "editor", width = w, height = h, row = math.max(0, r), col = math.max(0, c),
-    border = "rounded", title = title_chunks(), title_pos = "left",
-    footer = footer_chunks(), footer_pos = "right", zindex = 60,
-  }
+  return table.concat(out)
 end
 
-local function refresh_float()
-  if not float_shown() then return end
-  pcall(api.nvim_win_set_config, S.win, float_config())
+local function statusline(key)
+  local left, right = pane_chunks(key)
+  return sl(left, 1, 2) .. "%<" .. sl(left, 3) .. "%*%=" .. sl(right) .. "%*"
+end
+
+local function refresh()
+  if not S then return end
+  for _, key in ipairs(PANES) do
+    local w = S.wins[key]
+    if valid_win(w) then pcall(function() vim.wo[w].statusline = statusline(key) end) end
+  end
 end
 
 -- ---------------------------------------------------------------- prompt line
@@ -238,9 +268,8 @@ local function set_input(text)
   local n = api.nvim_buf_line_count(ib)
   api.nvim_buf_set_lines(ib, n - 1, n, false, { S.prompt .. text })
   update_prompt()
-  if float_shown() and api.nvim_win_get_buf(S.win) == ib then
-    api.nvim_win_set_cursor(S.win, { n, #S.prompt + #text })
-  end
+  local w = S.wins.chat
+  if valid_win(w) and api.nvim_win_get_buf(w) == ib then api.nvim_win_set_cursor(w, { n, #S.prompt + #text }) end
 end
 
 -- ---------------------------------------------------------------- appending output
@@ -320,6 +349,39 @@ local function clear_buf(key)
   S.tail[key] = key ~= "chat"
 end
 
+-- ---------------------------------------------------------------- plan pane
+local function plan_text()
+  local ok, sum = pcall(P.summary)
+  if not ok or sum == "no plan is open" then return { "", "  mksk is opening the plan…" } end
+  return { "", "  " .. sum, "", "  The plan file shows here once the first change is approved." }
+end
+
+--- The plan pane shows the plan file on disk, or a placeholder while the plan has no file yet. It is switched only
+--- when the plan file changes (another plan, a new day's snapshot, the first save) or when forced.
+local function show_plan(force)
+  local ok, file = pcall(P.file)
+  file = ok and file or nil
+  local changed = force or file ~= S.plan_file
+  S.plan_file = file
+  if not file then
+    local b = S.bufs.plan
+    vim.bo[b].modifiable = true
+    api.nvim_buf_set_lines(b, 0, -1, false, plan_text())
+    vim.bo[b].modifiable = false
+  end
+  local w = S.wins.plan
+  if not changed or not in_tab(w) then return end
+  pcall(function() vim.wo[w].winfixbuf = false end)
+  if not file then
+    api.nvim_win_set_buf(w, S.bufs.plan)
+  elseif not same_path(api.nvim_buf_get_name(api.nvim_win_get_buf(w)), file) then
+    local ok2, err = pcall(api.nvim_win_call, w, function()
+      vim.cmd("silent keepalt hide edit " .. fn.fnameescape(file))
+    end)
+    if not ok2 then vim.notify("mksk: cannot show the plan file: " .. tostring(err), vim.log.levels.WARN) end
+  end
+end
+
 -- ---------------------------------------------------------------- requests from mksk.py
 local OPS = {}
 
@@ -332,19 +394,27 @@ end
 
 function OPS.context() return position(target_win()) end
 
-local function open_file()
-  local ok, st = pcall(P.state)
-  if not ok or not st.open then error("no plan is open", 0) end
-  if (st.base_file or "") == "" then error("the plan has no file yet (nothing was approved so far)", 0) end
-  if api.nvim_get_current_win() == (S and S.win) then vim.cmd("stopinsert") end
-  local w = S and target_win()
-  if valid_win(w) then api.nvim_set_current_win(w) end
-  vim.cmd("tabnew " .. fn.fnameescape(st.base_file))
-  if S then S.target = api.nvim_get_current_win() end
-  return "opened " .. st.base_file .. " in a new tab"
+--- Show the plan file in the plan pane again; focus: also go to the mksk tab and into the plan pane.
+local function open_file(focus)
+  local file = P.file()
+  if not file then
+    error(P.summary() == "no plan is open" and "no plan is open"
+      or "the plan has no file yet (nothing was approved so far)", 0)
+  end
+  if not S then
+    vim.cmd("tabnew " .. fn.fnameescape(file))
+    return "opened " .. file .. " in a new tab"
+  end
+  if focus then M.show(false) end
+  show_plan(true)
+  if focus and in_tab(S.wins.plan) then
+    vim.cmd("stopinsert")
+    api.nvim_set_current_win(S.wins.plan)
+  end
+  return "the plan file is shown in the plan pane of the mksk tab: " .. file
 end
 
-function OPS.open_file() return open_file() end
+function OPS.open_file() return open_file(false) end
 
 local function handle_req(msg)
   local res = { t = "res", id = msg.id }
@@ -357,93 +427,130 @@ local function handle_req(msg)
   res.ok = ok
   if ok then res.out = out else res.err = tostring(out) end
   send(res)
-  if float_shown() then refresh_float() end
+  show_plan() -- the plan file may have changed (opened, named, saved)
+  refresh()
 end
 
--- ---------------------------------------------------------------- float window
-local function setup_win(win)
+-- ---------------------------------------------------------------- the mksk tab
+local function setup_pane(win)
   local wo = vim.wo[win]
   wo.wrap, wo.linebreak, wo.number, wo.relativenumber = true, true, false, false
   wo.signcolumn, wo.foldcolumn, wo.cursorline, wo.list, wo.spell = "no", "0", false, false, false
-  wo.winhighlight = "Normal:NormalFloat,FloatBorder:MkskBorder"
+  wo.winfixheight = true
   pcall(function() wo.winfixbuf = true end)
 end
 
-local function put_view(view)
-  S.view = view
-  pcall(function() vim.wo[S.win].winfixbuf = false end)
-  api.nvim_win_set_buf(S.win, S.bufs[view])
-  pcall(function() vim.wo[S.win].winfixbuf = true end)
+local function to_bottom(win, buf) api.nvim_win_set_cursor(win, { api.nvim_buf_line_count(buf), 0 }) end
+
+--- The IFACE pane, right of the log, while mksk is on the network.
+local function open_iface()
+  local W = S.wins
+  if in_tab(W.iface) then return end
+  local left = (in_tab(W.log) and W.log) or (in_tab(W.chat) and W.chat) or nil
+  if not left then return end
+  W.iface = api.nvim_open_win(S.bufs.iface, false,
+    { split = "right", win = left, width = math.max(20, math.floor(api.nvim_win_get_width(left) / 2)) })
+  setup_pane(W.iface)
+  to_bottom(W.iface, S.bufs.iface)
+end
+
+local function close_iface()
+  if valid_win(S.wins.iface) then pcall(api.nvim_win_close, S.wins.iface, true) end
+  S.wins.iface = nil
+end
+
+local function sync_net()
+  local joined = (S.state.net or {}).joined == true
+  if joined == S.net then return end
+  S.net = joined
+  if joined then open_iface() else close_iface() end
+end
+
+--- Lay out the mksk tab (the current tab): the plan on top, chat | log (| IFACE) below. Recreates closed panes.
+local function build()
+  local W = S.wins
+  local fresh = not in_tab(W.chat) and not in_tab(W.log)
+  if not in_tab(W.plan) then
+    W.plan = api.nvim_open_win(S.bufs.plan, false, { split = "above", win = -1 })
+    vim.wo[W.plan].winfixheight = false
+    show_plan(true)
+  end
+  if not in_tab(W.chat) then
+    if in_tab(W.log) then
+      W.chat = api.nvim_open_win(S.bufs.chat, false, { split = "left", win = W.log })
+    else
+      W.chat = api.nvim_open_win(S.bufs.chat, false, { split = "below", win = -1 })
+    end
+    setup_pane(W.chat)
+    to_bottom(W.chat, S.bufs.chat)
+  end
+  if not in_tab(W.log) then
+    W.log = api.nvim_open_win(S.bufs.log, false, { split = "right", win = W.chat })
+    setup_pane(W.log)
+    to_bottom(W.log, S.bufs.log)
+  end
+  if S.net then open_iface() end
+  if fresh then
+    local total = api.nvim_win_get_height(W.plan) + api.nvim_win_get_height(W.chat) + 1
+    pcall(api.nvim_win_set_height, W.chat, math.max(6, math.floor(total * BOTTOM)))
+    pcall(api.nvim_win_set_width, W.chat, math.floor(vim.o.columns * (in_tab(W.iface) and 0.4 or 0.5)))
+  end
+  refresh()
+end
+
+local function open_tab()
+  vim.cmd("tabnew")
+  S.tab = api.nvim_get_current_tabpage()
+  local scratch = api.nvim_get_current_buf()
+  S.wins = { plan = api.nvim_get_current_win() }
+  show_plan(true)
+  -- the empty buffer tabnew made, unless :edit reused it for the plan file
+  if api.nvim_buf_is_valid(scratch) and scratch ~= api.nvim_win_get_buf(S.wins.plan)
+    and api.nvim_buf_get_name(scratch) == "" and not vim.bo[scratch].modified then
+    pcall(api.nvim_buf_delete, scratch, {})
+  end
 end
 
 local function enter_input()
-  if not float_shown() then return end
-  if S.view ~= "chat" then
-    put_view("chat")
-    refresh_float()
-  end
-  api.nvim_set_current_win(S.win)
+  local w = S and S.wins.chat
+  if not shown() or not in_tab(w) then return end
+  api.nvim_set_current_win(w)
   local n = api.nvim_buf_line_count(S.bufs.chat)
-  api.nvim_win_set_cursor(S.win, { n, #api.nvim_buf_get_lines(S.bufs.chat, n - 1, n, false)[1] })
+  api.nvim_win_set_cursor(w, { n, #api.nvim_buf_get_lines(S.bufs.chat, n - 1, n, false)[1] })
   vim.cmd("startinsert!")
 end
 
+--- Go to the mksk tab (opening or repairing it); enter: focus the chat input.
 function M.show(enter)
   if not S then return M.start() end
   if enter ~= false then remember_target() end
-  if valid_win(S.win) and not float_shown() then pcall(api.nvim_win_close, S.win, true) end
-  if not float_shown() then
-    S.win = api.nvim_open_win(S.bufs[S.view], false, float_config())
-    setup_win(S.win)
-    if S.peek then vim.wo[S.win].winblend = vim.g.mksk_peek_blend or 70 end
-    local n = api.nvim_buf_line_count(S.bufs[S.view])
-    api.nvim_win_set_cursor(S.win, { n, 0 })
+  if not tab_valid() then
+    open_tab()
+  elseif api.nvim_get_current_tabpage() ~= S.tab then
+    api.nvim_set_current_tabpage(S.tab)
   end
-  if enter ~= false then
-    if S.view == "chat" then enter_input() else api.nvim_set_current_win(S.win) end
-  end
+  build()
+  if enter ~= false then enter_input() end
 end
 
+--- Back to the tab you came from (the mksk tab stays as it is).
 function M.hide()
-  if S and valid_win(S.win) then
-    if api.nvim_get_current_win() == S.win then vim.cmd("stopinsert") end
-    pcall(api.nvim_win_close, S.win, true)
+  if not shown() then return end
+  vim.cmd("stopinsert")
+  local back = S.prev_tab
+  if back and back ~= S.tab and api.nvim_tabpage_is_valid(back) then
+    api.nvim_set_current_tabpage(back)
+  elseif #api.nvim_list_tabpages() > 1 then
+    vim.cmd("tabprevious")
+  else
+    vim.notify("mksk: no other tab to go back to", vim.log.levels.INFO)
   end
-  if S then S.win = nil end
 end
 
 function M.toggle()
   if not S then return M.start() end
-  if float_shown() and api.nvim_get_current_win() == S.win then return M.hide() end
+  if shown() and api.nvim_get_current_win() == S.wins.chat then return M.hide() end
   M.show(true)
-end
-
--- peek: make the float translucent to read the windows behind it (needs 'termguicolors'), toggle back
-function M.peek()
-  if not float_shown() then return end
-  S.peek = not S.peek
-  vim.wo[S.win].winblend = S.peek and (vim.g.mksk_peek_blend or 70) or 0
-  refresh_float()
-end
-
-function M.set_layout(name)
-  if not S then return end
-  if name and name ~= "" then
-    for i, l in ipairs(LAYOUTS) do if l == name then S.layout = i end end
-  else
-    S.layout = S.layout % #LAYOUTS + 1
-  end
-  refresh_float()
-end
-
---- F2 chat ⇄ raw LLM log, F8 chat ⇄ IFACE (network traffic and decisions).
-local function toggle_view(view)
-  if not float_shown() then return end
-  put_view(S.view == view and "chat" or view)
-  local n = api.nvim_buf_line_count(S.bufs[S.view])
-  api.nvim_win_set_cursor(S.win, { n, 0 })
-  if S.view == "chat" then enter_input() else vim.cmd("stopinsert") end
-  refresh_float()
 end
 
 -- ---------------------------------------------------------------- backend messages
@@ -458,18 +565,24 @@ local function on_message(msg)
   elseif t == "state" then
     S.state = msg
     update_prompt()
-    refresh_float()
+    sync_net()
+    show_plan()
+    refresh()
   elseif t == "req" then
     vim.schedule(function() if S then handle_req(msg) end end)
   elseif t == "clear" then
     clear_buf(msg.b)
-  elseif t == "show" then
-    M.show(true)
+  elseif t == "show" then -- an answer is needed: focus the input, but never pull you out of another tab
+    if shown() then
+      enter_input()
+    else
+      vim.notify("mksk is waiting for your answer (:MkskToggle)", vim.log.levels.WARN)
+    end
   elseif t == "input" then
     set_input(oneline(msg.text))
-    if float_shown() then enter_input() end
+    if shown() then enter_input() end
   elseif t == "notify" then
-    if not float_shown() then vim.notify("mksk: " .. msg.text, msg.level == "warn" and vim.log.levels.WARN or vim.log.levels.INFO) end
+    if not shown() then vim.notify("mksk: " .. msg.text, msg.level == "warn" and vim.log.levels.WARN or vim.log.levels.INFO) end
   end
 end
 
@@ -490,7 +603,7 @@ local function on_stderr(_, data)
   local text = table.concat(data, "\n")
   if text:match("%S") then append("log", { { text .. "\n", 0 } }) end
   if text:match("Traceback") or text:match("Error") then
-    append("chat", { { "backend error (F2 for the log): " .. oneline(text):sub(1, 200) .. "\n", 0 } })
+    append("chat", { { "backend error (see the log pane): " .. oneline(text):sub(1, 200) .. "\n", 0 } })
   end
 end
 
@@ -501,7 +614,7 @@ local function on_exit(_, code)
   pcall(P.discard) -- edits the backend staged are orphaned now
   append("chat", { { "[mksk backend exited with code " .. code .. " — :Mksk to restart]\n", 0 } })
   update_prompt()
-  refresh_float()
+  refresh()
 end
 
 -- ---------------------------------------------------------------- input line
@@ -569,7 +682,7 @@ local function on_submit(text)
   local sel = S.sel
   if vim.trim(text) ~= "" then S.sel = nil end
   submit(text, sel)
-  vim.schedule(function() if S then update_prompt() refresh_float() end end)
+  vim.schedule(function() if S then update_prompt() refresh() end end)
 end
 
 -- ---------------------------------------------------------------- selection capture
@@ -591,8 +704,8 @@ function M.toggle_visual()
     S.sel = capture_selection(buf, l1, l2)
     if not is_float(win) then S.target = win end
   end
-  if not float_shown() or api.nvim_get_current_win() ~= S.win then M.show(true) end
-  refresh_float()
+  if not shown() or api.nvim_get_current_win() ~= S.wins.chat then M.show(true) end
+  refresh()
 end
 
 function M.ask(text, o)
@@ -612,7 +725,7 @@ function M.ask(text, o)
   local n = api.nvim_buf_line_count(S.bufs.chat)
   mark_user_line(n - 2, #S.prompt)
   submit(text, sel)
-  if not float_shown() then M.show(false) end
+  if not shown() then M.show(false) end
 end
 
 -- ---------------------------------------------------------------- keymaps / autocmds
@@ -626,18 +739,7 @@ local function set_keymaps()
   map({ "n", "i" }, "<C-c>", function()
     if S.state.busy then send({ t = "cancel" }) else set_input("") end
   end, all)
-  map({ "n", "i" }, "<F2>", function() toggle_view("log") end, all)
-  map({ "n", "i" }, "<F8>", function() toggle_view("iface") end, all)
-  -- dock the float to a side so the windows behind it stay visible; M-b makes it translucent (peek)
-  map({ "n", "i" }, "<M-h>", function() M.set_layout("left") end, all)
-  map({ "n", "i" }, "<M-l>", function() M.set_layout("right") end, all)
-  map({ "n", "i" }, "<M-k>", function() M.set_layout("top") end, all)
-  map({ "n", "i" }, "<M-j>", function() M.set_layout("bottom") end, all)
-  map({ "n", "i" }, "<M-c>", function() M.set_layout("center") end, all)
-  map({ "n", "i" }, "<M-f>", function() M.set_layout("full") end, all)
-  map({ "n", "i" }, "<M-b>", M.peek, all)
   map("n", "q", M.hide, all)
-  map("n", "<Esc>", M.hide, all)
   map("i", "<Up>", function() history_step(-1) end, { cb })
   map("i", "<Down>", function() history_step(1) end, { cb })
   for _, lhs in ipairs({ "i", "a", "I", "A", "o" }) do map("n", lhs, enter_input, all) end
@@ -661,18 +763,25 @@ local function set_autocmds()
   api.nvim_create_autocmd("WinClosed", {
     group = group,
     callback = function(ev)
-      if S and tonumber(ev.match) == S.win then S.win = nil end
+      if not S then return end
+      local id = tonumber(ev.match)
+      for k, w in pairs(S.wins) do
+        if w == id then S.wins[k] = nil end
+      end
     end,
   })
-  api.nvim_create_autocmd("VimResized", { group = group, callback = function() if S then refresh_float() end end })
-  -- follow the user's position: the window "this target" refers to (the float itself is ignored)
-  api.nvim_create_autocmd({ "WinEnter", "BufEnter", "TabEnter" }, {
+  -- the tab to go back to when you leave the mksk tab
+  api.nvim_create_autocmd("TabLeave", {
     group = group,
     callback = function()
-      if not S then return end
-      remember_target()
-      if float_shown() then refresh_float() end
+      local t = api.nvim_get_current_tabpage()
+      if S and t ~= S.tab then S.prev_tab = t end
     end,
+  })
+  -- follow the user's position: the window "this target" refers to (mksk's panes are ignored)
+  api.nvim_create_autocmd({ "WinEnter", "BufEnter", "TabEnter" }, {
+    group = group,
+    callback = function() if S then remember_target() end end,
   })
   api.nvim_create_autocmd("VimLeavePre", {
     group = group,
@@ -688,7 +797,8 @@ local function create_buffers()
   fn.prompt_setcallback(cb, on_submit)
   fn.prompt_setinterrupt(cb, function() send({ t = "interrupt" }) end)
   local bufs = { chat = cb }
-  for key, ft in pairs({ log = "mksklog", iface = "mkskiface" }) do
+  -- plan: what the plan pane shows while the plan has no file yet
+  for key, ft in pairs({ log = "mksklog", iface = "mkskiface", plan = "mkskplan" }) do
     local b = api.nvim_create_buf(false, true)
     pcall(api.nvim_buf_set_name, b, "mksk://" .. key)
     vim.bo[b].bufhidden, vim.bo[b].swapfile, vim.bo[b].modifiable = "hide", false, false
@@ -716,10 +826,8 @@ function M.start(args)
   local dir, plan = clean_dir(vim.g.mksk_dir or fn.getcwd()), vim.g.mksk_plan
   if args[1] and args[1]:sub(1, 1) ~= "-" then plan = table.remove(args, 1) end
   if S == nil then
-    local layout = 3
-    for i, l in ipairs(LAYOUTS) do if l == vim.g.mksk_layout then layout = i end end
     S = {
-      bufs = create_buffers(), view = "chat", layout = layout, tail = { chat = false, log = true, iface = true },
+      bufs = create_buffers(), wins = {}, tail = { chat = false, log = true, iface = true },
       state = { phase = "starting" }, prompt = "", partial = "", history = load_history(),
     }
     remember_target()
@@ -747,7 +855,7 @@ function M.start(args)
   if not S.timer then
     S.timer = uv.new_timer()
     S.timer:start(150, 150, vim.schedule_wrap(function()
-      if S and S.state.busy and float_shown() then refresh_float() end
+      if S and S.state.busy and shown() then refresh() end
     end))
   end
   M.show(true)
@@ -764,7 +872,10 @@ function M.quit()
     S.timer:stop()
     S.timer:close()
   end
-  M.hide()
+  if tab_valid() and #api.nvim_list_tabpages() > 1 then
+    if shown() then vim.cmd("stopinsert") end
+    pcall(vim.cmd, "tabclose " .. api.nvim_tabpage_get_number(S.tab))
+  end
   for _, b in pairs(S.bufs) do
     if api.nvim_buf_is_valid(b) then pcall(api.nvim_buf_delete, b, { force = true }) end
   end
@@ -783,10 +894,11 @@ api.nvim_create_user_command("Mksk", function(o)
   local args = vim.list_extend(normalize_args(nil), o.fargs) -- typed args come last, so they win
   if plan then table.insert(args, 1, plan) end
   M.start(args)
-end, { nargs = "*", desc = "Open the mksk float (starts the backend): [plan] [backend args]" })
-api.nvim_create_user_command("MkskToggle", function() M.toggle() end, { desc = "Show / focus / hide the mksk float" })
-api.nvim_create_user_command("MkskHide", function() M.hide() end, { desc = "Hide the mksk float" })
-api.nvim_create_user_command("MkskQuit", function() M.quit() end, { desc = "Stop mksk and wipe its chat" })
+end, { nargs = "*", desc = "Open the mksk tab (starts the backend): [plan] [backend args]" })
+api.nvim_create_user_command("MkskToggle", function() M.toggle() end,
+  { desc = "Focus the mksk chat / back to the previous tab" })
+api.nvim_create_user_command("MkskHide", function() M.hide() end, { desc = "Leave the mksk tab" })
+api.nvim_create_user_command("MkskQuit", function() M.quit() end, { desc = "Stop mksk, wipe its chat, close its tab" })
 api.nvim_create_user_command("MkskAsk", function(o) M.ask(o.args, o) end,
   { nargs = "*", range = true, desc = "Send a message to mksk ([range] attaches lines)" })
 api.nvim_create_user_command("MkskDiff", function()
@@ -794,13 +906,9 @@ api.nvim_create_user_command("MkskDiff", function()
   if not ok then vim.notify("mksk: " .. tostring(out), vim.log.levels.WARN) end
 end, { desc = "Saved | proposed plan, side by side" })
 api.nvim_create_user_command("MkskFile", function()
-  local ok, out = pcall(open_file)
+  local ok, out = pcall(open_file, true)
   if not ok then vim.notify("mksk: " .. tostring(out), vim.log.levels.WARN) end
-end, { desc = "Open the plan file" })
-api.nvim_create_user_command("MkskLayout", function(o) M.set_layout(o.args) end, {
-  nargs = "?", desc = "mksk float layout",
-  complete = function() return LAYOUTS end,
-})
+end, { desc = "Focus the plan pane" })
 
 local key = vim.g.mksk_toggle_key
 if key == nil then key = "<M-m>" end

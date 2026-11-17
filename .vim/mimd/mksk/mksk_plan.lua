@@ -11,6 +11,7 @@
 -- plain Lua, usable by hand:   :lua require("mksk").plan.edit_target{ target = "cutover", status = "WIP", agent = "bee" }
 --
 --   files     P.setup{dir, actor}  P.list{dir}  P.latest{dir}  P.open{dir, name}  P.name_plan{name}  P.state()  P.validate()
+--             P.file()   (the plan file on disk, nil while there is none)
 --   weights   P.set_weights{sub, weights = {target = w}}   P.reweigh()        (W = w + w of every prerequisite, once each)
 --   table     P.edit_target{sub, target, description, status, agent, w}       (rows stay sorted by W, descending)
 --   targets   P.add_target{sub, target, description, w, deps, notes, status, agent}
@@ -478,6 +479,8 @@ local function render(doc)
         out[#out + 1] = s.fence
         extend(s.lead)
         for _, t in ipairs(s.targets) do
+          -- a blank line above each target name, for readability (not right below the fence)
+          if out[#out] ~= s.fence and out[#out]:match("%S") then out[#out + 1] = "" end
           out[#out + 1] = t.name .. ":" .. (#t.deps > 0 and (" " .. table.concat(t.deps, " ")) or "")
           extend(t.body)
         end
@@ -721,6 +724,13 @@ function P.summary()
   end
   return ("plan %s · %s · %d sub-document(s), %d target(s): %d TODO, %d WIP, %d DONE"):format(
     ST.name or "(unnamed)", where, #ST.doc.subs, c.n, c.TODO, c.WIP, c.DONE)
+end
+
+--- The plan file on disk the working plan comes from (its newest snapshot); nil while the plan has no file yet.
+function P.file()
+  if not ST.open then return nil end
+  refresh()
+  return ST.base_file
 end
 
 --- Open the newest snapshot of a plan (a name, or a path to one of its files). A new name starts a new plan;
@@ -1072,19 +1082,26 @@ function P.diff()
     new_file = ST.base_file == nil or not same_file(ST.base_file, today_file() or ""), named = ST.name ~= nil }
 end
 
---- Side-by-side diff (saved | proposed) in its own tab, for the user's review. q closes it.
+--- Side-by-side diff (saved | proposed) in its own tab, for the user's review. q closes it and goes back to the
+--- tab it was opened from.
 function P.show_diff()
   local doc = need()
+  local back = api.nvim_get_current_tabpage()
+  local function close()
+    pcall(vim.cmd, "tabclose")
+    if api.nvim_tabpage_is_valid(back) then api.nvim_set_current_tabpage(back) end
+  end
   local function scratch(lines, label)
     local b = api.nvim_get_current_buf()
     vim.bo[b].buftype, vim.bo[b].bufhidden, vim.bo[b].swapfile = "nofile", "wipe", false
     api.nvim_buf_set_lines(b, 0, -1, false, lines)
     vim.bo[b].modifiable, vim.bo[b].filetype = false, "markdown"
     pcall(api.nvim_buf_set_name, b, label)
-    vim.keymap.set("n", "q", "<cmd>tabclose<cr>", { buffer = b, nowait = true, silent = true })
+    vim.keymap.set("n", "q", close, { buffer = b, nowait = true, silent = true })
     vim.wo.wrap = false
     vim.cmd("diffthis")
   end
+  vim.cmd("stopinsert") -- the answer "v" was typed in the chat input
   vim.cmd("tabnew")
   scratch(ST.base, "mksk://saved/" .. (ST.base_file and fn.fnamemodify(ST.base_file, ":t") or "(new plan)"))
   vim.cmd("rightbelow vnew")

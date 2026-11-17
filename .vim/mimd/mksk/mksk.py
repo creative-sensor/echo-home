@@ -26,8 +26,8 @@ backend -> nvim
                 plan, staged, deferred, net:{joined,connected,name,hub,network,state,members}}
   {"t":"req","id":N,"op":"plan","fn":<mksk_plan.lua function>,"args":{..}} | {"t":"req","id":N,"op":"context"|"open_file"}
   {"t":"input","text":..}      put text in the input line
-  {"t":"show"}                 open/focus the float (user input needed)
-  {"t":"notify","text":..,"level":"info"|"warn"}   shown when the float is hidden
+  {"t":"show"}                 focus the chat input (user input needed; a notification when the mksk tab is not in view)
+  {"t":"notify","text":..,"level":"info"|"warn"}   shown when the mksk tab is not in view
   {"t":"exit"}
 
 nvim -> backend
@@ -389,7 +389,7 @@ def json_call(system: str, user: str) -> Optional[dict]:
 # ==========================================
 # 3. AGENT
 # ==========================================
-BASE_PROMPT = """You are mksk (make-sketch), a planning agent working with the human user inside their Neovim. You answer in a floating chat window. You draft and refine plans with the user, answer their questions about the plan, and keep the plan file up to date.
+BASE_PROMPT = """You are mksk (make-sketch), a planning agent working with the human user inside their Neovim. You answer in a chat pane below the plan file. You draft and refine plans with the user, answer their questions about the plan, and keep the plan file up to date.
 
 THE PLAN FILE (make-sketch format)
 - One file per day in the user's folder: mksk--<plan_name>--YYYY-MM-DD.md. You work on the newest. Every approved change is written to
@@ -488,7 +488,7 @@ HELP_TEXT = f"""{BOLD}mksk commands{RST}
   staged edits:   y apply │ n drop │ v side by side │ or type what to change
   suggestions:    numbers (1,3) │ all │ none │ w skip them and write what is staged │ or answer in your own words
                   (<CR> on an option line picks it)
-{BOLD}Keys{RST} (in the float)  C-x interrupt │ C-c cancel/clear │ F2 log │ F8 network │ M-h/j/k/l dock, M-c center, M-f full, M-b peek │ q/Esc hide │ ↑/↓ history"""
+{BOLD}Keys{RST} (in the chat)  C-x interrupt │ C-c cancel/clear │ ↑/↓ history │ q back to the previous tab │ M-m chat ⇄ previous tab"""
 
 EDITS = {"add_sub", "set_overview", "add_target", "edit_target", "set_weights", "note", "remove_target"}
 NET_ACTIONS = {"who", "assign", "post", "ask_agent", "wait_agent"}
@@ -1442,8 +1442,8 @@ def main():
     chat(f"\033[1;36m◆ mksk\033[0m make-sketch planner · \033[1m{MODEL_NAME or 'no LLM'}\033[0m")
     if not MODEL_NAME:
         chat(f"{RED}  cannot reach the LLM at http://{ARGS.host}:{ARGS.port} — start it; I try again on each request{RST}")
-    chat(dim("  I stage plan edits and ask before anything is written · ===h help · F8 network"))
-    ilog("IFACE — Intelligence Network traffic and decisions (F8 back to chat)", "Title")
+    chat(dim("  I stage plan edits and ask before anything is written · ===h help"))
+    ilog("IFACE — Intelligence Network traffic and decisions", "Title")
     import mksk_iface
     if mksk_iface.INET_ERROR:
         ilog("⚠️ Intelligence Network driver not loaded; mksk plans but cannot join.", "ErrorMsg")
