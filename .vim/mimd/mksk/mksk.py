@@ -13,7 +13,7 @@ Boundaries
   this process never opens the plan file itself.
 - At start: the plan named by --plan, else the most up-to-date mksk--*--YYYY-MM-DD.md in --dir, else a zero plan.
 - Edits are staged. Nothing reaches the file until the user approves the diff, and then only today's file is
-  written; changes made for the network wait in a queue until the user reviews them (===p).
+  written; changes made for the network wait in a queue until the user reviews them (REVIEW pane, ===p).
 - The conversation stays in the LLM context from start to quit (old action results are shortened, --history-chars).
 
 Protocol: newline-delimited JSON on stdin/stdout. stdout belongs to the protocol; print() goes to stderr.
@@ -26,14 +26,20 @@ backend -> nvim
                 plan, staged, deferred, net:{joined,connected,name,hub,network,state,members}}
   {"t":"req","id":N,"op":"plan","fn":<mksk_plan.lua function>,"args":{..}} | {"t":"req","id":N,"op":"context"|"open_file"}
   {"t":"input","text":..}      put text in the input line
-  {"t":"show"}                 open/focus the float (user input needed)
-  {"t":"notify","text":..,"level":"info"|"warn"}   shown when the float is hidden
+  {"t":"show"}                 focus the chat input (user input needed; a notification when the mksk tab is not in view)
+  {"t":"notify","text":..,"level":"info"|"warn"}   shown when the mksk tab is not in view
+  {"t":"queue","items":[{qid,from,id,text,at,ops:[[fn,args],..],sends:[{to,sub,target,message}],
+                         state:"waiting"|"applying"|"dropping",error}]}
+                               the changes made for the network that wait for the user (the REVIEW pane); sends are the
+                               assignment briefs that go out once the user applies the change
+  {"t":"queue_show"}           go to the REVIEW pane (===p)
   {"t":"exit"}
 
 nvim -> backend
   {"t":"input","text":..,"sel":{file,start,end,text}|null,"ctx":{file,line,col,text}|null}
   {"t":"res","id":N,"ok":b,"out":..,"err":..}
   {"t":"net","op":"join","name","purpose","hub","network"} | {"t":"net","op":"leave"} | {"t":"net","op":"say","text"}
+  {"t":"queue","op":"apply"|"drop","qid":N}      the user's verdict on a queued change, from the REVIEW pane
   {"t":"interrupt"} | {"t":"cancel"} | {"t":"clear","b":..} | {"t":"quit"}
 """
 import argparse
@@ -389,7 +395,7 @@ def json_call(system: str, user: str) -> Optional[dict]:
 # ==========================================
 # 3. AGENT
 # ==========================================
-BASE_PROMPT = """You are mksk (make-sketch), a planning agent working with the human user inside their Neovim. You answer in a floating chat window. You draft and refine plans with the user, answer their questions about the plan, and keep the plan file up to date.
+BASE_PROMPT = """You are mksk (make-sketch), a planning agent working with the human user inside their Neovim. You answer in a chat pane below the plan file. You draft and refine plans with the user, answer their questions about the plan, and keep the plan file up to date.
 
 THE PLAN FILE (make-sketch format)
 - One file per day in the user's folder: mksk--<plan_name>--YYYY-MM-DD.md. You work on the newest. Every approved change is written to
@@ -464,7 +470,9 @@ NETWORK — you are on the Intelligence Network <NETWORK> as @<NAME>; [NETWORK] 
   the target's brief is sent to it. While planning you may also suggest owners for unassigned targets among the members.
 - Requests marked [Network request ...] come from other agents: when one reports progress, record it (status, and notes for the evidence:
   files, job ids, memo). Changes made for the network are queued for the user's approval, so tell the reporter it is recorded and waits
-  for approval. "suggest" and "assign" are not available while serving a network request.
+  for approval (the user reviews them in the REVIEW pane). When an agent asks you to give a target to an agent, "assign" it: in a
+  network request the assignment is queued the same way, and the brief is sent only once the user approves it. "suggest" is not
+  available while serving a network request: the user is not part of it, so decide from the plan, or say in the reply what is unclear.
 Network actions:
   {"action_type":"who"}
   {"action_type":"assign","target":"..","to":"memphia","message":"<optional extra instruction>"}
@@ -477,7 +485,8 @@ HELP_TEXT = f"""{BOLD}mksk commands{RST}
   <text>          idle: new request │ busy: steering message for the next turn
   !<text>         steer and interrupt the current LLM generation now
   +<text>         queue a request to run after the current one
-  ===p            review the plan changes agents reported on the network (queued until you approve)
+  ===p            go to the REVIEW pane: plan changes agents reported on the network, waiting for you
+                  (there: y apply │ n drop │ v side by side │ ]] / [[ next / previous change)
   ===s            plan status: summary, in progress, ready to start, warnings
   ===d            saved | proposed plan, side by side (also :MkskDiff)
   ===x            cancel the running request      ====  clear queues
@@ -488,7 +497,7 @@ HELP_TEXT = f"""{BOLD}mksk commands{RST}
   staged edits:   y apply │ n drop │ v side by side │ or type what to change
   suggestions:    numbers (1,3) │ all │ none │ w skip them and write what is staged │ or answer in your own words
                   (<CR> on an option line picks it)
-{BOLD}Keys{RST} (in the float)  C-x interrupt │ C-c cancel/clear │ F2 log │ F8 network │ M-h/j/k/l dock, M-c center, M-f full, M-b peek │ q/Esc hide │ ↑/↓ history"""
+{BOLD}Keys{RST} (in the chat)  C-x interrupt │ C-c cancel/clear │ ↑/↓ history │ q back to the previous tab │ M-m chat ⇄ previous tab"""
 
 EDITS = {"add_sub", "set_overview", "add_target", "edit_target", "set_weights", "note", "remove_target"}
 NET_ACTIONS = {"who", "assign", "post", "ask_agent", "wait_agent"}
@@ -551,7 +560,9 @@ class MkskAgent:
         self.trim_told = False
         self.ops: List[Tuple[str, dict]] = []  # edits staged by the running request (replayable)
         self.write_now = False                 # the user answered a PICK with w
-        self.deferred: deque = deque()         # changes made for the network, waiting for the user
+        self.deferred: deque = deque()         # changes made for the network, waiting for the user (REVIEW pane)
+        self.qid = 0                           # numbers the queued changes
+        self.sends: List[dict] = []            # briefs an assign of a network request sends once the user approves
         self.plan_info: dict = {}              # last P.state()
         from mksk_iface import IFace
         self.iface = IFace(self, ARGS, json_call, ilog)
@@ -718,6 +729,7 @@ class MkskAgent:
             except PlanError:
                 pass
             self.ops = []
+        self.sends = []  # an assignment brief goes with its staged edits
         BRIDGE.mark_dirty()
 
     # ---------- reviewing staged edits ----------
@@ -776,13 +788,19 @@ class MkskAgent:
             self.drop_staged()
             return "none", ""
         if origin:  # the network never writes the file: park the change until the user looks at it
-            self.deferred.append({"from": origin.get("from"), "id": origin.get("id"), "text": origin.get("text") or "",
-                                  "ops": list(self.ops)})
+            sends = list(self.sends)
+            with self.lock:
+                self.qid += 1
+                self.deferred.append({"qid": self.qid, "from": origin.get("from"), "id": origin.get("id"),
+                                      "text": origin.get("text") or "", "at": time.strftime("%H:%M"),
+                                      "ops": list(self.ops), "sends": sends, "state": "waiting", "error": None})
             self.drop_staged()
-            chat(f"{YELLOW}⏸ change for @{origin.get('from')} queued for your approval — ===p reviews it "
+            what = ("assignment of " + ", ".join(f"{s['target']} to @{s['to']}" for s in sends)) if sends else "change"
+            chat(f"{YELLOW}⏸ {what} for @{origin.get('from')} queued for your approval in the REVIEW pane "
                  f"({len(self.deferred)} waiting){RST}")
             BRIDGE.emit({"t": "notify", "level": "warn",
-                         "text": f"@{origin.get('from')} reported progress: {len(self.deferred)} plan change(s) wait for your approval (===p)"})
+                         "text": f"@{origin.get('from')}: {len(self.deferred)} plan change(s) wait in the REVIEW pane"})
+            self.emit_queue()
             return "deferred", ""
         self.show_diff(d)
         ans = self.confirm("diff", "apply this to the plan file?", "APPLY? y/n/v")
@@ -794,52 +812,114 @@ class MkskAgent:
             return "discarded", ""
         return "revise", ans
 
-    def review_deferred(self):
-        if not self.deferred:
-            chat(dim("nothing is waiting for review"))
+    # ---------- the queue: plan changes reported on the network, waiting for the user (REVIEW pane) ----------
+    def queue_items(self) -> List[dict]:
+        with self.lock:
+            return [{"qid": i["qid"], "from": i["from"], "id": i["id"], "text": i["text"], "at": i["at"],
+                     "ops": [[fn, args] for fn, args in i["ops"]], "sends": [dict(s) for s in i.get("sends") or []],
+                     "state": i["state"], "error": i["error"]}
+                    for i in self.deferred]
+
+    def emit_queue(self):
+        BRIDGE.emit({"t": "queue", "items": self.queue_items()})
+        BRIDGE.mark_dirty()
+
+    def queue_decide(self, qid, verdict: str):
+        """The user's y (apply) / n (drop) in the REVIEW pane. Runs on the stdin reader thread: the plan is touched by the
+        worker only, so the verdict becomes a task ahead of every other request (it waits for the running one)."""
+        if verdict not in ("apply", "drop"):
             return
-        while self.deferred:
-            item = self.deferred[0]
-            chat(f"\n{MAG}⏸ reported by @{item['from']} (#{item['id']}):{RST} {short(item['text'], 300)}")
+        with self.lock:
+            item = next((i for i in self.deferred if i["qid"] == qid), None)
+            if not item or item["state"] != "waiting":
+                return
+            item["state"], item["error"] = ("applying" if verdict == "apply" else "dropping"), None
+            pos = 0
+            while pos < len(self.tasks) and self.tasks[pos]["kind"] == "queue":
+                pos += 1
+            self.tasks.insert(pos, {"kind": "queue", "text": f"{verdict} queued change #{qid}", "qid": qid,
+                                    "verdict": verdict, "sel": None, "ctx": None, "origin": None})
+            busy = self.busy
+        self.wake.set()
+        if busy:
+            chat(dim(f"  ⏳ #{qid}: {verdict} after the running request"))
+        self.emit_queue()
+
+    def unqueue(self, item: dict, verdict: str):
+        with self.lock:
+            if item in self.deferred:
+                self.deferred.remove(item)
+        self.note(f"System: the change asked by @{item['from']} ({short(item['text'], 200)}) was {verdict}.")
+        if self.iface.connected:
+            noun = "request" if item.get("sends") else "report"
+            self.iface.say(f"Your {noun} (#{item['id']}) was {verdict}.", re=item["id"], to=[item["from"]])
+        self.emit_queue()
+
+    def send_briefs(self, sends: List[dict]) -> str:
+        """After the user applied a queued assignment: the brief of each target goes to its agent (from the saved plan)."""
+        out = []
+        for s in sends:
+            brief = str(self.plan("brief", cancellable=False, sub=s.get("sub"), target=s["target"],
+                                  reply_to=self.iface.net.name))
+            if s.get("message"):
+                brief += "\n" + str(s["message"]).strip()
+            sent = self.iface.say(brief, to=[s["to"]])
+            chat(f"{MAG}  ✉ brief of {s['target']} → @{s['to']}{RST}" if sent
+                 else f"{RED}  ✗ the brief of {s['target']} could not be sent to @{s['to']}{RST}")
+            out.append(f"@{s['to']} has the brief of {s['target']}" if sent
+                       else f"the brief of {s['target']} could NOT be sent to @{s['to']}")
+        return "; ".join(out)
+
+    def settle_queued(self, qid, verdict: str):
+        with self.lock:
+            item = next((i for i in self.deferred if i["qid"] == qid), None)
+        if not item:
+            return
+        label = f"#{qid} from @{item['from']}"
+        try:
+            if verdict == "drop":
+                chat(f"{YELLOW}✖ {label} dropped{RST}")
+                self.unqueue(item, "declined by the user")
+                return
+            self.set_phase(f"applying #{qid}")
+            sends = item.get("sends") or []
+            away = [s["to"] for s in sends if not (self.iface.connected and self.iface.member(s["to"]))]
+            if away:  # check first: an assignment is saved only when its brief can go out with it
+                names = ", ".join("@" + n for n in away)
+                item["error"] = (f"mksk is off the network, so the brief to {names} cannot be sent (mkskj joins; n drops it)"
+                                 if not self.iface.connected else
+                                 f"{names} left the network, so the brief cannot be sent (y again once back; n drops it)")
+                chat(f"{RED}✖ {label}: {item['error']}{RST}")
+                return
+            self.ops = list(item["ops"])  # set first: a replay that fails half-way is discarded too
             try:
                 for fn, params in item["ops"]:
                     self.plan(fn, **params)
-                self.ops = list(item["ops"])
                 d = self.plan("diff")
             except PlanError as e:
-                self.ops = list(item["ops"])
                 self.drop_staged()
-                self.deferred.popleft()
-                chat(f"{RED}  it no longer fits the plan and was dropped: {e}{RST}")
-                continue
+                chat(f"{RED}✖ {label} no longer fits the plan and was dropped: {e}{RST}")
+                self.unqueue(item, f"dropped: it no longer fits the plan ({e})")
+                return
             if not d.get("changed"):
                 self.drop_staged()
-                self.deferred.popleft()
-                chat(dim("  already in the plan"))
-                continue
-            self.show_diff(d)
-            ans = self.confirm("review", "apply this to the plan file?", "APPLY? y/n/v · else later")
-            if ans == "y":
-                try:
-                    self.commit()
-                except PlanError as e:
-                    self.drop_staged()
-                    chat(f"{RED}  cannot save it: {e} — left in the queue{RST}")
-                    break
-                verdict = "applied to the plan"
-            elif ans == "n":
+                chat(dim(f"  {label} is already in the plan"))
+                self.unqueue(item, "already in the plan")
+                return
+            try:
+                self.commit()
+            except PlanError as e:
                 self.drop_staged()
-                chat(f"{YELLOW}✖ dropped{RST}")
-                verdict = "declined by the user"
-            else:
-                self.drop_staged()
-                chat(dim(f"  left in the queue ({len(self.deferred)} waiting, ===p to come back)"))
-                break
-            self.deferred.popleft()
-            self.note(f"System: the change reported by @{item['from']} ({short(item['text'], 200)}) was {verdict}.")
-            if self.iface.connected:
-                self.iface.say(f"Your report (#{item['id']}) was {verdict}.", re=item["id"], to=[item["from"]])
-            BRIDGE.mark_dirty()
+                item["error"] = str(e)
+                chat(f"{RED}✖ {label} cannot be saved: {e} — it stays in the REVIEW pane{RST}")
+                return
+            sent = self.send_briefs(sends) if sends else ""
+            self.unqueue(item, "applied to the plan" + (f"; {sent}" if sent else ""))
+        finally:
+            with self.lock:
+                if item in self.deferred:
+                    item["state"] = "waiting"  # still queued (cancelled, or the save failed)
+            self.emit_queue()
 
     # ---------- history (kept from startup to quit) ----------
     def note(self, text: str, k: str = "sys"):
@@ -960,8 +1040,8 @@ class MkskAgent:
             BRIDGE.mark_dirty()
             cancelled = False
             try:
-                if task["kind"] == "review":
-                    self.review_deferred()
+                if task["kind"] == "queue":
+                    self.settle_queued(task["qid"], task["verdict"])
                 else:
                     self.run_request(task)
             except Cancelled:
@@ -1041,12 +1121,13 @@ class MkskAgent:
                          + ". open_plan opens one; a new name starts a new plan.")
         if self.deferred:
             parts.append(f"[QUEUED] {len(self.deferred)} change(s) reported on the network wait for the user's approval "
-                         "(the user reviews them with ===p)")
+                         "(the user reviews them in the REVIEW pane, right of the plan file)")
         if self.iface.connected:
             parts.append(f"[NETWORK] {self.iface.net.network} as @{self.iface.net.name}; members: {self.iface.net.who()}")
         if origin:
             parts.append(f"[REQUESTER] @{origin.get('from')} on the network ({'private' if origin.get('to') else 'in the room'}). "
-                         "The user is not part of this exchange.")
+                         "The user is not part of this exchange: do not use suggest; decide from the plan, or say in the "
+                         "reply what is unclear. Edits and assign are queued for the user's approval (REVIEW pane).")
         elif isinstance(ctx, dict) and PLAN_FILE.search(str(ctx.get("file") or "")):
             parts.append(f"[USER POSITION] {ctx.get('file')} line {ctx.get('line')}: {short(ctx.get('text'), 200)}")
         parts.append(f"The request you are working on: {text}")
@@ -1234,7 +1315,8 @@ class MkskAgent:
     def suggest(self, a: dict, origin: Optional[dict]) -> str:
         """Offer options and let the user choose; nothing is staged here."""
         if origin:
-            return "System: denied — the user is not part of a network request; decide from the plan or report what is unclear."
+            return ("System: denied — suggest asks the user, and the user is not part of a network request: decide from "
+                    "the plan, or say in the reply what is unclear.")
         question = str(a.get("question") or "Which of these should go into the plan?").strip()
         opts = a.get("options") if isinstance(a.get("options"), list) else []
         opts = [str(o).strip() for o in opts if str(o).strip()]
@@ -1262,17 +1344,33 @@ class MkskAgent:
                 + ("\nNot selected (do not add, do not offer again):\n" + "\n".join(f"- {o}" for o in rest) if rest else ""))
 
     def assign(self, a: dict, origin: Optional[dict]) -> str:
-        """Hand a target to an agent on the network: plan change + brief, both after the user's approval."""
-        if origin:
-            return "System: denied — only the user assigns targets; tell the requester to ask the user."
+        """Hand a target to an agent on the network: plan change + brief, both after the user's approval.
+        For a network request the assignment is staged with the request's other edits and queued (REVIEW pane): the brief
+        goes out when the user applies it there."""
         if not self.iface.connected:
             return "System: not on the Intelligence Network (the user joins with mkskj or :InetJoin mksk)."
         who = self.iface.member(str(a.get("to") or ""))
         if not who:
             return f"System: @{a.get('to')} is not on the network. Members: {self.iface.net.who()}"
         sub, target = a.get("sub"), a.get("target")
+        if origin:
+            if not target:
+                return "Error: assign needs \"target\""
+            same = [t for t in self.plan_state().get("targets") or []
+                    if t.get("target") == target and (not sub or t.get("sub") == sub)
+                    and str(t.get("agent") or "").lstrip("@").lower() == who.lower()]
+            if same:
+                return f"{target} is already assigned to @{who} in the plan: nothing to queue."
+            if any(s["to"] == who and s["target"] == target for s in self.sends):
+                return f"assigning {target} to @{who} is already staged."
         self.edit("edit_target", sub=sub, target=target, agent=who)
         self.edit("note", sub=sub, target=target, key="assigned", value=f"{time.strftime('%Y-%m-%d')} to @{who}")
+        if origin:
+            self.sends.append({"to": who, "sub": sub, "target": target,
+                               "message": str(a.get("message") or "").strip() or None})
+            return (f"staged: {target} assigned to @{who}. It is queued for the user's approval with this request's other "
+                    f"edits (REVIEW pane); the brief goes to @{who} only once the user approves. Finish with declare_result "
+                    f"and tell @{origin.get('from')} it waits for the user.")
         brief = str(self.plan("brief", sub=sub, target=target, reply_to=self.iface.net.name))
         if a.get("message"):
             brief += "\n" + str(a["message"]).strip()
@@ -1348,7 +1446,10 @@ class Router:
         elif cmd == "===c":
             BRIDGE.clear("chat")
         elif cmd == "===p":
-            a.submit_task("review the changes reported on the network", kind="review")
+            if a.deferred:
+                BRIDGE.emit({"t": "queue_show"})
+            else:
+                chat(dim("nothing is waiting for review"))
         elif cmd == "===s":
             threading.Thread(target=self._status, daemon=True).start()
         elif cmd == "===d":
@@ -1370,7 +1471,7 @@ class Router:
         for w in (st.get("warnings") or [])[:12]:
             chat(f"{YELLOW}  ⚠ {w}{RST}")
         if self.a.deferred:
-            chat(f"{YELLOW}  ⏸ {len(self.a.deferred)} reported change(s) wait for review: ===p{RST}")
+            chat(f"{YELLOW}  ⏸ {len(self.a.deferred)} reported change(s) wait in the REVIEW pane (===p){RST}")
 
     def _diff(self):
         try:
@@ -1442,8 +1543,8 @@ def main():
     chat(f"\033[1;36m◆ mksk\033[0m make-sketch planner · \033[1m{MODEL_NAME or 'no LLM'}\033[0m")
     if not MODEL_NAME:
         chat(f"{RED}  cannot reach the LLM at http://{ARGS.host}:{ARGS.port} — start it; I try again on each request{RST}")
-    chat(dim("  I stage plan edits and ask before anything is written · ===h help · F8 network"))
-    ilog("IFACE — Intelligence Network traffic and decisions (F8 back to chat)", "Title")
+    chat(dim("  I stage plan edits and ask before anything is written · ===h help"))
+    ilog("IFACE — Intelligence Network traffic and decisions", "Title")
     import mksk_iface
     if mksk_iface.INET_ERROR:
         ilog("⚠️ Intelligence Network driver not loaded; mksk plans but cannot join.", "ErrorMsg")
@@ -1482,6 +1583,8 @@ def main():
                     agent.iface.leave()
                 elif op == "say":
                     agent.iface.say(msg.get("text", ""), to=msg.get("to"))
+            elif t == "queue":
+                agent.queue_decide(msg.get("qid"), str(msg.get("op") or ""))
             elif t == "quit":
                 break
             BRIDGE.mark_dirty()

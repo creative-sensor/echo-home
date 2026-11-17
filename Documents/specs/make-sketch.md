@@ -73,6 +73,7 @@ A pseudo Makefile in a fenced `Makefile` block. It is the oversight map of the p
   targets, deadlines, pending items, job ids, files created, memos.
 - A dependency on a target in another sub-document is written `name/target`
   (for example `schema-migration/cutover`).
+- A blank line goes above each target name (except the first) so the targets read apart.
 
 ## Template
 
@@ -98,12 +99,14 @@ inventory:
     # output: docs/inventory.csv
     # magnitude: leaf
     # done: 2026-11-14, commit 3fa91c2
+
 dump_restore: inventory
     # links["inventory"]: uses the table list to order the dump
     # storage: /mnt/backup/orders-2026-11-14.dump
     # job id: dump-8841 (finished), restore not started
     # notes: restore needs the pg_trgm extension installed first
     # magnitude: medium
+
 cutover: inventory dump_restore
     # primary steps:
     #    - freeze writes
@@ -111,6 +114,7 @@ cutover: inventory dump_restore
     #    - flip the connection string
     # deadline: strictly before Dec 13
     # priority: high
+
 verifier: cutover
     # test suite: run-v23
     # approver to ask: sam smith

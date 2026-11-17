@@ -11,12 +11,15 @@
 -- plain Lua, usable by hand:   :lua require("mksk").plan.edit_target{ target = "cutover", status = "WIP", agent = "bee" }
 --
 --   files     P.setup{dir, actor}  P.list{dir}  P.latest{dir}  P.open{dir, name}  P.name_plan{name}  P.state()  P.validate()
+--             P.file()   (the plan file on disk, nil while there is none)
 --   weights   P.set_weights{sub, weights = {target = w}}   P.reweigh()        (W = w + w of every prerequisite, once each)
 --   table     P.edit_target{sub, target, description, status, agent, w}       (rows stay sorted by W, descending)
 --   targets   P.add_target{sub, target, description, w, deps, notes, status, agent}
 --             P.edit_target{..., deps, rename}   P.note{sub, target, key, value | text | remove}   P.remove_target{sub, target}
 --   sections  P.add_sub{name, goal}   P.set_overview{sub, key, value}
 --   review    P.diff()  P.show_diff()  P.commit()  P.discard()
+--   queued    P.preview{ops}  P.show_diff{ops, label}   a change reported on the network, against the saved plan,
+--             without staging it (ops = { {"edit_target", {target=.., status=..}}, ... })
 --   handover  P.brief{sub, target, reply_to}    everything an agent needs to take a target over
 -- "sub" may be left out when the target name is unique in the plan; "target" may also be written sub/target.
 
@@ -478,6 +481,8 @@ local function render(doc)
         out[#out + 1] = s.fence
         extend(s.lead)
         for _, t in ipairs(s.targets) do
+          -- a blank line above each target name, for readability (not right below the fence)
+          if out[#out] ~= s.fence and out[#out]:match("%S") then out[#out + 1] = "" end
           out[#out + 1] = t.name .. ":" .. (#t.deps > 0 and (" " .. table.concat(t.deps, " ")) or "")
           extend(t.body)
         end
@@ -721,6 +726,14 @@ function P.summary()
   end
   return ("plan %s · %s · %d sub-document(s), %d target(s): %d TODO, %d WIP, %d DONE"):format(
     ST.name or "(unnamed)", where, #ST.doc.subs, c.n, c.TODO, c.WIP, c.DONE)
+end
+
+--- The plan file on disk the working plan comes from (its newest snapshot; nil while the plan has no file yet),
+--- and a stamp that changes whenever that file does.
+function P.file()
+  if not ST.open then return nil end
+  refresh()
+  return ST.base_file, ST.stamp
 end
 
 --- Open the newest snapshot of a plan (a name, or a path to one of its files). A new name starts a new plan;
@@ -1057,13 +1070,13 @@ function P.remove_target(a)
 end
 
 -- ---------------------------------------------------------------- review
---- { changed, text (unified diff), from, to, added, removed }
-function P.diff()
-  local doc = need()
-  local old, new = table.concat(ST.base, "\n"), table.concat(render(doc), "\n")
+--- The saved plan (or `base` lines) against `doc`: { changed, text (unified diff), from, to, added, removed }
+local function diff_against(doc, base)
+  base = base or ST.base
+  local old, new = table.concat(base, "\n"), table.concat(render(doc), "\n")
   local to = today_file() or ("(unnamed plan) " .. today_label())
   if old == new then return { changed = false, text = "", added = 0, removed = 0, to = to } end
-  local text = vdiff(#ST.base > 0 and (old .. "\n") or "", new .. "\n", { result_type = "unified", ctxlen = 2 })
+  local text = vdiff(#base > 0 and (old .. "\n") or "", new .. "\n", { result_type = "unified", ctxlen = 2 })
   local added, removed = 0, 0
   for l in text:gmatch("[^\n]+") do
     if l:match("^%+") then added = added + 1 elseif l:match("^%-") then removed = removed + 1 end
@@ -1072,23 +1085,73 @@ function P.diff()
     new_file = ST.base_file == nil or not same_file(ST.base_file, today_file() or ""), named = ST.name ~= nil }
 end
 
---- Side-by-side diff (saved | proposed) in its own tab, for the user's review. q closes it.
-function P.show_diff()
-  local doc = need()
+--- What is staged: the working plan against the saved one.
+function P.diff() return diff_against(need()) end
+
+local EDIT_FNS = { add_sub = true, set_overview = true, add_target = true, edit_target = true, set_weights = true,
+  note = true, remove_target = true }
+
+--- The saved plan with `ops` ({ {fn, args}, ... } edit calls) applied, on a scratch copy: the working plan and its
+--- staged edits stay exactly as they were.
+local function saved_copy(ops)
+  need()
+  local keep = { doc = ST.doc, dirty = ST.dirty, conflict = ST.conflict, stamp = ST.stamp }
+  ST.doc, ST.dirty = load_doc(ST.base), false
+  local ok, err = pcall(function()
+    for _, op in ipairs(ops or {}) do
+      if not EDIT_FNS[op[1]] then fail("not a plan edit: " .. tostring(op[1])) end
+      P[op[1]](vim.deepcopy(op[2] or {}))
+    end
+  end)
+  local copy = ST.doc
+  ST.doc, ST.dirty, ST.conflict = keep.doc, keep.dirty, keep.conflict
+  if ST.stamp ~= keep.stamp then -- the file changed on disk meanwhile (and was reloaded): as refresh() would do
+    if ST.dirty then ST.conflict = true else ST.doc = load_doc(ST.base) end
+  end
+  if not ok then fail(tostring(err)) end
+  return copy
+end
+
+--- The saved plan as mksk writes it (headers, padding, blank lines): what a queued change is compared with, so its
+--- diff shows only what the change itself does.
+local function saved_normalized()
+  need()
+  return render(load_doc(ST.base))
+end
+
+--- A queued change (edits reported on the network) against the saved plan, without staging it: P.diff's table.
+function P.preview(a)
+  local copy = saved_copy(a.ops)
+  return diff_against(copy, saved_normalized())
+end
+
+--- Side-by-side diff (saved | proposed) in its own tab, for the user's review. q closes it and goes back to the
+--- tab it was opened from. With {ops, label}: saved | the saved plan with those edits (a queued change).
+function P.show_diff(a)
+  a = a or {}
+  local doc = a.ops and saved_copy(a.ops) or need()
+  local back = api.nvim_get_current_tabpage()
+  local function close()
+    pcall(vim.cmd, "tabclose")
+    if api.nvim_tabpage_is_valid(back) then api.nvim_set_current_tabpage(back) end
+  end
   local function scratch(lines, label)
     local b = api.nvim_get_current_buf()
     vim.bo[b].buftype, vim.bo[b].bufhidden, vim.bo[b].swapfile = "nofile", "wipe", false
     api.nvim_buf_set_lines(b, 0, -1, false, lines)
     vim.bo[b].modifiable, vim.bo[b].filetype = false, "markdown"
     pcall(api.nvim_buf_set_name, b, label)
-    vim.keymap.set("n", "q", "<cmd>tabclose<cr>", { buffer = b, nowait = true, silent = true })
+    vim.keymap.set("n", "q", close, { buffer = b, nowait = true, silent = true })
     vim.wo.wrap = false
     vim.cmd("diffthis")
   end
+  vim.cmd("stopinsert") -- the answer "v" was typed in the chat input
   vim.cmd("tabnew")
-  scratch(ST.base, "mksk://saved/" .. (ST.base_file and fn.fnamemodify(ST.base_file, ":t") or "(new plan)"))
+  scratch(a.ops and saved_normalized() or ST.base,
+    "mksk://saved/" .. (ST.base_file and fn.fnamemodify(ST.base_file, ":t") or "(new plan)"))
   vim.cmd("rightbelow vnew")
-  scratch(render(doc), "mksk://proposed/" .. today_label())
+  scratch(render(doc), "mksk://" .. (a.label or "proposed") .. "/" .. today_label())
+  if a.ops then return "saved | with the queued change, side by side in a new tab (q closes it)" end
   return ST.dirty and "saved | proposed, side by side in a new tab (q closes it)" or "no staged edits: both sides are the same"
 end
 

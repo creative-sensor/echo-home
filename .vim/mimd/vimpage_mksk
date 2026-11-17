@@ -1,6 +1,5 @@
 let g:mksk_python = 'python'
 let g:mksk_args = ['--port', get(g:, 'LMSH_PORT', 8080)]
-let g:mksk_layout = 'right'
 "let g:mksk_toggle_key = '<M-m>'
 " plan folder = the current directory when mksk starts. Override:
 "let g:mksk_dir = '~/echo-home/Documents/mksk'
@@ -13,6 +12,7 @@ map mkski : exec 'Mksk --port '.get(g:, 'LMSH_PORT', 8080)<CR>
 map mkskt : MkskToggle<CR>
 map mkskd : MkskDiff<CR>
 map mkskf : MkskFile<CR>
+map mkskp : MkskReview<CR>
 map mkskj : InetJoin mksk<CR>
 map mkskl : InetLeave mksk<CR>
 map mkskq : MkskQuit<CR>
@@ -22,22 +22,35 @@ map mkskq : MkskQuit<CR>
 "  (format: ~/echo-home/Documents/specs/make-sketch.md): plan updates and questions, on your request. mksk1 loads and
 "  opens it on the most up-to-date plan file in the current directory, else on a zero plan (it names it when the first
 "  change is saved). :Mksk <plan> opens a named plan instead (a new name starts a new plan).
-"- Recall the chat from anywhere (normal/insert/terminal): Alt-m. In visual mode Alt-m attaches the selected lines
-"  (e.g. rows of the targets table: "weigh these").
-"- Ask without opening the float: :MkskAsk <text>, or :'<,'>MkskAsk <text> to attach a range.
-"- In the float: Enter sends, Up/Down history, Ctrl-X interrupts the LLM, Ctrl-C cancels, F2 raw LLM log, F8 network pane,
-"  q hides. Busy: plain text steers the running request, !text steers now, +text queues a new request.
-"- Float position: Alt-h/j/k/l docks it left/bottom/top/right, Alt-c center, Alt-f full, Alt-b peek (translucent;
-"  needs termguicolors). :MkskLayout <name> or g:mksk_layout picks one.
+"- mksk opens in a tab of its own: the plan file on top; below it the chat (left), the raw LLM log (right) and, while
+"  mksk is on the network, the IFACE pane (network traffic and decisions) right of the log. The plan pane follows the
+"  plan (another plan, today's new file); mkskf goes to it. Closed panes come back on the next Alt-m.
+"- Alt-m from anywhere (normal/insert/terminal) goes to the chat; in the chat, Alt-m or q (normal) goes back to the tab
+"  you came from. In visual mode Alt-m attaches the selected lines (e.g. rows of the targets table: "weigh these").
+"- Ask without typing in the chat: :MkskAsk <text>, or :'<,'>MkskAsk <text> to attach a range.
+"- In the chat: Enter sends, Up/Down history, Ctrl-X interrupts the LLM, Ctrl-C cancels. Busy: plain text steers the
+"  running request, !text steers now, +text queues a new request. When mksk needs your answer while you are in another
+"  tab, it notifies you instead of pulling you back.
 "- Nothing is written without you: edits are staged and shown as a diff. y applies, n drops, v opens saved | proposed side
-"  by side (mkskd any time), any other text tells it what to change. Approved changes always go to today's file (the
-"  first one of a day creates it from the newest); older files are never written. Suggestions: pick numbers (1,3), all,
-"  none, w (skip them and go straight to the diff of what is staged), or answer in your own words; Enter on an option
-"  line picks it.
-"- Memory: the whole chat stays in its context from start to quit (mkskq); ===r forgets it. ===s shows where the plan stands.
+"  by side (mkskd any time; q there comes back), any other text tells it what to change. Approved changes always go to
+"  today's file (the first one of a day creates it from the newest); older files are never written. Suggestions: pick
+"  numbers (1,3), all, none, w (skip them and go straight to the diff of what is staged), or answer in your own words;
+"  Enter on an option line picks it.
+"- Memory: the whole chat stays in its context from start to quit (mkskq, which also closes the tab); ===r forgets it.
+"  ===s shows where the plan stands.
 "- Intelligence Network: task assignment exists only once mksk joins it. mkskj joins echo-net as @mksk (name/purpose:
 "  g:inet_agents.mksk in vimpage_inet, optional). Then "assign dump_restore to memphia" records the agent and sends it
 "  the target's brief, after your y.
-"  Progress agents report to @mksk is staged and queued; ===p reviews the queue (y/n each). The network never writes the file.
+"  Progress agents report to @mksk is staged and queued for you; the network never writes the file. The queued changes
+"  show in the REVIEW pane right of the plan file (only while something waits): who reported it, the report, its edits
+"  and its diff against the saved plan. There: y applies it, n drops it, v (or Enter) shows saved | with it side by side,
+"  ]] / [[ jump between changes. ===p in the chat or mkskp goes to the pane. Applying waits for the running request;
+"  the reporter is told the verdict.
+"  An agent asking to give a target to an agent ("@mksk assign define_requirements to memphia") is queued the same way:
+"  the pane shows the edits (agent column, "assigned" note) and "✉ y also sends @memphia the brief of ...". y saves it
+"  and sends the brief; n drops it and nothing is sent. If that agent is off the network, y saves nothing and the
+"  change stays with a warning: y again once it is back.
+"- While mksk serves a network request (prompt badge QUEUE: what you type becomes your next request), it cannot ask you
+"  anything: a "suggest" it tries is denied, and it decides from the plan or says what is unclear in its answer.
 "- The plan functions are plain Lua (mksk_plan.lua): :lua require('mksk').plan.edit_target{target='cutover', status='WIP'}
 "  then :MkskDiff and :lua require('mksk').plan.commit()  (or .discard()).
