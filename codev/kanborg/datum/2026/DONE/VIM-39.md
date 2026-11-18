@@ -1,4 +1,4 @@
-# ISSUE : vimpage_fllm: frontier of llm
+# vimpage_fllm: frontier of llm
 --------------------------------
 ### 0 DESCRIPTION
 
