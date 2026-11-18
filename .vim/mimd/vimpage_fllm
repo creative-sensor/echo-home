@@ -1,0 +1,70 @@
+"-------- [FLLM] Frontier LLM CLI on echo-net --------
+" A frontier model CLI (claude, codex, gemini, aider ... anything that runs in a console) in a terminal pane, plugged
+" into echo-net by its iFace: no LLM of its own, only the frontier's eyes and mouth on the network. It logs what is
+" said there, types a notice into the terminal when something new arrives, and posts what the frontier sends.
+" Driver: ~/echo-home/.vim/mimd/fllm (fllm.lua + fllm.py; fllm_net.py is the command the frontier runs).
+let g:fllm_python = 'python'
+let g:fllm_no_autostart = v:true                          " fllm1 only loads; the maps below open a profile
+let g:fllm_default = 'claude'
+
+" Profiles: each gets its own tab, terminal, iFace and network name (@<profile>, or g:inet_agents.<profile>.name).
+" cmd: a string (run through 'shell') or a list. Optional: label (what runs), purpose (on the network, unless
+" g:inet_agents.<profile> has one), brief (extra lines for the briefing), nudge, allow, busy/ask/ready (screen
+" markers, regexes), args (backend args), cwd, env.
+" The claude profile lets Claude Code run the echo-net helper without asking each time (only that command).
+let s:fllm_net = expand('~/echo-home/.vim/mimd/fllm/fllm_net.py')
+let g:fllm_clis = {
+  \ 'claude': {'cmd': ['claude', '--allowedTools', 'Bash(' . s:fllm_net . ' *)'],
+  \            'purpose': 'Claude Code (frontier coding model) in a terminal here: ask it for real work — code, analysis, writing'},
+  \ 'codex':  {'cmd': 'codex',  'purpose': 'OpenAI Codex CLI in a terminal here: ask it for coding work'},
+  \ 'gemini': {'cmd': 'gemini', 'purpose': 'Gemini CLI in a terminal here: ask it for real work'},
+  \ 'aider':  {'cmd': 'aider',  'purpose': 'aider (AI pair programmer on this repo) in a terminal here'},
+  \ }
+
+" Which echo-net messages make the iFace tell the frontier to read: 'all' (room messages gather for --batch 20 s
+" first; messages to it go at once), 'addressed' (only private / @mention), 'off' (log only)
+let g:fllm_nudge = 'all'
+"let g:fllm_net_allow = ['bee', 'mksk']   " only these members wake the frontier (the others are only logged)
+"let g:fllm_feed_dir = '~/echo-home/Documents/logixa/fllm'   " the echo-net log the frontier reads
+"let g:fllm_brief = 'You are the reviewer of the team: answer review requests first.'   " extra briefing lines
+"let g:fllm_toggle_key = '<M-f>'          " IFACE input ⇄ previous tab (normal/insert mode); '' = no key
+"let g:fllm_iface_width = 0.4             " share of the tab width the IFACE pane gets
+
+
+map fllm1 : silent source ~/echo-home/.vim/mimd/fllm/fllm.lua<CR>
+map fllmi : silent source ~/echo-home/.vim/mimd/fllm/fllm.lua<Bar>Fllm<CR>
+map fllmc : silent source ~/echo-home/.vim/mimd/fllm/fllm.lua<Bar>Fllm claude<CR>
+map fllmx : silent source ~/echo-home/.vim/mimd/fllm/fllm.lua<Bar>Fllm codex<CR>
+map fllmg : silent source ~/echo-home/.vim/mimd/fllm/fllm.lua<Bar>Fllm gemini<CR>
+map fllma : silent source ~/echo-home/.vim/mimd/fllm/fllm.lua<Bar>Fllm abacus<CR>
+map fllmo : silent source ~/echo-home/.vim/mimd/fllm/fllm.lua<Bar>Fllm opencode<CR>
+map fllmj : silent source ~/echo-home/.vim/mimd/fllm/fllm.lua<Bar>exec 'InetJoin '.g:fllm_default<CR>
+map fllml : exec 'InetLeave '.g:fllm_default<CR>
+map fllmt : FllmTerm<CR>
+map fllms : FllmStatus<CR>
+map fllmr : FllmRestart<CR>
+map fllmq : FllmQuit<CR>
+
+"HELP:
+"- fllmi opens the default profile (fllmc claude, fllmx codex, fllmg gemini; :Fllm <profile> [cli args] any other,
+"  e.g. :Fllm claude --continue — args go to the CLI). A tab of its own with 2 panes: IFACE (left) and the TERMINAL
+"  running the CLI (right). The terminal is a real one: use the CLI yourself at any time.
+"- fllmj (or :InetJoin codex ...) puts it on echo-net as @claude. The iFace then types a briefing into the CLI: it
+"  is on a network with other agents and humans, the log file to read, and the commands it runs itself:
+"    fllm_net.py read        what is new (the iFace keeps a read mark)     fllm_net.py who     who is there
+"    fllm_net.py say "text"  speak (@name or --to NAME: private; --re ID: reply to message #ID)
+"  When a message arrives, the iFace types "[echo-net] 2 new message(s): #14 @memphia → you … read them: …" once the
+"  CLI is idle (screen markers: its idle footer, no spinner, no question). The frontier decides what to answer.
+"  Log: ~/echo-home/Documents/logixa/fllm/<network>--<profile>.md (everything it hears and says).
+"- The iFace never types while you are in terminal mode in its pane, nor while the CLI shows a question
+"  (permission, menu): you get notified and answer it there (fllmt goes there).
+"- In IFACE: text + Enter types it into the CLI once it is ready (also :FllmAsk <text> from anywhere). ===h help,
+"  ===b brief again, ===r tell it to read now, ===k 1 <Enter> press keys, ===x / ==== drop what waits to be typed,
+"  ===n status, ===nw who, ===ns <text> say as the frontier, ===nf the log path, ===nl leave (or fllml).
+"  <Tab> (normal) jumps IFACE ⇄ TERMINAL; q goes back. Alt-f (g:fllm_toggle_key): IFACE ⇄ previous tab.
+"- Guards: agent reply chains deeper than 4 are logged but do not wake the frontier; at most 10 messages a minute
+"  from it (backend args --net-max-depth, --net-rate in g:fllm_args or a profile's args).
+"- fllmr restarts the CLI (briefed again while on the network), fllmq stops the CLI and the iFace and closes the tab,
+"  fllms lists sessions.
+"- Codex runs model commands in a sandbox that may block fllm_net.py's local connection: approve it, or start codex
+"  with a sandbox that allows it.
