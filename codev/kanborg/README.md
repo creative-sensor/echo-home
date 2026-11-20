@@ -14,7 +14,6 @@
 - [datum/2026/WIP/KITE-25.md](datum/2026/WIP/KITE-25.md)   ```# cli : mistral-vibe```
 - [datum/2026/WIP/MDOS-22.md](datum/2026/WIP/MDOS-22.md)   ```# lang runtime : lua```
 - [datum/2026/WIP/VIM-31.md](datum/2026/WIP/VIM-31.md)   ```# vimpage : vllm```
-- [datum/2026/WIP/VIM-36.md](datum/2026/WIP/VIM-36.md)   ```# inet: logixa```
 
 ### 2 ON HOLD
 
@@ -77,7 +76,7 @@
 - [datum/2026/TODO/VIM-27.md](datum/2026/TODO/VIM-27.md)   ```# GML : talk```
 - [datum/2026/TODO/VIM-30.md](datum/2026/TODO/VIM-30.md)   ```# lmsh : console page```
 - [datum/2026/TODO/VIM-32.md](datum/2026/TODO/VIM-32.md)   ```# lmsh : instant promptia```
-- [datum/2026/TODO/VIM-38.md](datum/2026/TODO/VIM-38.md)   ```# mksk: relayout```
+- [datum/2026/TODO/VIM-40.md](datum/2026/TODO/VIM-40.md)   ```# vimpage_hbmx: high bandwidth file reader```
 
 ### 4 DONE
 
@@ -174,7 +173,9 @@
 - [datum/2026/DONE/VIM-33.md](datum/2026/DONE/VIM-33.md)   ```# vimpage_mmph : VTUI for memphia ```
 - [datum/2026/DONE/VIM-34.md](datum/2026/DONE/VIM-34.md)   ```# vimpage : neos```
 - [datum/2026/DONE/VIM-35.md](datum/2026/DONE/VIM-35.md)   ```# vimpage_inet: intelligence network```
+- [datum/2026/DONE/VIM-36.md](datum/2026/DONE/VIM-36.md)   ```# inet: logixa```
 - [datum/2026/DONE/VIM-37.md](datum/2026/DONE/VIM-37.md)   ```# vimpage_mksk: make-sketch```
+- [datum/2026/DONE/VIM-38.md](datum/2026/DONE/VIM-38.md)   ```# mksk: relayout```
 - [datum/2026/DONE/VIM-39.md](datum/2026/DONE/VIM-39.md)   ```# vimpage_fllm: frontier of llm```
 - [datum/2026/DONE/VIM-4.md](datum/2026/DONE/VIM-4.md)   ```# rc : container x-ray```
 
