@@ -1,0 +1,59 @@
+"-------- [HBMX] large-file reader & data analyst --------
+" hbmx reads LARGE files without loading them, neither into the LLM nor into a buffer. It probes the file signature
+" (libmagic `file`, its own signature table and format detectors; $HBMX_PROBE_TOOL adds a tool of yours), maps the
+" file in one streaming pass and keeps a memory per content in ~/echo-home/memory/hbmx/<d1>/<d2>/<d3d4>/<full_sha256>/:
+"   meta.yaml      the map: identity, structure, regions (index tree), zones, landmarks, functions, findings, howto
+"   .function/     helper scripts made for the file (templates at probe time + the ones hbmx writes)
+"   .data/         line index + cell stats (grid.json), table of contents, extracts, inflated copies
+" Code: ~/echo-home/.vim/mimd/hbmx   Engine CLI, no LLM: hbmx_core.py probe|map|view|seek|search|filter|stats|extract <file>
+let g:hbmx_python = 'python'
+let g:hbmx_args = ['--port', get(g:, 'LMSH_PORT', 8080)]
+"let g:hbmx_args = ['--port', get(g:, 'LMSH_PORT', 8080), '--auto']   " no approval for shell / the functions hbmx writes
+"let g:hbmx_toggle_key = '<M-h>'
+"let g:hbmx_map_width = 0.42
+"let g:hbmx_chat_height = 12
+let g:hbmx_no_autostart = 1
+
+
+map hbmx1 : silent source ~/echo-home/.vim/mimd/hbmx/hbmx.lua<CR>
+map hbmxi : Hbmx<CR>
+map hbmxo : HbmxOpen<CR>
+map hbmxj : InetJoin hbmx<CR>
+map hbmxl : InetLeave hbmx<CR>
+map hbmxx : HbmxCancel<CR>
+map hbmxq : HbmxQuit<CR>
+
+"HELP:
+"- hbmx1 loads hbmx (and the inet driver, registering 'hbmx' there). hbmxi starts it / goes to its tab / back.
+"  hbmxo opens a file: the file under the cursor (netrw too), else the current buffer's file, else it asks.
+"  :HbmxOpen <path> opens a given file. The first open maps the file (about 1 s per 100 MB); later opens of the same
+"  content are instant, from memory, at any path.
+"- The hbmx tab: MAP (left) shows what hbmx knows about the file, VIEW (right) what the last look returned. Below,
+"  a pane with two tabs on its bar: HBMX · <file> = the chat (what hbmx does, your input) and the raw LLM output side
+"  by side, and IFACE = the full network interaction (whole width). Click a tab (or <Tab>) to show it; a tab with news
+"  you have not seen is marked • (●n network lines). i goes back to the chat, q to the previous tab.
+"- One conversation per file: hbmxo on another file shows that file's chat in HBMX; hbmxo on the first file again
+"  brings its conversation back (===s lists them).
+"- Knowledge: every question answered on a file is kept with its answer and evidence, and its key findings are
+"  extracted (an extra short LLM call) into <full_sha256>/knowledge.yaml. Opening the file again recalls them: the
+"  same question is answered from memory at once (fresh: <question> analyses again), related findings and past
+"  answers are put in front of the LLM. MAP lists them (K = finding, Q = question; <CR> shows one), ===k shows all,
+"  ===k <text> keeps a finding of yours. Shell: hbmx_core.py knowledge|recall <file> [query].
+"- Navigation, no LLM: <CR> on a zone (z7, zoom z7.3), a region (r1.2), a landmark (L3), a line number, "line N",
+"  a hex row or a function name shows it in VIEW. In VIEW: ] / [ page, gl line, gt time, gb byte (hex),
+"  m marks the line under the cursor as a landmark of yours (kept in the map). r redraws the map.
+"- Ask in the chat: "summarise it", "analyse the errors: when did they spike and why", "security audit",
+"  "what is different in z37", "orders over 400 from VN", "find user 4028 on Jan 2". hbmx answers through bounded
+"  actions (stats, search, filter, seek, view ≤ 40 lines …); every full result lands in VIEW, the LLM gets a clipped
+"  copy. Findings, landmarks and howto it notes stay with the file for the next read.
+"  :'<,'>HbmxAsk explain these attaches the selected lines. In the chat: Enter sends, C-x interrupts, C-c cancels;
+"  while busy plain text steers, !text steers now, +text queues. ===h help, ===o <path> open, ===f files in memory.
+"- Helper scripts: hbmx writes them into <full_sha256>/.function/ and registers them in meta.yaml. Its own templates run
+"  freely; scripts it wrote and shell commands ask y/n/a (hbmx: allow: yes in ~/echo-home/autopilot.yaml or ===a
+"  skips the question). Every script also runs by hand: <script> args, or hbmx_core.py run <file> <name> args.
+"- Intelligence Network: hbmxj joins echo-net as @hbmx (name/purpose: g:inet_agents.hbmx in vimpage_inet, optional).
+"  Agents and humans can then ask "@hbmx audit /var/log/nginx/access.log"; hbmx answers with numbers and line refs.
+"  ===nj/===nl/===ns <text> in the chat join/leave/speak by hand; IFACE shows what it hears and decides.
+"- Shell, no Neovim: hbmx_core.py probe <file> (the brief), map <file> [--zone z3], view <file> --line N,
+"  search <file> <regex> --count, stats <file> --kind levels|timeline|templates|security|columns|keys|top|compare,
+"  files (the catalog). @<sha prefix> names a file in memory. ~/echo-home/memory/hbmx/.function/hbmx wraps it.

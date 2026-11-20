@@ -487,5 +487,6 @@ exec 'source '.g:MIMD_BASE."/vimpage_inet"
 exec 'source '.g:MIMD_BASE."/vimpage_knbg"
 exec 'source '.g:MIMD_BASE."/vimpage_mksk"
 exec 'source '.g:MIMD_BASE."/vimpage_fllm"
+exec 'source '.g:MIMD_BASE."/vimpage_hbmx"
 
 
