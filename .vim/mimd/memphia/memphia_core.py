@@ -37,7 +37,7 @@ import sys
 import tempfile
 import threading
 import time
-from collections import deque
+from collections import OrderedDict, deque
 from typing import Callable, Dict, List, Optional, Tuple
 
 import requests
@@ -362,7 +362,8 @@ class UvianStore:
                 hit_terms.add(-1)
             if hit_terms:
                 score = len(hit_terms) * 10 + min(matched, 20)
-                results.append({"uuid": uid, "score": score, "lines": shown})
+                results.append({"uuid": uid, "score": score, "lines": shown,
+                                "hits": len(hit_terms), "terms": len(terms)})
         results.sort(key=lambda r: r["score"], reverse=True)
         return results[:max_candidates]
 
@@ -926,7 +927,8 @@ Your goal is to fulfill the User Intent, verify it worked using stdout/stderr pr
 RULES:
 1. Operate in a loop: each turn either run a shell command, load a related Uvian memory entry, or declare the task finished.
 2. Do not declare SUCCESS without explicit proof from stdout/stderr or provided Uvian facts.
-3. [RELATED MEMORY SUGGESTIONS] lists Uvian entries linked to the selected entry in the knowledge graph.
+3. [RELATED MEMORY SUGGESTIONS] lists Uvian entries linked to the selected entry in the knowledge graph, and
+   [RECENTLY USED MEMORY] lists entries used earlier in this session.
    They are NOT loaded. Load one (action_type "load_uvian") only when its preview suggests it is needed for the intent.
 4. Messages starting with "User Steering Update" come from the user mid-task. Follow them; they override earlier plans.
 5. A task starting with "[Network request from @name]" was relayed by your network interface from another member of the
@@ -945,14 +947,17 @@ OUTPUT SCHEMA:
 """
 
 SELECT_SYSTEM_PROMPT = (
-    "You are a UUID selection assistant.\n"
-    "Analyze the user's intent and the candidate memory UUID entries (YAML: matched lines and headings).\n"
-    "Select the single UUID that is most relevant to fulfilling the user's intent.\n"
-    "Also list other candidate UUIDs that are genuinely related to the selected one or to the intent "
+    "You are a memory selection assistant.\n"
+    "Analyze the user's intent and the numbered candidate memory entries (headings and matched lines).\n"
+    "Select the single entry that is most relevant to fulfilling the user's intent.\n"
+    "An entry marked CURRENT is the one in use for the ongoing conversation. A follow-up often does not repeat "
+    "its keywords (\"do the same for X\", \"why did that fail\"); use the ongoing conversation and the previous task "
+    "to judge whether the intent continues it. Keep CURRENT unless the intent is clearly about a different subject.\n"
+    "Also list other candidate numbers that are genuinely related to the selected one or to the intent "
     "(they will be suggested to the agent and linked in a knowledge graph). Do not list unrelated ones.\n"
-    "If none of the candidates are relevant, set selected_uuid to null.\n"
+    "If none of the candidates are relevant, set selected to null.\n"
     "Respond strictly in valid JSON:\n"
-    '{\n  "selected_uuid": "<uuid or null>",\n  "related_uuids": ["<uuid>", ...],\n  "reason": "<short explanation>"\n}'
+    '{\n  "selected": <number or null>,\n  "related": [<number>, ...],\n  "reason": "<short explanation>"\n}'
 )
 
 HELP_TEXT = """\033[1mMemphia commands\033[0m
@@ -961,6 +966,10 @@ HELP_TEXT = """\033[1mMemphia commands\033[0m
   +<text>           queue a new task to run after the current one
   ===l              pin the last used uuid          ====      unpin + clear all queues
   =-= <keywords>    search the uvian folder         ===p <uuid|#>  pin a uuid or search result
+  ===r              recently used entries (GRAPH pane; ===a <#> loads one)
+  ===s              conversation history on the pin  ===s!     clear it
+  (manual pins stay until ====; an auto-pin is re-checked every task and dropped after --pin-misses misses.
+   While a uuid stays pinned, earlier prompts + results ride along; pinning another uuid clears them.)
   ===g [uuid]       show graph neighbours           ===k <a> <b>   link two entries manually
   ===a <#|uuid>...  load GRAPH entry # (or a uuid) into the LLM context at the next turn
   ===a! <#|uuid>... same, interrupting the current LLM generation so it applies now
@@ -968,6 +977,22 @@ HELP_TEXT = """\033[1mMemphia commands\033[0m
   ===q              show queues                     ===x      cancel the running task
   ===n              network interface (iFace): ===nj join, ===nl leave, ===ns say, ===n help
   ===h              this help                       exit / quit"""
+
+
+STORY_MAX_ENTRIES = 20  # stored; how many reach the prompt is set by --story-chars
+HL_SELECTED = "\033[1;38;5;16;48;5;226m"  # black on bright yellow: the uuid the selector LLM picked
+SELECT_PHASES = ("searching uvian", "checking pin", "selecting uuid")
+_UUID_RE = re.compile(r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+
+
+def short_uid(uid: str) -> str:
+    """First 8 hex digits of a real uuid; other entry names up to 20 chars."""
+    return uid[:8] if _UUID_RE.fullmatch(uid) else uid[:20]
+
+
+def is_user_task(task) -> bool:
+    """False for a task relayed from the Intelligence Network (memphia_iface.NetTask carries `origin`)."""
+    return not hasattr(task, "origin")
 
 
 class MemphiaAgent:
@@ -986,6 +1011,17 @@ class MemphiaAgent:
         self.phase = "idle"
         self.current_task = ""
         self.pinned_uuid: Optional[str] = None
+        self.pin_manual = False  # ===p / ===l: stays until ====; auto-pins are re-checked every task
+        self.pin_misses = 0  # consecutive user tasks the auto-pin was judged off-topic
+        self.history: "OrderedDict[str, str]" = OrderedDict()  # uuid -> headline, most recent last
+        self.prev_result: Optional[dict] = None  # last finished user task (for the pin check)
+        self.prev_in_story = False  # prev_result is the last entry of self.story
+        # Ongoing conversation on the pinned entry: user tasks that ran on it, oldest first. Carried into
+        # every new task that keeps the pin; cleared only when a different uuid gets pinned.
+        self.story: List[dict] = []
+        self.story_uuid: Optional[str] = None
+        self.task_target: Optional[str] = None  # entry the running task was given
+        self.last_task_end = 0.0  # time the last user task finished
         self.last_uuid: Optional[str] = None
         self.approval: Optional[dict] = None
         self.last_search: List[dict] = []
@@ -1051,6 +1087,118 @@ class MemphiaAgent:
     def set_phase(self, phase: str):
         self.phase = phase
         _REDRAW()
+
+    # ---------- pin lease ----------
+    def pin(self, uid: str, manual: bool):
+        with self.lock:
+            self.pinned_uuid, self.pin_manual, self.pin_misses = uid, manual, 0
+            dropped = len(self.story) if uid != self.story_uuid else 0
+            if uid != self.story_uuid:
+                self.story, self.story_uuid = [], uid
+        if dropped:
+            log(f"🧹 Conversation history cleared ({dropped} task(s)): new memory entry {uid}")
+        _REDRAW()
+
+    # ---------- ongoing conversation (story) ----------
+    def story_active(self, target: Optional[str]) -> bool:
+        return bool(target) and target == self.pinned_uuid == self.story_uuid
+
+    def record_story(self, task, result: dict):
+        """Append a finished user task to the conversation when it ran on the pinned entry."""
+        self.prev_in_story = False
+        if not is_user_task(task) or not self.story_active(self.task_target):
+            return
+        outcome = result.get("answer") or result.get("reason") or ""
+        with self.lock:
+            self.story.append({"intent": str(task), "steers": list(result.get("steers") or []),
+                               "status": result.get("status"), "outcome": str(outcome)})
+            del self.story[:-STORY_MAX_ENTRIES]
+        self.prev_in_story = True
+        _REDRAW()
+
+    def format_story(self, budget: int) -> str:
+        """Newest tasks that fit in `budget` chars, printed oldest first."""
+        with self.lock:
+            entries = list(enumerate(self.story, 1))
+        blocks, used = [], 0
+        for i, e in reversed(entries):
+            lines = [f"{i}. User: {e['intent'][:400]}"]
+            lines += [f"   Steering: {s[:200]}" for s in e["steers"][:3]]
+            lines.append(f"   Result: {e['status']} — {e['outcome'][:400]}")
+            block = "\n".join(lines)
+            if blocks and used + len(block) > budget:
+                break
+            blocks.append(block)
+            used += len(block)
+        if not blocks:
+            return ""
+        omitted = len(entries) - len(blocks)
+        head = [f"[ONGOING CONVERSATION on memory {self.story_uuid}]",
+                "Earlier tasks of this conversation, oldest first. The User Intent below may continue them."]
+        if omitted:
+            head.append(f"({omitted} older task(s) omitted)")
+        return "\n".join(head + blocks[::-1])
+
+    def unpin(self) -> Optional[str]:
+        with self.lock:
+            old = self.pinned_uuid
+            self.pinned_uuid, self.pin_manual, self.pin_misses = None, False, 0
+        _REDRAW()
+        return old
+
+    def pin_note(self) -> str:
+        """Short pin state for the status line, e.g. 'manual', 'auto, 1 miss', 'auto, 🧵3'."""
+        if not self.pinned_uuid:
+            return ""
+        parts = ["manual" if self.pin_manual else "auto"]
+        if self.pin_misses and not self.pin_manual:
+            parts.append(f"{self.pin_misses} miss")
+        if self.story and self.story_uuid == self.pinned_uuid:
+            parts.append(f"🧵{len(self.story)}")
+        return ", ".join(parts)
+
+    def mind_badges(self) -> List[Tuple[str, str]]:
+        """AGENT-pane header: what the agent has in mind. (kind, text) pairs, kind one of
+        pin | tent | sel | head | aux | note. To fit, frontends drop 'aux' parts (also shown in the
+        status line) first, then shrink 'head' (headline) parts."""
+        def headline(uid: str) -> str:
+            return re.sub(r"^#+\s*", "", self.store.describe(uid, width=40))
+        pin, tgt = self.pinned_uuid, self.task_target
+        segs: List[Tuple[str, str]] = []
+        if pin:
+            segs += [("pin", f" 📌 {short_uid(pin)} "), ("head", f" {headline(pin)}"), ("aux", f" ({self.pin_note()})")]
+        gap = [("note", "  ")] if segs else []
+        if self.busy and tgt is None and self.phase in SELECT_PHASES:
+            segs += gap + [("sel", "🎯 selecting…")]
+        elif tgt and tgt != pin:
+            segs += gap + [("tent", f" 🎯 {short_uid(tgt)} "), ("head", f" {headline(tgt)}"), ("aux", " tentative")]
+        return [("note", " ")] + (segs or [("note", "📌 -")])
+
+    def pin_label(self) -> str:
+        note = self.pin_note()
+        return f"{self.pinned_uuid} ({note})" if note else "-"
+
+    def remember(self, uid: str):
+        """Record uid in the recently-used list (`#n <uuid>: <headline>` for the selector and agent)."""
+        with self.lock:
+            self.history.pop(uid, None)
+            self.history[uid] = self.store.describe(uid)
+            while len(self.history) > ARGS.pin_history:
+                self.history.popitem(last=False)
+
+    def recent(self, exclude=()) -> List[Tuple[str, str]]:
+        """Recently used entries, newest first, that still exist."""
+        with self.lock:
+            items = list(self.history.items())
+        return [(u, h) for u, h in reversed(items) if u not in exclude and self.store.exists(u)]
+
+    def format_history(self, exclude: set) -> str:
+        items = self.recent(exclude)
+        if not items:
+            return ""
+        lines = ["\n\n[RECENTLY USED MEMORY]", "Not loaded. Use action_type \"load_uvian\" with the uuid only if needed."]
+        lines += [f"- {u}: {h[:100]}" for u, h in items]
+        return "\n".join(lines)
 
     def _check_cancel(self):
         if self.cancel_event.is_set():
@@ -1120,14 +1268,15 @@ class MemphiaAgent:
             self.cancel_event.clear()
             self.interrupt_event.clear()
             self.busy, self.current_task = True, task
-            self.last_result = None
+            self.last_result, self.task_target = None, None
             outcome = None
             _REDRAW()
             try:
                 found = self.run_task(task)
-                if found and not self.pinned_uuid:
-                    self.pinned_uuid = found
-                    log(f"✅ Auto-pinned memory UUID {found} for the rest of this session. Type '====' to unpin.")
+                if found and not self.pinned_uuid and is_user_task(task):
+                    self.pin(found, manual=False)
+                    log(f"✅ Auto-pinned memory UUID {found}. It is re-checked every task and dropped after "
+                        f"{ARGS.pin_misses} off-topic task(s) in a row; ===p pins it for good, ==== unpins.")
             except Cancelled:
                 log("\033[33m🛑 Task cancelled.\033[0m")
                 outcome = ("CANCELLED", "cancelled by the operator")
@@ -1139,6 +1288,9 @@ class MemphiaAgent:
                                               "answer": None, "trail": []}
                 if outcome:
                     result["status"], result["reason"] = outcome
+                if is_user_task(task):
+                    self.record_story(task, result)
+                    self.prev_result, self.last_task_end = result, time.time()
                 self.busy, self.current_task = False, ""
                 self.set_phase("idle")
                 for fn in list(self.task_listeners):
@@ -1148,27 +1300,55 @@ class MemphiaAgent:
                         log(f"\033[31m❌ task listener failed:\033[0m {type(e).__name__}: {e}")
 
     # ---------- memory selection ----------
-    def select_uuid(self, intent: str) -> Tuple[Optional[str], List[str]]:
-        self.set_phase("searching uvian")
-        log("🔍 Searching Uvian folder by text...")
-        cands = self.store.search(intent, max_candidates=ARGS.max_candidates)
-        if not cands:
+    def select_uuid(self, intent: str, cands: Optional[List[dict]] = None, current: Optional[str] = None,
+                    away_min: float = 0.0) -> Tuple[Optional[str], List[str], str]:
+        """Ask the selector LLM which entry fits the intent. Options: the CURRENT pin (if any), the
+        text-search candidates and the recently used entries, numbered so the small model answers with a
+        number instead of copying a uuid. Returns (selected, related, reason); on an LLM error the
+        selection falls back to `current`."""
+        if cands is None:
+            self.set_phase("searching uvian")
+            log("🔍 Searching Uvian folder by text...")
+            cands = self.store.search(intent, max_candidates=ARGS.max_candidates)
+        by_uid = {c["uuid"]: c for c in cands}
+        order = ([current] if current else []) + [c["uuid"] for c in cands if c["uuid"] != current]
+        order += [u for u, _h in self.recent(exclude=set(order))]
+        if not order:
             log("🔍 Text matching found no candidates.")
-            return None, []
+            return None, [], "no candidates"
         ub = BUFFERS["uvian"]
-        ub.writeln(f"\033[1m📄 TEXT MATCH CANDIDATES for:\033[0m {intent[:120]}")
-        yaml_lines = []
-        for c in cands:
-            yaml_lines.append(f"{c['uuid']}: |")
-            ub.writeln(f"\033[48;5;54m\033[38;5;177m{c['uuid']}\033[0m \033[90m(score {c['score']})\033[0m")
-            for text, is_match, is_header in c["lines"]:
-                yaml_lines.append(f"    {text}")
+        ub.writeln(f"\033[1m📄 SELECTOR OPTIONS for:\033[0m {intent[:120]}")
+        blocks = []
+        for i, uid in enumerate(order, 1):
+            c = by_uid.get(uid)
+            tag = ("CURRENT: in use for the ongoing conversation" if uid == current
+                   else "recently used; no keyword match" if not c else "")
+            blocks.append(f"#{i} {uid}" + (f"  [{tag}]" if tag else ""))
+            ub.writeln(f"\033[48;5;54m\033[38;5;177m#{i} {uid}\033[0m \033[90m"
+                       f"{'(score ' + str(c['score']) + ')' if c else ''} {tag}\033[0m")
+            lines = c["lines"] if c else [(self.store.describe(uid), False, True)]
+            for text, is_match, is_header in lines:
+                blocks.append(f"    {text}")
                 colour = "\033[38;5;146m" if is_header and not is_match else "\033[38;5;177m"
                 ub.writeln(f"    {colour}{text}\033[0m")
-        log(f"📄 {len(cands)} candidate(s) shown in the UVIAN pane. Asking LLM to select...")
+        log(f"📄 {len(order)} option(s) shown in the UVIAN pane. Asking LLM to select...")
         self._check_cancel()
         self.set_phase("selecting uuid")
-        user = f"User Intent: {intent}\n\nCandidate Memory UUIDs (YAML):\n```yaml\n" + "\n".join(yaml_lines) + "\n```"
+        user = f"User Intent: {intent}\n"
+        with self.lock:
+            story = list(self.story[-3:]) if current and current == self.story_uuid else []
+        if story:
+            user += "\nOngoing conversation on CURRENT (latest tasks, oldest first):\n" + "".join(
+                f"- {e['intent'][:200]} → {e['status']}: {e['outcome'][:150]}\n" for e in story)
+        prev = self.prev_result
+        if prev and not (story and self.prev_in_story):
+            outcome = (prev.get("answer") or prev.get("reason") or "")[:300]
+            label = "Previous task (a side task outside that conversation)" if story else "Previous task"
+            user += f"\n{label}: {str(prev.get('intent', ''))[:300]}\nIts result: {prev.get('status')} — {outcome}\n"
+        if current and away_min:
+            user += (f"\nNote: the user was away for {away_min:.0f} minutes before this intent; "
+                     f"keep CURRENT only if the intent is clearly still about it.\n")
+        user += "\nCandidate Memory Entries:\n" + "\n".join(blocks)
         try:
             resp = CLIENT.chat.completions.create(
                 model=MODEL_NAME, temperature=0.0, response_format={"type": "json_object"},
@@ -1178,17 +1358,74 @@ class MemphiaAgent:
             parsed = parse_llm_json(resp.choices[0].message.content or "") or {}
         except Exception as e:
             log(f"❌ Error during LLM UUID selection: {e}")
-            return None, []
-        valid = {c["uuid"] for c in cands}
-        sel = parsed.get("selected_uuid")
-        related = [u for u in (parsed.get("related_uuids") or []) if isinstance(u, str) and u in valid and u != sel]
-        if sel in valid:
-            log(f"🎯 LLM selected {sel} — {parsed.get('reason', '')}")
+            return current, [], "selector error"
+
+        def pick(v) -> Optional[str]:
+            if isinstance(v, str) and v.strip() in order:
+                return v.strip()
+            s = str(v).strip().lstrip("#") if isinstance(v, (int, str)) and not isinstance(v, bool) else ""
+            return order[int(s) - 1] if s.isdigit() and 1 <= int(s) <= len(order) else None
+
+        reason = str(parsed.get("reason") or "")
+        sel = pick(parsed.get("selected", parsed.get("selected_uuid")))
+        raw_rel = parsed.get("related", parsed.get("related_uuids")) or []
+        related = list(dict.fromkeys(u for u in map(pick, raw_rel if isinstance(raw_rel, list) else [])
+                                     if u and u != sel))
+        if sel:
+            log(f"🎯 LLM selected {HL_SELECTED}{sel}\033[0m{' (CURRENT)' if sel == current else ''} — {reason}")
             if related:
                 log(f"🔗 Also relevant: {', '.join(related)}")
+            return sel, related, reason
+        log(f"ℹ️ No relevant UUID. ({reason})")
+        return None, [], reason
+
+    def choose_target(self, intent: str) -> Tuple[Optional[str], List[str]]:
+        """Pick the memory entry for this task. A manual pin is used as is. An auto-pin must pass a
+        relevance check every task: it is kept when it ranks #1 in text search, otherwise the selector
+        LLM decides with the pin marked CURRENT. Off-topic user tasks skip it; --pin-misses of them in a
+        row drop it. Network requests may skip it but never count as misses."""
+        pin = self.pinned_uuid
+        if pin and not self.store.exists(pin):
+            log(f"⚠️ Pinned entry {pin} no longer exists; unpinned.")
+            self.unpin()
+            pin = None
+        if not pin:
+            sel, related, _ = self.select_uuid(intent)
             return sel, related
-        log(f"ℹ️ No relevant UUID. ({parsed.get('reason', '')})")
-        return None, []
+        if self.pin_manual:
+            log(f"📌 Using pinned UUID {pin} (manual pin)")
+            return pin, []
+        user_task = is_user_task(self.current_task)
+        self.set_phase("checking pin")
+        away = (time.time() - self.last_task_end) / 60 if self.last_task_end else 0.0
+        strict = away >= ARGS.pin_idle
+        cands = self.store.search(intent, max_candidates=ARGS.max_candidates)
+        top = cands[0] if cands else None
+        if not strict and top and top["uuid"] == pin and top["hits"] * 2 >= top["terms"]:
+            if user_task:
+                self.pin_misses = 0
+            log(f"📌 Keeping pinned {pin}: ranks #1 in text search ({top['hits']}/{top['terms']} words)")
+            return pin, []
+        if strict:
+            log(f"⏰ {away:.0f} min since the last task: re-checking pinned {pin} without the keyword shortcut")
+        sel, related, _ = self.select_uuid(intent, cands, current=pin, away_min=away if strict else 0.0)
+        if sel == pin:
+            if user_task:
+                self.pin_misses = 0
+            log(f"📌 Keeping pinned {pin}")
+            return pin, related
+        if not user_task:
+            log(f"⏸ Pinned {pin} skipped for this network request (pin unchanged)")
+            return sel, related
+        self.pin_misses += 1
+        if self.pin_misses >= ARGS.pin_misses:
+            self.unpin()
+            log(f"🔓 Auto-pin {pin} dropped after {ARGS.pin_misses} off-topic task(s) in a row (still in ===r)")
+        else:
+            log(f"⏸ Pinned {pin} looks off-topic: skipped for this task only "
+                f"(miss {self.pin_misses}/{ARGS.pin_misses})")
+            _REDRAW()
+        return sel, related
 
     def collect_suggestions(self, anchor: Optional[str], extra: List[str], exclude: set) -> List[dict]:
         out: Dict[str, dict] = {}
@@ -1235,6 +1472,7 @@ class MemphiaAgent:
         self.set_phase(f"running uvian {uid[:8]}")
         res = execute_uvian_entry(self.store, uid, self.cancel_event)
         self.last_uuid = uid
+        self.remember(uid)
         self.graph.touch(uid, self.store.describe(uid))
         if res["type"] != "tool_execution":
             log(f"⚠️ Uvian error: {res['content']}")
@@ -1336,13 +1574,17 @@ class MemphiaAgent:
                                   "reason": "max turns reached", "answer": None, "trail": []}
         log(f"\n\033[1;36m▶ TASK:\033[0m {intent}")
         BUFFERS["llm"].writeln(f"\033[1;36m▶ TASK:\033[0m {intent}")
-        target, related = None, []
-        if self.pinned_uuid:
-            target = self.pinned_uuid
-            log(f"📌 Using pinned UUID {target}")
-        else:
-            target, related = self.select_uuid(intent)
+        target, related = self.choose_target(intent)
+        self.task_target = target
+        _REDRAW()
+        res["steers"] = []
         self._check_cancel()
+        story = ""
+        if is_user_task(intent) and self.story_active(target):
+            story = self.format_story(ARGS.story_chars)
+            if story:
+                log(f"🧵 Continuing the conversation on {target}: {len(self.story)} earlier task(s) "
+                    f"({len(story)} chars) in context")
 
         loaded: List[str] = []
         context = ""
@@ -1352,6 +1594,7 @@ class MemphiaAgent:
             cached_doc = self.llamark_doc(target)
         if target:
             self.last_uuid = target
+            self.remember(target)
             if cached_doc is not None:
                 self.graph.touch(target, self.store.describe(target))
                 context += (f"\n\n[UVIAN ENTRY {target}] is loaded verbatim at the start of the system prompt "
@@ -1366,6 +1609,7 @@ class MemphiaAgent:
         if suggested:
             log(f"🧭 {len(suggested)} related entr{'y' if len(suggested) == 1 else 'ies'} suggested to the LLM (see GRAPH pane).")
         context += self.format_suggestions(target, suggested)
+        context += self.format_history(set(loaded) | suggested_ids)
 
         # llamark: the entry must be the very first bytes of the system turn — that is the
         # prefix stored in <sha256>.bin, so the server reuses it instead of re-prefilling.
@@ -1373,7 +1617,8 @@ class MemphiaAgent:
             f"{cached_doc}\n\n=== END MEMORY {target} ===\n\n{SYSTEM_PROMPT}")
         messages = [
             {"role": "system", "content": system},
-            {"role": "user", "content": f"User Intent: {intent}{get_os_env_context()}{context}"},
+            {"role": "user", "content": (f"{story}\n\n" if story else "")
+                                        + f"User Intent: {intent}{get_os_env_context()}{context}"},
         ]
         try:
             for turn in range(ARGS.max_turns):
@@ -1386,6 +1631,7 @@ class MemphiaAgent:
                 for s in steers:
                     log(f"\033[35m[STEERED]\033[0m {s}")
                     messages.append({"role": "user", "content": f"User Steering Update: {s}"})
+                    res["steers"].append(str(s))
                 self.apply_attachments(intent, target, loaded, suggested_ids, messages)
                 self.interrupt_event.clear()
 
@@ -1519,16 +1765,13 @@ class CommandRouter:
             log(HELP_TEXT + ("\n" + self.keys_help if self.keys_help else ""))
         elif cmd == "===l":
             if a.last_uuid:
-                a.pinned_uuid = a.last_uuid
-                log(f"📌 Memory pinned at {a.last_uuid}")
+                a.pin(a.last_uuid, manual=True)
+                log(f"📌 Memory pinned at {a.last_uuid} (manual: kept until '====')")
             else:
                 log("ℹ️ No last uuid is found to be pinned.")
         elif cmd == "====":
-            if a.pinned_uuid:
-                log(f"🔓 Unpinned memory ({a.pinned_uuid}).")
-                a.pinned_uuid = None
-            else:
-                log("ℹ️ No memory file is currently pinned.")
+            old = a.unpin()
+            log(f"🔓 Unpinned memory ({old})." if old else "ℹ️ No memory file is currently pinned.")
             s, t, n = a.clear_queues()
             log(f"🧹 Cleared {s} steering message(s), {t} queued task(s) and {n} pending load(s).")
         elif cmd == "===x":
@@ -1554,10 +1797,30 @@ class CommandRouter:
             if arg.isdigit() and 1 <= int(arg) <= len(a.last_search):
                 uid = a.last_search[int(arg) - 1]["uuid"]
             if a.store.exists(uid):
-                a.pinned_uuid = uid
+                a.pin(uid, manual=True)
                 log(f"✅ Memory {uid} pinned! Used for subsequent prompts until '===='.")
             else:
                 log(f"❌ UUID '{arg}' not found.")
+        elif cmd == "===s":
+            text = a.format_story(10 ** 6)
+            if not text:
+                log("ℹ️ No conversation history yet (it builds up while a uuid stays pinned).")
+            else:
+                active = "" if a.story_uuid == a.pinned_uuid else "  (inactive: that entry is not pinned now)"
+                log(f"🧵 {text}{active}")
+        elif cmd == "===s!":
+            with a.lock:
+                n, a.story = len(a.story), []
+            log(f"🧹 Conversation history cleared ({n} task(s)).")
+            _REDRAW()
+        elif cmd == "===r":
+            items = a.recent()
+            if not items:
+                log("ℹ️ No uvian entry has been used in this session yet.")
+                return
+            self.focus_tab("graph")
+            a.show_graph_entries("🕘 Recently used" + (f"  (📌 {a.pin_label()})" if a.pinned_uuid else ""),
+                                 [(u, "📌 pinned" if u == a.pinned_uuid else "", h) for u, h in items])
         elif cmd.startswith("===a"):
             interrupt = cmd.startswith("===a!")
             args = cmd[5 if interrupt else 4:].split()
@@ -1666,6 +1929,13 @@ def parse_args(argv=None) -> argparse.Namespace:
     p.add_argument("--llamark-script", type=str, default="~/echo-home/memory/llamark/llamark.sh")
     p.add_argument("--llamark-slot", type=int, default=0, help="llama-server slot for the agent loop + cache")
     p.add_argument("--aux-slot", type=int, default=1, help="slot for selector/map-reduce calls when --llamark is on")
+    p.add_argument("--pin-misses", type=int, default=2,
+                   help="Off-topic tasks in a row before an auto-pin is dropped (the first ones only skip it)")
+    p.add_argument("--pin-idle", type=float, default=20,
+                   help="Minutes idle after which the auto-pin check skips the keyword shortcut")
+    p.add_argument("--pin-history", type=int, default=8, help="Recently used entries kept for ===r and the LLM")
+    p.add_argument("--story-chars", type=int, default=3000,
+                   help="Max chars of earlier prompts/results on the pinned entry carried into a new task")
     p.add_argument("--max-turns", type=int, default=13)
     p.add_argument("--cmd-timeout", type=int, default=30, help="Seconds before a shell/uvian command is killed")
     g = p.add_argument_group("Intelligence Network (iFace)")

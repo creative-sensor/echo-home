@@ -37,6 +37,7 @@ from prompt_toolkit.layout.controls import FormattedTextControl
 from prompt_toolkit.layout.dimension import Dimension as D
 from prompt_toolkit.mouse_events import MouseEventType
 from prompt_toolkit.styles import Style
+from prompt_toolkit.utils import get_cwidth
 from prompt_toolkit.widgets import TextArea
 
 import memphia_core as core
@@ -44,6 +45,24 @@ from memphia_core import BUFFERS, HISTORY_FILE, RIGHT_TABS, CommandRouter, Memph
 
 KEYS_HELP = """\033[1mKeys\033[0m  F1-F6/Tab: right pane │ PgUp/PgDn, Shift-↑/↓, wheel: scroll │ Ctrl-O: scroll target │ End(F12): follow
       Ctrl-T: hide/show agent pane │ F8: hide/show IFACE pane │ Ctrl-L: clear right pane │ Esc: interrupt LLM │ Ctrl-C: cancel task │ Ctrl-Q: quit"""
+
+
+def _fit_badges(segs, room: int):
+    """Fit the badges in `room` cells: drop 'aux' parts, then shrink 'head' (headline) parts, last first."""
+    out = list(segs)
+    over = sum(get_cwidth(t) for _k, t in out) - room
+    for shrink in ("aux", "head"):
+        for i in reversed(range(len(out))):
+            if over <= 0:
+                return out
+            kind, text = out[i]
+            if kind != shrink:
+                continue
+            keep = len(text) - over - 1 if kind == "head" else 0
+            new = text[:keep] + "…" if keep > 2 else ""
+            over -= get_cwidth(text) - get_cwidth(new)
+            out[i] = (kind, new)
+    return out
 
 
 class BufferView:
@@ -102,6 +121,7 @@ class MemphiaTUI:
         self.show_agent_pane = True
         self.show_iface = True
         self.scroll_target = "right"
+        self._header_wins = {}  # pane target -> its header Window (for the rendered width)
         self.router = CommandRouter(agent, focus_tab=self._focus_tab, keys_help=KEYS_HELP)
 
         self.input = TextArea(
@@ -128,8 +148,10 @@ class MemphiaTUI:
     def _pane(self, get_key: Callable[[], str], header: Callable, target: str):
         def on_scroll():
             self.scroll_target = target  # wheel over a pane makes it the keyboard scroll target too
+        header_win = Window(FormattedTextControl(header), height=1, style="class:header")
+        self._header_wins[target] = header_win
         return HSplit([
-            Window(FormattedTextControl(header), height=1, style="class:header"),
+            header_win,
             Window(_ScrollableControl(get_key, on_scroll, focusable=False, show_cursor=False),
                    wrap_lines=True),
         ])
@@ -138,7 +160,11 @@ class MemphiaTUI:
         b = BUFFERS["agent"]
         mark = "" if b.following else "  ⏸ scrolled"
         tgt = " ◀" if self.scroll_target == "agent" else ""
-        return [("class:tab.active", " AGENT "), ("class:header", f"{mark}{tgt}")]
+        win = self._header_wins.get("agent")
+        width = win.render_info.window_width if win and win.render_info else 80
+        room = width - get_cwidth(" AGENT ") - get_cwidth(mark + tgt)
+        badges = [(f"class:mind.{k}", t) for k, t in _fit_badges(self.agent.mind_badges(), room)]
+        return [("class:tab.active", " AGENT "), *badges, ("class:header", f"{mark}{tgt}")]
 
     def _iface_visible(self) -> bool:
         i = self.agent.iface
@@ -206,7 +232,7 @@ class MemphiaTUI:
             ("class:status", f" {core.MODEL_NAME} "),
             (g, " graph " if a.graph.enabled else " graph off "),
             *self._net_status(),
-            ("class:status", f" 📌 {a.pinned_uuid or '-'} │ cwd {core.to_bash_path(core.CURRENT_CWD)} │ ===h help "),
+            ("class:status", f" 📌 {a.pin_label()} │ cwd {core.to_bash_path(core.CURRENT_CWD)} │ ===h help "),
         ]
 
     def _net_status(self):
@@ -251,6 +277,12 @@ class MemphiaTUI:
     def _style(self):
         return Style.from_dict({
             "header": "bg:#1c1c1c fg:#888888",
+            "mind.pin": "bg:#875f87 fg:#ffffff bold",
+            "mind.tent": "bg:#ffff00 fg:#000000 bold",
+            "mind.sel": "bg:#1c1c1c fg:#ffff00 bold",
+            "mind.head": "bg:#1c1c1c fg:#d0d0d0",
+            "mind.note": "bg:#1c1c1c fg:#888888",
+            "mind.aux": "bg:#1c1c1c fg:#888888",
             "tab": "bg:#262626 fg:#a8a8a8",
             "tab.unread": "bg:#262626 fg:#c4c408 bold",
             "tab.active": "bg:#c4c408 fg:#000000 bold",

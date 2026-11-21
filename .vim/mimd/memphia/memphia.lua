@@ -54,6 +54,11 @@ local sync_iface_win -- defined in the layout section
 local function define_highlights()
   local hl = {
     MemphiaHeader = { bg = "#1c1c1c", fg = "#888888" },
+    MemphiaMindPin = { bg = "#875f87", fg = "#ffffff", bold = true },
+    MemphiaMindTent = { bg = "#ffff00", fg = "#000000", bold = true },
+    MemphiaMindSel = { bg = "#1c1c1c", fg = "#ffff00", bold = true },
+    MemphiaMindHead = { bg = "#1c1c1c", fg = "#d0d0d0" },
+    MemphiaMindNote = { bg = "#1c1c1c", fg = "#888888" },
     MemphiaTab = { bg = "#262626", fg = "#a8a8a8" },
     MemphiaTabUnread = { bg = "#262626", fg = "#c4c408", bold = true },
     MemphiaTabActive = { bg = "#c4c408", fg = "#000000", bold = true },
@@ -170,17 +175,50 @@ local function status_bar()
     "%#MemphiaStatus# ", esc(st.model or "-"), " ",
     st.graph and "%#MemphiaStOn# graph " or "%#MemphiaStOff# graph off ",
     net_status(st),
-    "%#MemphiaStatus# 📌 ", esc(st.pinned or "-"), " │ cwd ", esc(st.cwd or ""), " │ ===h help %=",
+    "%#MemphiaStatus# 📌 ", esc(st.pinned or "-"),
+    (type(st.pin_note) == "string" and st.pin_note ~= "") and esc(" (" .. st.pin_note .. ")") or "", " │ cwd ", esc(st.cwd or ""), " │ ===h help %=",
     S.job and "" or "%#MemphiaPApprove# backend stopped ",
   })
+end
+
+local MIND_HL = { pin = "MemphiaMindPin", tent = "MemphiaMindTent", sel = "MemphiaMindSel",
+                  head = "MemphiaMindHead", note = "MemphiaMindNote", aux = "MemphiaMindNote" }
+
+-- AGENT header badges (pinned uuid, tentative selection) from the backend. To fit `room`, drop the
+-- 'aux' parts (also in the status line), then shrink the 'head' (headline) parts, last first.
+local function mind_badges(room)
+  local segs = {}
+  for _, s in ipairs(type(S.state.mind) == "table" and S.state.mind or {}) do
+    segs[#segs + 1] = { kind = s[1], text = tostring(s[2] or "") }
+  end
+  local over = -room
+  for _, s in ipairs(segs) do over = over + fn.strdisplaywidth(s.text) end
+  for _, shrink in ipairs({ "aux", "head" }) do
+    for i = #segs, 1, -1 do
+      if over <= 0 then break end
+      local s = segs[i]
+      if s.kind == shrink then
+        local keep = shrink == "head" and (fn.strchars(s.text) - over - 1) or 0
+        local new = keep > 2 and (fn.strcharpart(s.text, 0, keep) .. "…") or ""
+        over = over - (fn.strdisplaywidth(s.text) - fn.strdisplaywidth(new))
+        s.text = new
+      end
+    end
+  end
+  local out = {}
+  for _, s in ipairs(segs) do
+    out[#out + 1] = "%#" .. (MIND_HL[s.kind] or "MemphiaHeader") .. "#" .. esc(s.text)
+  end
+  return table.concat(out)
 end
 
 function refresh_bars()
   if not S then return end
   local w = S.wins
   if valid_win(w.agent) then
-    vim.wo[w.agent].winbar = "%#MemphiaTabActive# AGENT %#MemphiaHeader#"
-      .. (S.follow.agent and "" or "  ⏸ scrolled") .. (S.target == "agent" and " ◀" or "")
+    local tail = (S.follow.agent and "" or "  ⏸ scrolled") .. (S.target == "agent" and " ◀" or "")
+    local room = api.nvim_win_get_width(w.agent) - fn.strdisplaywidth(" AGENT " .. tail)
+    vim.wo[w.agent].winbar = "%#MemphiaTabActive# AGENT " .. mind_badges(room) .. "%#MemphiaHeader#" .. tail
   end
   if valid_win(w.right) then
     local parts = {}
@@ -694,6 +732,10 @@ local function set_autocmds()
   })
   api.nvim_create_autocmd({ "TextChangedI", "TextChanged" }, {
     group = group, buffer = S.bufs.input, callback = fit_input,
+  })
+  -- the AGENT header badge fits its pane width
+  api.nvim_create_autocmd({ "VimResized", "WinResized" }, {
+    group = group, callback = function() if S then refresh_bars() end end,
   })
   api.nvim_create_autocmd("VimLeavePre", {
     group = group,

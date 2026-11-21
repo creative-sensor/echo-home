@@ -10,6 +10,12 @@ map mmphq : MemphiaQuit <CR>
 "- Interrupt the LLM: Ctrl-X instead of Esc, so Esc still leaves insert mode.
 "- Quit: :MemphiaQuit or Ctrl-Q.
 "- Jump to the input line: i, a or Enter while in an output pane.
+"- Memory pins: ===p/===l pin until ====. An auto-pin is re-checked every task, skipped when off-topic and dropped
+"  after 2 misses in a row (--pin-misses; --pin-idle 20 = minutes before a stricter check). ===r lists recent entries.
+"- While a uuid stays pinned, earlier prompts + results go into each new task (--story-chars 3000); pinning another
+"  uuid clears them. ===s shows that history, ===s! clears it.
+"- AGENT header: 📌 pinned uuid (purple) and 🎯 tentative selection (yellow), "🎯 selecting…" while choosing.
+"  The uuid in each "LLM selected" log line has the same yellow.
 "- Intelligence Network: set up in vimpage_inet (inetj plugs Memphia in with its profile, inetr opens the room).
 "  Inside Memphia: ===n help, ===nj/===nl join/leave by hand, ===ns <text> speaks. F8 toggles the IFACE pane.
 "- g:memphia_python sets which Python to use (default python3). Calling require("memphia") from your config loads the commands without opening the UI.

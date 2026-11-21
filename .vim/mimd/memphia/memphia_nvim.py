@@ -9,7 +9,7 @@ backend -> nvim
   {"t":"style","id":N,"fg":"#rrggbb"|null,"bg":...,"bold":b,"italic":b,"underline":b,"reverse":b}
   {"t":"w","b":<buffer key>,"s":[[text, style id (0 = default)], ...]}   append to a buffer
   {"t":"clear","b":<buffer key>}
-  {"t":"state", busy, phase, model, graph, pinned, cwd, steer:[..], tasks:[..], approval:{kind,detail,editing}|null,
+  {"t":"state", busy, phase, model, graph, pinned, pin_note, mind:[[kind, text], ...], cwd, steer:[..], tasks:[..], approval:{kind,detail,editing}|null,
    iface:{joined,connected,name,hub,state,members}|null}
   {"t":"focus","tab":<right tab key>}
   {"t":"input","text":...}            put text in the input line (approval edit mode)
@@ -213,7 +213,7 @@ class Bridge:
             loads = [f"{u}  {a.store.describe(u)}" for u in a.attachments]
         return {
             "t": "state", "busy": a.busy, "phase": a.phase, "model": core.MODEL_NAME,
-            "graph": a.graph.enabled, "pinned": a.pinned_uuid, "cwd": core.to_bash_path(core.CURRENT_CWD),
+            "graph": a.graph.enabled, "pinned": a.pinned_uuid, "pin_note": a.pin_note(), "mind": a.mind_badges(), "cwd": core.to_bash_path(core.CURRENT_CWD),
             "steer": steer, "tasks": tasks, "loads": loads,
             "approval": {"kind": ap["kind"], "detail": ap["detail"], "editing": ap["editing"]} if ap else None,
             "iface": a.iface.summary() if a.iface else None,
