@@ -14,6 +14,7 @@
 - [datum/2026/WIP/KITE-25.md](datum/2026/WIP/KITE-25.md)   ```# cli : mistral-vibe```
 - [datum/2026/WIP/MDOS-22.md](datum/2026/WIP/MDOS-22.md)   ```# lang runtime : lua```
 - [datum/2026/WIP/VIM-31.md](datum/2026/WIP/VIM-31.md)   ```# vimpage : vllm```
+- [datum/2026/WIP/VIM-41.md](datum/2026/WIP/VIM-41.md)   ```# vimpage_memphia: uuid ttl```
 
 ### 2 ON HOLD
 
@@ -76,7 +77,6 @@
 - [datum/2026/TODO/VIM-27.md](datum/2026/TODO/VIM-27.md)   ```# GML : talk```
 - [datum/2026/TODO/VIM-30.md](datum/2026/TODO/VIM-30.md)   ```# lmsh : console page```
 - [datum/2026/TODO/VIM-32.md](datum/2026/TODO/VIM-32.md)   ```# lmsh : instant promptia```
-- [datum/2026/TODO/VIM-40.md](datum/2026/TODO/VIM-40.md)   ```# vimpage_hbmx: high bandwidth file reader```
 
 ### 4 DONE
 
@@ -178,6 +178,8 @@
 - [datum/2026/DONE/VIM-38.md](datum/2026/DONE/VIM-38.md)   ```# mksk: relayout```
 - [datum/2026/DONE/VIM-39.md](datum/2026/DONE/VIM-39.md)   ```# vimpage_fllm: frontier of llm```
 - [datum/2026/DONE/VIM-4.md](datum/2026/DONE/VIM-4.md)   ```# rc : container x-ray```
+- [datum/2026/DONE/VIM-40.md](datum/2026/DONE/VIM-40.md)   ```# vimpage_hbmx: high bandwidth file reader```
+- [datum/2026/DONE/VIM-42.md](datum/2026/DONE/VIM-42.md)   ```# vimpage_mksk: on-pane header badge```
 
 ### 5 BACKLOG
 
