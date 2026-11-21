@@ -77,7 +77,8 @@ local NS = api.nvim_create_namespace("mksk")
 local NS_PROMPT = api.nvim_create_namespace("mksk_prompt")
 local NS_REVIEW = api.nvim_create_namespace("mksk_review")
 local PANES = { "chat", "log", "iface", "queue" } -- the panes mksk owns (the plan pane shows the plan file)
-local PANE_TITLE = { chat = " MKSK ", log = " MKSK · LOG ", iface = " MKSK · IFACE ", queue = " MKSK · REVIEW " }
+local PANE_TITLE = { chat = " MKSK ", log = " LLM ", iface = " MKSK · IFACE ", queue = " MKSK · REVIEW " }
+local PANE_HL = { chat = "Chat", log = "Log", iface = "Iface", queue = "Queue" } -- each pane's bar colors (MkskBadge*/MkskBar*)
 local BOTTOM = 0.45 -- share of the tab height the chat row gets when the tab is laid out
 local REVIEW_WIDTH = 0.38 -- share of the tab width the REVIEW pane gets
 local REVIEW_DIFF = 14 -- diff lines shown per change in the REVIEW pane (v shows everything)
@@ -99,6 +100,22 @@ local function define_highlights()
     MkskAttach = { bg = "#005f87", fg = "#ffffff" },
     MkskReviewHead = { fg = "#ffd75f", bold = true },
   }
+  -- Each pane's header has its own color: the title badge + a tinted strip (the rest of the bar), as hbmx's panes.
+  -- chat keeps mksk's cyan; PLAN green, LOG blue, IFACE purple, REVIEW orange (it waits for you).
+  -- Override with :hi MkskBarLog ... / MkskBadgeLog ...
+  local light = vim.o.background == "light"
+  local on = light and "#fbf1c7" or "#1d2021"
+  local panes = {
+    Chat = { badge = "#08a4c4", fg = "#000000", bar = light and "#cdeaf0" or "#1f3a40" },
+    Log = { badge = light and "#076678" or "#83a598", fg = on, bar = light and "#cadbea" or "#2a3b48" },
+    Iface = { badge = light and "#8f3f71" or "#d3869b", fg = on, bar = light and "#e7cfdc" or "#43304a" },
+    Queue = { badge = light and "#af3a03" or "#fe8019", fg = on, bar = light and "#f2d9c4" or "#4a3326" },
+    Plan = { badge = light and "#79740e" or "#b8bb26", fg = on, bar = light and "#e0e5c3" or "#353a1f" },
+  }
+  for name, p in pairs(panes) do
+    hl["MkskBadge" .. name] = { bg = p.badge, fg = p.fg, bold = true }
+    hl["MkskBar" .. name] = { bg = p.bar }
+  end
   for name, spec in pairs(hl) do
     spec.default = true
     api.nvim_set_hl(0, name, spec)
@@ -164,12 +181,16 @@ local function position(win)
     text = (api.nvim_buf_get_lines(buf, cur[1] - 1, cur[1], false)[1] or ""):sub(1, 300) }
 end
 
--- ---------------------------------------------------------------- pane status lines
+-- ---------------------------------------------------------------- pane headers
+-- Each pane's bar is its header (the window's winbar, at the top: it stays in view however far the pane scrolls),
+-- tinted with the pane's color: the badge, then the status chunks on the pane's strip.
 -- No animation: the bar changes only when the phase does (busy = orange, idle = green). A spinner redrawn on a timer
 -- made the status bars of the bottom panes flicker for as long as the LLM worked.
 local function phase_chunk()
   local st = S.state
-  return { " ● " .. oneline(st.phase or "starting") .. " ", st.busy and "MkskBusy" or "MkskIdle" }
+  local phase = oneline(st.phase or "starting")
+  if st.busy and (phase == "idle" or phase == "") then phase = "working" end -- busy before the first phase arrives
+  return { " ● " .. phase .. " ", st.busy and "MkskBusy" or "MkskIdle" }
 end
 
 local function net_chunk()
@@ -181,7 +202,7 @@ end
 --- left (the first two chunks are kept when the line is too long), right
 local function pane_chunks(key)
   local st = S.state
-  local left, right = { { PANE_TITLE[key], "MkskBadge" } }, {}
+  local left, right = { { PANE_TITLE[key], "MkskBadge" .. PANE_HL[key] } }, {}
   if key == "queue" then
     local n = #S.queue
     left[2] = { (" %d waiting "):format(n), n > 0 and "MkskApprove" or "MkskTitle" }
@@ -195,9 +216,11 @@ local function pane_chunks(key)
       right[1] = { " " .. oneline(net.network) .. (net.members and (" · " .. net.members .. " member(s)") or "") .. " ",
         "MkskTitle" }
     end
+  elseif key == "chat" then -- the chat's header names the work only while there is some (no "idle", no model)
+    if st.busy then left[2] = phase_chunk() end
   else
     left[2] = phase_chunk()
-    left[3] = { " " .. oneline(st.model or "-") .. " ", "MkskTitle" }
+    left[3] = { " " .. oneline(fn.fnamemodify(tostring(st.model or "-"), ":t")) .. " ", "MkskTitle" } -- the file, not its path
   end
   if not S.job then left[#left + 1] = { " backend stopped ", "MkskApprove" } end
   if key == "chat" then
@@ -220,21 +243,47 @@ local function sl(chunks, i, j)
   local out = {}
   for k = i or 1, j or #chunks do
     local c = chunks[k]
-    out[#out + 1] = "%#" .. c[2] .. "#" .. (c[1]:gsub("%%", "%%%%"))
+    if c then out[#out + 1] = "%#" .. c[2] .. "#" .. (c[1]:gsub("%%", "%%%%")) end
   end
   return table.concat(out)
 end
 
-local function statusline(key)
+local function header(key)
   local left, right = pane_chunks(key)
   return sl(left, 1, 2) .. "%<" .. sl(left, 3) .. "%*%=" .. sl(right) .. "%*"
 end
 
+--- The plan pane's header: the plan, what waits on it, then the file the pane shows (%t%m: live) — the placeholder of
+--- a zero plan has no file. 'winbar' is kept per buffer in a window: BufWinEnter re-applies it (an :edit there).
+local function plan_header(w)
+  local st = S.state
+  local chunks = { { " MKSK · PLAN ", "MkskBadgePlan" }, { " ▤ " .. oneline(st.plan or "zero plan") .. " ", "MkskTitle" } }
+  if st.staged then chunks[#chunks + 1] = { " staged edits · :MkskDiff ", "MkskSteer" } end
+  if (st.deferred or 0) > 0 then chunks[#chunks + 1] = { " ⏸ " .. st.deferred .. " in REVIEW ", "MkskApprove" } end
+  local file = api.nvim_win_get_buf(w) ~= S.bufs.plan and "%#MkskBarPlan# %t%m " or ""
+  return sl(chunks) .. file .. "%<%*"
+end
+
 local function refresh()
   if not S then return end
+  local pw = S.wins.plan
+  if in_tab(pw) then
+    pcall(function()
+      vim.wo[pw].winbar = plan_header(pw)
+      local whl = "WinBar:MkskBarPlan,WinBarNC:MkskBarPlan"
+      if vim.wo[pw].winhighlight ~= whl then vim.wo[pw].winhighlight = whl end
+    end)
+  end
   for _, key in ipairs(PANES) do
     local w = S.wins[key]
-    if valid_win(w) then pcall(function() vim.wo[w].statusline = statusline(key) end) end
+    if valid_win(w) then
+      pcall(function()
+        vim.wo[w].winbar = header(key)
+        if vim.wo[w].statusline ~= "" then vim.wo[w].statusline = "" end -- an older mksk put the bar there
+        local whl = ("WinBar:MkskBar%s,WinBarNC:MkskBar%s"):format(PANE_HL[key], PANE_HL[key])
+        if vim.wo[w].winhighlight ~= whl then vim.wo[w].winhighlight = whl end -- the strip takes the pane's color
+      end)
+    end
   end
 end
 
@@ -1146,6 +1195,13 @@ do
       vim.log.levels.WARN)
   end
 end
+
+-- The pane colors follow the colorscheme and 'background' (a colorscheme change clears highlight groups).
+local colors_group = api.nvim_create_augroup("mksk_colors", { clear = true })
+api.nvim_create_autocmd("ColorScheme", { group = colors_group, callback = function() define_highlights(); refresh() end })
+api.nvim_create_autocmd("BufWinEnter", { group = colors_group, callback = function()
+  if S and S.wins and S.wins.plan == api.nvim_get_current_win() then refresh() end
+end })
 
 -- `:source mksk.lua` opens the UI right away; `require("mksk")` from a config does not.
 if MODNAME == nil and not vim.g.mksk_no_autostart then M.start() end
