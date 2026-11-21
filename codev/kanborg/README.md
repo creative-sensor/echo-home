@@ -70,6 +70,7 @@
 - [datum/2026/TODO/MDOS-27.md](datum/2026/TODO/MDOS-27.md)   ```# wsli : WSL Windows interface```
 - [datum/2026/TODO/MDOS-35.md](datum/2026/TODO/MDOS-35.md)   ```# fancontrol : winring0```
 - [datum/2026/TODO/MDOS-36.md](datum/2026/TODO/MDOS-36.md)   ```# env : replicate gitbash to powershell```
+- [datum/2026/TODO/MDOS-38.md](datum/2026/TODO/MDOS-38.md)   ```# abacus : set gitbash as shell for command run```
 - [datum/2026/TODO/MONO-1.md](datum/2026/TODO/MONO-1.md)   ```# Apache : NiFi```
 - [datum/2026/TODO/MONO-7.md](datum/2026/TODO/MONO-7.md)   ```# ULI : Unified Linux Interface```
 - [datum/2026/TODO/NJS-1.md](datum/2026/TODO/NJS-1.md)   ```# KANBORG : ELECTRON UI```

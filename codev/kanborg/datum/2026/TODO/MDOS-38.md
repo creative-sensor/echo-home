@@ -1,4 +1,4 @@
-# ISSUE :
+# abacus : set gitbash as shell for command run
 --------------------------------
 ### 0 DESCRIPTION
 
