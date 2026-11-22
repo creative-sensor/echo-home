@@ -2,8 +2,7 @@
 #set -x
 # ---- |EXT ----
 PROJECT_CODE=$1
-TITLE=$2
-DESCRIPTION=$TITLE
+DESCRIPTION=$2
 VARSET_EXT=$3
 # ---- |DEFAULT ----
 CYCLE=$(date +%Y)
@@ -45,9 +44,5 @@ CARD=$CYCLE_DIR/BACKLOG/${PROJECT_CODE}-${LAST_ID}.md
 TEMPLATE_CARD=.template/${PROJECT_CODE}.CARD.md
 test -s $TEMPLATE_CARD || TEMPLATE_CARD=CARD.md
 cat $TEMPLATE_CARD | envsubst > $CARD
-sed -i 's/\r$//' $CARD
-if [ -n "$TITLE" ]; then
-    { printf '# %s\n' "$TITLE"; tail -n +2 $CARD; } > $CARD.tmp && mv $CARD.tmp $CARD
-fi
 git add $CARD
 echo -e "\nCARD=$CARD"

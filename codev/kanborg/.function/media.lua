@@ -40,11 +40,17 @@ local function relpath(from_dir, to_path)
 end
 
 local function card_context()
+    -- card, offset of its first line in the buffer, whether the buffer is a VIEW (not the card file), why not
     local buf = vim.api.nvim_get_current_buf()
+    if vim.b[buf].kanborg_pane == 'meta' then
+        return nil, 0, false, 'insert media from the card pane, not META'
+    end
     local first = vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1] or ''
     local offset = first:match('^>>>> Viewing for ') and 1 or 0
+        -- old VIEW header line; the card pane now edits the card file itself (path branch below)
     local card = vim.b[buf].kanborg_card
-    if not card or card == '' then
+    local in_view = card ~= nil and card ~= ''
+    if not in_view then
         local name = vim.api.nvim_buf_get_name(buf)
         if name:match('%.md$') then
             local cycle = vim.g.cycle_dir
@@ -58,7 +64,7 @@ local function card_context()
             end
         end
     end
-    return card, offset
+    return card, offset, in_view
 end
 
 local image_ext = {
@@ -90,9 +96,9 @@ local function unique_path(dir, name)
 end
 
 local function insert_media(src)
-    local card, offset = card_context()
+    local card, offset, in_view, why = card_context()
     if not card then
-        notify('cursor is not inside a card view or card buffer', vim.log.levels.WARN)
+        notify(why or 'cursor is not inside a card view or card buffer', vim.log.levels.WARN)
         return
     end
     if vim.fn.filereadable(src) == 0 then
@@ -120,7 +126,7 @@ local function insert_media(src)
         and ('![' .. label .. '](' .. link .. ')')
         or ('[' .. label .. '](' .. link .. ')')
 
-    if offset == 1 then
+    if in_view then
         local lines = vim.fn.readfile(card)
         local row = vim.api.nvim_win_get_cursor(0)[1] - offset
         row = math.max(1, math.min(row, math.max(#lines, 1)))
