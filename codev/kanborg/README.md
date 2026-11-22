@@ -45,7 +45,6 @@
 - [datum/2026/TODO/CORTA-39.md](datum/2026/TODO/CORTA-39.md)   ```# aider-chat : gemma 4```
 - [datum/2026/TODO/CORTA-4.md](datum/2026/TODO/CORTA-4.md)   ```# pytorch : start```
 - [datum/2026/TODO/CORTA-44.md](datum/2026/TODO/CORTA-44.md)   ```# opencode agent: artefact-manager```
-- [datum/2026/TODO/CORTA-45.md](datum/2026/TODO/CORTA-45.md)   ```# abacus : skills```
 - [datum/2026/TODO/CORTA-5.md](datum/2026/TODO/CORTA-5.md)   ```# tensorflow : start```
 - [datum/2026/TODO/DBMS-1.md](datum/2026/TODO/DBMS-1.md)   ```# Vector : Search```
 - [datum/2026/TODO/DROID-4.md](datum/2026/TODO/DROID-4.md)   ```# APK : pgp tools```
@@ -124,6 +123,7 @@
 - [datum/2026/DONE/CORTA-41.md](datum/2026/DONE/CORTA-41.md)   ```# singletron : inspector```
 - [datum/2026/DONE/CORTA-42.md](datum/2026/DONE/CORTA-42.md)   ```# singletron : design mode```
 - [datum/2026/DONE/CORTA-43.md](datum/2026/DONE/CORTA-43.md)   ```# mtp : speculative decoding```
+- [datum/2026/DONE/CORTA-45.md](datum/2026/DONE/CORTA-45.md)   ```# abacus : skills```
 - [datum/2026/DONE/CORTA-46.md](datum/2026/DONE/CORTA-46.md)   ```# javelin : fire and forget```
 - [datum/2026/DONE/CORTA-47.md](datum/2026/DONE/CORTA-47.md)   ```# memphia: text matching```
 - [datum/2026/DONE/CORTA-48.md](datum/2026/DONE/CORTA-48.md)   ```# memphiu : advanced TUI for memphiX```
