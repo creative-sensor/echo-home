@@ -87,6 +87,58 @@ class CoreTest(unittest.TestCase):
             self.assertTrue(text.strip())
         self.assertIn("VIM-1", kb.render_timeline(self.b, ["VIM"]))
 
+    def test_search(self):
+        self.b.set_fields("VIM-1", [("title", "FEATURE : timeline view"), ("owner", "bee"), ("tags", "ui")])
+        self.b.set_section("VIM-1", "SOLUTION", "- [x] render the timeline lanes")
+        self.b.set_section("HIPG-1", "NOTES", "benchmark the timeline renderer")
+        self.b.link("VIM-2", "depends", "VIM-1")
+        b = kb.Board(self.root, "2026")
+        ids = lambda res: [c.id for c, _, _ in res]
+        self.assertEqual(ids(kb.search(b, ["timeline"])), ["VIM-1", "HIPG-1"])      # a title hit ranks first
+        self.assertEqual(ids(kb.search(b, ["timeline", "lanes"])), ["VIM-1"])        # every term must appear
+        self.assertEqual(ids(kb.search(b, ["lanes", "renderer"], any_term=True)), ["HIPG-1", "VIM-1"])
+        self.assertEqual(ids(kb.search(b, ["timeline"], section="notes")), ["HIPG-1"])
+        self.assertEqual(ids(kb.search(b, ["render.*lanes"], regex=True)), ["VIM-1"])
+        self.assertEqual(ids(kb.search(b, ["VIM-1"])), ["VIM-2"])                    # cards linking VIM-1
+        self.assertEqual(ids(kb.search(b, ["solution"])), [])                        # section headers are not text
+        self.assertEqual(ids(kb.search(b, [], projects=["vim"], owner="@bee")), ["VIM-1"])
+        with self.assertRaises(kb.KbError):
+            kb.search(b, ["("], regex=True)
+        res = kb.search(b, ["timeline"])
+        self.assertEqual(kb.render_search(b, res, ["timeline"]).split("\n")[1], " - VIM-1 / FEATURE : timeline view")
+        self.assertIn("L", kb.render_search(b, res, ["timeline"], mode="lines"))
+        self.assertIn("by project:", kb.render_search(b, res, ["timeline"], mode="count"))
+        self.assertIn("1 more: HIPG-1", kb.render_search(b, res, ["timeline"], limit=1))
+
+    def test_history(self):
+        def git(*args):
+            subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", "-c", "commit.gpgsign=false", *args],
+                           cwd=self.root, check=True, capture_output=True)
+        git("commit", "-qm", "cards")                       # the cards setUp made (staged by the tool)
+        self.b.move("VIM-1", "WIP")
+        self.b.set_fields("VIM-1", [("due", "+1w")])
+        git("commit", "-qm", "VIM-1 start")
+        self.b.journal("VIM-2", "pending note")              # staged, not committed
+        b = kb.Board(self.root, "2026")
+        _, text = kb.history(b, "log")
+        self.assertIn("VIM-1 BACKLOG→WIP", text)
+        self.assertIn("VIM-0 new in BACKLOG", text)
+        data, text = kb.history(b, "moves", cards=["VIM-1"])
+        self.assertEqual([st["status"] for st in data[0]["steps"]], ["BACKLOG", "WIP"])
+        self.assertIn("days in: BACKLOG", text)
+        _, text = kb.history(b, "diff", cards=["VIM-1"], limit=1)
+        self.assertIn("due: — → 2026-11-17", text)
+        data, _ = kb.history(b, "show", cards=["VIM-1"], at="HEAD~1")
+        self.assertEqual(data["status"], "BACKLOG")
+        _, text = kb.history(b, "pending")
+        self.assertIn("VIM-2 edited", text)
+        self.assertIn("pending note", text)
+        data, _ = kb.history(b, "work", cards=["VIM-1"])
+        self.assertEqual([c["subject"] for c in data], ["VIM-1 start"])
+        for bad in (dict(mode="show", cards=["VIM-1"], at="-x"), dict(mode="work"), dict(mode="log", cards=["vim"])):
+            with self.assertRaises(kb.KbError):
+                kb.history(b, **bad)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=1)

@@ -10,7 +10,9 @@ kanborg TUI module is loaded in the same Neovim, knbg.lua uses its public Lua AP
 Protocol: newline-delimited JSON on stdin/stdout. stdout belongs to the protocol; print() goes to stderr.
 
 backend -> nvim
-  {"t":"w","b":"chat"|"iface","text":..,"hl":<highlight group>|null}     append lines
+  {"t":"w","b":"chat"|"iface"|"log","text":..,"hl":<highlight group>|null}   append lines
+  {"t":"w","b":"log","text":..,"raw":true}   streamed LLM text (continues the stream's line)
+  {"t":"w","b":"log","text":"","eos":true}   end of an LLM stream
   {"t":"state","busy":b,"phase":..,"queue":n,"auto":b,"approval":<text>|null,"net":{..},"model":..}
   {"t":"req","id":N,"op":"context"|"ex"|"lua"|"refresh"|"view"|"open", ...}   run in the user's editor
   {"t":"show"}   {"t":"exit"}
@@ -25,6 +27,7 @@ import json
 import os
 import queue
 import re
+import shlex
 import sys
 import threading
 import time
@@ -81,6 +84,11 @@ def chat(text: str = "", hl: Optional[str] = None):
 
 def iface_log(text: str = "", hl: Optional[str] = None):
     emit({"t": "w", "b": "iface", "text": text, "hl": hl})
+
+
+def logw(text: str = "", hl: Optional[str] = None):
+    """A line in the LLM pane (the raw LLM output)."""
+    emit({"t": "w", "b": "log", "text": text, "hl": hl})
 
 
 def clip(s, n: int = 300) -> str:
@@ -141,14 +149,39 @@ class LLM:
         if not self.ensure():
             raise RuntimeError(f"cannot reach the LLM at {self.base} (start it, then ask again)")
         resp = self.client.chat.completions.create(model=self.model, messages=messages, temperature=0.0, stream=True)
-        out = ""
+        out, buf, last, in_think = "", "", time.time(), False
+
+        def flush():  # the LLM pane gets the text as it comes, in small batches
+            nonlocal buf, last
+            if buf:
+                emit({"t": "w", "b": "log", "text": buf, "raw": True})
+                buf, last = "", time.time()
         try:
             for chunk in resp:
                 if cancel.is_set():
                     break
-                if chunk.choices and chunk.choices[0].delta.content:
-                    out += chunk.choices[0].delta.content
+                if not chunk.choices:
+                    continue
+                d = chunk.choices[0].delta
+                think = getattr(d, "reasoning_content", None)
+                if think:
+                    if not in_think:
+                        flush()
+                        buf, in_think = "💭 ", True
+                    buf += think
+                if d.content:
+                    if in_think:
+                        buf += "\n"
+                        in_think = False
+                    out += d.content
+                    buf += d.content
+                if "\n" in buf or len(buf) > 160 or time.time() - last > 0.1:
+                    flush()
         finally:
+            flush()
+            if cancel.is_set():
+                emit({"t": "w", "b": "log", "text": " ✖ cancelled", "raw": True})
+            emit({"t": "w", "b": "log", "text": "", "eos": True})
             if cancel.is_set():
                 try:
                     resp.close()
@@ -161,7 +194,9 @@ class LLM:
             raise RuntimeError(f"cannot reach the LLM at {self.base}")
         r = self.client.chat.completions.create(model=self.model, temperature=0.0, messages=[
             {"role": "system", "content": system}, {"role": "user", "content": user}])
-        return parse_llm_json(r.choices[0].message.content or "")
+        content = r.choices[0].message.content or ""
+        logw("── 🌐 network attention ──\n" + (content.strip()[-1500:] or "(empty)") + "\n", "Comment")
+        return parse_llm_json(content)
 
 
 # ---------------------------------------------------------------- prompt
@@ -177,16 +212,20 @@ THE BOARD
 
 RULES
 1. Each turn run ONE action, then read its result. Base every claim on action results, never on guesses.
-2. "this card"/"here" = [USER POSITION] card. Resolve unclear card references with list_cards/show_card before changing anything.
+2. "this card"/"here" = [USER POSITION] card. To find cards by what they are about, search_base with words taken from the
+   request and the [USER POSITION], then show_card the card you pick; list_cards lists by project/status. Resolve unclear
+   card references before changing anything.
 3. Before moving a card to WIP/DONE, check its dependencies; report what got unblocked or what still blocks.
 4. Record decisions, findings and answers from other agents in the card's journal (journal action), concise and attributed.
 5. As coordinator: when a request needs expertise you lack (investigating a machine, code, research), ask the right agent on the network
    (ask_agent; see [NETWORK] members and purposes), then record the outcome on the board. Do not ask agents what the board already says.
 6. Editor actions (run_command, run_lua) need the user's approval unless auto mode is on; prefer board actions and open_view/open_card.
    Network requests cannot use editor actions.
-7. Finish with declare_result: "reply" is the concrete answer (card ids, dates, numbers, what changed). For progress/timeline/dependency
+7. For when / how long / why / what changed / what was done questions, read board_history (moves, diff, work) and cite
+   the commits (hash, date) you base the answer on.
+8. Finish with declare_result: "reply" is the concrete answer (card ids, dates, numbers, what changed). For progress/timeline/dependency
    questions summarise the view, do not paste it whole.
-8. Output ONLY one JSON object with only the fields the action needs.
+9. Output ONLY one JSON object with only the fields the action needs.
 
 ACTIONS — "action_type" is exactly one of the names below; all other fields sit at the top level of the same object.
 Example: {"action_type": "new_card", "project": "LMEN", "title": "Learning Machine", "status": "BACKLOG", "description": "ML study", "reason": "..."}
@@ -195,7 +234,19 @@ Reading the board:
   {"action_type":"view","view":"lanes|board|related|progress|deps|timeline","projects":["CODE"]}
   {"action_type":"validate"}
   {"action_type":"list_cards","project":"CODE","status":"WIP"}            (both optional)
+  {"action_type":"search_base","query":"timeline export","project":"VIM","status":"WIP","section":"SOLUTION","mode":"cards"}
+      finds cards by content, best match first, one line each: " - CARD / first line". Every word must appear
+      ("any":true = one is enough, "regex":true = query is a regex, "quoted words" = one phrase); project, status,
+      section (or "title"/"meta"), owner, tag narrow it (all optional); a card id as query finds the cards linking it.
+      mode: cards | lines (+ the matching lines) | fields (+ status, owner, dates, progress, links) | count
   {"action_type":"show_card","card":"VIM-2","body":true}                    (body optional)
+  {"action_type":"board_history","mode":"moves","card":"VIM-2","since":"2 weeks ago"}
+      the board's git history, newest first; all optional: card (or a list), project, since/until (2026-11-01,
+      "3 days ago"), author, grep (commit message), text (regex in changed lines), limit. mode:
+      log = commits and what each did to cards (moved, new, edited) | moves = each card's status changes and days
+      in each status | diff = changed lines and fields (old → new) | show = a card as it was "at" a date or commit
+      ("section" optional) | pending = changes not committed yet | work = the commits that did the card's or
+      project's work (their message names it) and the files they changed
   {"action_type":"read_section","card":"VIM-2","section":"SOLUTION"}
 Changing the board:
   {"action_type":"new_card","project":"CODE","title":"..","status":"BACKLOG","kind":"ISSUE","description":".."}
@@ -223,7 +274,7 @@ Every action also takes "reason": one short sentence why.
 """
 
 
-ACTION_NAMES = ["overview", "view", "validate", "list_cards", "show_card", "read_section", "new_card", "move_card",
+ACTION_NAMES = ["overview", "view", "validate", "list_cards", "search_base", "board_history", "show_card", "read_section", "new_card", "move_card",
                 "set_fields", "link", "unlink", "journal", "write_section", "set_project", "open_view", "open_card",
                 "run_command", "run_lua", "who", "ask_agent", "wait_agent", "post", "declare_result"]
 
@@ -232,6 +283,7 @@ def normalize_action(act: dict) -> dict:
     """Accept near-misses small models produce: a category as action_type with the real action nested
     ({"action_type":"write","new_card":{...}}), "write:new_card", "write.new_card", "action":"new_card"."""
     kind = str(act.get("action_type") or act.get("action") or "").strip()
+    kind = ACTION_ALIASES.get(kind, kind)
     if kind in ACTION_NAMES:
         return dict(act, action_type=kind)
     for sep in (":", ".", "/", " "):
@@ -257,6 +309,18 @@ def default_cli(root: str) -> str:
 
 
 VIEWS = ["lanes", "board", "related", "progress", "deps", "timeline"]
+
+
+ACTION_ALIASES = {"search": "search_base", "search_cards": "search_base", "find_cards": "search_base",
+                  "find": "search_base", "grep": "search_base", "search_board": "search_base",
+                  "history": "board_history", "git_log": "board_history", "git_history": "board_history",
+                  "git": "board_history", "board_log": "board_history", "card_history": "board_history"}
+SEARCH_MODES = ("cards", "lines", "fields", "count")
+HISTORY_MODES = ("log", "moves", "diff", "show", "pending", "work")
+
+
+def truthy(v) -> bool:
+    return v is True or str(v).strip().lower() in ("1", "true", "yes", "on")
 
 
 class ToolError(Exception):
@@ -473,6 +537,9 @@ class Agent:
             if origin:
                 chat("")
                 chat(f"🌐 network request #{origin.get('id')} from @{origin.get('from')}: {clip(text, 300)}", "Special")
+                logw(f"▶ 🌐 #{origin.get('id')} @{origin.get('from')}: {clip(text, 200)}", "Title")
+            else:
+                logw(f"▶ {clip(text, 200)}", "Title")
             status, reply = "FAILED", ""
             try:
                 status, reply = self.run_task(text, origin, ctx)
@@ -532,6 +599,7 @@ class Agent:
             if self.cancel.is_set():
                 raise Cancelled()
             self.set_phase(f"thinking {turn}/{self.args.max_turns}")
+            logw(f"── turn {turn}/{self.args.max_turns} ──", "Comment")
             raw = self.llm.stream(messages, self.cancel)
             if self.cancel.is_set():
                 raise Cancelled()
@@ -593,6 +661,10 @@ class Agent:
             if a.get("status"):
                 args += ["-s", str(a["status"])]
             return T.text(*args) or "no matching cards"
+        if kind == "search_base":
+            return self.search_base(a)
+        if kind == "board_history":
+            return self.board_history(a)
         if kind == "show_card":
             out = T.text("show", card)
             if a.get("body"):
@@ -704,6 +776,80 @@ class Agent:
                 return "Error: set_project needs description and/or related"
             return T.text("project", str(a.get("project") or "").upper(), *pairs)
 
+    def search_base(self, a):
+        """The card base searched through the kanborg CLI (search): " - CARD / first line" per card, best first;
+        the other modes add the matching lines, the planning fields, or counts."""
+        regex = truthy(a.get("regex"))
+        q = a.get("query", a.get("terms", a.get("pattern", a.get("text", ""))))
+        if isinstance(q, list):
+            terms = [str(x) for x in q if str(x).strip()]
+        elif regex:
+            terms = [str(q)] if str(q).strip() else []
+        else:
+            try:
+                terms = shlex.split(str(q or ""))
+            except ValueError:  # an unbalanced quote
+                terms = str(q or "").split()
+        mode = str(a.get("mode") or "cards").strip().lower()
+        if mode not in SEARCH_MODES:
+            return f"Error: mode must be one of {', '.join(SEARCH_MODES)}"
+        args = ["search"]
+        proj = a.get("project") or a.get("projects") or []
+        codes = [str(c).upper() for c in (proj if isinstance(proj, list) else re.split(r"[,\s]+", str(proj))) if str(c).strip()]
+        if codes:
+            args += ["-p", *codes]
+        for key, flag in (("status", "-s"), ("section", "--in"), ("owner", "--owner"), ("tag", "--tag")):
+            if a.get(key):
+                args += [flag, str(a[key])]
+        if regex:
+            args.append("-r")
+        if truthy(a.get("any")):
+            args.append("--any")
+        try:
+            limit = max(1, min(50, int(a.get("limit") or (10 if mode == "lines" else 20))))
+        except (TypeError, ValueError):
+            limit = 20
+        args += ["-m", mode, "-n", str(limit), "--", *terms]
+        try:
+            return self.tool.text(*args)
+        except ToolError as e:
+            if "invalid choice" in str(e):
+                return f"Error: this board's kanborg CLI ({self.tool.cli}) has no search command; use list_cards/show_card"
+            raise
+
+    def board_history(self, a):
+        """The board's git history through the kanborg CLI (history, read-only). work looks for the commits named
+        after the card / project in --work-repo repositories (default: the board's own)."""
+        mode = str(a.get("mode") or "log").strip().lower()
+        if mode not in HISTORY_MODES:
+            return f"Error: mode must be one of {', '.join(HISTORY_MODES)}"
+        args = ["history", "-m", mode]
+
+        def ids(*keys):
+            v = next((a[k] for k in keys if a.get(k)), [])
+            return [str(x).strip().upper() for x in (v if isinstance(v, list) else re.split(r"[,\s]+", str(v))) if str(x).strip()]
+        if ids("card", "cards"):
+            args += ["-c", *ids("card", "cards")]
+        if ids("project", "projects"):
+            args += ["-p", *ids("project", "projects")]
+        for key, flag in (("since", "--since"), ("until", "--until"), ("author", "--author"), ("grep", "--grep"),
+                          ("text", "--text"), ("at", "--at"), ("section", "--in")):
+            if a.get(key) is not None and str(a[key]).strip():
+                args.append(f"{flag}={a[key]}")
+        if a.get("limit"):
+            try:
+                args += ["-n", str(max(1, min(50, int(a["limit"]))))]
+            except (TypeError, ValueError):
+                pass
+        if mode == "work" and self.args.work_repo:
+            args += ["--repo", *[resolve_path(r) for r in self.args.work_repo]]
+        try:
+            return self.tool.text(*args)
+        except ToolError as e:
+            if "invalid choice" in str(e):
+                return f"Error: this board's kanborg CLI ({self.tool.cli}) has no history command"
+            raise
+
     def refresh_editor(self):
         emit({"t": "req", "id": 0, "op": "refresh"})  # fire and forget
 
@@ -712,7 +858,8 @@ HELP_TEXT = """knbg — Kanborg operator
   <text>   a request (status, plan, create/move/link cards, dates, ask other agents ...)
   ===a     toggle auto-approve for editor actions      ===x  cancel the running task
   ===n     network status   ===nj [name] [purpose] join   ===nl leave   ===ns <text> say   ===nw who
-  F8 chat ⇄ IFACE pane · <C-c> cancel · q hide (normal mode)"""
+  The strip: KNBG (this chat) · LLM (raw LLM output) · IFACE (the network, only while joined)
+  <Tab> next pane · <S-Tab> previous · i input · <C-c> cancel · q hide (normal mode) · knk show/hide"""
 
 
 def autopilot_allows() -> bool:
@@ -764,6 +911,9 @@ def main():
     p.add_argument("--tool-python", default=os.environ.get("KANBORG_PYTHON") or sys.executable or "python",
                    help="python that runs the kanborg CLI (default: the one running knbg)")
     p.add_argument("--journal-as", default="knbg", help="author of the journal entries the agent writes")
+    p.add_argument("--work-repo", action="append", default=[],
+                   help="a git repository whose commits are named after cards (VIM-42 ...); board_history work reads "
+                        "the work done on a card there (repeatable; default: the board's own repository)")
     p.add_argument("--port", type=int, default=8080, help="port of the local LLM server")
     p.add_argument("--host", default="localhost")
     p.add_argument("--auto", action="store_true", help="auto-approve editor actions (also autopilot.yaml knbg.allow)")
@@ -801,13 +951,14 @@ def main():
     llm_ok = agent.llm.ensure()
     chat(f"LLM {agent.llm.base}: " + (agent.llm.model if llm_ok else "not reachable yet (start it; I retry on each request)"),
          "Comment" if llm_ok else "WarningMsg")
-    chat("Ask me about the board or tell me what to change. ===h help · F8 network pane", "Comment")
-    iface_log("IFACE — Intelligence Network traffic and decisions (F8 back to chat)", "Title")
+    chat("Ask me about the board or tell me what to change. ===h help · <Tab> next pane · knk show/hide", "Comment")
+    logw("LLM — raw LLM output, streamed as it is generated", "Title")
+    iface_log("IFACE — Intelligence Network traffic and decisions (shown while joined)", "Title")
     import knbg_iface
     if knbg_iface.INET_ERROR:
         iface_log("⚠️ Intelligence Network driver not loaded; knbg works on the board but cannot join.", "ErrorMsg")
         iface_log("   " + knbg_iface.INET_ERROR, "ErrorMsg")
-        chat("⚠️ network driver not found (details: F8). Board work is unaffected.", "WarningMsg")
+        chat("⚠️ network driver not found: " + knbg_iface.INET_ERROR + "\n   Board work is unaffected.", "WarningMsg")
     else:
         iface_log(f"   inet driver: {knbg_iface.INET_DIR}", "Comment")
     if ARGS.net_name:

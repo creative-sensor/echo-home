@@ -9,24 +9,44 @@ let g:knbg_args = ['--port', get(g:, 'LMSH_PORT', 8080)]
 "let g:knbg_root = '~/echo-home/codev/kanborg'
 " kanborg CLI = <board>/.function/kanborg.py, else ~/echo-home/codev/kanborg/.function/kanborg.py. Override:
 "let g:knbg_tool = '~/echo-home/codev/kanborg/.function/kanborg.py'
-let g:knbg_no_autostart = 1
+" repositories whose commits are named after cards (VIM-42 ...): knbg reads there the work done on a card
+let g:knbg_work_repos = ['~/echo-home']
+"let g:knbg_height = 0.4          " the bottom strip: rows (frame included), or a fraction of the screen
+"let g:knbg_margin = 2            " columns of editor left and right of the frame
+"let g:knbg_llm_width = 0.33      " LLM pane, fraction of the frame (KNBG takes the rest)
+"let g:knbg_iface_width = 0.3     " IFACE pane (only while joined)
+"let g:knbg_toggle_key = '<M-k>'  " show/hide the strip from normal, insert and terminal mode
 
 
 map knbg1 : silent source ~/echo-home/.vim/mimd/knbg/knbg.lua<CR>
 map knbgi : Knbg<CR>
-map knbga : exec 'Knbg --port '.get(g:, 'LMSH_PORT', 8080).' --auto'<CR>
+map knk : KnbgToggle<CR>
 map knbgj : InetJoin knbg<CR>
 map knbgl : InetLeave knbg<CR>
 map knbgx : KnbgCancel<CR>
 map knbgq : KnbgQuit<CR>
 
 "HELP:
-"- knbg1 loads knbg (and the inet driver, registering 'knbg' there); knbgi opens/toggles its float; knbga starts it auto-approving.
+"- knbg1 loads and starts knbg at once (with the inet driver, registering 'knbg' there) and opens its strip; pressed
+"  again while knbg runs, it just shows the strip. knk shows/hides the strip from anywhere; knbgi focuses it, or
+"  hides it when you are in it. After knbgq, knbg1 reloads knbg fresh.
+"- The strip, a framed float along the bottom: KNBG (the chat, your input on its last line, status in its header) ·
+"  LLM (the raw LLM output, streamed) · IFACE (the network: what knbg hears, decides, says; there only while joined).
 "- Ask for status/progress/blocked/timelines, or to create, move, link, date, journal cards. Changes are git-staged
 "  (not committed) by the kanborg CLI; if the kanborg TUI runs in this Neovim its columns/views refresh at once.
+"- Cards by content: knbg searches the card base itself (search_base, from your words and where you are) and gets
+"  " - CARD / first line" per card, best first, then opens the one it needs; other modes add the matching lines,
+"  the planning fields or counts. Same search in the shell: kanborg.py search timeline export -m lines (-h for all).
+"- History: knbg reads the board's git history (board_history): commits and what they did to cards, status moves
+"  and days in each status, changed lines and fields (due 11-20 → 11-27), a card as it was at a date, changes not
+"  committed yet, and the work commits named after a card in g:knbg_work_repos (~/echo-home). Ask "when did VIM-41
+"  start and how long was it in WIP?", "what was done for VIM-42?", "what changed on the board this week?".
+"  Shell: kanborg.py history -m moves -c VIM-41  (modes log|moves|diff|show|pending|work, -h for all).
 "- To drive the TUI itself: start the TUI (.function/startn), then :source ~/echo-home/.vim/mimd/vimpage_knbg and knbg1 there.
-"- Vim hands: opening views/cards needs no approval; Ex/Lua actions ask y/n/a (knbga or autopilot.yaml  knbg: allow: yes  skips).
-"- Float: <CR> send · <C-c> cancel · F8 chat ⇄ IFACE pane · q hide · ===h help · ===a auto-approve toggle.
+"- Vim hands: opening views/cards needs no approval; Ex/Lua actions ask y/n/a (===a in the chat, or autopilot.yaml
+"  knbg: allow: yes, skips the question).
+"- Strip: <CR> send · <C-c> cancel · <Tab> next pane · <S-Tab> previous · i input · q hide · ===h help ·
+"  ===a auto-approve toggle.
 "- Intelligence Network: knbgj joins with g:inet_agents.knbg (vimpage_inet) as @kanborg. As coordinator it answers board
 "  questions from the room, records reported work on cards and asks experts (@memphia ...) while working.
-"  ===nj/===nl/===ns <text> inside the float join/leave/speak by hand.
+"  ===nj/===nl/===ns <text> in the chat join/leave/speak by hand; joining opens IFACE, leaving closes it.
