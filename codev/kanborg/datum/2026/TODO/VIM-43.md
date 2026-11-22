@@ -1,4 +1,4 @@
-# ISSUE : vimpage_knbg: relayout and actions
+# vimpage_knbg: relayout and actions
 --------------------------------
 ### 0 DESCRIPTION
 
