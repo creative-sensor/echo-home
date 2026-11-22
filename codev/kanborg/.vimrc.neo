@@ -63,12 +63,15 @@ filetype plugin indent on    " required
 "-------- [GLOBAL] --------
 set shellslash
 let g:cycle_dir = $DATA_DIR.'/'.$CYCLE
-let g:VIEW = '0.VIEW'
+let g:META = '0.META'
 let g:BACKLOG = '1.BACKLOG'
 let g:TODO = '2.TODO'
 let g:HOLD = '3.HOLD'
 let g:WIP = '4.WIP'
 let g:DONE= '5.DONE'
+let g:kanborg_statuses = ['BACKLOG', 'TODO', 'HOLD', 'WIP', 'DONE']
+let g:kanborg_panes = get(g:, 'kanborg_panes', {})
+    " {'meta': buffer number of the META pane}; the card pane is the window with w:kanborg_pane = 'card'
 
 "-------- [FUNCTIONS] --------
 
@@ -111,39 +114,107 @@ function CardRelative(path)
 endfunction
 
 
-function CardDisplay(path)
-    " TODO/CARD.md `TITLE`
-    let rel = CardRelative(a:path)
-    let title = CardTitle(a:path)
-    return title ==# '' ? rel : rel.' `'.title.'`'
+function ColumnOf(bufname)
+    " status of a column buffer (1.BACKLOG -> BACKLOG), '' for any other buffer
+    let ext = fnamemodify(a:bufname, ':e')
+    return index(g:kanborg_statuses, ext) >= 0 ? ext : ''
 endfunction
 
 
-function CardPath(name)
-    " turn a compact column entry back into a real card path
+function CardDisplay(path)
+    " column entry: CARD TITLE  (no STATUS/, no .md: the column is the status, CardPath puts both back)
+    let name = fnamemodify(a:path, ':t:r')
+    let title = CardTitle(a:path)
+    return title ==# '' ? name : name.' '.title
+endfunction
+
+
+function CardPath(name, ...)
+    " turn a column entry back into a real card path.
+    " CARD gets .md appended and its status prepended: a:1 when given, else the column of the current
+    " buffer; a card that is not there (stale column, caller outside the columns) is looked up in every
+    " status. CARD.md, STATUS/CARD.md entries and full paths resolve as they always did.
     let name = trim(a:name)
-    let name = substitute(name, '\s\+`.*$', '', '')
-    if name !~# '^/'
-                \ && stridx(name, g:cycle_dir.'/') != 0
-                \ && stridx(name, './'.g:cycle_dir.'/') != 0
-        let name = g:cycle_dir.'/'.name
+    if !filereadable(name)
+        let name = matchstr(substitute(name, '\s\+`.*$', '', ''), '^\S\+')
+            " entry: the card is the first word, the title follows (older entries: `TITLE` in backticks)
     endif
-    return name
+    if name ==# ''
+        return ''
+    endif
+    if name !~# '\.md$'
+        let name .= '.md'
+    endif
+    if name =~# '^/'
+                \ || stridx(name, g:cycle_dir.'/') == 0
+                \ || stridx(name, './'.g:cycle_dir.'/') == 0
+        return name
+    endif
+    if name =~# '/'
+        return g:cycle_dir.'/'.name
+    endif
+    let status = a:0 && a:1 !=# '' ? a:1 : ColumnOf(bufname())
+    for st in (status ==# '' ? [] : [status]) + g:kanborg_statuses
+        let path = g:cycle_dir.'/'.st.'/'.name
+        if filereadable(path)
+            return path
+        endif
+    endfor
+    return g:cycle_dir.'/'.(status ==# '' ? '' : status.'/').name
+endfunction
+
+
+function KanborgIsCard(path)
+    " a card file: .../<STATUS>/<name>.md
+    return a:path =~# '\v/(BACKLOG|TODO|HOLD|WIP|DONE)/[^/]+\.md$'
+endfunction
+
+
+function KanborgBufOf(path)
+    " buffer holding a file, -1 when there is none
+    let full = fnamemodify(a:path, ':p')
+    for info in getbufinfo()
+        if info.name ==# full
+            return info.bufnr
+        endif
+    endfor
+    return -1
+endfunction
+
+
+function CardAtCursor()
+    " path of the card under the cursor: a column entry (status prepended), the card file being
+    " edited (card pane, --- tab), or the card the META pane shows
+    if ColumnOf(bufname()) ==# ''
+        if KanborgIsCard(expand('%:p'))
+            return expand('%:p')
+        endif
+        if get(b:, 'kanborg_card', '') !=# ''
+            return b:kanborg_card
+        endif
+    endif
+    return CardPath(getline('.'))
 endfunction
 
 
 function AppendCard(path)
     let text = CardDisplay(a:path)
+    let locked = !&l:modifiable
+        " a column: read-only for the user, opened for this one line
+    setlocal modifiable
     if line('$') == 1 && getline(1) ==# ''
         call setline(1, text)
     else
         call append(line('$'), text)
     endif
+    if locked
+        setlocal nomodifiable nomodified
+    endif
 endfunction
 
 
 function KanborgHighlightTitle(column_name)
-    " color the `TITLE` part per column (same palette as .function/show -c)
+    " color the TITLE part per column (same palette as .function/show -c)
     let groups = {
                 \ 'BACKLOG': ['KanborgBacklogTitle', '1', '#dc322f'],
                 \ 'TODO':    ['KanborgTodoTitle',    '3', '#b58900'],
@@ -154,27 +225,285 @@ function KanborgHighlightTitle(column_name)
     let spec = get(groups, a:column_name, ['KanborgCardTitle', '4', '#268bd2'])
     exec 'highlight default '.spec[0].' ctermfg='.spec[1].' guifg='.spec[2].' cterm=bold gui=bold'
     call clearmatches()
-    call matchadd(spec[0], '`\zs[^`]*\ze`\s*$')
+    call matchadd(spec[0], '^\S\+\s\+\zs.*$')
+        " the title: everything after the card name
+endfunction
+
+
+"-------- [PANE HEADERS] --------
+" every pane gets a colored badge header: the winbar (nvim 0.8+), else the window's own status line.
+"   columns     [ BACKLOG ][12]                       badge = status color, live card count on dark
+"   card pane   [ WIP ][DTUM-1][ title ........... ]  card name: status color on dark, title bar up to the end
+"   META pane   [META][ DTUM-1 ................... ]  black and pink inverted: META black on pink,
+"                                                     card name bar pink on black up to the end
+
+function KanborgBadges()
+    " per color: Badge = light on the color (bold)   Bar = light on the color, fills the header to the end
+    "            Name = the color on dark (card name in the card pane, card count in the columns)
+    let palette = {
+                \ 'BACKLOG': ['1', '#dc322f'], 'TODO': ['3', '#b58900'], 'HOLD': ['5', '#d33682'],
+                \ 'WIP': ['6', '#2aa198'], 'DONE': ['2', '#859900'], 'VIEW': ['4', '#268bd2'],
+                \ }
+    for [name, c] in items(palette)
+        exec 'highlight KanborgBadge'.name.' ctermfg=15 ctermbg='.c[0].' guifg=#fdf6e3 guibg='.c[1].' cterm=bold gui=bold'
+        exec 'highlight KanborgBar'.name.' ctermfg=15 ctermbg='.c[0].' guifg=#fdf6e3 guibg='.c[1].' cterm=NONE gui=NONE'
+        exec 'highlight KanborgName'.name.' ctermfg='.c[0].' ctermbg=0 guifg='.c[1].' guibg=#073642 cterm=bold gui=bold'
+    endfor
+    " META pane: black and pink, inverted between the label and the bar
+    highlight KanborgBadgeMETA ctermfg=16 ctermbg=205 guifg=#000000 guibg=#ff69b4 cterm=bold gui=bold
+    highlight KanborgBarMETA ctermfg=205 ctermbg=16 guifg=#ff69b4 guibg=#000000 cterm=NONE gui=NONE
+endfunction
+
+
+function KanborgCursorLine()
+    " cursor line: a soft blend of green and yellow (insert mode turns it to a bright lime, see AUTOCMD)
+    highlight CursorLine cterm=NONE ctermbg=193 gui=NONE guibg=#e2efb0
+    highlight CursorLineNr cterm=bold ctermfg=64 ctermbg=193 gui=bold guifg=#5f8700 guibg=#e2efb0
+endfunction
+
+
+function KanborgBar(winid, text)
+    call setwinvar(a:winid, exists('+winbar') ? '&winbar' : '&statusline', a:text)
+endfunction
+
+
+function KanborgCount()
+    " cards in the column whose header is drawn (%{} runs in that header's window)
+    return len(filter(getline(1, '$'), 'v:val =~# "\\S"'))
+endfunction
+
+
+function KanborgColumnBar(column_name)
+    let c = a:column_name
+    return '%#KanborgBadge'.c.'# '.c.' %#KanborgName'.c.'# %{KanborgCount()} %*'
+endfunction
+
+
+function KanborgCardBar()
+    " card pane header, for whatever file the pane shows (%{%%} runs in the pane's window, so it follows
+    " edits and :e): STATUS badge, card name on dark, title on the status color up to the end
+    let path = expand('%:p')
+    if !KanborgIsCard(path)
+        return '%#KanborgBadgeVIEW# VIEW %#KanborgBarVIEW# '.substitute(expand('%:t'), '%', '%%', 'g')
+                    \ .' · -- on a card opens it here'
+    endif
+    let status = fnamemodify(path, ':h:t')
+    let title = ''
+    for line in getline(1, 20)
+        if line =~# '^#\s\+'
+            let title = substitute(line, '^#\s\+', '', '')
+            break
+        endif
+    endfor
+    return '%#KanborgBadge'.status.'# '.status.' %#KanborgName'.status.'# '.fnamemodify(path, ':t:r')
+                \ .' %#KanborgBar'.status.'# %<'.substitute(title, '%', '%%', 'g')
+endfunction
+
+
+function KanborgMetaBar(path, found)
+    " META pane header: META black on pink, then the card name pink on black up to the end
+    let text = a:path ==# '' ? 'json block of the card in the card pane'
+                \ : fnamemodify(a:path, ':t:r').(a:found ? '' : ' · no ```json block')
+    return '%#KanborgBadgeMETA# META %#KanborgBarMETA# '.text
 endfunction
 
 
 function LoadColumn(column_name)
     let dir = g:cycle_dir.'/'.a:column_name
-    let lines = ['----'.a:column_name.'----']
+    let lines = []
     for path in systemlist('find '.shellescape(dir).' -type f | sort')
         call add(lines, CardDisplay(path))
     endfor
+    setlocal modifiable
     silent %delete _
     call setline(1, lines)
-    setlocal filetype=markdown
+    setlocal nomodifiable nomodified
+        " read-only pane: cards change through the keys (mmm bbb rr XCard, , tools), which write it themselves
+    setlocal filetype=kanborgcolumn
+        " not markdown: bare titles would get markdown markup (node_modules -> markdownError)
     call KanborgHighlightTitle(a:column_name)
+    call KanborgBar(win_getid(), KanborgColumnBar(a:column_name))
+endfunction
+
+
+"-------- [VIEW AREA] --------
+" under the columns: card pane (the card file itself: edit there, :w saves) | META pane (its json block, 0.META)
+
+function KanborgCardWin()
+    " window-ID of the card pane in this tab page, -1 when it was closed
+    for win in gettabinfo(tabpagenr())[0].windows
+        if getwinvar(win, 'kanborg_pane') ==# 'card'
+            return win
+        endif
+    endfor
+    return -1
+endfunction
+
+
+function KanborgCardPane()
+    " the current window becomes the card pane
+    let w:kanborg_pane = 'card'
+    call KanborgBar(win_getid(), '%{%KanborgCardBar()%}')
+endfunction
+
+
+function KanborgMetaOpen()
+    " META pane right of the current window; returns its window-ID
+    let buf = get(g:kanborg_panes, 'meta', -1)
+    if bufexists(buf)
+        exec 'rightbelow vertical sbuffer '.buf
+    else
+        rightbelow vnew
+        exec 'silent file '.fnameescape(g:META)
+        setlocal buftype=nofile bufhidden=hide noswapfile nomodifiable
+        let b:kanborg_pane = 'meta'
+        let g:kanborg_panes.meta = bufnr()
+    endif
+    let w:kanborg_pane = 'meta'
+    call KanborgBar(win_getid(), KanborgMetaBar(get(b:, 'kanborg_card', ''), 1))
+    exec 'vertical resize '.KanborgMetaWidth()
+    return win_getid()
+endfunction
+
+
+function KanborgViewPanes()
+    " [card_win, meta_win]; reopens a pane that was closed. Focus does not change.
+    let here = win_getid()
+    let vwin = KanborgCardWin()
+    if vwin == -1
+        exec 'botright '.(filereadable('HELP.md') ? 'split HELP.md' : 'new')
+        call KanborgCardPane()
+        let vwin = win_getid()
+    endif
+    let mwin = bufwinid(get(g:kanborg_panes, 'meta', -1))
+    if mwin == -1
+        call win_gotoid(vwin)
+        let mwin = KanborgMetaOpen()
+    endif
+    call win_gotoid(here)
+    return [vwin, mwin]
+endfunction
+
+
+function KanborgMetaWidth()
+    return max([36, &columns / 3])
+endfunction
+
+
+function KanborgFill(winid, lines, filetype, path)
+    " replace a scratch pane's content; the cursor line is kept when the same card is shown again
+    let buf = winbufnr(a:winid)
+    let lnum = getbufvar(buf, 'kanborg_card', '') ==# a:path ? getcurpos(a:winid)[1] : 1
+    call setbufvar(buf, '&modifiable', 1)
+    silent! call deletebufline(buf, 1, '$')
+    call setbufline(buf, 1, a:lines)
+    call setbufvar(buf, 'kanborg_card', a:path)
+    call setbufvar(buf, '&modified', 0)
+    if getbufvar(buf, '&filetype') !=# a:filetype
+        call win_execute(a:winid, 'setlocal filetype='.a:filetype)
+    endif
+    call win_execute(a:winid, 'call cursor('.lnum.', 1)')
+endfunction
+
+
+function KanborgMetaSync(buf)
+    " redraw the META pane from the card pane's buffer: it follows edits before they are saved too
+    let vwin = KanborgCardWin()
+    if vwin == -1 || winbufnr(vwin) != a:buf
+        return
+    endif
+    let mwin = bufwinid(get(g:kanborg_panes, 'meta', -1))
+    if mwin == -1
+        return
+    endif
+    let path = fnamemodify(bufname(a:buf), ':p')
+    let meta = []
+    if KanborgIsCard(path)
+        let meta = KanborgJsonPretty(KanborgJsonBlock(getbufline(a:buf, 1, '$')))
+    else
+        let path = ''
+    endif
+    call KanborgFill(mwin, meta, 'json', path)
+    call setbufvar(winbufnr(mwin), '&modifiable', 0)
+    call KanborgBar(mwin, KanborgMetaBar(path, !empty(meta)))
+endfunction
+
+
+function KanborgJsonBlock(lines)
+    " text of the card's last ```json block (the meta footer), '' when it has none
+    let start = -1
+    for i in range(len(a:lines) - 1, 0, -1)
+        if a:lines[i] =~# '^\s*```json'
+            let start = i
+            break
+        endif
+    endfor
+    if start < 0
+        return ''
+    endif
+    let body = []
+    for line in a:lines[start + 1 :]
+        if line =~# '^\s*```\s*$'
+            break
+        endif
+        call add(body, line)
+    endfor
+    return join(body, "\n")
+endfunction
+
+
+function KanborgJsonPretty(text)
+    " indent json text keeping its key order (json_encode would not); [] for blank text
+    let pat = '"\%([^"\\]\|\\.\)*"\|[][{},:]\|[^][{},:" \t\r\n]\+'
+    let tokens = []
+    let pos = 0
+    while 1
+        let [tok, start, end] = matchstrpos(a:text, pat, pos)
+        if start < 0
+            break
+        endif
+        call add(tokens, tok)
+        let pos = end
+    endwhile
+    let lines = ['']
+    let depth = 0
+    let i = 0
+    while i < len(tokens)
+        let t = tokens[i]
+        if (t ==# '{' || t ==# '[') && get(tokens, i + 1, '') ==# (t ==# '{' ? '}' : ']')
+            let lines[-1] .= t.tokens[i + 1]
+            let i += 1
+        elseif t ==# '{' || t ==# '['
+            let lines[-1] .= t
+            let depth += 1
+            call add(lines, repeat('  ', depth))
+        elseif t ==# '}' || t ==# ']'
+            let depth = max([depth - 1, 0])
+            call add(lines, repeat('  ', depth).t)
+        elseif t ==# ','
+            let lines[-1] .= ','
+            call add(lines, repeat('  ', depth))
+        elseif t ==# ':'
+            let lines[-1] .= ': '
+        else
+            let lines[-1] .= t
+        endif
+        let i += 1
+    endwhile
+    return filter(lines, 'v:val =~# "\\S"')
 endfunction
 
 
 function Kolumns()
-    exec 'file '.g:VIEW.' | read HELP.md | setlocal filetype=markdown'
-        "vim: read file into buffer 
-    exec 'new '.g:BACKLOG
+    call KanborgBadges()
+    call KanborgCardPane()
+    if filereadable('HELP.md')
+        silent edit HELP.md
+    endif
+    let [vwin, mwin] = KanborgViewPanes()
+        " VIEW area: card pane | META pane
+    exec 'topleft new '.g:BACKLOG
+        " columns: one row across the whole width, above the VIEW area
     call LoadColumn('BACKLOG')
     exec 'vnew '.g:TODO
     call LoadColumn('TODO')
@@ -184,6 +513,7 @@ function Kolumns()
     call LoadColumn('WIP')
     exec 'vnew '.g:DONE
     call LoadColumn('DONE')
+    call win_execute(mwin, 'vertical resize '.KanborgMetaWidth())
 endfunction
 
 
@@ -198,33 +528,122 @@ endfunction
 command! -nargs=* XCard call XCard(<q-args>)
 
 
-function ViewCard(name)
-    "cursor is presumed being at VIEW window already
-    let xname = CardPath(a:name)
-    exec "%delete"
-    call setline(1, '>>>> Viewing for '.CardRelative(xname))
-    exec "silent read ".fnameescape(xname)
-    exec "setlocal filetype=markdown"
-    let b:kanborg_card = xname
+function KanborgWarn(msg)
+    echohl WarningMsg | echomsg 'kanborg: '.a:msg | echohl None
 endfunction
 
 
-function EditCard(name)
-    let xname = CardPath(a:name)
+function ViewCard(name, ...)
+    " open a card in the card pane (the card file itself: edit it there, :w saves), its json block in META.
+    " a:1 = status of the column the entry comes from. Works from any window; focus does not change.
+    let xname = CardPath(a:name, a:0 ? a:1 : '')
+    if xname ==# '' || !filereadable(xname)
+        call KanborgWarn('no card '.trim(a:name))
+        return 0
+    endif
+    let [vwin, mwin] = KanborgViewPanes()
+    let buf = winbufnr(vwin)
+    if fnamemodify(bufname(buf), ':p') ==# fnamemodify(xname, ':p')
+        exec 'silent! checktime '.buf
+            " same card: pick up what the core tools (,e ,j ..) wrote to it
+    else
+        try
+            call win_execute(vwin, 'edit '.fnameescape(xname))
+        catch /E37:/
+            call KanborgWarn(fnamemodify(bufname(buf), ':t:r').' has unsaved changes: :w it (or :e!) first')
+            return 0
+        endtry
+        call win_execute(vwin, 'setlocal bufhidden=delete')
+            " an unchanged card leaves the buffer list when the pane moves on; a changed one asks for :w
+    endif
+    call KanborgMetaSync(winbufnr(vwin))
+    return 1
+endfunction
+
+
+function ViewCardAtCursor()
+    " -- : open the card under the cursor in the card pane, then jump there
+    if ViewCard(CardAtCursor())
+        call win_gotoid(KanborgCardWin())
+    endif
+endfunction
+
+
+function EditCard(name, ...)
+    let xname = CardPath(a:name, a:0 ? a:1 : '')
+    if xname ==# '' || !filereadable(xname)
+        return KanborgWarn('no card '.trim(a:name))
+    endif
     exec 'tabnew '.fnameescape(xname)
     exec "setlocal filetype=markdown"
 endfunction
 
 
-function MoveCard(name)
-    let xname = CardPath(a:name)
-    let column_name = fnamemodify(bufname(),':e')
-        " vim: extract file extension
-    let card_short_name = fnamemodify(xname,':t')
-        " vim: extract base name
-    let yname = g:cycle_dir.'/'.column_name.'/'.card_short_name
-    exec 'silent !set -x ; git mv '.shellescape(xname).' '.shellescape(yname)
+function MoveCard(name, ...)
+    " move a card into the column of the current buffer and list it there; returns 1 when it moved.
+    " a:1 = status the entry comes from (bare CARD.md entries carry none). An untracked card is renamed
+    " and git-added, as the core (kanborg.py move) does.
+    let xname = CardPath(a:name, a:0 ? a:1 : '')
+    let column_name = ColumnOf(bufname())
+    if column_name ==# ''
+        return KanborgWarn('move: the cursor is not in a column')
+    endif
+    if xname ==# '' || !filereadable(xname)
+        return KanborgWarn('move: no card '.trim(a:name))
+    endif
+    let buf = KanborgBufOf(xname)
+    if buf != -1 && getbufvar(buf, '&modified')
+        return KanborgWarn('move: '.fnamemodify(xname, ':t:r').' has unsaved changes, :w it first')
+    endif
+    let yname = g:cycle_dir.'/'.column_name.'/'.fnamemodify(xname, ':t')
+    if fnamemodify(xname, ':p') ==# fnamemodify(yname, ':p')
+        return 0
+    endif
+    call system('git mv '.shellescape(xname).' '.shellescape(yname))
+    if v:shell_error
+        if filereadable(yname) || rename(xname, yname) != 0
+            return KanborgWarn('move: could not move '.xname.' to '.yname)
+        endif
+        call system('git add -- '.shellescape(yname))
+    endif
     call AppendCard(yname)
+    let vwin = KanborgCardWin()
+    if buf != -1 && vwin != -1 && winbufnr(vwin) == buf
+        call ViewCard(yname)
+            " the card pane follows the card into its new column
+    endif
+    if buf != -1 && bufexists(buf) && empty(win_findbuf(buf)) && !getbufvar(buf, '&modified')
+        exec 'silent! bwipeout '.buf
+            " no buffer left on the old path: a :w there would bring the card back
+    endif
+    return 1
+endfunction
+
+
+function ShiftCard(dir)
+    " mmm / bbb: move the card under the cursor to the column on the right ('l') / left ('h').
+    " The entry has no status, so it is taken from the column it sits in.
+    let src = ColumnOf(bufname())
+    if src ==# '' || trim(getline('.')) ==# ''
+        return
+    endif
+    let xname = CardPath(getline('.'), src)
+    let [srcwin, lnum] = [win_getid(), line('.')]
+    exec 'wincmd '.a:dir
+    let dst = ColumnOf(bufname())
+    if win_getid() == srcwin || dst ==# '' || dst ==# src
+        call win_gotoid(srcwin)
+        return KanborgWarn('no column on that side')
+    endif
+    if MoveCard(xname)
+        let srcbuf = winbufnr(srcwin)
+        call setbufvar(srcbuf, '&modifiable', 1)
+        call deletebufline(srcbuf, lnum)
+        call setbufvar(srcbuf, '&modified', 0)
+        call setbufvar(srcbuf, '&modifiable', 0)
+    else
+        call win_gotoid(srcwin)
+    endif
 endfunction
 
 function RefreshColumn()
@@ -283,8 +702,13 @@ endif
 "-------- [AUTOCMD] --------
 autocmd FileType yaml  : set tabstop=2
 autocmd VimEnter * silent call Kolumns()
+autocmd ColorScheme * call KanborgBadges() | call KanborgCursorLine()
+autocmd BufWinEnter * if get(w:, 'kanborg_pane', '') ==# 'card' | call KanborgCardPane() | endif
+    " the card pane header is a window-local winbar, which :edit resets: put it back on every file it opens
+autocmd BufWinEnter,TextChanged,InsertLeave,BufWritePost,FileChangedShellPost * call KanborgMetaSync(str2nr(expand('<abuf>')))
+    " META pane follows the card pane: other card, edits, saves, reloads
 autocmd InsertEnter * highlight CursorLine ctermbg=190 guibg=#D5EE16 | highlight StatusLine ctermbg=190 guibg=#CCFF00
-autocmd InsertLeave * highlight CursorLine ctermbg=254 guibg=#eee8d5 | highlight StatusLine ctermbg=254 guibg=#eee8d5
+autocmd InsertLeave * call KanborgCursorLine() | highlight StatusLine ctermbg=254 guibg=#eee8d5
 
 
 
@@ -324,25 +748,20 @@ vnoremap ===    "+y : vsplit <CR> : Grin <C-R>+ <CR>
     ":and call function Grin which take
     "content of '+' as argument
 
-nnoremap  --   yy <C-w><Down>  :call ViewCard('<C-R>"') <CR>
-    " copy current line at cursor to clipboard
-    " view card at the path in clipboard
+" column entries are CARD.md `TITLE`: these keys prepend the status of the cursored column (CardPath)
 
-nnoremap  ---   yy :call EditCard('<C-R>"') <CR>
-    " copy current line at cursor to clipboard
-    " open card in new tab
+nnoremap <silent> --   :call ViewCardAtCursor()<CR>
+    " open the card under the cursor in the card pane (the file itself: edit, :w saves),
+    " its json block in the META pane; the cursor lands in the card pane
 
-nnoremap  mmm   dd  <C-w><Right>  :call MoveCard('<C-R>"') <CR>
-    " copy current line at cursor to clipboard
-    " delete current line
-    " move cursor to the right
-    " insert card where the cursor is
+nnoremap <silent> ---  :call EditCard(CardAtCursor())<CR>
+    " open the card under the cursor (column entry, card pane or META pane) in a new tab
 
-nnoremap  bbb   dd  <C-w><Left>  :call MoveCard('<C-R>"') <CR>
-    " copy current line at cursor to clipboard
-    " delete current line
-    " move cursor to the right
-    " insert card where the cursor is
+nnoremap <silent> mmm  :call ShiftCard('l')<CR>
+    " move the card to the column on the right (git mv) and follow it there
+
+nnoremap <silent> bbb  :call ShiftCard('h')<CR>
+    " move the card to the column on the left (git mv) and follow it there
 
 nnoremap  rr  :call RefreshColumn() <CR>
     " REFRESH CONTENT OF CURSORED COLUMN

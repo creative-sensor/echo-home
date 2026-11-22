@@ -1,6 +1,7 @@
 -- kanborg.lua: card tools and multi-views for the kanborg Neovim TUI (loaded by .vimrc.neo).
 --
--- The legacy layout (VIEW + BACKLOG/TODO/HOLD/WIP/DONE columns) stays the default and untouched.
+-- The legacy layout (BACKLOG/TODO/HOLD/WIP/DONE columns over the VIEW area: card pane, the card file
+-- itself | META pane, its json block; all from .vimrc.neo) stays the default and untouched.
 -- Everything here works on "the card under the cursor": a column entry, a line of a view, the card
 -- shown in the VIEW window, or an open card file. All reads/writes go through .function/kanborg.py,
 -- so the TUI and the CLI always agree on the board.
@@ -47,8 +48,26 @@ end
 
 local function notify(msg, level) vim.notify("kanborg: " .. msg, level or vim.log.levels.INFO) end
 
+--- Core commands that rewrite or move a card file. They are refused while that card has unsaved edits in a
+--- buffer (the card pane edits the file itself): the core would work on a stale file, and a later :w would
+--- undo its change, or bring a moved card back to its old column.
+local WRITES = { move = true, set = true, link = true, unlink = true, journal = true, section = true }
+
+local function unsaved(id)
+  for _, b in ipairs(api.nvim_list_bufs()) do
+    if vim.bo[b].modified and api.nvim_buf_get_name(b):match("[/.]" .. vim.pesc(id) .. "%.md$") then return true end
+  end
+  return false
+end
+
 --- Run the core; returns stdout (string) or nil, err.
 function M.run(args, json)
+  if WRITES[args[1]] then
+    for _, a in ipairs({ args[2], args[#args] }) do
+      local id = type(a) == "string" and a:upper():match("^" .. CARD_PAT .. "$")
+      if id and unsaved(id) then return nil, id .. " has unsaved changes in the editor: :w it first" end
+    end
+  end
   local cmd = { python(), M.core, "--root", M.root }
   if json then cmd[#cmd + 1] = "--json" end
   vim.list_extend(cmd, args)
@@ -121,8 +140,13 @@ function M.refresh()
       local cur = api.nvim_win_get_cursor(win)
       api.nvim_win_call(win, function() pcall(fn.LoadColumn, col) end)
       pcall(api.nvim_win_set_cursor, win, { math.min(cur[1], api.nvim_buf_line_count(buf)), cur[2] })
-    elseif vim.b[buf].kanborg_card and vim.b[buf].kanborg_card ~= "" then
-      local id = id_in(fn.fnamemodify(vim.b[buf].kanborg_card, ":t"))
+    elseif vim.b[buf].kanborg_pane == "meta" then
+      -- META pane: ViewCard redraws it together with the card pane
+    elseif vim.w[win].kanborg_pane == "card" then
+      -- card pane (the card file itself): follow the card when the core moved it, reload what it wrote
+      local name = api.nvim_buf_get_name(buf)
+      local st = name:match("/(%u+)/[^/]+%.md$")
+      local id = st and vim.tbl_contains(STATUSES, st) and id_in(fn.fnamemodify(name, ":t"))
       local info = id and M.run({ "show", id }, true)
       if info then
         api.nvim_win_call(win, function() pcall(fn.ViewCard, fn.fnamemodify(info.path, ":.")) end)
