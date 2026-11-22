@@ -77,7 +77,6 @@
 - [datum/2026/TODO/VIM-27.md](datum/2026/TODO/VIM-27.md)   ```# GML : talk```
 - [datum/2026/TODO/VIM-30.md](datum/2026/TODO/VIM-30.md)   ```# lmsh : console page```
 - [datum/2026/TODO/VIM-32.md](datum/2026/TODO/VIM-32.md)   ```# lmsh : instant promptia```
-- [datum/2026/TODO/VIM-43.md](datum/2026/TODO/VIM-43.md)   ```# vimpage_knbg: relayout and actions```
 
 ### 4 DONE
 
@@ -182,6 +181,7 @@
 - [datum/2026/DONE/VIM-40.md](datum/2026/DONE/VIM-40.md)   ```# vimpage_hbmx: high bandwidth file reader```
 - [datum/2026/DONE/VIM-41.md](datum/2026/DONE/VIM-41.md)   ```# vimpage_memphia: uuid ttl```
 - [datum/2026/DONE/VIM-42.md](datum/2026/DONE/VIM-42.md)   ```# vimpage_mksk: on-pane header badge```
+- [datum/2026/DONE/VIM-43.md](datum/2026/DONE/VIM-43.md)   ```# vimpage_knbg: relayout and actions```
 
 ### 5 BACKLOG
 
