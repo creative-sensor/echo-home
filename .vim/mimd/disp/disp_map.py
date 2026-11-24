@@ -16,12 +16,14 @@ Prefill pipeline (Mapper.build); each stage is saved and shown in the MAP pane a
 
 Memory, one folder per content (layout of hbmx's memory, see README.md written at the root):
   <root>/<d1>/<d2>/<d3d4>/<sha256>/
-      meta.yaml     identity (names, paths, size, the pad's copy), first/last seen, opens, caption, text, map status
+      meta.yaml     identity (names, paths, size, the file it is read from), first/last seen, opens, caption, text,
+                    map status
       map.yaml      elements (flat, with parent / colours / words), text blocks, relations, groups, summary
       notes.yaml    questions answered on the image (qa) and findings (by disp, the user, other agents)
       trace.jsonl   what the user did on the pad with this image: touches, selections, marks, asks, zooms, crops
-No pictures are kept here: the image itself is in the pad's store (~/echo-home/memory/disp), and what the eye was shown
-(a region, scaled) is made again from it on demand; map.yaml `looks` records each region and scale.
+Images are not copied: the pad reads each from its own path (catalog.jsonl at the root says where) and hashes it on
+every load; only a pasted or cropped image, which has no file of its own, is kept once as <sha>/image.png. What the eye
+was shown (a region, scaled) is cut from the image on demand; map.yaml `looks` records each region and scale.
 """
 import json
 import os
@@ -38,29 +40,33 @@ STAGES = ["inventory", "detail", "pixels", "structure", "relations"]
 
 README = """# gddr9b — disp's image memory
 
-What disp (the image agent, `~/echo-home/.vim/mimd/disp`) learnt about the images it showed on the pad.
-An image is known by its content: `sha256` of the bytes; the same picture under another name or path reuses this
-memory, and reopening it reloads its map, notes and the trace of what was done on it.
-(The pad keeps the image bytes, thumbnails and marks in `~/echo-home/memory/disp`, same layout.)
+What disp (the image agent, `~/echo-home/.vim/mimd/disp`) and its pad DISPAD know about the images shown on the pad.
+An image is known by its content: the `sha256` of its bytes, computed every time the pad loads it. The same picture
+under another name or path reuses this memory; reopening it brings back its map, notes, marks and trace.
+Images are not copied here: the pad reads each one from where it is.
 
 ```
+catalog.jsonl                    the pad's strip: one line per load (sha, path, name, source, size, mtime, w, h, ext);
+                                 the images in the order first loaded, the last line of a sha says where it is now
 <d1>/<d2>/<d3d4>/                bucket: 1st, 2nd and 3rd-4th hex digits of the sha256
     <full sha256>/               one image
-        meta.yaml                identity (names, paths, size, the pad's copy), first/last seen, opens, caption,
-                                 text read in it, map status
+        meta.yaml                identity (names, paths, size), first/last seen, opens, caption, text read in it,
+                                 map status                                                                   (disp)
         map.yaml                 the map: elements (flat list: id, type, label, box [x,y,w,h], colours, parent,
-                                 words), text blocks, relations (geometric + semantic), groups, kind, summary
-        notes.yaml               qa (every question answered on it) and findings
-        trace.jsonl              the user's interactions on the pad: touch, select, mark, unmark, ask, view, crop
+                                 words), text blocks, relations (geometric + semantic), groups, kind, summary,
+                                 looks (the regions the eye was shown)                                         (disp)
+        notes.yaml               qa (every question answered on it) and findings                               (disp)
+        trace.jsonl              the user's interactions on the pad: touch, select, mark, unmark, ask, view, crop,
+                                 pick, grid                                                                    (disp)
+        marks.json               the marks drawn on it                                                          (pad)
+        image.png                only for an image with no file of its own: a paste or a crop                  (pad)
 ```
-
-No pictures here: the image is in the pad's store, and every view the eye was given is a region of it, scaled,
-made again on demand (map.yaml `looks` records which: name, region [x,y,w,h], scale, size).
 
 The map is built in stages (inventory → detail → pixels → structure → relations), see disp_map.py. A box snapped
 to the pixels is exact (`snapped: true`); the others are the eye's estimate (`eye_box` keeps the eye's own when snapped).
-Element ids (e1, e2 …) are stable for an image; e0 is the image itself. Words of a text line: e7.w2.
-Remove an image's memory: delete its `<full sha256>/` folder.
+Element ids (e1, e2 …) are stable for an image; e0 is the image itself. Words of a text line: e7.w2. Text blocks: b1 …
+Nothing derived is stored (no thumbnails, no crops shown to the eye): it is all made again from the image on demand.
+Remove an image's memory: delete its `<full sha256>/` folder (a pasted image goes with it).
 """
 
 TYPE_MAP = {
@@ -283,7 +289,8 @@ class Mem:
                 if info.get(k):
                     m[k] = info[k]
             if info.get("file"):
-                m["pad_file"] = info["file"]
+                m["file"] = info["file"]  # where the pad reads it now
+            m.pop("pad_file", None)  # (the pad kept a copy once)
             name, path = info.get("name"), info.get("path")
             if name and name not in (m.get("names") or []):
                 m["names"] = (m.get("names") or []) + [name]

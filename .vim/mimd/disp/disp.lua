@@ -3,7 +3,7 @@
 --
 -- The agent (disp.py, same folder) shows images to the user on the pad DISPAD, a Rust window (pad/: zoom, crop,
 -- numbered marks, touching pixels, clipboard, the strip of every image ever loaded), looks at them through the local
--- multimodal LLM (~/echo-home/.function/tllm.sh, llama.cpp with --mmproj) and MAPS them: a flat inventory of what
+-- multimodal LLM (llama.cpp serving a vision model: --mmproj) and MAPS them: a flat inventory of what
 -- the eye recognises, turned into a DOM-like tree with text blocks and relations, kept per content in
 -- ~/echo-home/memory/gddr9b with the notes and the trace of what you did on the pad (reloaded when it comes back).
 --
@@ -34,8 +34,8 @@
 --   :DispCancel        cancel the running task (and a map being built)       :DispQuit  stop the backend (the pad stays)
 --   :InetJoin disp / :InetLeave disp    (profile g:inet_agents.disp in vimpage_inet, optional)
 --
--- Options: g:disp_python ("python"), g:disp_args (list), g:disp_home (the pad's store, ~/echo-home/memory/disp),
---          g:disp_memory (disp's memory, ~/echo-home/memory/gddr9b), g:disp_pad_port (7791), g:disp_pad_bin,
+-- Options: g:disp_python ("python"), g:disp_args (list), g:disp_memory (the memory disp and the pad share,
+--          ~/echo-home/memory/gddr9b; images stay where they are), g:disp_pad_port (7791), g:disp_pad_bin,
 --          g:disp_no_autostart, g:disp_map_panes (2: MAP sub-panes at most), g:disp_bottom_height (0.42: rows, or a
 --          fraction of the screen), g:disp_llm_width (0.36) and g:disp_iface_width (0.28): fractions of the width,
 --          g:disp_toggle_key (e.g. '<M-d>').
@@ -939,7 +939,6 @@ function M.start(args, opts)
   local cmd = { py, "-u", script }
   local pad_bin = vim.g.disp_pad_bin and native(fn.fnamemodify(fn.expand(vim.g.disp_pad_bin), ":p")) or PAD_BIN
   vim.list_extend(cmd, { "--pad-bin", pad_bin })
-  if vim.g.disp_home then vim.list_extend(cmd, { "--home", native(fn.fnamemodify(fn.expand(vim.g.disp_home), ":p")) }) end
   if vim.g.disp_memory then vim.list_extend(cmd, { "--memory", native(fn.fnamemodify(fn.expand(vim.g.disp_memory), ":p")) }) end
   if vim.g.disp_pad_port then vim.list_extend(cmd, { "--pad-port", tostring(vim.g.disp_pad_port) }) end
   vim.list_extend(cmd, args)

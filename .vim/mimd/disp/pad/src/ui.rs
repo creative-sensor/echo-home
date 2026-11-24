@@ -74,11 +74,21 @@ pub struct PadApp {
     view_dirty: Option<f64>,
     /// the grid dot under the pointer
     hover_node: Option<String>,
+    /// strip thumbnails, made from the image files in threads (kept in memory only)
+    thumb_tx: std::sync::mpsc::Sender<(String, Option<egui::ColorImage>)>,
+    thumb_rx: std::sync::mpsc::Receiver<(String, Option<egui::ColorImage>)>,
+    thumb_busy: std::collections::HashSet<String>,
+    thumb_missing: std::collections::HashSet<String>,
 }
 
 impl PadApp {
     pub fn new(model: Arc<Mutex<Model>>, hub: Arc<Hub>) -> PadApp {
+        let (thumb_tx, thumb_rx) = std::sync::mpsc::channel();
         PadApp {
+            thumb_tx,
+            thumb_rx,
+            thumb_busy: Default::default(),
+            thumb_missing: Default::default(),
             model,
             hub,
             tex: None,
@@ -454,18 +464,43 @@ impl PadApp {
         ui.add_space(2.0);
     }
 
-    fn thumb(&mut self, ctx: &egui::Context, sha: &str, dir: std::path::PathBuf) -> Option<egui::TextureHandle> {
+    /// The strip's thumbnail of an image, made from its file in a thread (nothing is stored): None until ready.
+    fn thumb(&mut self, ctx: &egui::Context, sha: &str, file: std::path::PathBuf) -> Option<egui::TextureHandle> {
         if let Some(t) = self.thumbs.get(sha) {
             return Some(t.clone());
         }
-        let img = image::open(dir.join("thumb.png")).ok()?.to_rgba8();
-        let ci = egui::ColorImage::from_rgba_unmultiplied([img.width() as usize, img.height() as usize], img.as_raw());
-        if self.thumbs.len() > 400 {
-            self.thumbs.clear();
+        if self.thumb_busy.contains(sha) || self.thumb_missing.contains(sha) {
+            return None;
         }
-        let t = ctx.load_texture(format!("thumb-{}", sha), ci, egui::TextureOptions::LINEAR);
-        self.thumbs.insert(sha.to_string(), t.clone());
-        Some(t)
+        self.thumb_busy.insert(sha.to_string());
+        let (tx, ctx2, key) = (self.thumb_tx.clone(), ctx.clone(), sha.to_string());
+        std::thread::spawn(move || {
+            let ci = image::open(&file).ok().map(|im| {
+                let t = im.thumbnail(160, 160).to_rgba8();
+                egui::ColorImage::from_rgba_unmultiplied([t.width() as usize, t.height() as usize], t.as_raw())
+            });
+            let _ = tx.send((key, ci));
+            ctx2.request_repaint();
+        });
+        None
+    }
+
+    fn take_thumbs(&mut self, ctx: &egui::Context) {
+        while let Ok((sha, ci)) = self.thumb_rx.try_recv() {
+            self.thumb_busy.remove(&sha);
+            match ci {
+                Some(ci) => {
+                    if self.thumbs.len() > 400 {
+                        self.thumbs.clear();
+                    }
+                    let t = ctx.load_texture(format!("thumb-{}", sha), ci, egui::TextureOptions::LINEAR);
+                    self.thumbs.insert(sha, t);
+                }
+                None => {
+                    self.thumb_missing.insert(sha);
+                }
+            }
+        }
     }
 
     fn strip(&mut self, ui: &mut egui::Ui) {
@@ -487,7 +522,7 @@ impl PadApp {
                 let (sha, dir, n, name, w, h, source, marks) = {
                     let m = self.model.lock().unwrap();
                     let im = &m.imgs[i];
-                    (im.sha.clone(), m.dir_of(&im.sha), im.n, im.name.clone(), im.w, im.h, im.source.clone(), im.anns.len())
+                    (im.sha.clone(), m.file_of(i), im.n, im.name.clone(), im.w, im.h, im.source.clone(), im.anns.len())
                 };
                 let resp = ui.interact(r, ui.scope_id().with(("thumb", i)), Sense::click());
                 let p = ui.painter();
@@ -502,8 +537,10 @@ impl PadApp {
                     let k = (THUMB / s.x).min(THUMB / s.y);
                     let ir = Rect::from_center_size(tr.center(), s * k);
                     p.image(t.id(), ir, Rect::from_min_max(pos2(0.0, 0.0), pos2(1.0, 1.0)), Color32::WHITE);
+                } else if self.thumb_missing.contains(&sha) {
+                    p.text(tr.center(), Align2::CENTER_CENTER, "file gone", FontId::proportional(12.0), Color32::LIGHT_RED);
                 } else {
-                    p.text(tr.center(), Align2::CENTER_CENTER, "?", FontId::proportional(20.0), Color32::GRAY);
+                    p.text(tr.center(), Align2::CENTER_CENTER, "…", FontId::proportional(20.0), Color32::GRAY);
                 }
                 let label = format!("{}#{} {}", &sha[..4], n, name);
                 let lr = Rect::from_min_size(pos2(r.min.x + 4.0, r.max.y - 15.0), vec2(r.width() - 8.0, 14.0));
@@ -976,6 +1013,15 @@ impl eframe::App for PadApp {
             let v = i.viewport();
             json!({"visible": v.visible(), "focused": v.focused, "occluded": v.occluded, "minimized": v.minimized})
         });
+        // files that hold other bytes than when they were loaded: new content for the clients (disp maps it)
+        let changed: Vec<Value> = {
+            let mut m = self.model.lock().unwrap();
+            let c = std::mem::take(&mut m.changed);
+            c.iter().map(|&i| m.info(i)).collect()
+        };
+        for info in changed {
+            self.hub.broadcast(json!({"ev": "loaded", "image": info, "new": true, "by": "pad", "changed": true}));
+        }
         let (raise, quit, shot) = {
             let mut m = self.model.lock().unwrap();
             m.window = win;
@@ -1002,6 +1048,7 @@ impl eframe::App for PadApp {
 
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         let ctx = ui.ctx().clone();
+        self.take_thumbs(&ctx);
         // what the user does to the view in this pass (requests from the agent land between passes)
         let before = {
             let mut m = self.model.lock().unwrap();

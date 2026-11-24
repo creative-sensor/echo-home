@@ -1,6 +1,6 @@
 //! disppad: the image pad of the disp agent (~/echo-home/.vim/mimd/vimpage_disp).
 //!
-//!   disppad [--port 7791] [--home ~/echo-home/memory/disp] [image ...]
+//!   disppad [--port 7791] [--home ~/echo-home/memory/gddr9b] [image ...]
 //!
 //! One pad per port: started again while one runs, it hands its images to the running pad, raises it and exits.
 //! The disp agent (disp.py) drives it through the control socket (server.rs); the user through the window (ui.rs).
@@ -18,12 +18,13 @@ use std::sync::{Arc, Mutex};
 
 const USAGE: &str = "usage: disppad [--port N] [--home DIR] [image ...]
   --port N    control socket on 127.0.0.1:N (default $DISP_PAD_PORT or 7791)
-  --home DIR  image memory (default $DISP_HOME or ~/echo-home/memory/disp)
+  --home DIR  disp's memory: the strip (catalog.jsonl), marks, pasted images (default $DISP_HOME or
+              ~/echo-home/memory/gddr9b). Images are read from where they are, never copied.
 A pad already running on the port gets the images and comes to the front.";
 
 fn main() {
     let mut port: u16 = std::env::var("DISP_PAD_PORT").ok().and_then(|p| p.parse().ok()).unwrap_or(7791);
-    let mut home = std::env::var("DISP_HOME").unwrap_or_else(|_| "~/echo-home/memory/disp".into());
+    let mut home = std::env::var("DISP_HOME").unwrap_or_else(|_| "~/echo-home/memory/gddr9b".into());
     let mut files: Vec<String> = vec![];
     let mut args = std::env::args().skip(1);
     while let Some(a) = args.next() {

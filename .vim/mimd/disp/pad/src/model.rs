@@ -1,13 +1,15 @@
-//! What the pad holds: every image ever loaded (the memory), the one in focus, how it is viewed, the selection,
-//! the marks. Shared between the window (ui.rs) and the control socket (server.rs) behind one mutex.
+//! What the pad holds: every image ever loaded, the one in focus, how it is viewed, the selection, the marks.
+//! Shared between the window (ui.rs) and the control socket (server.rs) behind one mutex.
 //!
-//! Memory, owned by the pad (the agent only reads it, and writes its own notes.json next to it):
-//!   <home>/catalog.jsonl                     one line per load: {"sha","ts","source","path","name"}
-//!   <home>/<d1>/<d2>/<d3d4>/<sha256>/        one folder per content (same layout as hbmx)
-//!       image.<ext>   the bytes as loaded (clipboard images as PNG)
-//!       meta.json     name, source, first path, size, parent (crops), the marks
-//!       thumb.png     the strip's thumbnail
-//! What the vision model is shown is made on demand from image.<ext> (export) and handed over inline: never stored.
+//! Images are read where they are: the pad keeps their path, never a copy. The sha256 of the bytes is computed on
+//! every load and every read, and names the image's folder in disp's memory (home = ~/echo-home/memory/gddr9b, where
+//! disp keeps meta.yaml, map.yaml, notes.yaml, trace.jsonl). The pad writes there only:
+//!   <home>/catalog.jsonl                     one line per load: sha, path, name, source, size, mtime, w, h, ext, ts
+//!                                            (the strip, in the order first loaded; the last line of a sha wins)
+//!   <home>/<d1>/<d2>/<d3d4>/<sha256>/marks.json   the marks drawn on the image
+//!   <home>/<d1>/<d2>/<d3d4>/<sha256>/image.png    only for an image with no file of its own (clipboard, crop)
+//! Thumbnails are made in memory; what the vision model is shown is cut on demand and sent inline: nothing derived
+//! is stored.
 
 use crate::raster;
 use image::{imageops::FilterType, DynamicImage, RgbaImage};
@@ -45,6 +47,7 @@ pub struct Ann {
     pub by: String,
 }
 
+/// An image of the strip. Serialized as its catalog line (the marks live in marks.json).
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Img {
     #[serde(skip)]
@@ -52,6 +55,7 @@ pub struct Img {
     pub sha: String,
     pub name: String,
     pub source: String,
+    /// where the bytes are read from: the file it was opened from, or <sha>/image.png for a paste / crop
     pub path: String,
     pub w: u32,
     pub h: u32,
@@ -59,10 +63,30 @@ pub struct Img {
     pub ext: String,
     #[serde(default)]
     pub parent: Option<String>,
+    /// size and modification time (s) of the file when last read: a change means the bytes must be hashed again
     #[serde(default)]
+    pub size: u64,
+    #[serde(default)]
+    pub mtime: u64,
+    #[serde(skip)]
     pub anns: Vec<Ann>,
-    #[serde(default)]
+    #[serde(skip)]
     pub next_ann: u32,
+}
+
+#[derive(Serialize, Deserialize, Default)]
+struct Marks {
+    #[serde(default)]
+    anns: Vec<Ann>,
+    #[serde(default)]
+    next_ann: u32,
+}
+
+/// (size, mtime in seconds) of a file, or None when it is not there.
+pub fn stat(path: &Path) -> Option<(u64, u64)> {
+    let md = fs::metadata(path).ok()?;
+    let mtime = md.modified().ok().and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok()).map(|d| d.as_secs()).unwrap_or(0);
+    Some((md.len(), mtime))
 }
 
 /// A perceived component on the grid layer: an element (e5) or a text block (b2) of disp's map, at its position.
@@ -189,6 +213,8 @@ pub struct Model {
     /// a screenshot asked on the socket: the window thread sends the command (commands sent from other threads
     /// between two passes are lost) and the pixels come back through this channel
     pub shot: Option<std::sync::mpsc::Sender<Arc<eframe::egui::ColorImage>>>,
+    /// images whose file now holds other bytes (found when read again): told to the clients as new content
+    pub changed: Vec<usize>,
 }
 
 pub fn now() -> f64 {
@@ -253,28 +279,43 @@ impl Model {
             window: Value::Null,
             passes: (0, 0),
             shot: None,
+            changed: vec![],
         };
         let _ = fs::create_dir_all(&m.home);
         m.read_catalog();
         m
     }
 
-    /// The images of earlier sessions, in the order they were first loaded.
+    /// The images of earlier sessions, in the order they were first loaded; a later line of the same content
+    /// (opened again, maybe from another place) updates where it is.
     fn read_catalog(&mut self) {
         let Ok(text) = fs::read_to_string(self.home.join("catalog.jsonl")) else { return };
         for line in text.lines() {
-            let Ok(v) = serde_json::from_str::<Value>(line) else { continue };
-            let Some(sha) = v.get("sha").and_then(|s| s.as_str()) else { continue };
-            if self.by_sha.contains_key(sha) {
+            let Ok(mut img) = serde_json::from_str::<Img>(line) else { continue };
+            if let Some(&i) = self.by_sha.get(&img.sha) {
+                let old = &mut self.imgs[i];
+                if !img.path.is_empty() {
+                    old.path = img.path;
+                    old.size = img.size;
+                    old.mtime = img.mtime;
+                }
                 continue;
             }
-            let meta = self.dir_of(sha).join("meta.json");
-            let Ok(t) = fs::read_to_string(&meta) else { continue };
-            let Ok(mut img) = serde_json::from_str::<Img>(&t) else { continue };
             img.n = self.imgs.len() + 1;
             self.by_sha.insert(img.sha.clone(), self.imgs.len());
             self.imgs.push(img);
         }
+        for i in 0..self.imgs.len() {
+            self.load_marks(i);
+        }
+    }
+
+    fn load_marks(&mut self, i: usize) {
+        let f = self.dir_of(&self.imgs[i].sha).join("marks.json");
+        let mk: Marks = fs::read_to_string(&f).ok().and_then(|t| serde_json::from_str(&t).ok()).unwrap_or_default();
+        let img = &mut self.imgs[i];
+        img.next_ann = mk.next_ann.max(mk.anns.iter().map(|a| a.id).max().unwrap_or(0) + 1);
+        img.anns = mk.anns;
     }
 
     pub fn dir_of(&self, sha: &str) -> PathBuf {
@@ -284,34 +325,50 @@ impl Model {
     }
 
     pub fn file_of(&self, i: usize) -> PathBuf {
-        let img = &self.imgs[i];
-        self.dir_of(&img.sha).join(format!("image.{}", img.ext))
+        expand(&self.imgs[i].path)
     }
 
     pub fn info(&self, i: usize) -> Value {
         let img = &self.imgs[i];
         let dir = self.dir_of(&img.sha);
+        let file = self.file_of(i);
         json!({"n": img.n, "key": img.key(), "sha": img.sha, "name": img.name, "source": img.source, "path": img.path,
                "w": img.w, "h": img.h, "ts": img.ts, "parent": img.parent, "marks": img.anns.len(),
-               "file": self.file_of(i).to_string_lossy(), "dir": dir.to_string_lossy(),
+               "file": file.to_string_lossy(), "dir": dir.to_string_lossy(), "missing": !file.is_file(),
                "focus": self.focus == Some(i)})
     }
 
-    pub fn save_meta(&self, i: usize) {
+    /// The marks of an image, in its folder of disp's memory.
+    pub fn save_marks(&self, i: usize) {
         let img = &self.imgs[i];
         let dir = self.dir_of(&img.sha);
-        if let Ok(t) = serde_json::to_string_pretty(img) {
-            let tmp = dir.join("meta.json.tmp");
+        let f = dir.join("marks.json");
+        if img.anns.is_empty() && !f.exists() {
+            return;
+        }
+        let _ = fs::create_dir_all(&dir);
+        if let Ok(t) = serde_json::to_string_pretty(&json!({"anns": img.anns, "next_ann": img.next_ann})) {
+            let tmp = dir.join("marks.json.tmp");
             if fs::write(&tmp, t).is_ok() {
-                let _ = fs::rename(&tmp, dir.join("meta.json"));
+                let _ = fs::rename(&tmp, f);
             }
         }
     }
 
-    fn log_load(&self, img: &Img, source: &str, path: &str) {
-        let line = json!({"sha": img.sha, "ts": now(), "source": source, "path": path, "name": img.name});
+    fn log_load(&self, img: &Img) {
+        let mut line = json!(img);
+        line["ts"] = json!(now());
         if let Ok(mut f) = fs::OpenOptions::new().create(true).append(true).open(self.home.join("catalog.jsonl")) {
             let _ = writeln!(f, "{}", line);
+        }
+    }
+
+    /// The file of an image changed on disk since it was read (size or time): its pixels must be read again.
+    fn check(&mut self, i: usize) {
+        let img = &self.imgs[i];
+        if stat(&expand(&img.path)) != Some((img.size, img.mtime)) {
+            let sha = img.sha.clone();
+            self.pixels.remove(&sha);
         }
     }
 
@@ -362,14 +419,41 @@ impl Model {
         }
     }
 
-    /// Decoded pixels (a few kept in memory).
+    /// Decoded pixels (a few kept in memory), read from the image's file: hashed again, so a file whose bytes
+    /// changed becomes that new content (other sha, other memory), told to the clients as a new image.
     pub fn pixels(&mut self, i: usize) -> Result<Arc<RgbaImage>, String> {
         let sha = self.imgs[i].sha.clone();
         if let Some(p) = self.pixels.get(&sha) {
             return Ok(p.clone());
         }
-        let bytes = fs::read(self.file_of(i)).map_err(|e| format!("cannot read image #{}: {}", i + 1, e))?;
-        let img = image::load_from_memory(&bytes).map_err(|e| format!("cannot decode image #{}: {}", i + 1, e))?;
+        let file = self.file_of(i);
+        let bytes = fs::read(&file).map_err(|e| {
+            format!("{} is gone from {} ({}): moved or deleted? open it again from where it is now",
+                    self.imgs[i].key(), file.display(), e)
+        })?;
+        let img = image::load_from_memory(&bytes).map_err(|e| format!("cannot decode {}: {}", file.display(), e))?;
+        let now_sha = sha256(&bytes);
+        let (size, mtime) = stat(&file).unwrap_or((bytes.len() as u64, 0));
+        if now_sha != sha {
+            // the same path, other bytes: this entry follows the file, its memory is the new content's
+            self.by_sha.remove(&sha);
+            self.by_sha.insert(now_sha.clone(), i);
+            let e = &mut self.imgs[i];
+            e.sha = now_sha.clone();
+            e.w = img.width();
+            e.h = img.height();
+            e.ext = image::guess_format(&bytes).ok().and_then(|f| f.extensions_str().first().copied()).unwrap_or("img").to_string();
+            e.size = size;
+            e.mtime = mtime;
+            self.load_marks(i);
+            let snapshot = self.imgs[i].clone();
+            self.log_load(&snapshot);
+            self.changed.push(i);
+        } else if (size, mtime) != (self.imgs[i].size, self.imgs[i].mtime) {
+            self.imgs[i].size = size;
+            self.imgs[i].mtime = mtime;
+        }
+        let sha = now_sha;
         let px = Arc::new(img.to_rgba8());
         if self.pixels.len() >= 4 {
             let keep = self.focus.map(|f| self.imgs[f].sha.clone());
@@ -387,38 +471,54 @@ impl Model {
         -> Result<(usize, bool), String> {
         let sha = sha256(&bytes);
         if let Some(&i) = self.by_sha.get(&sha) {
+            // known content: it may come from another place now (the newest place is where it is read from)
+            if !path.is_empty() && self.imgs[i].path != path {
+                self.imgs[i].path = path.to_string();
+                if let Some((size, mtime)) = stat(Path::new(path)) {
+                    self.imgs[i].size = size;
+                    self.imgs[i].mtime = mtime;
+                }
+            }
             let img = self.imgs[i].clone();
-            self.log_load(&img, source, path);
+            self.log_load(&img);
             self.set_focus(i);
             return Ok((i, false));
         }
         let fmt = image::guess_format(&bytes).map_err(|e| format!("not an image: {}", e))?;
         let dynimg = image::load_from_memory_with_format(&bytes, fmt).map_err(|e| format!("cannot decode: {}", e))?;
         let ext = fmt.extensions_str().first().copied().unwrap_or("img").to_string();
-        let dir = self.dir_of(&sha);
-        fs::create_dir_all(&dir).map_err(|e| format!("cannot create {}: {}", dir.display(), e))?;
-        fs::write(dir.join(format!("image.{}", ext)), &bytes).map_err(|e| format!("cannot store image: {}", e))?;
-        let thumb = dynimg.thumbnail(160, 160);
-        let _ = thumb.to_rgba8().save(dir.join("thumb.png"));
+        let path = if path.is_empty() {
+            // no file of its own (clipboard, crop): kept once, in its folder of disp's memory
+            let dir = self.dir_of(&sha);
+            fs::create_dir_all(&dir).map_err(|e| format!("cannot create {}: {}", dir.display(), e))?;
+            let f = dir.join(format!("image.{}", ext));
+            fs::write(&f, &bytes).map_err(|e| format!("cannot keep the image: {}", e))?;
+            f.to_string_lossy().to_string()
+        } else {
+            path.to_string()
+        };
+        let (size, mtime) = stat(Path::new(&path)).unwrap_or((bytes.len() as u64, 0));
         let img = Img {
             n: self.imgs.len() + 1,
             sha: sha.clone(),
             name: if name.is_empty() { format!("image-{}.{}", &sha[..8], ext) } else { name.to_string() },
             source: source.to_string(),
-            path: path.to_string(),
+            path,
             w: dynimg.width(),
             h: dynimg.height(),
             ts: now(),
             ext,
             parent,
+            size,
+            mtime,
             anns: vec![],
             next_ann: 1,
         };
-        self.log_load(&img, source, path);
+        self.log_load(&img);
         self.by_sha.insert(sha.clone(), self.imgs.len());
         self.imgs.push(img);
         let i = self.imgs.len() - 1;
-        self.save_meta(i);
+        self.load_marks(i); // marks drawn on this content in an earlier life
         self.pixels.insert(sha, Arc::new(dynimg.to_rgba8()));
         self.set_focus(i);
         Ok((i, true))
@@ -478,6 +578,7 @@ impl Model {
             self.fit = true;
             self.picks.clear();
         }
+        self.check(i);
     }
 
     pub fn add_ann(&mut self, i: usize, mut a: Ann) -> u32 {
@@ -489,7 +590,7 @@ impl Model {
         img.next_ann += 1;
         img.anns.push(a);
         let id = img.next_ann - 1;
-        self.save_meta(i);
+        self.save_marks(i);
         id
     }
 
@@ -503,7 +604,7 @@ impl Model {
         }
         let gone = before - img.anns.len();
         if gone > 0 {
-            self.save_meta(i);
+            self.save_marks(i);
         }
         gone
     }

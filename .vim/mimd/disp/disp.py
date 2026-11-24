@@ -2,12 +2,14 @@
 """
 disp: the image agent of Vim. Shows images to the user on the disp pad (a Rust GUI window: zoom, crop, marks,
 touching pixels, clipboard, the strip of every image ever loaded), looks at them through the local multimodal LLM
-(llama.cpp + mmproj, ~/echo-home/.function/tllm.sh) and talks with the user about them in Vim.
+(llama.cpp serving a vision model: --mmproj) and talks with the user about them in Vim.
 Headless backend of disp.lua (same folder).
 
 The pad (pad/, binary pad/target/release/disppad, window DISPAD) is the medium between the user and the pixels. disp
 drives it through its control socket (127.0.0.1:--pad-port, NDJSON) and hears what the user does there (loaded, focus,
-touch, select, mark, view, ask). The pad keeps the image bytes, thumbnails and marks (~/echo-home/memory/disp).
+touch, select, mark, view, ask, pick). The pad reads every image where it is (its path; never a copy) and hashes it on
+each load: the sha256 names the image's folder in the memory both share, where the pad keeps the strip (catalog.jsonl),
+the marks and the only copy of a pasted or cropped image.
 
 disp's own memory is ~/echo-home/memory/gddr9b (disp_map.py): per content (sha256) the MAP of the image — a flat
 inventory of what the eye recognises (text lines and words, buttons, boxes, icons, shapes, figures, colour regions,
@@ -171,7 +173,7 @@ class LLM:
         return bool(self.model)
 
     def has_vision(self) -> bool:
-        """llama-server /props: modalities.vision (needs --mmproj in tllm.sh). Rechecked until it is true."""
+        """llama-server /props: modalities.vision (the server needs --mmproj). Rechecked until it is true."""
         if self.vision:
             return True
         try:
@@ -185,7 +187,7 @@ class LLM:
 
     def stream(self, messages, cancel: threading.Event, max_tokens: Optional[int] = None, think: bool = True) -> str:
         if not self.ensure():
-            raise RuntimeError(f"cannot reach the LLM at {self.base} (start it: ~/echo-home/.function/tllm.sh)")
+            raise RuntimeError(f"cannot reach the LLM at {self.base}")
         kw = {"max_tokens": max_tokens} if max_tokens else {}
         if not think:  # gemma-4's template thinks unless told not to: the eye answers at once
             kw["extra_body"] = {"chat_template_kwargs": {"enable_thinking": False}}
@@ -242,9 +244,9 @@ class LLM:
             think=False) -> str:
         """The eye: images (inline PNG base64, or paths) + question -> text. Streamed into the LLM pane, or one block (glances)."""
         if not self.ensure():
-            raise RuntimeError(f"cannot reach the LLM at {self.base} (start it: ~/echo-home/.function/tllm.sh)")
+            raise RuntimeError(f"cannot reach the LLM at {self.base}")
         if not self.has_vision():
-            raise RuntimeError("the LLM has no vision: start llama-server with --mmproj (~/echo-home/.function/tllm.sh)")
+            raise RuntimeError("the LLM has no vision (llama-server needs --mmproj)")
         content = [self.image_part(p) for p in images] + [{"type": "text", "text": question}]
         # no system turn when there is none: for box_2d lists gemma places boxes better without one
         messages = ([{"role": "system", "content": system}] if system else []) + [{"role": "user", "content": content}]
@@ -424,39 +426,7 @@ def key_of(info: Optional[dict]) -> str:
 
 
 def mem_of(info: Optional[dict]):
-    mem = STORE.get(info.get("sha")) if (STORE and isinstance(info, dict) and info.get("sha")) else None
-    if mem is not None and not getattr(mem, "folded", False):
-        mem.folded = True
-        fold_old_notes(mem, info)
-    return mem
-
-
-def fold_old_notes(mem, info: dict):
-    """The first disp kept caption, text and Q&A in notes.json next to the image in the pad's store: moved into
-    gddr9b once (meta.yaml caption/text, notes.yaml qa), then the old file goes."""
-    old = os.path.join(info.get("dir") or "", "notes.json")
-    if not (info.get("dir") and os.path.isfile(old)):
-        return
-    try:
-        with open(old, encoding="utf-8") as f:
-            d = json.load(f)
-    except (OSError, ValueError):
-        return
-    with mem.lock:
-        for k in ("caption", "text"):
-            if d.get(k) and not mem.meta.get(k):
-                mem.meta[k] = d[k]
-        seen = {(q.get("q"), q.get("a")) for q in mem.notes.get("qa") or []}
-        moved = [{"q": q.get("q"), "a": q.get("a"), "by": "user", "ts": str(q.get("ts") or "").replace(" ", "T")}
-                 for q in d.get("qa") or [] if isinstance(q, dict) and (q.get("q"), q.get("a")) not in seen]
-        if moved:
-            mem.notes["qa"] = moved + (mem.notes.get("qa") or [])
-            mem.meta.setdefault("notes", {})["qa"] = len(mem.notes["qa"])
-        mem.save("meta.yaml", "notes.yaml")
-    try:
-        os.remove(old)
-    except OSError:
-        pass
+    return STORE.get(info.get("sha")) if (STORE and isinstance(info, dict) and info.get("sha")) else None
 
 
 def caption_of(info: Optional[dict]) -> str:
@@ -625,7 +595,7 @@ class Agent:
     def __init__(self, args):
         self.args = args
         self.llm = LLM(args.host, args.port)
-        self.pad = Pad(args.pad_bin, args.pad_port, args.home, self.on_pad_event)
+        self.pad = Pad(args.pad_bin, args.pad_port, args.memory, self.on_pad_event)
         self.running = True
         self.tasks: "queue.Queue" = queue.Queue()
         self.pending = 0
@@ -891,7 +861,7 @@ class Agent:
                     done.set()
                 continue
             if not self.llm.ensure() or not self.llm.has_vision():
-                chat(f"🗺 {key_of(info)} not mapped: the LLM has no vision (tllm.sh --mmproj)", "WarningMsg")
+                chat(f"🗺 {key_of(info)} not mapped: the LLM has no vision (llama-server needs --mmproj)", "WarningMsg")
                 if done:
                     done.set()
                 continue
@@ -1054,7 +1024,7 @@ class Agent:
                     self.by_n[i["n"]] = i
                     cap = caption_of(i)
                     chat(f"  {'▶' if i.get('focus') else ' '} {describe(i)}" + (f" — {clip(cap, 120)}" if cap else ""), "Comment")
-                chat(f"  {r.get('count')} images in memory ({self.args.home})", "Comment")
+                chat(f"  {r.get('count')} images ({self.args.memory})", "Comment")
             elif c == "r":
                 self.pad.request("raise")
             elif c == "q":
@@ -1779,17 +1749,16 @@ def pad_from_vim(agent: Agent, msg: dict):
 def main():
     global ARGS
     p = argparse.ArgumentParser(description="disp: the image agent (backend of disp.lua)")
-    p.add_argument("--home", default=os.environ.get("DISP_HOME") or "~/echo-home/memory/disp",
-                   help="the image memory, shared with the pad (default ~/echo-home/memory/disp)")
     p.add_argument("--pad-bin", default=os.environ.get("DISP_PAD_BIN") or os.path.join(
         HERE, "pad", "target", "release", "disppad.exe" if os.name == "nt" else "disppad"),
                    help="the pad binary (default: pad/target/release/disppad next to disp.py)")
     p.add_argument("--pad-port", type=int, default=int(os.environ.get("DISP_PAD_PORT") or 7791))
     p.add_argument("--no-pad-start", action="store_true", help="do not open the pad at startup (only on first use)")
     p.add_argument("--no-glance", action="store_true", help="no caption for new images")
-    p.add_argument("--memory", default=os.environ.get("DISP_MEMORY") or "~/echo-home/memory/gddr9b",
-                   help="disp's memory: per image its map, notes and the trace of what the user did (default "
-                        "~/echo-home/memory/gddr9b)")
+    p.add_argument("--memory", "--home", dest="memory",
+                   default=os.environ.get("DISP_MEMORY") or os.environ.get("DISP_HOME") or "~/echo-home/memory/gddr9b",
+                   help="the memory disp and the pad share: per image its map, notes, trace and marks, the pad's strip; "
+                        "images themselves stay where they are (default ~/echo-home/memory/gddr9b)")
     p.add_argument("--no-map-auto", action="store_true", help="do not map images when they are loaded (===m maps)")
     p.add_argument("--map-passes", type=int, default=3, help="zoomed detail looks per map (0: inventory only)")
     p.add_argument("--map-context", type=int, default=3200, help="characters of the map put in the LLM's context")
@@ -1811,7 +1780,6 @@ def main():
     g.add_argument("--net-max-depth", type=int, default=4)
     g.add_argument("--net-rate", type=int, default=6)
     ARGS = p.parse_args()
-    ARGS.home = resolve_path(ARGS.home)
     ARGS.pad_bin = resolve_path(ARGS.pad_bin)
     ARGS.memory = resolve_path(ARGS.memory)
     global STORE
@@ -1821,12 +1789,12 @@ def main():
     threading.Thread(target=agent.worker, daemon=True).start()
     threading.Thread(target=agent.glance_worker, daemon=True).start()
     threading.Thread(target=agent.map_worker, daemon=True).start()
-    chat(f"disp · images in Vim · memory {ARGS.memory} (pad store {ARGS.home})", "Title")
+    chat(f"disp · images in Vim · memory {ARGS.memory}", "Title")
     llm_ok = agent.llm.ensure()
     vision = agent.llm.has_vision() if llm_ok else False
     chat(f"LLM {agent.llm.base}: " + ((agent.llm.model or "").rsplit("/", 1)[-1] + (" · vision ✔" if vision else
-         " · ⚠️ NO vision: add --mmproj to tllm.sh and restart it") if llm_ok else
-         "not reachable yet (start ~/echo-home/.function/tllm.sh; I retry on each request)"),
+         " · ⚠️ NO vision: llama-server needs --mmproj") if llm_ok else
+         "not reachable yet (I retry on each request)"),
          "Comment" if (llm_ok and vision) else "WarningMsg")
     if not agent.pad.available():
         chat(f"⚠️ the pad is not built: {ARGS.pad_bin}\n   :DispBuild (or cargo build --release in {HERE}/pad)", "WarningMsg")
