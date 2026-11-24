@@ -1,0 +1,26 @@
+[package]
+name = "disppad"
+version = "0.1.0"
+edition = "2021"
+description = "disp pad: the image window of the disp agent (vimpage_disp) - view, zoom, crop, annotate, touch pixels"
+
+[dependencies]
+eframe = "0.37"
+image = { version = "0.25", default-features = false, features = ["png", "jpeg", "gif", "webp", "bmp", "tiff", "ico"] }
+arboard = "3"
+rfd = "0.18"
+sha2 = "0.11"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+chrono = { version = "0.4", default-features = false, features = ["clock"] }
+
+[profile.release]
+opt-level = 3
+debug = false
+strip = true
+
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 3

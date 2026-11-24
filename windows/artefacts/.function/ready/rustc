@@ -1,0 +1,2 @@
+# the gnullvm build of Rust: same merge as ready/rust (see there)
+source $ARTIFACT_DIR/.function/ready/rust

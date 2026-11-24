@@ -1,0 +1,89 @@
+"-------- [DISP] image agent: Vim <-> pixels --------
+" disp lets Vim work with image data. The pad DISPAD (a Rust window, ~/echo-home/.vim/mimd/disp/pad) shows the image in
+" focus on top (zoom, crop, numbered marks, touching pixels, clipboard paste) and a sliding strip of every image ever
+" loaded below; it is how disp and the user meet over pixels. disp looks at images through the local multimodal LLM
+" (llama.cpp serving a vision model: --mmproj) and MAPS each one once (the prefill): a flat inventory of what
+" the eye recognises, snapped to the pixels and turned into a DOM-like tree with text blocks and relations.
+" Memory: ~/echo-home/memory/gddr9b/<d1>/<d2>/<d3d4>/<sha256>/  meta.yaml · map.yaml · notes.yaml · trace.jsonl ·
+"         marks.json, and catalog.jsonl (the pad's strip) at the root; README.md there. Images are read where they are
+"         (never copied; hashed on every load): only a paste or a crop, with no file of its own, is kept as image.png.
+" Code: ~/echo-home/.vim/mimd/disp   Pad alone: disp/pad/target/release/disppad [image ...]
+let g:disp_python = 'python'
+let g:disp_args = ['--port', get(g:, 'LMSH_PORT', 8080)]
+"let g:disp_args = ['--port', get(g:, 'LMSH_PORT', 8080), '--no-map-auto']    " map only on ===m / when asked
+"let g:disp_args = ['--port', get(g:, 'LMSH_PORT', 8080), '--map-passes', '0'] " no zoomed detail looks (faster maps)
+"let g:disp_args = ['--port', get(g:, 'LMSH_PORT', 8080), '--no-pad-start']   " open the pad on first use only
+"let g:disp_args = ['--port', get(g:, 'LMSH_PORT', 8080), '--no-glance']      " no caption for each new image
+"let g:disp_memory = '~/echo-home/memory/gddr9b' " the memory disp and the pad share: maps, notes, traces, marks
+"let g:disp_pad_port = 7791                       " the pad's control socket (127.0.0.1)
+"let g:disp_map_panes = 2         " MAP sub-panes at most on the top row (one per image)
+"let g:disp_bottom_height = 0.42  " DISP / LLM / IFACE row: rows, or a fraction of the screen
+"let g:disp_llm_width = 0.36      " LLM pane, fraction of the width (DISP takes the rest)
+"let g:disp_iface_width = 0.28    " IFACE pane (only while joined)
+"let g:disp_toggle_key = '<M-d>'  " go to the disp tab / back, from normal, insert and terminal mode
+
+
+map disp1 : silent source ~/echo-home/.vim/mimd/disp/disp.lua<CR>
+map dispi : Disp<CR>
+map dispk : DispToggle<CR>
+map dispo : DispOpen<CR>
+map dispp : DispPaste<CR>
+map dispm : DispMap<CR>
+map dispg : DispPad<CR>
+map dispb : DispBuild<CR>
+map dispj : InetJoin disp<CR>
+map displ : InetLeave disp<CR>
+map dispx : DispCancel<CR>
+map dispq : DispQuit<CR>
+
+"HELP:
+"- First time: dispb builds the pad (cargo build --release, ~1 min). The LLM needs vision: llama-server started with
+"  --mmproj (disp says "vision ✔" at start).
+"- disp1 loads and starts disp (with the inet driver, registering 'disp'), opens DISPAD and the disp TAB; pressed again
+"  while disp runs, it goes to the tab. dispi / dispk: to the disp tab, or back to your tab when you are in it (q too).
+"  After dispq, disp1 reloads disp fresh (the pad keeps running).
+"- The tab: on top, MAP sub-panes, one per image, titled " 3fa2 " " #3 " (the first 4 hex of its sha256 in the badge,
+"  its number on a dark plate; the pad names images 3fa2#3 too); the image in focus on the pad has the orange badge,
+"  the others aqua; at most g:disp_map_panes (2), the
+"  least recently used one gives way. Below: DISP (actions and chat, your input on its last line) · LLM (raw LLM output
+"  and what the eye sees) · IFACE (the network, only while joined). dispm / :DispMap [n] puts image #n in a MAP pane.
+"- The MAP of an image: identity (names, paths, seen N×), caption and summary, the TREE (elements nested by
+"  containment, in reading order: e5 button "Save" [x,y w×h] ■colour; ≈[...] = the eye's estimate, [...] = snapped to
+"  the pixels, exact), TEXT blocks (lines that read together vs labels standing apart), SENTENCES, GROUPS, RELATIONS
+"  (left-of / above / overlaps / names / labels from geometry; points to / part of / describes … from the LLM), the
+"  flat INVENTORY as found, NOTES (questions answered, findings) and the TRACE of what you did on the pad.
+"  In a MAP pane: <CR> on an element shows it on the pad (selected, zoomed) · m boxes it there · M maps the image again
+"  · gr the pad's grid layer on/off · r redraws · X closes the pane. Touching a pixel on the pad highlights the element
+"  under it in the MAP.
+"- The grid layer on DISPAD (G there, gr in a MAP pane, ===G in DISP): the map drawn over the image — a dot per
+"  perceived component where it was found (● elements e5 coloured by type, ◆ text blocks b2, with their ids), lines for
+"  their relations (amber: meaning, violet: lines of a block, faint white: position; containment shows around the dot
+"  under the pointer). Hover a dot: what it is and its box. Click dots (or drag a C selection over them) to pick them:
+"  the picks show as ⦿ e3 e7 b2 next to "Ask disp" and go with the question you type there — disp gets them, with
+"  what they are and where, as part of your message (Enter with only picks asks "what are these?"). Esc clears them.
+"- Mapping (the prefill), in the background when an image is first loaded (===M turns that off, ===m maps the image in
+"  focus, ===m! from scratch, ===x stops): 1 inventory (the eye lists what it sees) → 2 detail (zoomed looks into the
+"  big containers, or tiles of a large picture) → 3 pixels (boxes snapped to the pixels, colours measured) → 4 structure
+"  (tree, words, text blocks, geometric relations) → 5 relations (the LLM reads picture and tree together). The MAP pane
+"  fills stage by stage; a screenshot takes ~2 min, a simple picture ~20 s. Done once per content: the same image
+"  opened again (any name, any path) comes back with its map, notes and trace at once.
+"- Images in: dispo on a path in the text (markdown links too), a netrw entry or an image buffer (:DispOpen <path>);
+"  dispp or ===p pastes the clipboard (screenshots: ⌘⇧⌃4 then dispp); on the pad: Open…, ⌘V, or drop files on it.
+"  ===i lists the images, ===f <n> / :DispFocus <n> brings one to the front. New images get a glance (a caption).
+"- Ask in DISP about the image in focus: "what is this?", "which buttons are in the toolbar?", "read the text", "where
+"  is the error message? mark it", "zoom on the legend", "crop the chart", "compare #2 and #3", "put the text of this
+"  screenshot in a new buffer". disp answers from the MAP first (map_find / map_element; marks, zooms and crops take
+"  element ids: "box e5"), looks at the pixels only for what the map lacks, and keeps what it learns (map_note).
+"- Pixels to disp: on the pad, right-click (or the T touch tool) touches a pixel, C selects a region, R/E/A/P/M/X draw
+"  marks, zoom / pan changes the view; each lands in DISP (👆 on e3 "Save" · ▭ ⊇ e1 e2 · ✏), in the image's TRACE and
+"  in disp's context. When disp needs you to point, it says so on a yellow banner on the pad and waits.
+"  The pad's "Ask disp" box sends a question from the pad itself. Zoom: pinch, ⌘-scroll or wheel; pan: two-finger
+"  scroll or right-drag; F fit, 1 = 100 %, ←/→ previous/next image, ⌘Z undo a mark.
+"- Vim hands: insert_text into a new buffer needs no approval; into your buffer, Ex/Lua actions and save_image ask
+"  y/n/a (===a in the chat, or autopilot.yaml disp: allow: yes, skips the question).
+"- Tab keys: <CR> send · <C-c> cancel · <Tab> next pane · <S-Tab> previous · i input · q back to your tab · ===h help ·
+"  ===a auto-approve · ===g glance on/off · ===r show the pad · ===q close the pad.
+"- Intelligence Network: dispj joins echo-net as @disp (g:inet_agents.disp in vimpage_inet, optional). Agents can
+"  then ask "@disp show /tmp/plot.png to the user and tell me what it shows". ===nj/===nl/===ns <text> by hand.
+"- Shell, no Vim: disppad [--port 7791] [image ...] opens images on the running pad (or starts it); its socket speaks
+"  NDJSON: echo '{"id":1,"op":"list"}' | nc 127.0.0.1 7791 (ops incl. snap: see disp/pad/src/server.rs).
