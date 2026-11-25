@@ -184,6 +184,7 @@
 - [datum/2026/DONE/VIM-41.md](datum/2026/DONE/VIM-41.md)   ```# vimpage_memphia: uuid ttl```
 - [datum/2026/DONE/VIM-42.md](datum/2026/DONE/VIM-42.md)   ```# vimpage_mksk: on-pane header badge```
 - [datum/2026/DONE/VIM-43.md](datum/2026/DONE/VIM-43.md)   ```# vimpage_knbg: relayout and actions```
+- [datum/2026/DONE/VIM-45.md](datum/2026/DONE/VIM-45.md)   ```# vimpage_disp: adaptive memory base```
 
 ### 5 BACKLOG
 
