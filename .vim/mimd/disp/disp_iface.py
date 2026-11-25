@@ -241,7 +241,7 @@ class IFace:
     def _attend(self, msg: dict):
         direct, mentioned = self.net.addressing(msg)
         how = "private" if direct else "@mention" if mentioned else "broadcast"
-        stamp = time.strftime("%H:%M:%S", time.localtime(msg.get("ts") or time.time()))
+        stamp = time.strftime("%H:%M:%SZ", time.gmtime(msg.get("ts") or time.time()))  # UTC, as every disp time
         self.log(f"\n{stamp} 📨 #{msg.get('id')} @{msg.get('from')} [{how}, {msg.get('kind')}, depth {msg.get('depth', 0)}]",
                  "Special")
         self.log("   " + clip(msg.get("text"), 600))

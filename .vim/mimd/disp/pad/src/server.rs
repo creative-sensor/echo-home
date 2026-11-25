@@ -2,7 +2,9 @@
 //! shell with `nc`); each request gets its answer, every client gets the events.
 //!
 //! client -> pad   {"id":N,"op":..., ...}                        pad -> client   {"id":N,"ok":true,...} | {"id":N,"ok":false,"err":..}
-//!   hello | list | state | raise | quit | screenshot {path?}   (the window as the user sees it; inline without path)
+//!   hello | list {all?, last?} | state | raise | quit | screenshot {path?}   (the window; inline without path)
+//!   clear                             a fresh session: the strip empties, nothing in focus (numbers and marks stay)
+//!   recalled {images:[{sha|n, ranks}]}   what a recall brought up: onto the strip, tagged R1 R3 (focus unchanged)
 //!   open {path}            paste                    focus {image}
 //!   view {image?, fit?|zoom?|zoom_by?|center?:[x,y]|region?:[x,y,w,h]}
 //!   select {region}|{clear:true}                    tool {name}           prompt {text, secs?}
@@ -19,7 +21,8 @@
 //!   {"ev":"loaded","image":{..},"new":b,"by":"pad"|"client"}   {"ev":"focus","image":{..}}
 //!   {"ev":"click","n":..,"x":..,"y":..,"rgba":[..],"button":..}  {"ev":"select","n":..,"region":[..]}
 //!   {"ev":"mark","n":..,"mark":{..}}  {"ev":"unmark","n":..}  {"ev":"ask","text":..,"n":..,"region":..,"refs":[..]}
-//!   {"ev":"pick","n":..,"id":..,"on":b,"added":[..],"ids":[..]}  {"ev":"grid","on":b}  {"ev":"view",..}  {"ev":"bye"}
+//!   {"ev":"pick","n":..,"id":..,"on":b,"added":[..],"ids":[..]}  {"ev":"grid","on":b}  {"ev":"view",..}
+//!   {"ev":"cleared","removed":n}  {"ev":"bye"}
 
 use crate::model::{Ann, Layer, Link, Model, Node, Tool, AGENT_COLOR};
 use serde_json::{json, Value};
@@ -105,12 +108,35 @@ fn handle(m: &mut Model, req: &Value, events: &mut Vec<Value>) -> Result<Value, 
     let image = req.get("image").or_else(|| req.get("n"));
     match op {
         "hello" => Ok(json!({"pad": env!("CARGO_PKG_VERSION"), "home": m.home.to_string_lossy(), "port": m.port,
-                             "count": m.imgs.len(), "focus": m.focus.map(|i| m.info(i))})),
+                             "count": m.shown.len(), "known": m.imgs.len(),
+                             "shown": m.shown.iter().map(|&i| m.imgs[i].n).collect::<Vec<_>>(),
+                             "focus": m.focus.map(|i| m.info(i))})),
         "list" => {
+            // this session's strip; all: every image ever loaded (by number)
+            let all = req.get("all").and_then(|v| v.as_bool()).unwrap_or(false);
+            let idx: Vec<usize> = if all { (0..m.imgs.len()).collect() } else { m.shown.clone() };
             let last = req.get("last").and_then(|v| v.as_u64()).unwrap_or(0) as usize;
-            let from = if last > 0 { m.imgs.len().saturating_sub(last) } else { 0 };
-            let list: Vec<Value> = (from..m.imgs.len()).map(|i| m.info(i)).collect();
-            Ok(json!({"images": list, "count": m.imgs.len(), "focus": m.focus.map(|i| m.imgs[i].n)}))
+            let from = if last > 0 { idx.len().saturating_sub(last) } else { 0 };
+            let list: Vec<Value> = idx[from..].iter().map(|&i| m.info(i)).collect();
+            Ok(json!({"images": list, "count": m.shown.len(), "known": m.imgs.len(), "focus": m.focus.map(|i| m.imgs[i].n)}))
+        }
+        "recalled" => {
+            // what a recall brought up: [{sha | n, ranks:[1,3]}]
+            let items: Vec<(Value, Vec<u32>)> = req.get("images").and_then(|v| v.as_array()).map(|a| {
+                a.iter().filter_map(|it| {
+                    let who = it.get("sha").or_else(|| it.get("n")).cloned()?;
+                    let ranks = it.get("ranks").and_then(|r| r.as_array())
+                        .map(|r| r.iter().filter_map(|x| x.as_u64().map(|u| u as u32)).collect()).unwrap_or_default();
+                    Some((who, ranks))
+                }).collect()
+            }).unwrap_or_default();
+            let (shown, missing) = m.recall_onto_strip(&items);
+            Ok(json!({"shown": shown, "missing": missing}))
+        }
+        "clear" => {
+            let n = m.clear_session();
+            events.push(json!({"ev": "cleared", "removed": n}));
+            Ok(json!({"removed": n}))
         }
         "state" => Ok(m.state()),
         "raise" => {

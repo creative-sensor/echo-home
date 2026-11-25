@@ -92,10 +92,7 @@ fn main() {
                 eprintln!("disppad: {}", e);
             }
         }
-        if m.focus.is_none() && !m.imgs.is_empty() {
-            let last = m.imgs.len() - 1;
-            m.set_focus(last);
-        }
+        // nothing else is loaded at startup: the strip shows every image, one comes in when the user picks it
     }
     let hub = Arc::new(server::Hub::new());
     let options = eframe::NativeOptions {

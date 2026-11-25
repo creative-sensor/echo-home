@@ -295,10 +295,11 @@ impl PadApp {
                     self.dragging = false;
                 }
                 Key::ArrowLeft | Key::ArrowRight => {
-                    let n = m.imgs.len();
+                    // through this session's strip
+                    let n = m.shown.len();
                     if n > 0 {
-                        let cur = m.focus.unwrap_or(0);
-                        let next = if k == Key::ArrowLeft { (cur + n - 1) % n } else { (cur + 1) % n };
+                        let cur = m.focus.and_then(|f| m.shown.iter().position(|&i| i == f)).unwrap_or(0);
+                        let next = m.shown[if k == Key::ArrowLeft { (cur + n - 1) % n } else { (cur + 1) % n }];
                         drop(m);
                         self.focus(next);
                     }
@@ -505,11 +506,15 @@ impl PadApp {
 
     fn strip(&mut self, ui: &mut egui::Ui) {
         let ctx = ui.ctx().clone();
-        let (count, focus) = {
-            let m = self.model.lock().unwrap();
-            (m.imgs.len(), m.focus)
+        let (shown, focus, recalled, strip_to) = {
+            let mut m = self.model.lock().unwrap();
+            let to = m.strip_to.take();
+            (m.shown.clone(), m.focus, m.recalled.clone(), to)
         };
-        let scroll_to = if focus != self.last_focus { focus } else { None };
+        let count = shown.len();
+        // the strip holds this session's images: slot j shows image shown[j] (with its own number for good)
+        let scroll_to = if focus != self.last_focus { focus.and_then(|f| shown.iter().position(|&i| i == f)) } else { None }
+            .or(strip_to);
         self.last_focus = focus;
         let mut clicked = None;
         egui::ScrollArea::horizontal().id_salt("strip").auto_shrink([false, false]).show_viewport(ui, |ui, vp| {
@@ -517,8 +522,9 @@ impl PadApp {
             let slot = |i: usize| Rect::from_min_size(pos2(rect.min.x + 4.0 + i as f32 * SLOT, rect.min.y + 4.0), vec2(SLOT - 8.0, THUMB + 18.0));
             let first = (vp.min.x / SLOT).floor().max(0.0) as usize;
             let last = ((vp.max.x / SLOT).ceil() as usize + 1).min(count);
-            for i in first..last {
-                let r = slot(i);
+            for j in first..last {
+                let i = shown[j];
+                let r = slot(j);
                 let (sha, dir, n, name, w, h, source, marks) = {
                     let m = self.model.lock().unwrap();
                     let im = &m.imgs[i];
@@ -550,7 +556,17 @@ impl PadApp {
                 if marks > 0 {
                     p.text(tr.right_top() + vec2(-2.0, 2.0), Align2::RIGHT_TOP, format!("✏{}", marks), FontId::proportional(11.0), Color32::from_rgb(255, 196, 0));
                 }
-                let resp = resp.on_hover_text(format!("{}#{} {}\n{}×{} · {}{}", &sha[..4], n, name, w, h, source, if marks > 0 { format!(" · {} marks", marks) } else { String::new() }));
+                if let Some(ranks) = recalled.get(&i) {
+                    // brought up by the last recall: its R numbers, as in DISP's [RECALL] lines
+                    let tag = ranks.iter().take(4).map(|r| format!("R{}", r)).collect::<Vec<_>>().join(" ");
+                    let galley = p.layout_no_wrap(tag, FontId::proportional(11.0), Color32::BLACK);
+                    let tr2 = Rect::from_min_size(tr.left_top() + vec2(2.0, 2.0), galley.size() + vec2(6.0, 2.0));
+                    p.rect_filled(tr2, 3.0, Color32::from_rgb(190, 120, 255));
+                    p.galley(tr2.min + vec2(3.0, 1.0), galley, Color32::BLACK);
+                    p.rect_stroke(r, 4.0, Stroke::new(1.5, Color32::from_rgb(190, 120, 255)), StrokeKind::Inside);
+                }
+                let recall_note = recalled.get(&i).map(|r| format!("\nrecalled: {}", r.iter().map(|x| format!("R{}", x)).collect::<Vec<_>>().join(" "))).unwrap_or_default();
+                let resp = resp.on_hover_text(format!("{}#{} {}\n{}×{} · {}{}{}", &sha[..4], n, name, w, h, source, if marks > 0 { format!(" · {} marks", marks) } else { String::new() }, recall_note));
                 if resp.clicked() {
                     clicked = Some(i);
                 }

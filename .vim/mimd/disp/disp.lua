@@ -8,16 +8,17 @@
 -- ~/echo-home/memory/gddr9b with the notes and the trace of what you did on the pad (reloaded when it comes back).
 --
 -- disp has its own tab page:
---     ┌─ 3fa2#3  sign.png 480×320 · 24 elements ─┬─ a1ea#1  shapes.png 480×320 · … ─┐
---     │ the MAP of an image: identity, summary,   │ another image's MAP (one sub-pane │   top: MAP sub-panes, one
---     │ TREE, TEXT, RELATIONS, INVENTORY, NOTES,  │ per image, up to g:disp_map_panes)│   per image, titled
---     │ TRACE                                     │                                   │   <first4 sha>#<number>
---     ├─ DISP  🖼 3fa2#3 · ○ idle ──────────────┬─┴─ LLM  raw output · 👁 eye ─────┬─ IFACE ─┤
---     │ what disp does, your input on the last  │ the raw LLM output and what the  │ network │   bottom: DISP · LLM ·
---     │ line                                    │ eye sees                         │         │   IFACE (while joined)
---     └─────────────────────────────────────────┴──────────────────────────────────┴─────────┘
--- The pad's image in focus gets its MAP pane (orange badge); beyond g:disp_map_panes the least recently used pane
--- shows it instead. Each header is a colored badge and strip across the pane.
+--     ┌─ 3fa2  #3  sign.png 480×320 · 24 elements ─┬─ GRAPH  root 3fa2#3 · context "…" ───────┐
+--     │ MAP: the image in focus — identity, summary, │ the memory graph around it: its concepts, │   top: the image in
+--     │ TREE, TEXT, RELATIONS, INVENTORY, NOTES,     │ its knowledge, the memories associated    │   focus and its
+--     │ TRACE                                        │ (and how they link)                       │   memory graph
+--     ├─ DISP  🖼 3fa2#3 · ○ idle ────────────────┬──┴─ LLM  raw output · 👁 eye ──────┬─ IFACE ─┤
+--     │ what disp does, your input on the last    │ the raw LLM output and what the     │ network │   bottom: DISP · LLM ·
+--     │ line                                      │ eye sees                            │         │   IFACE (while joined)
+--     └───────────────────────────────────────────┴─────────────────────────────────────┴─────────┘
+-- MAP and GRAPH follow the pad's focus (a click on its strip, an image disp loads). GRAPH is the memory graph queried
+-- with the image in focus as root and the current request as context; it is in the request's context too ([GRAPH]).
+-- Each header is a colored badge and strip across the pane.
 --
 -- `:source disp.lua` (disp1) starts disp and opens its tab. Sourced again while disp runs, it only goes to the tab;
 -- once disp is stopped (:DispQuit), sourcing reloads this file fresh.
@@ -27,7 +28,7 @@
 --   :DispOpen [path]   show an image on the pad: the path given, else the image under the cursor (a path in the
 --                      text, a netrw entry, the buffer's own file), else it asks
 --   :DispPaste         the image on the clipboard to the pad          :DispFocus <n>   bring image #n to the front
---   :DispMap [n]       a MAP pane for image #n (default: the one in focus)   :DispMapBuild  map it again
+--   :DispMap [n]       bring image #n into focus (MAP, GRAPH follow); no n: go to MAP   :DispMapBuild  map it again
 --   :DispPad           show / start the pad      :DispPadQuit  close it
 --   :DispAsk <text>    send a request without going to the tab
 --   :DispBuild         build the pad (cargo build --release in a terminal tab)
@@ -36,13 +37,15 @@
 --
 -- Options: g:disp_python ("python"), g:disp_args (list), g:disp_memory (the memory disp and the pad share,
 --          ~/echo-home/memory/gddr9b; images stay where they are), g:disp_pad_port (7791), g:disp_pad_bin,
---          g:disp_no_autostart, g:disp_map_panes (2: MAP sub-panes at most), g:disp_bottom_height (0.42: rows, or a
---          fraction of the screen), g:disp_llm_width (0.36) and g:disp_iface_width (0.28): fractions of the width,
+--          g:disp_no_autostart, g:disp_map_width (0.55: MAP's share of the top row, GRAPH the rest),
+--          g:disp_bottom_height (0.42: rows, or a fraction of the screen), g:disp_llm_width (0.36) and
+--          g:disp_iface_width (0.28): fractions of the width,
 --          g:disp_toggle_key (e.g. '<M-d>').
 -- In the tab: last line of DISP is the input · <CR> send · <C-c> cancel task · <Tab> (normal) next pane ·
 --             <S-Tab> previous pane · i input · q back to your tab (normal)
--- In a MAP pane: <CR> on an element (e5 …) shows it on the pad · m marks it there · M maps the image again ·
---             gr the pad's grid layer on/off · r redraws · X closes this pane
+-- In MAP: <CR> on an element (e5 …) shows it on the pad · m marks it there · M maps the image again ·
+--             gr the pad's grid layer on/off · r redraws
+-- In GRAPH: <CR> on an image key (3fa2#3) brings that image into focus · r recomputes the graph view
 
 local MODNAME = ...
 
@@ -76,8 +79,8 @@ local PAD_BIN = SCRIPT_DIR .. "/pad/target/release/disppad" .. (fn.has("win32") 
 local NS = api.nvim_create_namespace("disp")
 local NS_MAP = api.nvim_create_namespace("disp_map")
 local NS_HIT = api.nvim_create_namespace("disp_map_hit")
--- The input prompt " Display ": " Dis" and "play " in inverted colors (DispPrompt / DispPromptInv).
-local PROMPT_PARTS = { { " Dis", "DispPrompt" }, { "play ", "DispPromptInv" } }
+-- The input prompt " DISPlay ": " DIS" as the DISP header badge, "Play " on the header's strip (DispPrompt / DispPromptInv).
+local PROMPT_PARTS = { { " DIS", "DispPrompt" }, { "Play ", "DispPromptInv" } }
 local PROMPT = PROMPT_PARTS[1][1] .. PROMPT_PARTS[2][1]
 local BOTTOM = { "chat", "log", "iface" }                   -- the bottom panes, left to right (buffer keys)
 local BADGE = { chat = "DISP", log = "LLM", iface = "IFACE" }
@@ -86,7 +89,7 @@ local IMAGE_EXT = { png = true, jpg = true, jpeg = true, gif = true, webp = true
   ico = true }
 local S -- session; nil when not running
 
--- The prompt label: " Dis" cream on a burnt orange, "play " the inverse. The pane headers: a badge and a strip per
+-- The prompt label: " DIS" as the DISP header badge, "Play " on its strip. The pane headers: a badge and a strip per
 -- pane: DISP in burnt orange (gruvbox's orange: pixels, light), LLM in gruvbox's blue (as in hbmx/knbg), IFACE in its
 -- purple; MAP panes in gruvbox's aqua, the image in focus on the pad with the DISP orange badge.
 -- Override with  :hi DispPrompt ... / DispMainBar / DispMainBadge / DispLlmBar / DispMapBadge / DispMapFocusBadge ...
@@ -94,8 +97,6 @@ local S -- session; nil when not running
 local function set_hl()
   local d = function(name, spec) spec.default = true; api.nvim_set_hl(0, name, spec) end
   local light = vim.o.background == "light"
-  d("DispPrompt", { bg = "#af3a03", fg = "#fbf1c7", bold = true, ctermbg = 130, ctermfg = 230, cterm = { bold = true } })
-  d("DispPromptInv", { bg = "#fbf1c7", fg = "#af3a03", bold = true, ctermbg = 230, ctermfg = 130, cterm = { bold = true } })
   -- bar: the strip (fg: its text, else the colorscheme's), badge / on: the badge and its text
   local P = light and {
     Main = { bar = "#f9dcc0", fg = "#5a2101", badge = "#af3a03", on = "#fbf1c7", cbar = 223, cfg = 52, cb = 130, con = 230 },
@@ -103,13 +104,19 @@ local function set_hl()
     Iface = { bar = "#e7cfdc", badge = "#8f3f71", on = "#fbf1c7", cbar = 225, cb = 96, con = 230 },
     Map = { bar = "#d5e6d3", fg = "#1d3b2a", badge = "#427b58", on = "#fbf1c7", cbar = 194, cfg = 22, cb = 29, con = 230 },
     MapFocus = { bar = "#d5e6d3", fg = "#1d3b2a", badge = "#af3a03", on = "#fbf1c7", cbar = 194, cfg = 22, cb = 130, con = 230 },
+    Graph = { bar = "#f2e5bc", fg = "#5a4209", badge = "#b57614", on = "#fbf1c7", cbar = 230, cfg = 94, cb = 136, con = 230 },
   } or {
     Main = { bar = "#4a2a14", fg = "#fbdcb8", badge = "#fe8019", on = "#1d2021", cbar = 52, cfg = 223, cb = 208, con = 234 },
     Llm = { bar = "#2a3b48", badge = "#83a598", on = "#1d2021", cbar = 17, cb = 109, con = 234 },
     Iface = { bar = "#43304a", badge = "#d3869b", on = "#1d2021", cbar = 53, cb = 175, con = 234 },
     Map = { bar = "#263b30", fg = "#cfe8d0", badge = "#8ec07c", on = "#1d2021", cbar = 22, cfg = 194, cb = 108, con = 234 },
     MapFocus = { bar = "#263b30", fg = "#cfe8d0", badge = "#fe8019", on = "#1d2021", cbar = 22, cfg = 194, cb = 208, con = 234 },
+    Graph = { bar = "#3c3418", fg = "#f2e5bc", badge = "#fabd2f", on = "#1d2021", cbar = 58, cfg = 230, cb = 214, con = 234 },
   }
+  -- the input prompt reads like the DISP header: " DIS" as its badge, "Play " on its strip in the badge's colour
+  local b = P.Main
+  d("DispPrompt", { bg = b.badge, fg = b.on, bold = true, ctermbg = b.cb, ctermfg = b.con, cterm = { bold = true } })
+  d("DispPromptInv", { bg = b.bar, fg = b.badge, bold = true, ctermbg = b.cbar, ctermfg = b.cb, cterm = { bold = true } })
   for name, p in pairs(P) do
     d("Disp" .. name .. "Bar", { bg = p.bar, fg = p.fg, ctermbg = p.cbar, ctermfg = p.cfg })
     d("Disp" .. name .. "Badge", { bg = p.badge, fg = p.on, bold = true, ctermbg = p.cb, ctermfg = p.con, cterm = { bold = true } })
@@ -279,6 +286,7 @@ local function main_status()
   if (st.queue or 0) > 0 then parts[#parts + 1] = st.queue .. " queued" end
   if st.auto then parts[#parts + 1] = "AUTO" end
   if st.map_auto == false then parts[#parts + 1] = "no auto-map" end
+  if st.graph == false then parts[#parts + 1] = "🧠 off" end
   if not joined() then parts[#parts + 1] = "🌐 off" end
   if st.approval and st.approval ~= vim.NIL then parts[#parts + 1] = "❓ y/n/a" end
   return table.concat(parts, " · ")
@@ -321,34 +329,27 @@ local function map_bar(color, key, text, w)
     .. "Bar# " .. esc(fit(text, math.max(1, room)))
 end
 
-local function map_key_of(w)
-  if not (S and valid_win(w)) then return nil end
-  local buf = api.nvim_win_get_buf(w)
-  for key, m in pairs(S.maps) do
-    if m.buf == buf then return key end
-  end
-end
-
 local function refresh_bars()
   if not S then return end
   for _, key in ipairs(BOTTOM) do
     local w = S.wins[key]
     if valid_win(w) then vim.wo[w].winbar = bar(COLOR[key], BADGE[key], STATUS[key](), w) end
   end
-  for _, w in ipairs(S.mapwins) do
-    if valid_win(w) then
-      local key = map_key_of(w)
-      local m = key and S.maps[key]
-      local focus = key ~= nil and key == S.focus_key
-      local c = focus and "MapFocus" or "Map"
-      vim.wo[w].winhighlight = ("WinBar:Disp%sBar,WinBarNC:Disp%sBar"):gsub("%%s", c)
-      vim.wo[w].winbar = m and map_bar(c, key, (focus and "▶ " or "") .. tostring(m.title or ""), w)
-        or bar("Map", "MAP", "the map of the image in focus on the pad appears here (dispo / ===p)", w)
-    end
+  local w = S.wins.map
+  if valid_win(w) then
+    local m = S.focus_key and S.maps[S.focus_key]
+    vim.wo[w].winhighlight = "WinBar:DispMapFocusBar,WinBarNC:DispMapFocusBar"
+    vim.wo[w].winbar = m and map_bar("MapFocus", S.focus_key, "▶ " .. tostring(m.title or ""), w)
+      or bar("Map", "MAP", "the image in focus on the pad (dispo / ===p / a click on the strip)", w)
+  end
+  w = S.wins.graph
+  if valid_win(w) then
+    vim.wo[w].winhighlight = "WinBar:DispGraphBar,WinBarNC:DispGraphBar"
+    vim.wo[w].winbar = bar("Graph", "GRAPH", S.graph_title or "the memory graph around the image in focus", w)
   end
 end
 
--- ---------------------------------------------------------------- MAP panes
+-- ---------------------------------------------------------------- the top row: MAP (image in focus) · GRAPH
 --- A colour swatch ■#rrggbb is painted in its own colour.
 local function swatch_hl(hex)
   M._swatches = M._swatches or {}
@@ -379,8 +380,10 @@ local function paint_map(buf)
     local a, b = l:find("^[│├└─ ]+")
     if a then mark(row, a, b, "DispMapTree") end
     local from = 1
-    while true do
+    while true do -- element / block ids, and image keys 3fa2#3
       local s, e = l:find("%f[%w][eb]%d+[%.w%d]*", from)
+      local s2, e2 = l:find("%f[%x]%x%x%x%x#%d+", from)
+      if s2 and (not s or s2 < s) then s, e = s2, e2 end
       if not s then break end
       mark(row, s, e, "DispMapId")
       from = e + 1
@@ -390,6 +393,20 @@ local function paint_map(buf)
       local s, e = l:find('"[^"]*"', from)
       if not s then break end
       mark(row, s, e, "DispMapLabel")
+      from = e + 1
+    end
+    from = 1
+    while true do -- graph: [concept] and —kind weight— links
+      local s, e = l:find("%[[%w ][^%]]*%]", from)
+      if not s then break end
+      if not l:sub(s, e):match("^%[%d") then mark(row, s, e, "DispMapSection") end
+      from = e + 1
+    end
+    from = 1
+    while true do
+      local s, e = l:find("—[%a/%-]+ [%d%.]+—", from)
+      if not s then break end
+      mark(row, s, e, "DispMapDim")
       from = e + 1
     end
     from = 1
@@ -411,7 +428,7 @@ local function map_buf(key)
   vim.bo[b].filetype = "dispmap"
   vim.bo[b].modifiable = false
   pcall(api.nvim_buf_set_name, b, "disp://map/" .. key)
-  m = { buf = b, used = 0 }
+  m = { buf = b }
   S.maps[key] = m
   M._map_keys(b, key)
   return m
@@ -426,16 +443,14 @@ local function element_at_cursor()
   return line:match("%f[%w](e%d+[%.w%d]*)") or line:match("%f[%w](b%d+)%f[%W]")
 end
 
-local MAX_MAPS = function() return math.max(1, math.floor(tonumber(vim.g.disp_map_panes) or 2)) end
-
 local function placeholder()
   if not (S.bufs.mapnone and api.nvim_buf_is_valid(S.bufs.mapnone)) then
     local b = api.nvim_create_buf(false, true)
     vim.bo[b].bufhidden = "hide"
     api.nvim_buf_set_lines(b, 0, -1, false, { "MAP", "",
-      "The map of the image in focus on the pad (DISPAD) shows here: what the eye recognised in it (text lines and",
-      "words, buttons, boxes, icons, shapes, figures, colour regions, patterns) as a tree, with its text blocks,",
-      "relations, notes and the trace of what you did on the pad. One pane per image, titled <first4 sha>#<number>.",
+      "The map of the image in focus on the pad (DISPAD): what the eye recognised in it (text lines and words, buttons,",
+      "boxes, icons, shapes, figures, colour regions, patterns) as a tree, with its text blocks, relations, notes and",
+      "the trace of what you did on the pad. It follows the focus: a click on the pad's strip, an image disp loads.",
       "", "Open an image: dispo on a path · ===p pastes the clipboard · Open… / ⌘V / drop on the pad." })
     vim.bo[b].modifiable = false
     S.bufs.mapnone = b
@@ -443,6 +458,13 @@ local function placeholder()
   end
   return S.bufs.mapnone
 end
+
+local GRAPH_NONE = { "GRAPH", "",
+  "The memory graph around the image in focus: its concepts, its own knowledge, and the memories the graph",
+  "associates with it (activation spreading from it and from what the current request is about), each with the path",
+  "that links it. It follows the focus, and it is part of each request's context ([GRAPH]).",
+  "When the associations change, they are kept with the image as knowledge (notes.yaml associations).",
+  "", "<CR> on an image key (3fa2#3) brings that image into focus · r recomputes · q back to your tab" }
 
 local function sizes()
   if not (S and in_tab()) then return end
@@ -464,9 +486,8 @@ local function sizes()
   if valid_win(S.wins.iface) then
     pcall(api.nvim_win_set_width, S.wins.iface, math.floor(cols * (tonumber(vim.g.disp_iface_width) or 0.28)))
   end
-  local maps = vim.tbl_filter(valid_win, S.mapwins)
-  for i, w in ipairs(maps) do
-    if i < #maps then pcall(api.nvim_win_set_width, w, math.floor(cols / #maps)) end
+  if valid_win(S.wins.map) and valid_win(S.wins.graph) then
+    pcall(api.nvim_win_set_width, S.wins.map, math.floor(cols * (tonumber(vim.g.disp_map_width) or 0.55)))
   end
 end
 
@@ -477,44 +498,17 @@ local function pane_opts(w, wrap)
   vim.wo[w].cursorline = not wrap
 end
 
---- Put an image's MAP in a pane of the top row: the pane already showing it, else a new pane (up to
---- g:disp_map_panes), else the least recently used pane. Only while the disp tab is the current one.
-local function place_map(key)
-  if not (in_tab() and S.maps[key]) then
-    S.pending_map = key
-    return
-  end
-  S.mapwins = vim.tbl_filter(win_in_tab, S.mapwins)
-  M._clock = (M._clock or 0) + 1
-  S.maps[key].used = M._clock
-  for _, w in ipairs(S.mapwins) do
-    if api.nvim_win_get_buf(w) == S.maps[key].buf then return refresh_bars() end
-  end
-  local target
-  for _, w in ipairs(S.mapwins) do -- the placeholder pane goes first
-    if api.nvim_win_get_buf(w) == S.bufs.mapnone then target = w end
-  end
-  if not target and #S.mapwins < MAX_MAPS() and #S.mapwins > 0 then
-    target = api.nvim_open_win(S.maps[key].buf, false, { split = "right", win = S.mapwins[#S.mapwins] })
-    S.mapwins[#S.mapwins + 1] = target
-  end
-  if not target then
-    local oldest, age
-    for _, w in ipairs(S.mapwins) do
-      local k = map_key_of(w)
-      local used = k and S.maps[k].used or -1
-      if k ~= S.focus_key and (age == nil or used < age) then oldest, age = w, used end
-    end
-    target = oldest or S.mapwins[1]
-  end
-  if not target then return end
-  api.nvim_win_set_buf(target, S.maps[key].buf)
-  pane_opts(target, false)
-  sizes()
-  refresh_bars()
+--- The MAP pane shows the image in focus (its buffer; the placeholder when there is none).
+local function show_focus_map()
+  local w = S.wins.map
+  if not valid_win(w) then return end
+  local m = S.focus_key and S.maps[S.focus_key]
+  local buf = m and m.buf or placeholder()
+  if api.nvim_win_get_buf(w) ~= buf then api.nvim_win_set_buf(w, buf) end
+  pane_opts(w, false)
 end
 
---- Build what is missing of the tab: the MAP row on top, DISP · LLM · IFACE (IFACE only while joined) below.
+--- Build what is missing of the tab: MAP (image in focus) | GRAPH on top, DISP · LLM · IFACE (IFACE while joined) below.
 local function layout()
   if not S then return end
   if not (S.tab and api.nvim_tabpage_is_valid(S.tab)) then
@@ -524,20 +518,22 @@ local function layout()
     local w = api.nvim_get_current_win()
     api.nvim_win_set_buf(w, placeholder())
     if api.nvim_buf_get_name(scratch) == "" and scratch ~= S.bufs.mapnone then pcall(api.nvim_buf_delete, scratch, { force = true }) end
-    S.wins, S.mapwins = {}, { w }
+    S.wins = { map = w }
   end
   if not in_tab() then return end
-  S.mapwins = vim.tbl_filter(win_in_tab, S.mapwins)
   local W = S.wins
-  for _, key in ipairs(BOTTOM) do
+  for _, key in ipairs({ "map", "graph", "chat", "log", "iface" }) do
     if W[key] and not win_in_tab(W[key]) then W[key] = nil end
   end
   if not W.chat then
     W.chat = api.nvim_open_win(S.bufs.chat, false, { split = "below", win = -1 })
     pcall(api.nvim_win_set_cursor, W.chat, { api.nvim_buf_line_count(S.bufs.chat), 0 })
   end
-  if #S.mapwins == 0 then
-    S.mapwins = { api.nvim_open_win(placeholder(), false, { split = "above", win = -1 }) }
+  if not W.map then
+    W.map = api.nvim_open_win(placeholder(), false, { split = "above", win = -1 })
+  end
+  if not W.graph then
+    W.graph = api.nvim_open_win(S.bufs.graph, false, { split = "right", win = W.map })
   end
   if not W.log then
     W.log = api.nvim_open_win(S.bufs.log, false, { split = "right", win = W.chat })
@@ -558,12 +554,8 @@ local function layout()
       vim.wo[w].winhighlight = ("WinBar:Disp%s,WinBarNC:Disp%s"):gsub("%%s", COLOR[key] .. "Bar")
     end
   end
-  for _, w in ipairs(S.mapwins) do pane_opts(w, false) end
-  if S.pending_map and S.maps[S.pending_map] then
-    local k = S.pending_map
-    S.pending_map = nil
-    place_map(k)
-  end
+  show_focus_map()
+  pane_opts(W.graph, false)
   sizes()
   refresh_bars()
 end
@@ -573,7 +565,7 @@ local function refresh()
   if in_tab() then layout() else refresh_bars() end
 end
 
---- The backend's MAP of one image: into its buffer (cursor kept), and into a pane when it is the pad's focus.
+--- The backend's MAP of one image: into its buffer (cursor kept); the MAP pane shows it when it is the pad's focus.
 local function on_map(msg)
   local key = msg.key
   local m = map_buf(key)
@@ -589,8 +581,22 @@ local function on_map(msg)
   for w, c in pairs(keep) do pcall(api.nvim_win_set_cursor, w, { math.min(c[1], api.nvim_buf_line_count(m.buf)), c[2] }) end
   if msg.focus then
     S.focus_key = key
-    place_map(key)
+    show_focus_map()
   end
+  refresh_bars()
+end
+
+--- The GRAPH pane: the memory graph around the image in focus (sent by the backend on each focus and request).
+local function on_graph(msg)
+  local b = S.bufs.graph
+  local w = S.wins.graph
+  local keep = valid_win(w) and api.nvim_win_get_buf(w) == b and S.graph_key == msg.key and api.nvim_win_get_cursor(w) or nil
+  vim.bo[b].modifiable = true
+  api.nvim_buf_set_lines(b, 0, -1, false, msg.lines or GRAPH_NONE)
+  vim.bo[b].modifiable = false
+  paint_map(b)
+  S.graph_key, S.graph_title = msg.key, msg.title
+  if valid_win(w) then pcall(api.nvim_win_set_cursor, w, keep and { math.min(keep[1], api.nvim_buf_line_count(b)), 0 } or { 1, 0 }) end
   refresh_bars()
 end
 
@@ -636,8 +642,9 @@ end
 local function cycle(delta)
   if not (S and in_tab()) then return end
   local list = {}
-  for _, w in ipairs(S.mapwins) do if valid_win(w) then list[#list + 1] = w end end
-  for _, key in ipairs(BOTTOM) do if valid_win(S.wins[key]) then list[#list + 1] = S.wins[key] end end
+  for _, key in ipairs({ "map", "graph", "chat", "log", "iface" }) do
+    if valid_win(S.wins[key]) then list[#list + 1] = S.wins[key] end
+  end
   if #list == 0 then return end
   local i = 1
   for k, w in ipairs(list) do if w == api.nvim_get_current_win() then i = k end end
@@ -676,28 +683,28 @@ function M.toggle()
 end
 M.toggle_view = M.toggle
 
---- :DispMap [n]: a MAP pane for image #n (default: the pad's focus).
+--- :DispMap [n]: bring image #n into focus (its MAP and GRAPH follow); without n, go to the MAP pane.
 function M.map_pane(n)
   if not S then return end
-  local key
   if n and n ~= "" then
-    n = tonumber((tostring(n):gsub("^.*#", "")))
-    for k, m in pairs(S.maps) do if m.n == n then key = k end end
-    if not key then
-      send({ t = "map", image = n }) -- the backend sends it; it lands in a pane below
-      S.want_n = n
-      return
-    end
-  else
-    key = S.focus_key
+    return send({ t = "focus", image = n })
   end
-  if key then
-    if not in_tab() then M.show() end
-    place_map(key)
+  if not in_tab() then M.show() end
+  if valid_win(S.wins.map) then
+    vim.cmd("stopinsert")
+    api.nvim_set_current_win(S.wins.map)
   end
 end
 
--- ---------------------------------------------------------------- MAP pane keys
+-- ---------------------------------------------------------------- MAP / GRAPH pane keys
+local function common_keys(b)
+  local o = { buffer = b, silent = true, nowait = true }
+  vim.keymap.set("n", "<Tab>", function() cycle(1) end, o)
+  vim.keymap.set("n", "<S-Tab>", function() cycle(-1) end, o)
+  vim.keymap.set("n", "q", function() M.back() end, o)
+  vim.keymap.set("n", "i", function() M.focus("chat") end, o)
+end
+
 function M._map_keys(b, key)
   local o = { buffer = b, silent = true, nowait = true }
   local function go(op)
@@ -715,22 +722,18 @@ function M._map_keys(b, key)
   vim.keymap.set("n", "M", go("build"), o)
   vim.keymap.set("n", "gr", go("grid"), o)
   vim.keymap.set("n", "r", function() if key and S.maps[key] then send({ t = "map", image = S.maps[key].n }) end end, o)
-  vim.keymap.set("n", "X", function()
-    local w = api.nvim_get_current_win()
-    S.mapwins = vim.tbl_filter(function(x) return valid_win(x) and x ~= w end, S.mapwins)
-    if #S.mapwins == 0 then
-      api.nvim_win_set_buf(w, placeholder())
-      S.mapwins = { w }
-    else
-      pcall(api.nvim_win_close, w, true)
-      sizes()
-    end
-    refresh_bars()
+  common_keys(b)
+end
+
+function M._graph_keys(b)
+  local o = { buffer = b, silent = true, nowait = true }
+  vim.keymap.set("n", "<CR>", function() -- an image key on the line: bring it into focus
+    local line = api.nvim_get_current_line()
+    local k = fn.expand("<cWORD>"):match("(%x%x%x%x#%d+)") or line:match("(%x%x%x%x#%d+)")
+    if k then send({ t = "focus", image = k }) else notify("no image key (3fa2#3) on this line") end
   end, o)
-  vim.keymap.set("n", "<Tab>", function() cycle(1) end, o)
-  vim.keymap.set("n", "<S-Tab>", function() cycle(-1) end, o)
-  vim.keymap.set("n", "q", function() M.back() end, o)
-  vim.keymap.set("n", "i", function() M.focus("chat") end, o)
+  vim.keymap.set("n", "r", function() send({ t = "graph_refresh" }) end, o)
+  common_keys(b)
 end
 
 -- ---------------------------------------------------------------- context & editor requests
@@ -826,13 +829,15 @@ local function on_message(msg)
     if joined() ~= was then refresh() else refresh_bars() end -- joining opens IFACE, leaving closes it
   elseif msg.t == "map" then
     on_map(msg)
-    if S.want_n and msg.n == S.want_n then
-      S.want_n = nil
-      if not in_tab() then M.show() end
-      place_map(msg.key)
-    end
+  elseif msg.t == "graph" then
+    on_graph(msg)
   elseif msg.t == "map_hit" then
     on_map_hit(msg)
+  elseif msg.t == "reset" then -- ==== / the pad's strip emptied: no image in view, the MAP row back to its placeholder
+    S.focus_key = nil
+    on_graph({ key = nil, title = nil, lines = GRAPH_NONE })
+    if in_tab() then show_focus_map() end
+    refresh_bars()
   elseif msg.t == "req" then
     handle_req(msg)
   elseif msg.t == "show" then
@@ -902,6 +907,13 @@ local function create_buffers()
   end)
   fn.prompt_setinterrupt(chat, function() send({ t = "cancel" }) end)
   local bufs = { chat = chat }
+  local graph = api.nvim_create_buf(false, true) -- the GRAPH pane (filled by the backend)
+  vim.bo[graph].bufhidden = "hide"
+  vim.bo[graph].filetype = "dispgraph"
+  pcall(api.nvim_buf_set_name, graph, "disp://graph")
+  api.nvim_buf_set_lines(graph, 0, -1, false, GRAPH_NONE)
+  vim.bo[graph].modifiable = false
+  M._graph_keys(graph)
   for key, ft in pairs({ log = "displog", iface = "dispiface" }) do
     local b = api.nvim_create_buf(false, true)
     vim.bo[b].bufhidden = "hide"
@@ -910,7 +922,9 @@ local function create_buffers()
     pcall(api.nvim_buf_set_name, b, "disp://" .. (key == "log" and "llm" or key))
     bufs[key] = b
   end
-  for _, b in pairs(bufs) do
+  bufs.graph = graph
+  for key, b in pairs(bufs) do
+    if key == "graph" then goto continue end
     local o = { buffer = b, silent = true, nowait = true }
     vim.keymap.set("n", "<Tab>", function() cycle(1) end, o)
     vim.keymap.set("n", "<S-Tab>", function() cycle(-1) end, o)
@@ -918,6 +932,7 @@ local function create_buffers()
     vim.keymap.set("n", "<C-c>", function() send({ t = "cancel" }) end, o)
     vim.keymap.set("n", "i", function() M.focus("chat") end, o)
     if b ~= chat then vim.keymap.set("n", "a", function() M.focus("chat") end, o) end
+    ::continue::
   end
   return bufs
 end
@@ -943,7 +958,7 @@ function M.start(args, opts)
   if vim.g.disp_pad_port then vim.list_extend(cmd, { "--pad-port", tostring(vim.g.disp_pad_port) }) end
   vim.list_extend(cmd, args)
   local old = S
-  S = { bufs = old and old.bufs or create_buffers(), wins = old and old.wins or {}, mapwins = old and old.mapwins or {},
+  S = { bufs = old and old.bufs or create_buffers(), wins = old and old.wins or {},
     maps = old and old.maps or {}, tab = old and old.tab, state = {},
     prev_tab = old and old.prev_tab or api.nvim_get_current_tabpage(), anchor = old and old.anchor or api.nvim_get_current_win() }
   if not in_tab() then S.prev_tab, S.anchor = api.nvim_get_current_tabpage(), api.nvim_get_current_win() end
@@ -1048,7 +1063,7 @@ cmd("DispAsk", function(o) M.ask(o.args) end, { nargs = "+", desc = "Ask disp" }
 cmd("DispOpen", function(o) M.open(o.args) end, { nargs = "?", complete = "file", desc = "Show an image on DISPAD" })
 cmd("DispPaste", function() M.paste() end, { desc = "The clipboard image to DISPAD" })
 cmd("DispFocus", function(o) M.focus_image(o.args) end, { nargs = 1, desc = "Bring image #n to the front of DISPAD" })
-cmd("DispMap", function(o) M.map_pane(o.args) end, { nargs = "?", desc = "A MAP pane for image #n (default: in focus)" })
+cmd("DispMap", function(o) M.map_pane(o.args) end, { nargs = "?", desc = "Bring image #n into focus (MAP, GRAPH follow); no n: go to MAP" })
 cmd("DispMapBuild", function() M.map_build() end, { desc = "Map the image in focus again" })
 cmd("DispPad", function() M.pad("raise") end, { desc = "Show / start DISPAD" })
 cmd("DispPadQuit", function() M.pad("quit") end, { desc = "Close DISPAD" })
@@ -1067,7 +1082,7 @@ local aug = api.nvim_create_augroup("disp", { clear = true })
 api.nvim_create_autocmd("VimResized", { group = aug, callback = function() if in_tab() then sizes() end end })
 api.nvim_create_autocmd("TabEnter", { group = aug, callback = function() if in_tab() then layout() end end })
 api.nvim_create_autocmd("TabClosed", { group = aug, callback = function()
-  if S and S.tab and not api.nvim_tabpage_is_valid(S.tab) then S.tab, S.wins, S.mapwins = nil, {}, {} end
+  if S and S.tab and not api.nvim_tabpage_is_valid(S.tab) then S.tab, S.wins = nil, {} end
 end })
 api.nvim_create_autocmd("VimLeavePre", { group = aug, callback = function() if S and S.job then send({ t = "quit" }) end end })
 -- Leaving the input for another pane (mouse, <C-w>) leaves insert mode: MAP, LLM and IFACE are read-only.
@@ -1077,8 +1092,7 @@ end })
 api.nvim_create_autocmd("WinClosed", { group = aug, callback = function(ev)
   if not S then return end
   local w = tonumber(ev.match)
-  S.mapwins = vim.tbl_filter(function(x) return x ~= w end, S.mapwins or {})
-  for _, key in ipairs(BOTTOM) do if S.wins[key] == w then S.wins[key] = nil end end
+  for key, x in pairs(S.wins) do if x == w then S.wins[key] = nil end end
 end })
 
 package.loaded.disp = M

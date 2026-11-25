@@ -118,11 +118,34 @@ def clip(s, n: int = 300) -> str:
     return s if len(s) <= n else s[: n - 1] + "…"
 
 
-def parse_llm_json(raw: str) -> Optional[dict]:
-    """First balanced JSON object in the text (tolerates fences, prose, <think> blocks)."""
+_JSTR = re.compile(r'"(?:[^"\\]|\\.)*"')
+_BARE = re.compile(r'([:\[,]\s*)([A-Za-z0-9_#.+\-]+)(?=\s*[,}\]])')
+_JNUM = re.compile(r'-?(0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?$')
+
+
+def repair_json(text: str) -> str:
+    """The slips a small model makes in JSON, fixed outside string literals: a bare word or key as a value
+    ("image": 5ee6 -> "image": "5ee6", [e028, 9fa5] -> ["e028", "9fa5"]) and trailing commas. Real numbers,
+    true / false / null stay as they are."""
+    def fix(seg: str) -> str:
+        seg = re.sub(r",\s*([}\]])", r"\1", seg)
+        return _BARE.sub(lambda m: m.group(0) if (m.group(2) in ("true", "false", "null") or _JNUM.match(m.group(2)))
+                         else f'{m.group(1)}"{m.group(2)}"', seg)
+    out, last = [], 0
+    for m in _JSTR.finditer(text):
+        out += [fix(text[last:m.start()]), m.group(0)]
+        last = m.end()
+    out.append(fix(text[last:]))
+    return "".join(out)
+
+
+def parse_llm_json_ex(raw: str):
+    """(first JSON object in the text, or None; why it failed). Tolerates fences, prose, <think> blocks, and the
+    slips repair_json fixes. The reason quotes the JSON error and where, so the model can correct itself."""
     if not raw:
-        return None
+        return None, "the reply was empty"
     raw = re.sub(r"<think>.*?</think>", "", raw, flags=re.S)
+    why = ""
     for start in [m.start() for m in re.finditer(r"\{", raw)]:
         depth, in_str, esc = 0, False, False
         for i in range(start, len(raw)):
@@ -139,14 +162,26 @@ def parse_llm_json(raw: str) -> Optional[dict]:
             elif ch == "}":
                 depth -= 1
                 if depth == 0:
-                    try:
-                        obj = json.loads(raw[start:i + 1])
-                        if isinstance(obj, dict):
-                            return obj
-                    except ValueError:
-                        pass
+                    cand = raw[start:i + 1]
+                    for text in (cand, repair_json(cand)):
+                        try:
+                            obj = json.loads(text)
+                            if isinstance(obj, dict):
+                                return obj, ""
+                        except ValueError as e:
+                            if not why and "action_type" in cand:
+                                pos = getattr(e, "pos", 0) or 0
+                                why = f"{e.msg} near: {cand[max(0, pos - 30):pos + 20]!r}"
                     break
-    return None
+        else:
+            if not why and "action_type" in raw[start:]:
+                why = "the JSON object is not closed (a } is missing)"
+    return None, why or "no JSON object in the reply"
+
+
+def parse_llm_json(raw: str) -> Optional[dict]:
+    """First JSON object in the text (see parse_llm_json_ex)."""
+    return parse_llm_json_ex(raw)[0]
 
 
 def truthy(v) -> bool:
@@ -284,7 +319,8 @@ class Pad:
         self.next_id = 0
         self.connected = False
         self.focus = None  # {n, name, w, h, ...} as the pad last told
-        self.count = 0
+        self.count = 0  # images on this session's strip
+        self.session = set()  # their numbers
         # events are handled on their own thread, in order: a handler may ask the pad something (the reader thread
         # must stay free to read the answer)
         self.events: "queue.Queue" = queue.Queue()
@@ -345,6 +381,7 @@ class Pad:
         try:
             r = self.request("hello", timeout=5)
             self.focus, self.count = r.get("focus"), r.get("count", 0)
+            self.session = set(r.get("shown") or [])
         except PadError:
             pass
         self.on_event({"ev": "_connected"})
@@ -361,7 +398,10 @@ class Pad:
                 if "ev" in msg:
                     if msg["ev"] in ("loaded", "focus") and isinstance(msg.get("image"), dict):
                         self.focus = msg["image"]
-                        self.count = max(self.count, int(msg["image"].get("n") or 0))
+                        self.session.add(msg["image"].get("n"))
+                        self.count = len(self.session)
+                    elif msg["ev"] == "cleared":
+                        self.focus, self.session, self.count = None, set(), 0
                     self.events.put(msg)
                 elif msg.get("id") in self.waiters:
                     w = self.waiters[msg["id"]]
@@ -402,7 +442,10 @@ class Pad:
                 raise PadError(str(res.get("err") or "pad error"))
             if op in ("open", "paste", "focus", "crop") and isinstance(res.get("image"), dict):
                 self.focus = res["image"]
-                self.count = max(self.count, int(res["image"].get("n") or 0))
+                self.session.add(res["image"].get("n"))
+                self.count = len(self.session)
+            elif op == "clear":
+                self.focus, self.session, self.count = None, set(), 0
             return res
         finally:
             self.waiters.pop(rid, None)
@@ -415,6 +458,7 @@ class Pad:
 
 # ---------------------------------------------------------------- memory (gddr9b, disp_map.py)
 import disp_map  # noqa: E402
+import disp_recall  # noqa: E402
 
 STORE: Optional["disp_map.MapStore"] = None
 
@@ -449,11 +493,18 @@ RULES
 7. Finish with declare_result: "reply" is the concrete answer (what you saw, where: #image and coordinates, marks you drew).
 8. Output ONLY one JSON object with only the fields the action needs.
 9. "image" is optional in every action (default: the image in focus); naming another image brings it into focus on the pad,
-   and the following actions apply to it.
+   and the following actions apply to it. Write an image as its number (4) or its key in quotes ("5ee6#4").
 10. [MAP] is what is already known about the image in focus: elements e1, e2 … (type, label, box [x,y w×h], colours),
    nested by containment, text blocks and relations. Answer from it when it is enough; use its ids as regions
-   ("region":"e5", text blocks too: "b2") and marks ("id":"e5"); look / locate only for what it lacks; map_note what
+   ("region":"e5", text blocks too: "b2") and marks ("id":"e5"); look / locate only for what it lacks — when [MAP] or
+   [RECALL] already holds what is asked (a text, a label, a colour), answer at once with declare_result; map_note what
    you discover. When the user picked components on the pad's grid, the request lists them: they are what the user means.
+11. When no image was named, disp may have loaded the image that best matches the request ("loaded … best match"):
+   it is the image in focus, [MAP] is its map. [RECALL] lists memories of earlier images and conversations that match the request (from gddr9b and the memory
+   graph): use them when they answer it, say which (their key: 3fa2#3) and do not look again for what they already say;
+   recall (action) searches deeper when you need something seen before.
+12. [GRAPH] is the memory graph around the image in focus: its concepts and the memories linked to it (other images,
+   answers, findings) with what links them; use it for "what is this related to", "where else did I see …".
 
 ACTIONS — "action_type" is exactly one of the names below; all other fields sit at the top level of the same object.
 Example: {"action_type": "look", "image": 3, "question": "what does the error dialog say?", "reason": "..."}
@@ -465,8 +516,10 @@ Looking:
   {"action_type":"compare","images":[2,3],"question":"what changed?"}
   {"action_type":"pixel","x":120,"y":40,"image":3}                 the exact colour of one pixel
   {"action_type":"colors","region":[x,y,w,h]}                     mean and dominant colours
-  {"action_type":"images","last":12}                              the images in memory, with captions
+  {"action_type":"images","last":12}                              this session's images ("all":true: every one known)
   {"action_type":"pad_state"}                                     focus, zoom, visible part, selection, marks
+Memory (every image seen, every answer, finding and deep look):
+  {"action_type":"recall","query":"the invoice with the red stamp","limit":10}   search past images and knowledge
 The map (kept per image in memory):
   {"action_type":"map_image","image":3,"fresh":false}             build the map (inventory → detail → colors → structure →
                                                                    relations; 1-3 minutes) or get it when it exists
@@ -505,10 +558,10 @@ Numbered marks (boxes, arrows, points with a number) were drawn by the user or b
 GLANCE_QUESTION = ("Describe this image in one or two sentences (what it is, the main content). "
                    "If it contains readable text, quote the most important text after 'Text:'.")
 
-ACTION_NAMES = ["map_image", "map_element", "map_find", "map_note", "look", "locate", "read_text", "compare", "pixel", "colors", "images", "pad_state", "open_image", "paste_image",
+ACTION_NAMES = ["recall", "map_image", "map_element", "map_find", "map_note", "look", "locate", "read_text", "compare", "pixel", "colors", "images", "pad_state", "open_image", "paste_image",
                 "focus", "zoom", "select", "crop", "mark", "unmark", "ask_user_point", "ask_user_region", "save_image",
                 "insert_text", "run_command", "run_lua", "who", "ask_agent", "wait_agent", "post", "declare_result"]
-ACTION_ALIASES = {"map": "map_image", "build_map": "map_image", "element": "map_element", "find_element": "map_find",
+ACTION_ALIASES = {"remember": "recall", "memory": "recall", "search_memory": "recall", "map": "map_image", "build_map": "map_image", "element": "map_element", "find_element": "map_find",
                   "search_map": "map_find", "note": "map_note", "relate": "map_note", "find": "locate", "where": "locate", "detect": "locate", "see": "look", "view": "look", "inspect": "look", "describe": "look", "analyze": "look",
                   "analyse": "look", "ocr": "read_text", "transcribe": "read_text", "diff": "compare",
                   "color": "colors", "stats": "colors", "list_images": "images", "state": "pad_state", "open": "open_image",
@@ -619,6 +672,13 @@ class Agent:
         self.maps: "queue.Queue" = queue.Queue()  # (info, fresh, done event | None)
         self.map_cancel = threading.Event()
         self.mapping = None  # key of the image being mapped
+        self.graph = disp_recall.Graph(None if args.no_memgraph else args.memgraph_uri, args.memgraph_user,
+                                       args.memgraph_password, log=lambda t: logw(t, "Comment"))
+        self.recall = disp_recall.Recall(STORE, args.memory, self.graph, log=lambda t: logw(t, "Comment"))
+        self.last_used = []  # memories recalled for the running request (wired to its answer: co-recall)
+        self.context_text = ""  # the current context: the latest request (steers the GRAPH view)
+        self.recall.after = self.graph_after
+        self.glock = threading.Lock()  # one graph view at a time
         self.mapper = disp_map.Mapper(self.map_eye, lambda op, **kw: self.pad.request(op, launch=False, timeout=30, **kw),
                                       lambda t: logw(t, "ErrorMsg"), detail_passes=args.map_passes)
         from disp_iface import IFace
@@ -648,7 +708,7 @@ class Agent:
         emit({"t": "state", "busy": self.busy, "phase": self.phase, "queue": self.pending, "auto": self.auto,
               "approval": self.approval["text"] if self.approval else None, "net": self.iface.summary(),
               "model": self.llm.model, "pad": pad, "glance": self.glance, "map_auto": self.map_auto,
-              "mapping": self.mapping})
+              "mapping": self.mapping, "graph": self.graph.on})
 
     def set_phase(self, p):
         self.phase = p
@@ -662,7 +722,7 @@ class Agent:
             return {}
         if n not in self.by_n:
             try:
-                for i in self.pad.request("list", launch=False, timeout=5).get("images") or []:
+                for i in self.pad.request("list", launch=False, timeout=5, all=True).get("images") or []:
                     self.by_n[i["n"]] = i
             except PadError:
                 pass
@@ -704,6 +764,55 @@ class Agent:
         emit({"t": "map", "key": key_of(info), "n": info.get("n"), "sha": info.get("sha"), "lines": lines, "focus": focus,
               "title": f"{info.get('name')} {info.get('w')}×{info.get('h')} · {state}"})
 
+    # ----- the GRAPH pane: the memory graph with the image in focus as root, the current context as query
+    def graph_soon(self, info):
+        # during a request, the request's own view (with its context) is the one kept as knowledge
+        threading.Thread(target=self.graph_update, args=(info,), kwargs={"store": not self.busy}, daemon=True).start()
+
+    def graph_after(self, sha):
+        """A memory of some image reached the graph: if it is the one in focus, its view may have grown."""
+        f = self.pad.focus or {}
+        if f.get("sha") == sha:
+            self.graph_update(f)
+
+    def graph_update(self, info, context=None, store=True):
+        """Query the graph around an image (context: the request, else the latest one, else its own summary), show
+        it in GRAPH, keep it as knowledge when its associations changed. Returns the view (None: no graph)."""
+        if not info or not info.get("sha"):
+            return None
+        mem = mem_of(info)
+        ctx = context if context is not None else self.context_text  # no request yet: the root's own neighbourhood
+        with self.glock:
+            try:
+                view = self.recall.graph_view(info["sha"], ctx)
+            except Exception as e:
+                logw(f"graph view: {type(e).__name__}: {e}", "ErrorMsg")
+                return None
+            lines = self.recall.graph_lines(view, info.get("name") or "")
+            if view and not view.get("missing") and mem and store:
+                related = [{"mid": a["mid"], "key": self.recall.key(a["sha"]) if a["sha"] else "?", "kind": a["kind"],
+                            "text": clip(a["text"], 140), "score": a["score"]} for a in view.get("assoc") or []]
+                entry, new = mem.add_association(related, ctx, [c["name"] for c in view.get("concepts") or []])
+                if entry:
+                    keys = list(dict.fromkeys(r["key"] for r in new))
+                    chat(f"   ⇄ {key_of(info)} associations kept as knowledge: + {', '.join(keys[:6])}", "Comment")
+            hist = (mem.notes.get("associations") or [])[-4:] if mem else []
+            if hist:
+                lines += ["", "KEPT ASSOCIATIONS (knowledge of this image, as the graph developed)"]
+                prev = set()
+                for h in hist:
+                    keys = list(dict.fromkeys(r.get("key") for r in h.get("related") or []))
+                    plus = [k for k in keys if k not in prev] if prev else []
+                    lines.append(f"  {disp_map.when(h.get('ts'))} {', '.join(keys[:8])}"
+                                 + (f"  (+ {', '.join(plus[:4])})" if plus else "")
+                                 + (f"  · context \"{clip(h.get('context'), 50)}\"" if h.get("context") else ""))
+                    prev = set(keys)
+            n_assoc = len((view or {}).get("assoc") or [])
+            emit({"t": "graph", "key": key_of(info), "lines": lines,
+                  "title": f"root {key_of(info)}" + (f" · context \"{clip(ctx, 48)}\"" if ctx else "")
+                           + (f" · {n_assoc} associated" if view else " · graph off")})
+            return view
+
     def remember(self, mem):
         """What memory knows about an image that comes back (same sha256): said in DISP, shown in its MAP pane."""
         m, me = mem.map, mem.meta
@@ -718,7 +827,7 @@ class Agent:
             parts.append(f"{n_t} interactions")
         if parts:
             chat(f"   ↺ known: {' · '.join(parts)} · seen {me.get('opens') or 1}×, first "
-                 f"{str(me.get('first_seen') or '')[:16].replace('T', ' ')}", "Comment")
+                 f"{disp_map.when(me.get('first_seen'))}", "Comment")
         cap = me.get("summary") or me.get("caption")
         if cap:
             chat(f"   👁 {clip(cap, 300)}", "Comment")
@@ -730,17 +839,10 @@ class Agent:
             self.by_n[img["n"]] = img
         if ev == "_connected":
             self.layer_sent.clear()  # a (new) pad has no layers yet
-            chat(f"🖼 pad connected (port {self.pad.port}) · {self.pad.count} images in memory"
-                 + (f" · in focus {describe(self.pad.focus)}" if self.pad.focus else ""), "Comment")
-            f = self.pad.focus
-            if f:
-                self.by_n[f.get("n")] = f
-                mem = mem_of(f)
-                if mem:
-                    mem.seen(f, count_open=False)
-                    self.remember(mem)
-                self.emit_map(f, focus=True)
-                self.want_map(f)
+            chat(f"🖼 pad connected (port {self.pad.port}) · strip: {self.pad.count} images this session", "Comment")
+            # nothing is loaded at startup: an image comes in when the user opens or focuses one
+        elif ev == "cleared":
+            emit({"t": "reset"})  # the MAP panes empty with the strip
         elif ev == "bye":
             self.pad_bye = True
             chat("🖼 pad closed (===r or :DispPad opens it again)", "Comment")
@@ -763,11 +865,13 @@ class Agent:
                         pm.add_trace({"ev": "crop", "child": key_of(img), "child_sha": img.get("sha")})
                 self.remember(mem)
             self.emit_map(img, focus=True)
+            self.graph_soon(img)
             if not caption_of(img) and self.glance:
                 self.glances.put(img)
             self.want_map(img)
         elif ev == "focus":
             self.emit_map(img, focus=True)
+            self.graph_soon(img)
             self.want_map(img)
         elif ev in ("click", "select", "mark", "unmark", "view", "ask", "pick", "grid"):
             info = self.info_of(msg.get("n")) if msg.get("n") else (self.pad.focus or {})
@@ -880,6 +984,7 @@ class Agent:
             try:
                 self.mapper.build(mem, info, self.map_cancel, progress, fresh=fresh)
                 m = mem.map
+                self.recall.submit("sync", sha=mem.sha, walk=True)  # into the graph, with its synapses
                 chat(f"🗺 {key} mapped in {int(time.time() - t0)}s: {len(m.get('elements') or [])} elements, "
                      f"{len(m.get('blocks') or [])} text blocks, {len(m.get('relations') or [])} relations"
                      + (f" — {clip(m.get('summary'), 200)}" if m.get("summary") else ""), "DiagnosticOk")
@@ -949,6 +1054,7 @@ class Agent:
                         mem.meta["text"] = seen.strip()
                     mem.save("meta.yaml")
                 logw(f"── 👁 glance {key_of(img)} ──\n{text}\n", "Comment")
+                self.recall.submit("sync", sha=mem.sha, walk=False)
                 chat(f"   👁 {key_of(img)}: {clip(caption.strip(), 300)}", "Comment")
                 if seen.strip():
                     chat(f"      text: {clip(seen.strip(), 200)}", "Comment")
@@ -974,6 +1080,10 @@ class Agent:
             self.auto = not self.auto
             chat(f"auto-approve editor actions: {'ON' if self.auto else 'off'}", "WarningMsg")
             return self.emit_state()
+        if text == "====":
+            return self.reset_context()
+        if text.startswith("===s"):
+            return threading.Thread(target=self.search_memory, args=(text[4:].strip(),), daemon=True).start()
         if text in ("===x", ":cancel"):
             return self.do_cancel()
         if text in ("===m", "===m!"):
@@ -1019,12 +1129,13 @@ class Agent:
                 r = self.pad.request("focus", image=int(arg.lstrip("#")) if arg.lstrip("#").isdigit() else arg)
                 chat(f"🖼 focus {describe(r.get('image'))}", "Comment")
             elif c == "i":
-                r = self.pad.request("list", last=20)
+                r = self.pad.request("list", last=40 if arg == "all" else 20, all=arg == "all")
                 for i in r.get("images") or []:
                     self.by_n[i["n"]] = i
                     cap = caption_of(i)
                     chat(f"  {'▶' if i.get('focus') else ' '} {describe(i)}" + (f" — {clip(cap, 120)}" if cap else ""), "Comment")
-                chat(f"  {r.get('count')} images ({self.args.memory})", "Comment")
+                chat(f"  {r.get('count')} images on the strip this session, {r.get('known')} known "
+                     f"({'===i all lists them' if arg != 'all' else self.args.memory})", "Comment")
             elif c == "r":
                 self.pad.request("raise")
             elif c == "q":
@@ -1033,6 +1144,62 @@ class Agent:
         except (PadError, ValueError) as e:
             chat(f"⚠️ pad: {e}", "ErrorMsg")
         self.emit_state()
+
+    def show_recalled(self, images):
+        """The images a recall brought up, onto the pad's strip (tagged with their R numbers; the focus stays)."""
+        if not images or not self.pad.connected:
+            return
+        try:
+            r = self.pad.request("recalled", launch=False, timeout=5,
+                                 images=[{"sha": sha, "ranks": ranks} for sha, ranks in images])
+        except PadError as e:
+            if "unknown op" not in str(e):  # an older pad: nothing to show
+                logw(f"pad: {e}", "ErrorMsg")
+            return
+        shown = r.get("shown") or []
+        if shown:
+            tags = {self.recall.key(sha): " ".join(f"R{x}" for x in ranks) for sha, ranks in images}
+            chat("   🧠 recalled onto the strip: " + " · ".join(f"{k} {tags.get(k, '')}".rstrip() for k in shown),
+                 "Comment")
+
+    def reset_context(self):
+        """A fresh start: queued requests dropped, earlier requests, touches and recalled memories forgotten, the pad's
+        strip emptied and nothing in focus (the running task goes on: ===x stops it). Memory itself (gddr9b, the
+        graph, the numbers and marks of every image) is kept: an image opened again comes back with all of it."""
+        dropped = 0
+        while True:
+            try:
+                self.tasks.get_nowait()
+                dropped += 1
+            except queue.Empty:
+                break
+        self.pending = 0
+        n_recent, n_touch = len(self.recent), len(self.touches)
+        self.recent.clear()
+        self.touches.clear()
+        self.last_used = []
+        self.context_text = ""
+        cleared = 0
+        if self.pad.connected:  # the strip empties, nothing in focus (numbers, marks and memory stay)
+            try:
+                cleared = self.pad.request("clear", launch=False).get("removed", 0)
+            except PadError as e:
+                chat(f"⚠️ pad: {e}", "ErrorMsg")
+        emit({"t": "reset"})
+        chat("")
+        chat(f"──── context reset: {n_recent} earlier requests, {n_touch} touches forgotten, {dropped} queued dropped, "
+             f"{cleared} images off the strip (memory kept) ────", "WarningMsg")
+        logw("──── context reset ────", "Comment")
+        self.emit_state()
+
+    def search_memory(self, q):
+        if not q:
+            return chat(f"===s <words>: search every image and answer in memory · {self.recall.status()}", "Comment")
+        items = self.recall.search(q, None, limit=12)
+        chat(f"🧠 {q}: " + (f"{len(items)} memories" if items else "nothing in memory"), "Title")
+        for i, (score, line, did, why) in enumerate(items, 1):
+            chat(f"  R{i} {line}  ({why})", "Comment")
+        self.show_recalled(self.recall.images(items))
 
     def pad_grid(self):
         try:
@@ -1151,11 +1318,16 @@ class Agent:
                 if mem and reply:
                     mem.add_qa(text, reply, by="user")
                     self.emit_map(self.pad.focus, focus=True)
+                    # new knowledge: into the graph, wired to what it was built on, then a walk for synapses
+                    self.recall.submit("note", sha=mem.sha, kind="qa", q=mem.notes["qa"][-1], walk=True,
+                                       used=list(self.last_used))
             if origin:
                 self.iface.answer(origin, status, reply)
                 mem = mem_of(self.pad.focus)
                 if mem and status == "SUCCESS" and reply:
                     mem.add_qa(text, reply, by="@" + str(origin.get("from")))
+                    self.recall.submit("note", sha=mem.sha, kind="qa", q=mem.notes["qa"][-1], walk=True,
+                                       used=list(self.last_used))
             self.current = None
             self.set_phase("idle")
             if self.iface.connected:
@@ -1218,8 +1390,37 @@ class Agent:
             pass
         return "\n".join(lines)
 
-    def context_block(self, origin, ctx) -> str:
-        parts = [f"[TODAY] {time.strftime('%Y-%m-%d')}", self.pad_block(ctx)]
+    def recall_block(self, text) -> str:
+        """Memories for this request, just in time: no LLM, gddr9b text + the memory graph."""
+        self.last_used = []
+        if self.args.recall <= 0:
+            return ""
+        try:
+            lines, used, images = self.recall.block(text, (self.pad.focus or {}).get("sha"), limit=self.args.recall)
+        except Exception as e:
+            logw(f"recall failed: {type(e).__name__}: {e}", "ErrorMsg")
+            return ""
+        self.last_used = used
+        self.show_recalled(images)
+        if lines:
+            logw("── 🧠 recall ──\n" + lines, "Comment")
+        return ("[RECALL] (memories of earlier images and talks)\n" + lines) if lines else ""
+
+    def context_block(self, origin, ctx, text="") -> str:
+        parts = [f"[TODAY] {time.strftime('%Y-%m-%d', time.gmtime())} (UTC, now {time.strftime('%H:%M', time.gmtime())}Z; "
+                 "every time below is UTC)", self.pad_block(ctx)]
+        rb = self.recall_block(text)
+        if rb:
+            parts.append(rb)
+        if text and not origin:
+            self.context_text = text
+        f = self.pad.focus
+        if f and f.get("sha"):
+            view = self.graph_update(f, context=text or None)
+            gb = self.recall.graph_block(view)
+            if gb:
+                logw("── 🕸 graph ──\n" + gb, "Comment")
+                parts.append(f"[GRAPH] (the memory graph around {key_of(f)}: what it is about, what it is linked with)\n{gb}")
         if origin:
             parts.append(f"[REQUESTER] @{origin.get('from')} on the network ({'private' if origin.get('to') else 'in the room'}).")
         else:
@@ -1241,9 +1442,50 @@ class Agent:
             parts.append("[NETWORK] not joined (network actions unavailable)")
         return "\n\n".join(parts)
 
+    # the request points at the image in view, or names one: then disp does not pick another itself
+    DEICTIC = re.compile(r"\b(this|these|that|those|here|current|focused|on screen|the (image|picture|screenshot|photo))\b", re.I)
+    NAMED = re.compile(r"(#\d+\b|\b[0-9a-f]{4}#\d+\b|\.(png|jpe?g|gif|webp|bmp|tiff?)\b)", re.I)
+
+    def auto_load(self, text, origin, ctx):
+        """Pick the image that best matches the request and load it (focus on the pad: strip, MAP pane, [MAP] in the
+        context) before the LLM starts. With an image already in view, only when another one matches far better and
+        the request does not point at the one in view; never when the user asked from the pad or picked on it."""
+        if self.args.no_auto_load or (isinstance(ctx, dict) and (ctx.get("from_pad") or ctx.get("refs"))):
+            return
+        if self.NAMED.search(text):
+            return
+        try:
+            ranked = self.recall.rank_images(text)
+        except Exception as e:
+            logw(f"auto-load: {type(e).__name__}: {e}", "ErrorMsg")
+            return
+        if not ranked:
+            return
+        best_sha, best, ranks = ranked[0]
+        focus = (self.pad.focus or {}).get("sha")
+        if focus:
+            if best_sha == focus or self.DEICTIC.search(text):
+                return
+            here = next((s for sha, s, _ in ranked if sha == focus), 0.0)
+            if best < 6.0 or best < 2 * here:
+                return
+        elif best < 3.0:  # nothing in view: one solid memory is enough
+            return
+        try:
+            r = self.pad.request("focus", image=best_sha)
+        except PadError as e:
+            return logw(f"auto-load {best_sha[:8]}: {e}", "ErrorMsg")
+        info = r.get("image") or {}
+        why = " ".join(f"R{x}" for x in ranks[:4])
+        chat(f"🧠 loaded {describe(info)} — best match for this request ({why}; score {best}"
+             + (f", the image in view {next((s for sha, s, _ in ranked if sha == focus), 0.0)}" if focus else "") + ")",
+             "Special")
+
     def run_task(self, text, origin, ctx):
+        self.auto_load(text, origin, ctx)
         messages = [{"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user", "content": self.context_block(origin, ctx) + f"\n\n[REQUEST]\n{text}"}]
+                    {"role": "user", "content": self.context_block(origin, ctx, text) + f"\n\n[REQUEST]\n{text}"}]
+        done_before = {}  # an action already run in this request -> its result (a small model loops)
         for turn in range(1, self.args.max_turns + 1):
             if self.cancel.is_set():
                 raise Cancelled()
@@ -1252,11 +1494,16 @@ class Agent:
             raw = self.llm.stream(self.trim(messages), self.cancel)
             if self.cancel.is_set():
                 raise Cancelled()
-            act = parse_llm_json(raw)
+            act, why = parse_llm_json_ex(raw)
             messages.append({"role": "assistant", "content": raw})
             if not act or not (act.get("action_type") or act.get("action")):
-                messages.append({"role": "user", "content": "System: reply with ONE JSON object with \"action_type\"."})
-                chat("  (unparsable LLM reply, asking again)", "Comment")
+                why = why or "the object has no \"action_type\""
+                # say what was wrong: told only "reply with JSON", a small model resends the same broken object
+                messages.append({"role": "user", "content":
+                                 f"System: your reply could not be read as JSON: {why}. Nothing was run. Every text value "
+                                 "needs double quotes (an image: 4 or \"5ee6#4\", never 5ee6). Reply with ONE valid JSON "
+                                 "object with \"action_type\"."})
+                chat(f"  (unreadable LLM reply: {clip(why, 120)} — asking again)", "Comment")
                 continue
             act = normalize_action(act)
             kind = str(act.get("action_type")).strip()
@@ -1269,6 +1516,13 @@ class Agent:
             if act.get("reason"):
                 chat(f"    {clip(act['reason'], 200)}", "Comment")
             self.set_phase(kind)
+            same = json.dumps({k: v for k, v in act.items() if k != "reason"}, sort_keys=True, ensure_ascii=False)
+            if same in done_before and kind not in ("ask_user_point", "ask_user_region", "wait_agent"):
+                evidence = (f"System: you already ran exactly this {kind} in this request; its result was:\n"
+                            f"{done_before[same][:600]}\nUse it, try something else, or answer with declare_result.")
+                chat("    ↺ same action again: not run, the earlier result is given back", "Comment")
+                messages.append({"role": "user", "content": f"[RESULT of {kind}]\n{evidence}"})
+                continue
             try:
                 evidence = self.do_action(kind, act, origin)
             except Cancelled:
@@ -1281,6 +1535,7 @@ class Agent:
             first = evidence.split("\n", 1)[0]
             chat(f"    → {clip(first, 240)}" + (f"  (+{evidence.count(chr(10))} lines)" if "\n" in evidence else ""),
                  "ErrorMsg" if evidence.startswith(("Error", "System: denied")) else "Comment")
+            done_before[same] = evidence
             messages.append({"role": "user", "content": f"[RESULT of {kind}]\n{evidence[:self.args.max_output]}"})
         return "FAILED", f"Stopped after {self.args.max_turns} turns without a result."
 
@@ -1368,11 +1623,19 @@ class Agent:
     def pad_info(self, image) -> dict:
         if image in (None, "", "focus"):
             return self.pad.focus or {}
-        r = self.pad.request("list")
+        r = self.pad.request("list", all=True)
         for i in r.get("images") or []:
             if str(i.get("n")) == str(image).lstrip("#") or i.get("sha", "").startswith(str(image)) or i.get("name") == image:
                 return i
         raise PadError(f"no image {image}")
+
+    def keep_look(self, kind, q, ans, region=None):
+        """A deep look is knowledge too: kept with the image (notes.yaml looks) and consolidated into the graph."""
+        mem = mem_of(self.pad.focus)
+        if not (mem and ans and str(ans).strip()):
+            return
+        lk = mem.add_look(q, ans, kind=kind, region=region)
+        self.recall.submit("note", sha=mem.sha, kind="look", q=lk, walk=True)
 
     def element_box(self, eid):
         """The box of a map element (e5, e5.w2) or text block (b2) of the image in focus."""
@@ -1416,6 +1679,7 @@ class Agent:
                 out.append(f"relation {a['a']} {a['rel']} {a['b']} kept")
             if text:
                 mem.add_finding(text, ids, by="disp")
+                self.recall.submit("note", sha=mem.sha, kind="finding", q=mem.notes["findings"][-1], walk=True)
                 out.append("finding kept")
             self.emit_map(f, focus=True)
             return "; ".join(out) or "Error: map_note needs \"text\" (and/or a, rel, b)"
@@ -1457,8 +1721,10 @@ class Agent:
         """An action names another image: the pad shows it, so the user sees what disp works on and the next
         actions (without "image") apply to it."""
         f = self.pad.focus or {}
-        if image in (None, "", "focus") or str(image).lstrip("#") == str(f.get("n")):
-            return
+        s_img = str(image or "").strip().lstrip("#").lower()
+        if image in (None, "", "focus") or s_img in (str(f.get("n")), key_of(f)) or (
+                len(s_img) >= 4 and all(c in "0123456789abcdef" for c in s_img) and str(f.get("sha", "")).startswith(s_img)):
+            return  # already the image in focus (its number, key or sha prefix)
         r = self.pad.request("focus", image=image)
         chat(f"    🖼 focus {describe(r.get('image'))}", "Comment")
 
@@ -1481,9 +1747,20 @@ class Agent:
                 with mem.lock:
                     mem.meta["text"] = ans
                     mem.save("meta.yaml")
+            self.keep_look(kind, q if kind == "look" else "the text", ans, a.get("region"))
             return ans or "(the eye said nothing)"
         if kind.startswith("map_"):
             return self.map_action(kind, a)
+        if kind == "recall":
+            q = str(a.get("query") or a.get("text") or a.get("what") or "").strip()
+            if not q:
+                return "Error: recall needs \"query\""
+            items = self.recall.search(q, None, limit=max(1, min(20, int(a.get("limit") or 10))))
+            if not items:
+                return f"nothing in memory matches '{q}'"
+            self.last_used += [self.recall.mid_of(did) for _, _, did, _ in items[:3]]
+            self.show_recalled(self.recall.images(items))
+            return "\n".join(f"R{i} {line}  ({why})" for i, (_, line, did, why) in enumerate(items, 1))
         if kind == "locate":
             what = str(a.get("what") or a.get("target") or a.get("question") or a.get("text") or "").strip()
             if not what:
@@ -1492,6 +1769,7 @@ class Agent:
             if not box:
                 return f"the eye did not find {what} on #{(self.pad.focus or {}).get('n')}"
             x1, y1, x2, y2 = box
+            self.keep_look("locate", what, f"box [{x1}, {y1}] to [{x2}, {y2}] ({how})")
             return (f"{what} on #{(self.pad.focus or {}).get('n')}: box [{x1}, {y1}] to [{x2}, {y2}] "
                     f"(region [{x1}, {y1}, {x2 - x1}, {y2 - y1}], centre [{(x1 + x2) // 2}, {(y1 + y2) // 2}]; {how})")
         if kind == "compare":
@@ -1506,8 +1784,10 @@ class Agent:
             names = ", ".join(f"picture {i + 1} = image #{n}" for i, n in enumerate(ims[:3]))
             logw(f"── 👁 compare {names}: {clip(q, 160)} ──", "Comment")
             self.set_phase("eye: compare")
-            return self.llm.see(EYE_SYSTEM.format(coords=f"There are {len(paths)} pictures: {names}."), q, paths,
-                                self.cancel, think=self.args.eye_think).strip()
+            ans = self.llm.see(EYE_SYSTEM.format(coords=f"There are {len(paths)} pictures: {names}."), q, paths,
+                               self.cancel, think=self.args.eye_think).strip()
+            self.keep_look("compare", f"{q} ({names})", ans)
+            return ans
         if kind == "pixel":
             r = self.pad.request("pixel", image=image, x=a.get("x"), y=a.get("y"))
             return f"#{r['n']} pixel ({r['x']}, {r['y']}) = {r['hex']} rgba {r['rgba']}"
@@ -1517,10 +1797,11 @@ class Agent:
             dom = ", ".join(f"{d['hex']} {d['share']}%" for d in r.get("dominant") or [])
             return f"region {r['region']}: mean {r['mean_hex']} (rgba {r['mean']}), min {r['min']}, max {r['max']}; dominant: {dom}"
         if kind == "images":
-            r = self.pad.request("list", last=max(1, min(40, int(a.get("last") or 12))))
+            r = self.pad.request("list", last=max(1, min(40, int(a.get("last") or 12))), all=truthy(a.get("all")))
             out = [f"{'▶' if i.get('focus') else ' '} {describe(i)}" + (f" — {clip(caption_of(i), 140)}" if caption_of(i) else "")
                    for i in r.get("images") or []]
-            return "\n".join(out + [f"({r.get('count')} images in memory)"]) or "no images yet"
+            return "\n".join(out + [f"({r.get('count')} on the strip this session, {r.get('known')} known: "
+                                     "\"all\":true lists them all)"])
         if kind == "pad_state":
             st = self.pad.request("state", timeout=5)
             return json.dumps({k: st.get(k) for k in ("focus", "count", "zoom", "fit", "visible", "selection", "tool", "marks")},
@@ -1670,15 +1951,20 @@ class Agent:
 HELP_TEXT = """disp — images in Vim: the pad shows them, the eye (vision LLM) reads them
   <text>   a request: "what is in this image?", "read the text", "mark the red button", "zoom on the error",
            "compare #2 and #3", "crop the chart", "put the text of this screenshot in a new buffer" ...
-  ===o <path> open on the pad   ===p paste from the clipboard   ===f <n> focus #n   ===i list images
+  ===o <path> open on the pad   ===p paste from the clipboard   ===f <n> focus #n (any number, also older images)
+  ===i this session's images   ===i all every image ever loaded
   ===r show / start the pad     ===q close the pad              ===g glance at new images on/off
   ===m map the image in focus (missing stages)   ===m! map it again from scratch   ===M auto-map new images on/off
   ===G the pad's grid layer on/off: a dot per component (e5, b2), lines for relations; click dots to pick them,
        the picks go with the question you type on the pad
+  ===s <words> search memory: every image seen, every answer, finding and deep look (gddr9b + memory graph)
+  ====  reset the context: earlier requests, touches, queued requests forgotten, the pad's strip emptied
+        (memory itself is kept: an image opened again comes back with its map, notes, marks and number)
   ===a auto-approve editor actions   ===x cancel the running task (and a map being built)
   ===n network status   ===nj [name] [purpose] join   ===nl leave   ===ns <text> say   ===nw who
-  The tab: MAP panes on top, one per image (<sha4>#<n>) · DISP (this chat) · LLM (raw LLM + eye) · IFACE (network)
-  MAP: <CR> on an element shows it on the pad · m marks it · M maps again · G grid on the pad · X closes the pane
+  The tab: MAP (the image in focus) | GRAPH (its memory graph) on top · DISP (this chat) · LLM · IFACE (network)
+  MAP: <CR> on an element shows it on the pad · m marks it · M maps again · gr grid on the pad · r redraws
+  GRAPH: <CR> on an image key brings it into focus · r recomputes
   <Tab> next pane · <S-Tab> previous · i input · <C-c> cancel · q back to your tab (normal mode)
   On the pad: right-click (or the touch tool) touches a pixel; select / marks / "Ask disp" reach this chat."""
 
@@ -1711,6 +1997,9 @@ def reader(agent: Agent):
                 agent.emit_map(info, focus=False)
         elif t == "map_go":
             threading.Thread(target=agent.map_go, args=(msg,), daemon=True).start()
+        elif t == "graph_refresh":
+            if agent.pad.focus:
+                agent.graph_soon(agent.pad.focus)
         elif t in ("open", "paste", "focus", "pad"):
             threading.Thread(target=pad_from_vim, args=(agent, msg), daemon=True).start()
         elif t == "net":
@@ -1727,6 +2016,7 @@ def reader(agent: Agent):
             break
     agent.running = False
     agent.map_cancel.set()
+    agent.recall.wait(5)  # memories still on their way to the graph
     if STORE:
         STORE.flush()
     agent.iface.net.close()
@@ -1760,6 +2050,14 @@ def main():
                    help="the memory disp and the pad share: per image its map, notes, trace and marks, the pad's strip; "
                         "images themselves stay where they are (default ~/echo-home/memory/gddr9b)")
     p.add_argument("--no-map-auto", action="store_true", help="do not map images when they are loaded (===m maps)")
+    p.add_argument("--recall", type=int, default=6, help="memories put in each request ([RECALL]; 0: none)")
+    p.add_argument("--no-auto-load", action="store_true",
+                   help="do not load the image that best matches a request (disp picks it from memory by default)")
+    p.add_argument("--memgraph-uri", default=os.environ.get("MEMGRAPH_URI", "bolt://127.0.0.1:7687"),
+                   help="Bolt URI of the Memgraph memory graph (shared with memphia; env MEMGRAPH_URI)")
+    p.add_argument("--memgraph-user", default=os.environ.get("MEMGRAPH_USER", ""))
+    p.add_argument("--memgraph-password", default=os.environ.get("MEMGRAPH_PASSWORD", ""))
+    p.add_argument("--no-memgraph", action="store_true", help="recall from gddr9b text only (no memory graph)")
     p.add_argument("--map-passes", type=int, default=3, help="zoomed detail looks per map (0: inventory only)")
     p.add_argument("--map-context", type=int, default=3200, help="characters of the map put in the LLM's context")
     p.add_argument("--eye-think", action="store_true", help="let the eye think before answering (slower)")
@@ -1789,6 +2087,15 @@ def main():
     threading.Thread(target=agent.worker, daemon=True).start()
     threading.Thread(target=agent.glance_worker, daemon=True).start()
     threading.Thread(target=agent.map_worker, daemon=True).start()
+
+    def memory_up():  # in the background: the graph may be slow or down; disp works without it
+        ok = agent.graph.connect()
+        agent.recall.refresh()  # gddr9b's texts indexed (reads yaml only)
+        agent.recall.submit("backfill")  # images in gddr9b the graph does not hold yet (no pixels read)
+        chat(f"🧠 {agent.recall.status() if ok else 'memory graph off (' + (agent.graph.error or 'off') + '): recall from text only'}",
+             "Comment" if ok else "WarningMsg")
+        agent.emit_state()
+    threading.Thread(target=memory_up, daemon=True).start()
     chat(f"disp · images in Vim · memory {ARGS.memory}", "Title")
     llm_ok = agent.llm.ensure()
     vision = agent.llm.has_vision() if llm_ok else False

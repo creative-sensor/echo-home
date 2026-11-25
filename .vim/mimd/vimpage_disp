@@ -15,8 +15,11 @@ let g:disp_args = ['--port', get(g:, 'LMSH_PORT', 8080)]
 "let g:disp_args = ['--port', get(g:, 'LMSH_PORT', 8080), '--no-pad-start']   " open the pad on first use only
 "let g:disp_args = ['--port', get(g:, 'LMSH_PORT', 8080), '--no-glance']      " no caption for each new image
 "let g:disp_memory = '~/echo-home/memory/gddr9b' " the memory disp and the pad share: maps, notes, traces, marks
+"let g:disp_args = ['--port', get(g:, 'LMSH_PORT', 8080), '--memgraph-uri', 'bolt://127.0.0.1:7687']  " memory graph
+"let g:disp_args = ['--port', get(g:, 'LMSH_PORT', 8080), '--no-memgraph']    " recall from gddr9b text only
+"let g:disp_args = ['--port', get(g:, 'LMSH_PORT', 8080), '--no-auto-load']   " never load an image by itself
 "let g:disp_pad_port = 7791                       " the pad's control socket (127.0.0.1)
-"let g:disp_map_panes = 2         " MAP sub-panes at most on the top row (one per image)
+"let g:disp_map_width = 0.55      " the top row: MAP's share (the image in focus), GRAPH takes the rest
 "let g:disp_bottom_height = 0.42  " DISP / LLM / IFACE row: rows, or a fraction of the screen
 "let g:disp_llm_width = 0.36      " LLM pane, fraction of the width (DISP takes the rest)
 "let g:disp_iface_width = 0.28    " IFACE pane (only while joined)
@@ -42,18 +45,24 @@ map dispq : DispQuit<CR>
 "- disp1 loads and starts disp (with the inet driver, registering 'disp'), opens DISPAD and the disp TAB; pressed again
 "  while disp runs, it goes to the tab. dispi / dispk: to the disp tab, or back to your tab when you are in it (q too).
 "  After dispq, disp1 reloads disp fresh (the pad keeps running).
-"- The tab: on top, MAP sub-panes, one per image, titled " 3fa2 " " #3 " (the first 4 hex of its sha256 in the badge,
-"  its number on a dark plate; the pad names images 3fa2#3 too); the image in focus on the pad has the orange badge,
-"  the others aqua; at most g:disp_map_panes (2), the
-"  least recently used one gives way. Below: DISP (actions and chat, your input on its last line) · LLM (raw LLM output
-"  and what the eye sees) · IFACE (the network, only while joined). dispm / :DispMap [n] puts image #n in a MAP pane.
+"- The tab: on top, MAP (left) is the image in focus — titled " 3fa2 " " #3 " (the first 4 hex of its sha256 in the
+"  badge, its number on a dark plate; the pad names images 3fa2#3 too) — and GRAPH (right) is the memory graph queried
+"  with that image as root and the current request as context. Both follow the focus: a click on the pad's strip, an
+"  image disp loads. Below: DISP (actions and chat, your input on its last line) · LLM (raw LLM output and what the
+"  eye sees) · IFACE (the network, only while joined). dispm / :DispMap [n] brings image #n into focus.
+"- GRAPH: the image's concepts ([storage] 1.20 …), its own knowledge (questions, findings, looks), and the memories
+"  the graph associates with it — activation spreading from it (and from what the request is about), each with the
+"  path that links it (0e3f#3 —about 1.20— [storage] —about 0.80— 6594#5). It is part of each request's context
+"  ([GRAPH]). When it reaches memories it had not reached before, it is kept as knowledge of the image (notes.yaml
+"  associations: KEPT ASSOCIATIONS at its end, ⇄ in DISP), searchable by recall. <CR> on an image key brings that
+"  image into focus, r recomputes.
 "- The MAP of an image: identity (names, paths, seen N×), caption and summary, the TREE (elements nested by
 "  containment, in reading order: e5 button "Save" [x,y w×h] ■colour; ≈[...] = the eye's estimate, [...] = snapped to
 "  the pixels, exact), TEXT blocks (lines that read together vs labels standing apart), SENTENCES, GROUPS, RELATIONS
 "  (left-of / above / overlaps / names / labels from geometry; points to / part of / describes … from the LLM), the
 "  flat INVENTORY as found, NOTES (questions answered, findings) and the TRACE of what you did on the pad.
 "  In a MAP pane: <CR> on an element shows it on the pad (selected, zoomed) · m boxes it there · M maps the image again
-"  · gr the pad's grid layer on/off · r redraws · X closes the pane. Touching a pixel on the pad highlights the element
+"  · gr the pad's grid layer on/off · r redraws. Touching a pixel on the pad highlights the element
 "  under it in the MAP.
 "- The grid layer on DISPAD (G there, gr in a MAP pane, ===G in DISP): the map drawn over the image — a dot per
 "  perceived component where it was found (● elements e5 coloured by type, ◆ text blocks b2, with their ids), lines for
@@ -70,6 +79,26 @@ map dispq : DispQuit<CR>
 "- Images in: dispo on a path in the text (markdown links too), a netrw entry or an image buffer (:DispOpen <path>);
 "  dispp or ===p pastes the clipboard (screenshots: ⌘⇧⌃4 then dispp); on the pad: Open…, ⌘V, or drop files on it.
 "  ===i lists the images, ===f <n> / :DispFocus <n> brings one to the front. New images get a glance (a caption).
+"- Memory and recall: disp remembers every image it has seen and everything learnt about it — its map, questions
+"  answered, findings, deep looks (what the eye was asked and saw) — in gddr9b, and the associations between them in
+"  the memory graph (Memgraph, bolt://127.0.0.1:7687, shared with memphia; disp's own nodes: :DispMemory). Each request
+"  gets [RECALL], just in time and without the LLM: the best few memories from gddr9b's text (BM25) and the graph (its
+"  text index + activation spreading from the hits and the image in focus), fused. ===s <words> searches by hand; the
+"  agent's recall action searches deeper. "🧠 off" in the DISP header: no graph, recall from text only.
+"  The images a recall brings up come onto DISPAD's strip (the focus stays), tagged with their R numbers (R1 R3) as in
+"  the [RECALL] / ===s lines and outlined in violet; click one to look at it. A new recall replaces the tags.
+"  disp also loads the image a request is about by itself ("🧠 loaded … best match"): with nothing in view, the best
+"  match; with an image in view, only when another matches far better and the request does not point at the one in view
+"  ("this", "here", "the image"), names one (#3, 3fa2#3, a path) or comes from the pad with picks. The loaded image is in
+"  focus: its map is in the request's context, its MAP pane shows. Off: '--no-auto-load' in g:disp_args.
+"  Synapses: when an image is mapped, a question answered or a deep look done, the new memory is written to the graph
+"  with its concepts, then random walks from it over the neighbourhood link it to the memories they keep reaching that
+"  share words with it (or strengthen the link); an answer is also wired to the memories it was built on (co-recall).
+"- disp loads no image at startup: DISPAD's strip shows this session's images only, empty at first. Every image ever
+"  loaded keeps its number (#n, also in recall: e028#1) and comes back onto the strip, with its map, notes, marks and
+"  trace, when opened again (or ===f <n>). ===i lists this session's images, ===i all every one known.
+"  ==== resets the context: earlier requests, touches and queued requests forgotten, the strip emptied, the MAP panes
+"  cleared (memory kept).
 "- Ask in DISP about the image in focus: "what is this?", "which buttons are in the toolbar?", "read the text", "where
 "  is the error message? mark it", "zoom on the legend", "crop the chart", "compare #2 and #3", "put the text of this
 "  screenshot in a new buffer". disp answers from the MAP first (map_find / map_element; marks, zooms and crops take
@@ -82,7 +111,8 @@ map dispq : DispQuit<CR>
 "- Vim hands: insert_text into a new buffer needs no approval; into your buffer, Ex/Lua actions and save_image ask
 "  y/n/a (===a in the chat, or autopilot.yaml disp: allow: yes, skips the question).
 "- Tab keys: <CR> send · <C-c> cancel · <Tab> next pane · <S-Tab> previous · i input · q back to your tab · ===h help ·
-"  ===a auto-approve · ===g glance on/off · ===r show the pad · ===q close the pad.
+"  ===a auto-approve · ===g glance on/off · ===r show the pad · ===q close the pad · ===s <words> search memory ·
+"  ==== reset the context.
 "- Intelligence Network: dispj joins echo-net as @disp (g:inet_agents.disp in vimpage_inet, optional). Agents can
 "  then ask "@disp show /tmp/plot.png to the user and tell me what it shows". ===nj/===nl/===ns <text> by hand.
 "- Shell, no Vim: disppad [--port 7791] [image ...] opens images on the running pad (or starts it); its socket speaks

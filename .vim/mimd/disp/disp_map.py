@@ -55,13 +55,17 @@ catalog.jsonl                    the pad's strip: one line per load (sha, path, 
         map.yaml                 the map: elements (flat list: id, type, label, box [x,y,w,h], colours, parent,
                                  words), text blocks, relations (geometric + semantic), groups, kind, summary,
                                  looks (the regions the eye was shown)                                         (disp)
-        notes.yaml               qa (every question answered on it) and findings                               (disp)
+        notes.yaml               qa (every question answered on it), findings, looks (what the eye was asked
+                                 and saw in deep looks), associations (what the memory graph linked it with,
+                                 kept each time that changed)                                                  (disp)
         trace.jsonl              the user's interactions on the pad: touch, select, mark, unmark, ask, view, crop,
                                  pick, grid                                                                    (disp)
         marks.json               the marks drawn on it                                                          (pad)
         image.png                only for an image with no file of its own: a paste or a crop                  (pad)
 ```
 
+Times are UTC, ISO 8601 with Z (2026-11-25T06:40:12Z); times written before that (no zone) were local time and are
+converted to UTC the first time an image's memory is loaded.
 The map is built in stages (inventory → detail → pixels → structure → relations), see disp_map.py. A box snapped
 to the pixels is exact (`snapped: true`); the others are the eye's estimate (`eye_box` keeps the eye's own when snapped).
 Element ids (e1, e2 …) are stable for an image; e0 is the image itself. Words of a text line: e7.w2. Text blocks: b1 …
@@ -103,7 +107,8 @@ RELATIONS_Q = (
     ' "relations": [{{"a": "e3", "rel": "<labels|describes|points to|part of|controls|same as|next to|contains>", '
     '"b": "e7"}}],\n'
     ' "sentences": [{{"ids": ["e4", "e5"], "text": "<separate words or lines that read together>"}}],\n'
-    ' "missing": ["<visible things the list misses>"]}}\n'
+    ' "missing": ["<visible things the list misses>"],\n'
+    ' "topics": ["<3-6 short topics or named things the image is about>"]}}\n'
     "Use only ids from the list. At most 12 groups, 25 relations, 10 sentences.")
 
 
@@ -142,6 +147,44 @@ def hov(a, b) -> float:
 def fmt_box(b, exact=True) -> str:
     """[x,y w×h]; ≈[...] for a box the eye estimated (not snapped to the pixels)."""
     return f"{'' if exact else '≈'}[{round(b[0])},{round(b[1])} {round(b[2])}×{round(b[3])}]"
+
+
+def utc_now(seconds: bool = True) -> str:
+    """Now, as every time is stored: UTC, ISO 8601 with Z (2026-11-25T06:40:12Z)."""
+    return time.strftime("%Y-%m-%dT%H:%M:%SZ" if seconds else "%Y-%m-%dT%H:%MZ", time.gmtime())
+
+
+_NAIVE = re.compile(r"^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2})(:\d{2})?$")
+
+
+def to_utc(ts):
+    """A stored time in UTC (…Z). A time without a zone is how disp wrote before UTC: this machine's local time,
+    converted (daylight saving included); epoch seconds too. UTC times, dates and anything else stay as they are."""
+    if ts is None or isinstance(ts, bool):
+        return ts
+    if isinstance(ts, (int, float)):
+        return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(float(ts)))
+    s = str(ts).strip()
+    m = _NAIVE.match(s)
+    if not m:
+        return ts
+    secs = m.group(3) or ""
+    t = time.mktime(time.strptime(f"{m.group(1)} {m.group(2)}{secs or ':00'}", "%Y-%m-%d %H:%M:%S"))
+    return time.strftime("%Y-%m-%dT%H:%M" + (":%S" if secs else "") + "Z", time.gmtime(t))
+
+
+def when(ts) -> str:
+    """A stored time as it is shown everywhere (panes, recall lines, the LLM's context): YYYY-MM-DD HH:MMZ, in UTC,
+    the year always — so a memory from another year, or written in another time zone, is placed right."""
+    try:
+        s = str(to_utc(float(ts)) if isinstance(ts, (int, float)) or re.fullmatch(r"\d{9,}(\.\d+)?", str(ts or ""))
+                else to_utc(ts) or "").strip()
+    except ValueError:
+        s = str(ts or "").strip()
+    m = re.match(r"^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2})(:\d{2})?Z$", s)
+    if m:
+        return f"{m.group(1)} {m.group(2)}Z"
+    return s[:16] or "?"
 
 
 def clip(s, n: int = 120) -> str:
@@ -225,8 +268,14 @@ class Mem:
         self.meta = self._load("meta.yaml") or {"sha": sha, "first4": sha[:4]}
         self.map = self._load("map.yaml") or {}
         self.notes = self._load("notes.yaml") or {}
+        self._utc_trace()
         self.trace = self._trace_tail(400)
         self.status = ""  # mapping progress, not saved
+        if self._utc_all():  # written before UTC: converted once, saved
+            try:
+                self.save()
+            except OSError:
+                pass
         for name in ("meta.yaml.tmp", "map.yaml.tmp", "notes.yaml.tmp"):  # a save cut short by an exit
             try:
                 os.remove(os.path.join(self.dir, name))
@@ -240,6 +289,52 @@ class Mem:
                 return v if isinstance(v, dict) else None
         except (OSError, yaml.YAMLError):
             return None
+
+    def _utc_all(self) -> bool:
+        """Every time in meta / map / notes in UTC (…Z): the ones from before UTC were local time. True: something changed."""
+        changed = False
+
+        def fix(d, k):
+            nonlocal changed
+            if isinstance(d, dict) and d.get(k) is not None:
+                v = to_utc(d[k])
+                if v != d[k]:
+                    d[k] = v
+                    changed = True
+        for k in ("first_seen", "last_seen"):
+            fix(self.meta, k)
+        fix(self.meta.get("map"), "updated")
+        fix(self.meta.get("trace"), "last")
+        fix(self.map, "updated")
+        for lst in ("qa", "findings", "looks", "associations"):
+            for item in self.notes.get(lst) or []:
+                fix(item, "ts")
+        return changed
+
+    def _utc_trace(self):
+        """trace.jsonl in UTC: rewritten once when lines from before UTC (local time) are in it."""
+        p = os.path.join(self.dir, "trace.jsonl")
+        try:
+            with open(p, encoding="utf-8") as f:
+                lines = f.readlines()
+        except OSError:
+            return
+        out, changed = [], False
+        for l in lines:
+            try:
+                ev = json.loads(l)
+            except ValueError:
+                out.append(l)
+                continue
+            v = to_utc(ev.get("ts"))
+            if v != ev.get("ts"):
+                ev["ts"], changed = v, True
+            out.append(json.dumps(ev, ensure_ascii=False) + "\n")
+        if changed:
+            tmp = p + ".tmp"
+            with open(tmp, "w", encoding="utf-8") as f:
+                f.writelines(out)
+            os.replace(tmp, p)
 
     def _trace_tail(self, n):
         try:
@@ -266,7 +361,7 @@ class Mem:
                 os.replace(tmp, os.path.join(self.dir, name))
 
     def add_trace(self, ev: dict):
-        ev = dict(ev, ts=ev.get("ts") or time.strftime("%Y-%m-%dT%H:%M:%S"))
+        ev = dict(ev, ts=ev.get("ts") or utc_now())
         with self.lock:
             os.makedirs(self.dir, exist_ok=True)
             with open(os.path.join(self.dir, "trace.jsonl"), "a", encoding="utf-8") as f:
@@ -282,7 +377,7 @@ class Mem:
         """Identity bookkeeping each time the pad shows this content."""
         with self.lock:
             m = self.meta
-            now = time.strftime("%Y-%m-%dT%H:%M:%S")
+            now = utc_now()
             m.setdefault("sha", self.sha)
             m["first4"] = self.sha[:4]
             for k in ("w", "h"):
@@ -305,15 +400,44 @@ class Mem:
     def add_qa(self, q, a, by="user"):
         with self.lock:
             qa = self.notes.setdefault("qa", [])
-            qa.append({"q": clip(q, 400), "a": clip(a, 900), "by": by, "ts": time.strftime("%Y-%m-%dT%H:%M")})
+            qa.append({"q": clip(q, 400), "a": clip(a, 900), "by": by, "ts": utc_now(False)})
             self.notes["qa"] = qa[-40:]
             self.meta.setdefault("notes", {})["qa"] = len(self.notes["qa"])
             self.save("notes.yaml", "meta.yaml")
 
+    def add_look(self, q, a, kind="look", region=None):
+        """A deep look (look, read_text, locate, compare): what was asked of the eye and what it saw."""
+        with self.lock:
+            lk = self.notes.setdefault("looks", [])
+            lk.append({"q": clip(f"{kind}: {q}", 300), "a": clip(a, 900), "region": region,
+                       "ts": utc_now(False)})
+            self.notes["looks"] = lk[-40:]
+            self.meta.setdefault("notes", {})["looks"] = len(self.notes["looks"])
+            self.save("notes.yaml", "meta.yaml")
+            return self.notes["looks"][-1]
+
+    def add_association(self, related, context="", concepts=None):
+        """A graph view of the image kept as knowledge — only when its associated memories changed since the last one
+        kept (the relationships developed). Returns (entry, the memories new to it) or (None, [])."""
+        with self.lock:
+            hist = self.notes.setdefault("associations", [])
+            before = {r["mid"] for h in hist[-3:] for r in (h.get("related") or [])}
+            # kept only when a memory shows up that the last entries did not have: the relationships grew (a reshuffle
+            # of the same memories, or some dropping out of the top, is not new knowledge)
+            if not related or not [r for r in related if r["mid"] not in before]:
+                return None, []
+            entry = {"ts": utc_now(False), "context": clip(context, 200),
+                     "concepts": list(concepts or [])[:8], "related": related[:8]}
+            hist.append(entry)
+            self.notes["associations"] = hist[-20:]
+            self.meta.setdefault("notes", {})["associations"] = len(self.notes["associations"])
+            self.save("notes.yaml", "meta.yaml")
+            return entry, [r for r in related if r["mid"] not in before]
+
     def add_finding(self, text, ids=None, by="disp"):
         with self.lock:
             f = self.notes.setdefault("findings", [])
-            f.append({"text": clip(text, 600), "ids": ids or [], "by": by, "ts": time.strftime("%Y-%m-%dT%H:%M")})
+            f.append({"text": clip(text, 600), "ids": ids or [], "by": by, "ts": utc_now(False)})
             self.notes["findings"] = f[-60:]
             self.meta.setdefault("notes", {})["findings"] = len(self.notes["findings"])
             self.save("notes.yaml", "meta.yaml")
@@ -506,7 +630,7 @@ class Mapper:
             with mem.lock:
                 if name not in mem.map["stages"]:
                     mem.map["stages"].append(name)
-                mem.map["updated"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+                mem.map["updated"] = utc_now()
                 mem.meta["map"] = {"elements": len(mem.elements()), "relations": len(mem.map.get("relations") or []),
                                    "stages": list(mem.map["stages"]), "updated": mem.map["updated"]}
                 mem.save("map.yaml", "meta.yaml")
@@ -678,6 +802,7 @@ class Mapper:
             m["sentences"] = [{"ids": [i for i in s.get("ids") or [] if i in ids], "text": clip(s.get("text"), 300)}
                               for s in d.get("sentences") or [] if isinstance(s, dict) and s.get("text")][:10]
             m["missing"] = [clip(x, 120) for x in d.get("missing") or [] if isinstance(x, str)][:10]
+            m["topics"] = [clip(x, 40) for x in d.get("topics") or [] if isinstance(x, str)][:6]
             if m.get("summary"):
                 mem.meta["summary"] = m["summary"]
             if m.get("kind"):
@@ -874,7 +999,7 @@ TRACE_ICON = {"click": "👆", "select": "▭", "mark": "✏", "unmark": "⌫", 
 
 
 def trace_line(ev: dict) -> str:
-    t = str(ev.get("ts") or "")[5:16].replace("T", " ")
+    t = when(ev.get("ts"))
     k = ev.get("ev")
     s = f"{t} {TRACE_ICON.get(k, '·')} {k}"
     if k == "click":
@@ -904,8 +1029,7 @@ def render(mem: Mem, info: dict, busy: str = "") -> List[str]:
     me, m = mem.meta, mem.map
     W, H = info.get("w") or me.get("w") or 0, info.get("h") or me.get("h") or 0
     out = [f"{mem.sha[:4]}#{info.get('n', '?')} {info.get('name') or (me.get('names') or ['?'])[-1]} · {W}×{H}"
-           f" · seen {me.get('opens') or 1}× · first {str(me.get('first_seen') or '')[:16].replace('T', ' ')}"
-           f" · last {str(me.get('last_seen') or '')[:16].replace('T', ' ')}"]
+           f" · seen {me.get('opens') or 1}× · first {when(me.get('first_seen'))} · last {when(me.get('last_seen'))}"]
     for p in (me.get("paths") or [])[-2:]:
         out.append(f"path: {p}")
     if busy:
@@ -961,9 +1085,9 @@ def render(mem: Mem, info: dict, busy: str = "") -> List[str]:
     if notes.get("findings") or notes.get("qa"):
         out += ["", "NOTES"]
         for f in (notes.get("findings") or [])[-10:]:
-            out.append(f"K {str(f.get('ts'))[5:16].replace('T', ' ')} {f.get('text')}" + (f" ({' '.join(f['ids'])})" if f.get("ids") else ""))
+            out.append(f"K {when(f.get('ts'))} {f.get('text')}" + (f" ({' '.join(f['ids'])})" if f.get("ids") else ""))
         for q in (notes.get("qa") or [])[-10:]:
-            out.append(f"Q {str(q.get('ts'))[5:16].replace('T', ' ')} {clip(q.get('q'), 100)} → {clip(q.get('a'), 160)}")
+            out.append(f"Q {when(q.get('ts'))} {clip(q.get('q'), 100)} → {clip(q.get('a'), 160)}")
     if mem.trace:
         total = (me.get("trace") or {}).get("events") or len(mem.trace)
         out += ["", f"TRACE (what you did on the pad; latest {min(20, len(mem.trace))} of {total})"]

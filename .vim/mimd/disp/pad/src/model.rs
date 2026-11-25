@@ -5,7 +5,10 @@
 //! every load and every read, and names the image's folder in disp's memory (home = ~/echo-home/memory/gddr9b, where
 //! disp keeps meta.yaml, map.yaml, notes.yaml, trace.jsonl). The pad writes there only:
 //!   <home>/catalog.jsonl                     one line per load: sha, path, name, source, size, mtime, w, h, ext, ts
-//!                                            (the strip, in the order first loaded; the last line of a sha wins)
+//!                                            (every image ever loaded, numbered #1, #2 … in the order first loaded;
+//!                                            the last line of a sha says where it is now)
+//! The strip shows this session's images only (empty at startup; the `clear` op empties it again): an image comes into
+//! it when it is loaded or focused, keeping its number for good.
 //!   <home>/<d1>/<d2>/<d3d4>/<sha256>/marks.json   the marks drawn on the image
 //!   <home>/<d1>/<d2>/<d3d4>/<sha256>/image.png    only for an image with no file of its own (clipboard, crop)
 //! Thumbnails are made in memory; what the vision model is shown is cut on demand and sent inline: nothing derived
@@ -184,6 +187,12 @@ impl Tool {
 pub struct Model {
     pub home: PathBuf,
     pub imgs: Vec<Img>,
+    /// this session's images (indexes into imgs), in the order they came into the strip
+    pub shown: Vec<usize>,
+    /// images the last recall brought up (index -> the R numbers of its memories): tagged on the strip
+    pub recalled: HashMap<usize, Vec<u32>>,
+    /// a strip position to bring into view (set by a recall), taken by the window
+    pub strip_to: Option<usize>,
     by_sha: HashMap<String, usize>,
     pub focus: Option<usize>,
     pixels: HashMap<String, Arc<RgbaImage>>,
@@ -257,6 +266,9 @@ impl Model {
         let mut m = Model {
             home,
             imgs: vec![],
+            shown: vec![],
+            recalled: HashMap::new(),
+            strip_to: None,
             by_sha: HashMap::new(),
             focus: None,
             pixels: HashMap::new(),
@@ -557,7 +569,7 @@ impl Model {
             }
         }
         if let Ok(img) = cb.get_image() {
-            let stamp = chrono::Local::now().format("%Y%m%d-%H%M%S");
+            let stamp = chrono::Utc::now().format("%Y%m%d-%H%M%SZ"); // UTC, as every time in disp's memory
             return self.load_rgba(img.width as u32, img.height as u32, img.bytes.into_owned(),
                 &format!("clip-{}.png", stamp), "clipboard", None);
         }
@@ -578,7 +590,47 @@ impl Model {
             self.fit = true;
             self.picks.clear();
         }
+        if !self.shown.contains(&i) {
+            self.shown.push(i); // focused = loaded in this session: on the strip
+        }
         self.check(i);
+    }
+
+    /// A fresh session: the strip empties, nothing in focus (the catalog, marks and numbers stay).
+    pub fn clear_session(&mut self) -> usize {
+        let n = self.shown.len();
+        self.shown.clear();
+        self.focus = None;
+        self.sel = None;
+        self.picks.clear();
+        self.banner = None;
+        self.pixels.clear();
+        self.layers.clear();
+        self.recalled.clear();
+        self.strip_to = None;
+        n
+    }
+
+    /// Images a recall brought up: onto the strip (the focus stays where it is), tagged with their R numbers (the
+    /// previous recall's tags go). Returns (keys shown, what could not be found).
+    pub fn recall_onto_strip(&mut self, items: &[(Value, Vec<u32>)]) -> (Vec<String>, Vec<String>) {
+        self.recalled.clear();
+        let (mut shown, mut missing, mut first) = (vec![], vec![], None);
+        for (who, ranks) in items {
+            match self.resolve(Some(who)) {
+                Ok(i) => {
+                    if !self.shown.contains(&i) {
+                        self.shown.push(i);
+                    }
+                    first.get_or_insert(i);
+                    self.recalled.insert(i, ranks.clone());
+                    shown.push(self.imgs[i].key());
+                }
+                Err(_) => missing.push(who.as_str().map(|s| s[..s.len().min(8)].to_string()).unwrap_or_else(|| who.to_string())),
+            }
+        }
+        self.strip_to = first.and_then(|i| self.shown.iter().position(|&j| j == i));
+        (shown, missing)
     }
 
     pub fn add_ann(&mut self, i: usize, mut a: Ann) -> u32 {
@@ -901,7 +953,7 @@ impl Model {
             .focus
             .map(|i| self.imgs[i].anns.iter().map(|a| json!(a)).collect())
             .unwrap_or_default();
-        json!({"focus": focus, "count": self.imgs.len(), "zoom": self.zoom, "fit": self.fit,
+        json!({"focus": focus, "count": self.shown.len(), "known": self.imgs.len(), "zoom": self.zoom, "fit": self.fit,
                "visible": self.visible(), "selection": self.sel, "tool": self.tool.name(), "marks": marks,
                "port": self.port, "home": self.home.to_string_lossy(), "clients": self.clients,
                "grid": self.grid, "picks": self.picks,
