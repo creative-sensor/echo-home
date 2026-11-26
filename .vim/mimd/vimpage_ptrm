@@ -1,3 +1,141 @@
+"-------- [PTRM] port-remote agent: services of remote hosts at local ports --------
+" ptrm puts services that run on remote, high-performance hosts (LLM servers …) at ports of this machine and keeps them
+" there. The rows of the table (~/echo-home/.vim/pages/<hostname>.ptrm.md, else ptrm.md) map localhost:<LOCAL_PORT>
+" to <REMOTE_IP>:<REMOTE_PORT> through <SSH_HOST>; at start ptrm brings every row up, in the table's order, except
+" the disabled ones (LOCAL_PORT written ~~8090~~, or #8090 / 8090 disabled; X in DASH, ===off 8090): ptrm leaves those
+" alone — no bring-up, healing, incident or teach — though you can still open one by hand. Empty
+" cells: SSH_HOST → ptrm chooses a host from its inventory (the one that serves or knows how to start what NOTES says,
+" with the capacity, answering now; DASH shows ~host), REMOTE_IP → 127.0.0.1, REMOTE_PORT → LOCAL_PORT. NOTES says
+" what is expected there (llm/gemma-4 e2b q8): ptrm recalls from it the recipe or the procedure that brought it up
+" before. When nothing is recalled (or NOTES is vague, or it never started it on that host), ptrm opens a terminal
+" on the host in STATS ("teach"): you bring the service up there, ptrm records the commands and learns the recipe.
+" ptrm opens the ssh tunnels (detached: they outlive ptrm and Vim),
+" watches what answers behind them, heals a tunnel whose ssh dies, discovers what runs on a host (hardware, tools,
+" listening services, the command lines that started them = launch recipes), launches a missing service from its
+" recipe, troubleshoots, and manages the table itself. The hosts are not 24/7 servers (they sleep, reboot, move, lose
+" cables, get GPUs unplugged): when a row that was up fails, ptrm opens an INCIDENT — it diagnoses the layer that broke,
+" fixes what it can (tunnel, relaunch from the recipe) and asks you for REMOTE HANDS (power, wake, cable, Wi-Fi, login …)
+" with a checklist from the diagnosis, the host's profile and what you did last time; it rechecks until it is back.
+" Memory: ~/echo-home/memory/ptrm/<this machine's hostname>/ — one folder per client, so the memories of several
+"         machines merge (sync them with echo-home); ptrm reads the other folders too (hosts, recipes, procedures,
+"         runbooks, cases). An older flat memory/ptrm/ moves into the client folder at the first start. In it:
+"         events.jsonl (every open/close/state change/discovery/launch/incident, UTC) ·
+"         hosts/<host>.yaml (every host ever accessed: inventory, profiles, changes, risks, runbook, incidents) +
+"         hosts/<host>.inv.jsonl (every inventory that changed) · ports/<port>.yaml (every local port ever opened, its
+"         profiles: how it was brought up, why it failed, what fixed it) · cases.jsonl (incidents and requests:
+"         symptom → cause → fix; teach lessons) · run/ (tunnels, ssh logs, open incidents, chosen hosts, teach
+"         terminals); README.md in memory/ptrm.
+" Code: ~/echo-home/.vim/mimd/ptrm   Shell: python ~/echo-home/.vim/mimd/ptrm/ptrm_core.py status|check|open|close|
+"       tunnels|reach|discover|inventory|diagnose|profiles|cases|runbook|hosts|history|recall|note|listen
+let g:ptrm_python = 'python'
+let g:ptrm_args = ['--port', get(g:, 'LMSH_PORT', 8080)]
+"let g:ptrm_args = ['--port', 8081]                        " ptrm's own LLM behind one of its rows: opened at start
+"let g:ptrm_args = ['--port', get(g:, 'LMSH_PORT', 8080), '--interval', '10']  " look at the ports every 10 s (5)
+"let g:ptrm_args = ['--port', get(g:, 'LMSH_PORT', 8080), '--no-heal']        " never reopen a tunnel by itself
+"let g:ptrm_args = ['--port', get(g:, 'LMSH_PORT', 8080), '--no-incidents']   " no incidents / remote-hands requests
+"let g:ptrm_args = ['--port', get(g:, 'LMSH_PORT', 8080), '--inventory-age', '6']  " re-inventory hosts every 6 h (24)
+"let g:ptrm_args = ['--port', get(g:, 'LMSH_PORT', 8080), '--no-bringup']     " do not bring the table up at start
+"let g:ptrm_args = ['--port', get(g:, 'LMSH_PORT', 8080), '--no-think']       " no LLM thinking (faster turns)
+"let g:ptrm_table = '~/echo-home/.vim/pages/ptrm.md'      " default: <pages>/<g:hostname>.ptrm.md, else ptrm.md
+"let g:ptrm_memory = '~/echo-home/memory/ptrm'          " the base: this machine writes <base>/<hostname>/
+"let g:ptrm_stats = ['hosts']     " monitors opened at start ('hosts', the default: one on each host of the table once
+"                                 " ptrm reaches it): 'local', 'local:btop', 'user@host', 'user@host:nvtop', or
+"                                 " {'host': 'hostB', 'tool': 'watch -n 2 nvidia-smi'} (a command line of your own)
+"let g:ptrm_stats_rows = 2        " STATS panes per column (more columns beyond)
+"let g:ptrm_stats_max = 6
+"let g:ptrm_dash_width = 0.5      " the top row: DASH's share, the STATS grid takes the rest
+"let g:ptrm_term_height = 0.4     " the shells of t below DASH: a fraction of the top row, or rows
+"let g:ptrm_bottom_height = 16    " PTRM / LLM / IFACE row: rows, or a fraction (default: 38% of the screen less 2 lines)
+"let g:ptrm_llm_width = 0.34      " LLM pane, fraction of the width (PTRM takes the rest)
+"let g:ptrm_iface_width = 0.26    " IFACE pane (only while joined)
+"let g:ptrm_toggle_key = '<M-p>'  " go to the ptrm tab / back, from normal, insert and terminal mode
+
+
+map ptrm1 : silent source ~/echo-home/.vim/mimd/ptrm/ptrm.lua<CR>
+map ptrmi : Ptrm<CR>
+map ptrmk : PtrmToggle<CR>
+map ptrms : PtrmStats<CR>
+map ptrmj : InetJoin ptrm<CR>
+map ptrml : InetLeave ptrm<CR>
+map ptrmx : PtrmCancel<CR>
+map ptrmq : PtrmQuit<CR>
+
+"HELP:
+"- ptrm1 loads and starts ptrm (with the inet driver, registering 'ptrm') and opens the ptrm TAB; pressed again while
+"  ptrm runs, it goes to the tab. ptrmi / ptrmk: to the tab, or back to your tab when you are in it (q too).
+"  After ptrmq, ptrm1 reloads it fresh. The tunnels stay open when ptrm stops; it adopts them again at start.
+"- The tab: on top, DASH (left) is the table, live — PORT (dark green bold when up, struck through when disabled) ·
+"  STATE · HOST · REMOTE (its port dark orange bold when it is not the PORT) · SERVICE (▸ the model an llm/ row
+"  serves) · VIA (ssh pid; * = a tunnel opened elsewhere, a ptrmo terminal) · MS — then INCIDENTS (open ones), HOSTS
+"  (the hosts of the table and every host with an inventory, one line each: the name, ✔ last reached, then
+"  ' OS ' ' CPU ' ' MEM ' ' GPU ' in inverted colours against their values (cores, GB, VRAM GB), ' NET ' against the
+"  medium (eth, wifi), the network's name and the IP, each in its own colour, ' SVC ' against the number of services
+"  listening there (besides ssh), ⚠ risks; :hi PtrmInvName / PtrmInvLabel / PtrmInvVal / PtrmNetType / PtrmNetName /
+"  PtrmNetIP / PtrmSvcVal / PtrmPortUp / PtrmPortDiff / PtrmPortOff; ↳ what changed in the last 24 h) and RECENT
+"  (the last events). The table's buffer (e) gets the same PORT / REMOTE_PORT colours. SERVICE: ▸ the model an llm/
+"  row serves, ≠ when it is not the one NOTES asks for. STATS (right) is a grid of monitor terminals, at start one on
+"  each host of the table (htop, btop, nvtop, nvidia-smi … over ssh -t; S adds this machine), each buffer named
+"  <user>@<host>. Below: PTRM (actions and chat, your input on its last line) · LLM (the LLM output, its thinking
+"  first in dim italics after 💭, :hi PtrmThink; ===T or --no-think turns thinking off) · IFACE (the network, only
+"  while joined).
+"- States: ✅ up (answers; llm/ rows: the model) · ⏳ loading (HTTP 503) · 🟠 down (the tunnel works, nothing answers
+"  behind it: the service is down on the host) · ⌛ stalled · ❗ error · ❌ lost (ptrm keeps it open and its ssh died:
+"  healed with backoff) · ⚪ off · ⛔ busy (another local process holds the port) · 🏠 local · 🔀 other (a tunnel to
+"  another host/port, or one not in the table) · 🚫 disabled (the row or its host is disabled: ptrm leaves it alone).
+"- DASH keys: <CR> check the port (probe, who listens, the tunnel and its ssh log, memory; when it is not up: is the
+"  host reachable, does the service answer there) — on a HOSTS line: reach the host; on an INCIDENTS line: its
+"  diagnosis and checklist · D diagnose (the layer that broke, evidence, what ptrm can fix, the steps for you) ·
+"  B bring the row up (host choice, open, launch what NOTES recalls, else teach) · T teach (a terminal on the row's
+"  host: show ptrm how to start it; it learns from the commands once the service answers) ·
+"  X disable the row / enable it again (written ~~port~~ in the table; enabled again, ptrm brings it up; on a HOSTS
+"  line: the host) · Xh disable / enable the host of the line: ptrm stops using it — its rows are left alone (host
+"  struck through in DASH and the table), it is never chosen for an empty SSH_HOST (rows ptrm had put there move to
+"  another host), its tunnels kept by ptrm close; enabled again, its rows come up (kept in this machine's memory of
+"  the host; X waits 'timeoutlen' for the h; ===off/===on <host>, :PtrmDisableHost/:PtrmEnableHost [host]) ·
+"  o open · x close · R reopen · s stats of the row's host · S stats of this machine · t a terminal on the host (a
+"  shell split off DASH, below it, named <user>@<host>, ready to type in: <C-\><C-n> back, x closes it; t again goes
+"  back to it; g:ptrm_term_height; its
+"  header: ' TERM ' ' <username> ' ' <hostname> ' to the edge, :hi PtrmTermBadge / PtrmTermUser / PtrmTermHost) ·
+"  d discover the host (and take
+"  its inventory) · h history · a ask about the row · e edit the table · r refresh.
+"  STATS: x close the pane · R restart it · i type into it (<C-\><C-n> back).
+"  :PtrmCheck / :PtrmOpen / :PtrmClose / :PtrmReopen [port] work on the row under the cursor in the table too.
+"  :PtrmStats [host|local] [tool | a command line]  (ptrms: this machine).  :PtrmTerm [host|local]: a shell there.
+"- Ask in PTRM: "I need gemma 12B at 8081", "why is 8086 down?", "what runs on serpenti?", "move 8087 to hostC",
+"  "put the static server of serpenti (8099 there) at 8092", "show the GPU of hostB", "which host served gemma-4-26B
+"  last week?". ptrm checks, opens, discovers, launches from a recipe (bound to 127.0.0.1), edits the table and
+"  keeps what it learns (notes, cases, runbook). "why did 8081 fail yesterday?", "what changed on serpenti?". ssh runs
+"  keys-only (BatchMode): a password-only host needs
+"  ssh-copy-id, or the old ptrmo (a terminal).
+"- Host inventory (d, discovery; by itself every 24 h for a host whose tunnel works): hardware (GPUs + VRAM, also the
+"  ones once attached), OS + last boot, network (Wi-Fi/Ethernet, IPs, DHCP, route, DNS, network name, Private/Public),
+"  firewall (does it let ssh in here), disks, power (battery, sleep after idle, lid), sleep/wake/power-loss events,
+"  sshd (starts by itself?), account, keys — and how this machine reaches it (name resolved, host key, our key, the
+"  network this machine was on). Each distinct hardware·network·OS configuration is a profile (p1, p2 …): a host that
+"  moved or got a GPU unplugged gets a new one, and ptrm says what changed. Risks: what can take it away (sleeps after
+"  2 h idle, ssh allowed on Private networks only, disk nearly full …) with the fix.
+"- Incidents: a row ptrm keeps open (or that was up) goes down/lost/stalled → 🚨 #N → diagnosis (this machine's
+"  network · name resolution · host down/asleep · ssh blocked · sshd down · key refused · host key changed · service
+"  down · tunnel) → ptrm reopens the tunnel or relaunches the service (asks first, 5 min) → else 🖐 remote hands: a
+"  checklist in PTRM and a notification. Do the steps, then say what you did ("I woke it, the cable was loose") or
+"  ===d <text> (works without the LLM); it rechecks every 20 s anyway. When it is back: ✅, and the case is kept —
+"  what you did goes to the host's runbook and shows in the next checklist. ===i lists the open incidents, ===i x N
+"  closes one.
+"- Approvals: remote and local commands, launches, stops, docker changes, closing a tunnel opened elsewhere and editor
+"  actions ask y/n/a (===a in the chat, or autopilot.yaml ptrm: allow: yes, skips the question). Opening, closing
+"  its own tunnels, probing, discovering and editing the table do not ask.
+"- PTRM commands: ===r refresh · ===H healing on/off · ===s <words> search memory · ===i incidents · ===d <what you
+"  did> · ===b [port] bring up (all rows) · ===t teach terminals (===t <port> open, ===t x <port> close) ·
+"  ===off <port> disable a row · ===on <port> enable it · ===T LLM thinking on/off ·
+"  ==== reset the context · ===x cancel · ===h help.  :PtrmBringup / :PtrmTeach / :PtrmDisable / :PtrmEnable [port]
+"  from the table too.
+"- Intelligence Network: ptrmj joins echo-net as @ptrm (g:inet_agents.ptrm in vimpage_inet, optional). Agents can
+"  then ask "@ptrm I need an LLM at localhost:8086" or "@ptrm is 8081 up?". ===nj/===nl/===ns <text> by hand.
+"- Without the agent: ptrm opens the table, ptrmo opens the row's tunnel in a terminal, ptrmc appends ✅/❌ (they
+"  read a plain LOCAL_PORT: not on a ~~disabled~~ row).
+
+
+"-------- the table without the agent (ptrm · ptrmo · ptrmc) --------
 " Function to extract data from the current line in the table and invoke port-remote
 function! PortRemoteFromTable()
     " Get the current line
