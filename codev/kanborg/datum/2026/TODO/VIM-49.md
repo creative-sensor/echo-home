@@ -1,4 +1,4 @@
-# vimpage_disp: rusty DISPAD 
+# gml8: llm init
 --------------------------------
 ### 0 DESCRIPTION
 
@@ -18,5 +18,5 @@
 
 --------------------------------
 ```json
-{ "project_code": "VIM" , "links": "" , "location": "" , "fpoint": "" }
+{"project_code": "VIM", "links": "", "location": "", "fpoint": ""}
 ```
