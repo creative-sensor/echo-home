@@ -1,9 +1,119 @@
+"-------- [GML8] the operator of this machine's llama.cpp LLM services --------
+" gml8 runs the entries of the inventory (gml.<hostname>.yson) as llama-servers, keeps them, and provides them to the
+" agent shells (mksk …) through a discovery bus. It is an agent shell itself, powered by the first service that answers.
+" Code: ~/echo-home/.vim/mimd/gmlama (gml8.lua · gml8.py · gml8_core.py · gml8_iface.py · gml8bus.lua)
+" Memory: ~/echo-home/memory/gml8/<hostname>/ — events.jsonl, entries.json, run/runs.json, run/services.json (the
+"         registry other agents read), logs/<entry>-<port>-<UTC>.log, gguf.json, inventory.bak/ (before each write)
+" Shell: python ~/echo-home/.vim/mimd/gmlama/gml8_core.py status|entries|entry <ref>|merge [--dry]|launch <ref>|
+"        stop <ref|port>|logs <ref>|diagnose <ref>|services|discover [--vision] [--port-only]|gguf <file>|hw|history
 let g:GML_PROFILE = "~/echo-home/workstation/lmstudio/gmlama/.properd/gml.".g:hostname.".yson"
+let g:gml8_python = 'python'
+let g:gml8_args = []
+"let g:gml8_args = ['--llm', '8080']          " the service that powers gml8: a port, #line or @name (default: the first up)
+"let g:gml8_args = ['--no-think']             " gml8's LLM answers without thinking (faster turns; ===T toggles)
+"let g:gml8_args = ['--no-heal']              " never relaunch a service that died after it was up
+"let g:gml8_args = ['--no-troubleshoot']      " no LLM diagnosis of a crash by itself
+"let g:gml8_args = ['--no-merge']             " do not merge the series into the inventory at start
+"let g:gml8_args = ['--interval', '5']        " look at the services every 5 s (3)
+"let g:gml8_inv_width = 0.5        " INVENTORY's share of the top row (MODEL IDX · STAGE · LOG take the rest)
+"let g:gml8_bottom_height = 0.34   " GML8 / LLM / IFACE row: rows, or a fraction of the screen
+"let g:gml8_log_height = 0.42      " the LOG pane: a fraction of the right column, or rows
+"let g:gml8_toggle_key = '<M-g>'   " go to the gml8 tab / back, from normal, insert and terminal mode
+lua pcall(dofile, vim.fn.expand('~/echo-home/.vim/mimd/gmlama/gml8bus.lua'))
 
+function! Gml8Load()
+  if luaeval('package.loaded.gml8 == nil')
+    let g:gml8_no_autostart = 1
+    silent source ~/echo-home/.vim/mimd/gmlama/gml8.lua
+    unlet g:gml8_no_autostart
+  endif
+endfunction
+
+map gml81 : silent source ~/echo-home/.vim/mimd/gmlama/gml8.lua<CR>
+map gml8w : call Gml8Load()<CR>:Gml8Launch<CR>
+map gml8r : call Gml8Load()<CR>:Gml8Relaunch<CR>
+map gml8c : call Gml8Load()<CR>:Gml8Commit<CR>
+map gml8k : call Gml8Load()<CR>:Gml8Toggle<CR>
+map gml8j : call Gml8Load()<CR>:InetJoin gml8<CR>
+map gml8l : InetLeave gml8<CR>
+map gml8q : Gml8Quit<CR>
+
+"HELP:
+"- gml8e opens the inventory in a new tab, as always (ft yaml), with line numbers, after merging the series into it.
+"  gml81 starts gml8 and opens its tab; pressed again it goes to the tab (gml8k: there / back). Both merge the series
+"  (.properd/artefact-series.gml) into the inventory: line N of the series is reserved line N of the inventory; a
+"  series line without an entry gets the placeholder '<model>: []' (a new series line: a new reserved line, before
+"  the first ---- SECTION ---- line). The inventory is backed up first (memory inventory.bak/); with unsaved changes
+"  in its buffer, gml8e leaves it alone.
+"- The inventory: <model>: ["<ACCEL>/<profile>", "<llama-server params>", "<llama.cpp version>", "<gpu device>"]
+"  RESERVED lines (up to the first ---- SECTION ---- line) are slots, addressed by line number (gml8w 11, #11): their
+"  params are open — gml8 adapts them to this machine when it launches them (a free --port when theirs is taken or
+"  missing; a placeholder gets GPU/ when the GPU build sees a GPU and -c 8192) and writes that back to the line.
+"  NAMED entries (---- NAMED ---- … ---- NAMED.end ----) are your recipes, addressed by profile name (@MBG4_MMDI_disp):
+"  launched as written, never adapted. A 5th element sets up complex launches:
+"    {env: {K: V}, script: <name|path>, pre: <shell>, post: <shell>, port: N, wait: <secs>}
+"  script: an executable (.function/named/<name>, or a path) run instead of llama-server, with GML8_BIN, GML8_MODEL,
+"  GML8_PARAMS, GML8_DEV, GML8_PORT, GML8_LOG, GML8_KEY, GML8_NAME, GML8_CWD set; it must keep running while the
+"  service runs (exec llama-server at its end). ["MEGALOADER"] alone runs .function/named/MEGALOADER when it exists.
+"- The tab: INVENTORY (the file itself, line numbers on; its header: the file name, [+] while unsaved, and ⚡n, the
+"  services gml8 launched that run; each entry's state at the window's right edge, on a dark
+"  chip with a bright text: PORT 8090 only on the entry gml8 launched, once it is up (the port in the same colours
+"  inverted; another entry with the same port and a server started outside gml8 get no mark) · FILE 404, faint
+"  (the model file is not on this machine) · 💥 crashed · ≠ series #N; ◌ placeholder after the text; in the sign
+"  column ▶ launched, ⚡ powers gml8) · MODEL IDX (the
+"  entry under the cursor, in depth: the GGUF — arch, size, quant, layers, heads, context, SWA, vocab, template,
+"  vision projector — the params by kind, the build and its devices, capacity: weights + KV cache + compute against
+"  the free GPU memory and RAM, the run, its speed, history) · STAGE (only after ss in MODEL IDX, q closes it: the
+"  entry as fields, edit them, MODEL IDX re-measures as you type; nothing is written until C) · LOG (tail -F of the
+"  server's output, while the entry runs or after it failed) · GML8 (actions and chat, your input on its last line) ·
+"  LLM (gml8's own LLM: its reasoning 💭 and its answers) · IFACE (the network, while joined).
+"- gml8w launches the entry under the cursor (in the inventory, anywhere), gml8r relaunches it, gml8c commits its
+"  STAGE. In MODEL IDX: L launch (the STAGE when it differs) · R relaunch · x stop · C commit · u reset the STAGE ·
+"  ss show the STAGE and edit it · e the entry's line · l LOG on/off · y yank the command · a ask about it ·
+"  r refresh · m merge.
+"  :Gml8Launch / :Gml8Relaunch / :Gml8Stop / :Gml8Commit [ref] — ref: 11, #11, @name, part of a model name, a port.
+"- Every launch is tracked (pid, port, log) and probed through the OpenAI API (/v1/models) every 3 s: 🚀 launching ·
+"  ⏳ loading · ✅ up · ⌛ stalled · 💥 crashed · ❌ failed · ⏹ stopped; llama-servers started elsewhere are found
+"  and shown too (🔀 outside gml8). A failure is diagnosed from its log (port taken, out of memory, a flag this build
+"  does not know, the model file, the projector, the device, the build) with the fix; a service that dies after it
+"  was up is relaunched (3 times an hour at most, --no-heal); the LLM is asked to troubleshoot (--no-troubleshoot).
+"- gml8q stops gml8, not the services: they run detached and gml8 adopts them at its next start.
+"- gml8 powers itself from the first chat service that is up (⚡ in GML8's header; ===L <ref|port> picks one). Ask in
+"  GML8: "bring up gemma E2B", "why did #11 crash?", "give #1 a 16k context", "what fits on the GPU?". Launches,
+"  relaunches, stops and commits it decides ask y/n/a (===a, or autopilot.yaml gml8: allow: yes).
+"  ===w <ref> launch · ===R <ref> relaunch · ===k <ref|port> stop · ===l services · ===m merge · ===hw hardware ·
+"  ===s <words> events · ===T thinking · ==== reset · ===x cancel · ===h help.
+"- The bus (gml8bus.lua, loaded with this page): agent shells find the services that are up. In Lua:
+"  package.loaded.gml8bus — .discover{vision=true} .port(want, default) .ensure(want, cb) (gml8 launches a matching
+"  entry when none runs) .subscribe(fn); autocmds User Gml8Ready / Gml8Gone / Gml8Services. In Vim script:
+"  Gml8Port() (the best chat service, else g:LMSH_PORT), :Gml8Services. An agent's args '--port', 'gml8' (or
+"  'gml8:vision', 'gml8:<name>') resolve through it (mksk does). Scripts: gml8_core.py discover --port-only.
+"- Intelligence Network: gml8j joins echo-net as @gml8 (g:inet_agents.gml8 in vimpage_inet, optional): "@gml8 which
+"  LLM can I use?", "@gml8 I need a model with vision". Unpowered, it answers with the services that run.
+
+
+"-------- without the agent (gml8e · gml8 · gml8s · gml8x) --------
+" gml8e: the series merged into the inventory first (what gml8 does at its start), then the inventory as always
+function! Gml8Merge()
+  let l:path = expand(g:GML_PROFILE)
+  let l:b = bufnr(l:path)
+  if l:b > 0 && getbufvar(l:b, '&modified')
+    echo 'gml8: the inventory has unsaved changes: the series is not merged'
+    return
+  endif
+  let l:out = system(get(g:, 'gml8_python', 'python') . ' ' . shellescape(expand('~/echo-home/.vim/mimd/gmlama/gml8_core.py'))
+        \ . ' merge --inventory ' . shellescape(l:path))
+  if l:b > 0 && bufloaded(l:b)
+    call setbufvar(l:b, '&autoread', 1)
+    exec 'checktime ' . l:b
+  endif
+  let l:lines = filter(split(l:out, "\n"), 'v:val !~ "^\\s*$"')
+  echo 'gml8: ' . (empty(l:lines) ? 'merge: no output' : l:lines[-1])
+endfunction
 
 map gml8s : vsplit<CR>:exec 'term ssh '.g:SSH_ALIAS gml8<CR>:set ft=markdown<CR>
-map gml8e : tabnew <C-R>=g:GML_PROFILE<CR><CR>:set ft=yaml<CR>
+map gml8e : call Gml8Merge()<CR>:tabnew <C-R>=g:GML_PROFILE<CR><CR>:set ft=yaml<CR>:setlocal number<CR>
 map gml8x : exec 'below term gml8 '.line('.')<CR>:set ft=markdown<CR>
-map gml8w : exec 'below term gml8w '.line('.')<CR>:normal G<CR>
+"map gml8w : exec 'below term gml8w '.line('.')<CR>:normal G<CR>                " before gml8 the agent
 map gml8 : vsplit<CR>:term gml8<CR>:set ft=markdown<CR>
 

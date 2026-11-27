@@ -1074,6 +1074,12 @@ local function normalize_args(args)
   if type(args) == "string" then args = vim.split(vim.trim(args), "%s+", { trimempty = true }) end
   local out = {}
   for _, a in ipairs(args or {}) do out[#out + 1] = tostring(a) end
+  -- "--port gml8" (or gml8:vision, gml8:<name>): the LLM service gml8 provides, found on its bus (gml8bus.lua);
+  -- none up: g:LMSH_PORT, else 8080
+  local ok, bus = pcall(function()
+    return package.loaded.gml8bus or dofile(fn.fnamemodify(SCRIPT_DIR, ":h") .. "/gmlama/gml8bus.lua")
+  end)
+  if ok and type(bus) == "table" and bus.resolve_args then out = bus.resolve_args(out, { by = "mksk" }) end
   return out
 end
 
