@@ -94,6 +94,12 @@ map gml8q : Gml8Quit<CR>
 "  LLM can I use?", "@gml8 I need a model with vision". Unpowered, it answers with the services that run.
 
 
+" the inventories and the series are saved with unix LF line ends, on Windows too (gml8 writes them that way)
+augroup Gml8UnixLF
+  autocmd!
+  autocmd BufWritePre */.properd/gml.*.yson,*/.properd/artefact-series.gml setlocal fileformat=unix
+augroup END
+
 "-------- without the agent (gml8e · gml8 · gml8s · gml8x) --------
 " gml8e: the series merged into the inventory first (what gml8 does at its start), then the inventory as always
 function! Gml8Merge()

@@ -226,6 +226,9 @@ local function inv_buf()
   vim.bo[b].buflisted = true
   if vim.bo[b].filetype == "" then vim.bo[b].filetype = "yaml" end
   vim.bo[b].autoread = true
+  -- the inventory is saved with unix LF line ends, on Windows too (as gml8 writes it)
+  api.nvim_create_autocmd("BufWritePre", { group = api.nvim_create_augroup("gml8_inv_lf", { clear = true }), buffer = b,
+    callback = function() vim.bo[b].fileformat = "unix" end })
   S.inv_buf = b
   M._inv_keys(b)
   return b

@@ -151,10 +151,26 @@ def winfix(s: str) -> str:
     return s.replace("\\", "/")
 
 
+def native_paths(s: str) -> str:
+    """Paths in params as this machine's llama-server reads them. On Windows gml8 (a native Python) starts
+    llama-server.exe itself, and nothing converts MSYS paths in its arguments there: C:\\x and /c/x -> C:/x
+    (backslashes too: the params are split as a shell would, which eats them). Elsewhere: gml8w's winfix."""
+    if not WINDOWS:
+        return winfix(s)
+    s = (s or "").replace("\\", "/")
+    return re.sub(r"(^|[\s=\"'])/([a-zA-Z])(?=/)", lambda m: m.group(1) + m.group(2).upper() + ":", s)
+
+
+def expand_params(s: str, missing: Optional[list] = None) -> str:
+    """An entry's params (or device) ready to launch: $VARs from the environment, paths native (native_paths)."""
+    return native_paths(envsubst(s or "", missing=missing))
+
+
 def atomic_write(path: str, text: str):
+    """Every file gml8 writes goes through here (or event()): utf-8, unix LF line ends — on Windows too."""
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
     tmp = f"{path}.tmp{os.getpid()}"
-    with open(tmp, "w", encoding="utf-8") as f:
+    with open(tmp, "w", encoding="utf-8", newline="\n") as f:
         f.write(text)
     os.replace(tmp, path)
 
@@ -1252,7 +1268,7 @@ class Memory:
         rec = {"at": utc_now(), "ev": ev}
         rec.update({k: v for k, v in kw.items() if v not in (None, "", [], {})})
         with self.lock:
-            with open(os.path.join(self.root, "events.jsonl"), "a", encoding="utf-8") as f:
+            with open(os.path.join(self.root, "events.jsonl"), "a", encoding="utf-8", newline="\n") as f:
                 f.write(json.dumps(rec, ensure_ascii=False) + "\n")
         return rec
 
@@ -1370,8 +1386,8 @@ def build_spec(entry: Entry, values: Optional[dict] = None, avoid_ports=(), adap
     accel = sp.profile.split("/", 1)[0].upper() if "/" in sp.profile else "CPU"
     pname = sp.profile.split("/", 1)[1] if "/" in sp.profile else sp.profile
     missing: List[str] = []
-    params = winfix(envsubst(v["params"] or "", missing=missing))
-    device = winfix(envsubst(v["device"] or "", missing=missing)).strip()
+    params = expand_params(v["params"], missing=missing)
+    device = expand_params(v["device"], missing=missing).strip()
     if not device and accel != "CPU" and os.environ.get("GML_DEV"):
         device = os.environ["GML_DEV"]
     sp.missing_vars = missing
@@ -1484,6 +1500,13 @@ def spawn(spec: Spec, log_path: str) -> subprocess.Popen:
     logf.write((f"# gml8 {utc_now()} launch {spec.key} :{spec.port}\n# $ {spec.shell()}\n").encode())
     if spec.env:
         logf.write(("# env " + " ".join(f"{k}={v}" for k, v in spec.env.items()) + "\n").encode())
+    slots = pget(parse_params(spec.params), "slotsave")  # llama-server refuses a --slot-save-path that is no directory
+    if slots and slots is not True and not os.path.isdir(str(slots)):
+        try:
+            os.makedirs(str(slots), exist_ok=True)
+            logf.write(f"# created the --slot-save-path directory {slots}\n".encode())
+        except OSError as ex:
+            logf.write(f"# could not create the --slot-save-path directory {slots}: {ex}\n".encode())
     if spec.pre:
         logf.write(f"# pre: {spec.pre}\n".encode())
         r = subprocess.run(spec.pre, shell=True, cwd=spec.cwd, env=env, stdout=logf, stderr=subprocess.STDOUT, timeout=300)
