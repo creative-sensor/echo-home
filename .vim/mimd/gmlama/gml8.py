@@ -42,7 +42,7 @@ import time
 from collections import deque
 from typing import List, Optional
 
-_PROTO = os.fdopen(os.dup(1), "w", encoding="utf-8", buffering=1)
+_PROTO = os.fdopen(os.dup(1), "w", encoding="utf-8", buffering=1, newline="\n")  # LF to Neovim, on Windows too
 os.dup2(2, 1)
 sys.stdout = sys.stderr
 
@@ -947,7 +947,7 @@ class Agent:
         elif f and f.get("error"):
             d.kv("gguf", ("✘ " + f["error"], "Gml8Bad"))
         mm = core.mmproj_near(sp.model_abs)
-        pairs = core.parse_params(core.winfix(core.envsubst(cur.params)))
+        pairs = core.parse_params(core.expand_params(cur.params))
         if mm:
             loaded = core.pget(pairs, "mmproj")
             d.kv("vision", (os.path.basename(mm[0][0]), "Gml8Val"), (f" ({gib(mm[0][1])})", "Gml8Dim"),
