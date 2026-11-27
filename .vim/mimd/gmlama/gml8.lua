@@ -310,6 +310,9 @@ local function joined() return net_state().joined == true end
 
 local function power_text()
   local p = S and S.state and S.state.power
+  if type(p) == "table" and p.external then -- ===Lf: a service gml8 does not run
+    return "⚡ ext " .. (p.host ~= "127.0.0.1" and tostring(p.host) or "") .. ":" .. tostring(p.port)
+  end
   if type(p) == "table" then return "⚡ " .. tostring(p.key) .. " :" .. tostring(p.port) end
   return "⚡ unpowered"
 end

@@ -1002,9 +1002,13 @@ def estimate(facts: Optional[dict], weights: int, pairs: List[list], accel: str,
 
 # ---------------------------------------------------------------- processes, ports, probes
 def port_free(port: int) -> bool:
+    """Can a llama-server listen on the port now? It binds with SO_REUSEADDR, so the connections a server that has just
+    stopped leaves in TIME_WAIT (~30 s on macOS; gml8's own probes make them) do not count — a live listener does."""
     for fam, addr in ((socket.AF_INET, "127.0.0.1"), (socket.AF_INET, "0.0.0.0")):
         s = socket.socket(fam, socket.SOCK_STREAM)
         try:
+            if not WINDOWS:  # on Windows SO_REUSEADDR would let the bind steal a port in use
+                s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             s.bind((addr, port))
         except OSError:
             return False
@@ -1029,6 +1033,16 @@ def port_holder(port: int) -> Optional[dict]:
     pid = re.search(r"^p(\d+)", out, re.M)
     cmd = re.search(r"^c(.+)", out, re.M)
     return {"pid": int(pid.group(1)), "cmd": cmd.group(1) if cmd else ""} if pid else None
+
+
+def wait_port_free(port: Optional[int], limit: float = 2.0) -> float:
+    """Wait (up to limit seconds) for a port a stopped service held to be free again; the seconds it took."""
+    t0 = time.time()
+    if not port:
+        return 0.0
+    while not port_free(int(port)) and time.time() - t0 < limit:
+        time.sleep(0.1)
+    return time.time() - t0
 
 
 def free_port(start: int = 8080, avoid=(), limit: int = 200) -> Optional[int]:

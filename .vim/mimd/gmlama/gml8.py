@@ -124,15 +124,17 @@ class LLM:
         self.client = None
         self.think = think
         self.label = ""
+        self.host = "127.0.0.1"
 
     @property
     def base(self):
-        return f"http://127.0.0.1:{self.port}/v1" if self.port else "(no service)"
+        return f"http://{self.host}:{self.port}/v1" if self.port else "(no service)"
 
-    def target(self, port: Optional[int], model: str = "", label: str = ""):
-        if port == self.port and self.client:
+    def target(self, port: Optional[int], model: str = "", label: str = "", host: str = "127.0.0.1"):
+        if port == self.port and host == self.host and self.client:
+            self.label = label or self.label
             return
-        self.port, self.model, self.label = port, (model or None), label
+        self.port, self.host, self.model, self.label = port, host, (model or None), label
         self.client = None
         if port:
             from openai import OpenAI
@@ -282,6 +284,7 @@ HELP_TEXT = """gml8 — the operator of this machine's llama.cpp services (and a
   <text>  a request: "bring up gemma E2B", "why did #11 crash?", "give #1 a 16k context", "what fits on the GPU?"
   ===w <ref> launch · ===R <ref> relaunch (with its STAGE) · ===k <ref|port> stop · ===l the services · ===m merge the series
   ===L [ref|port] power gml8 from that service (alone: back to automatic) · ===hw hardware again · ===r probe now
+  ===Lf <port|host:port> power gml8 from a service gml8 does not run (another launcher, a tunnel), touching no entry
   ===s <words> search events · ===a auto-approve · ===T LLM thinking on/off · ==== reset the context · ===x cancel
   ===n network   ===nj [name] [purpose] join   ===nl leave   ===ns <text> say   ===nw who
   <ref>: 11 / #11 (a reserved line) · @MBG4_MMDI_disp (a named entry) · part of a model file name
@@ -462,6 +465,7 @@ class Agent:
         self.ticks = 0
         self.power_id = None
         self.power_pref = args.llm or ""
+        self.power_force = None  # ===Lf: {"host", "port"} — an external service powers gml8, no entry or run involved
         self.power_waiting_said = False
         self.sel = None  # {"line", "key", "text", "modified"}
         self.stages = {}  # key -> STAGE text (what the user staged)
@@ -489,6 +493,10 @@ class Agent:
         return c
 
     def power_info(self) -> Optional[dict]:
+        f = self.power_force
+        if f:
+            return {"key": "ext", "port": f["port"], "host": f["host"], "model": self.llm.model or "", "pref": "",
+                    "external": True} if self.llm.port else None
         r = self.runs.runs.get(self.power_id) if self.power_id else None
         if not r or not self.llm.port:
             return None
@@ -658,7 +666,41 @@ class Agent:
     def ups(self) -> List[dict]:
         return [r for r in self.runs.active() if r.get("state") == "up" and r.get("kind", "chat") == "chat"]
 
+    def force_tick(self):
+        """===Lf: gml8's LLM is whatever answers the OpenAI API at host:port (another launcher, a tunnel …). It is only
+        probed: no entry, no run, no adoption. A service that stops answering for --stall-after seconds unpowers gml8,
+        which waits for it until ===L."""
+        f = self.power_force
+        p = core.probe(f["port"], self.args.probe_timeout, f["host"])
+        here = self.llm.port == f["port"] and self.llm.host == f["host"]
+        where = f"{f['host']}:{f['port']}"
+        if p.get("state") == "up":
+            f["fail_since"] = None
+            if not here:
+                self.power_id = None
+                self.llm.target(f["port"], p.get("model") or "", "ext", host=f["host"])
+                chat(f"⚡ powered by the external service {where} · {p.get('model') or '?'} (forced: no entry is touched)"
+                     " — ask me anything", "DiagnosticOk")
+                self.emit_state()
+            return
+        f["fail_since"] = f.get("fail_since") or time.time()
+        if here and time.time() - f["fail_since"] >= self.args.stall_after:
+            f["said"] = True
+            self.llm.target(None)
+            chat(f"⚡ the external service {where} stopped answering ({p.get('state')}): gml8 runs unpowered and waits "
+                 "for it (===L alone: back to automatic)", "WarningMsg")
+            self.emit_state()
+        elif not here and self.llm.port:
+            self.power_id = None
+            self.llm.target(None)
+            self.emit_state()
+        if not here and not f.get("said"):
+            f["said"] = True
+            chat(f"⚡ waiting for the external service {where} ({p.get('state')}) · ===L alone: back to automatic", "WarningMsg")
+
     def power_tick(self):
+        if self.power_force:
+            return self.force_tick()
         cur = self.runs.runs.get(self.power_id) if self.power_id else None
         ups = self.ups()
         pick = None
@@ -1108,7 +1150,7 @@ class Agent:
         out = []
         if r and r.get("state") in ACTIVE:
             out.append(self.stop_ref(e.key, why=f"relaunch by {origin}"))
-            time.sleep(0.5)
+            core.wait_port_free(r.get("port"), 2.0)  # its old port back before the launch, not a new one adapted
         out.append(self.launch_entry(e, values, origin, wait=wait))
         return "\n".join(out)
 
@@ -1334,7 +1376,9 @@ class Agent:
             out.append("recent failures:")
             out += ["  " + self.run_line(r) + (f" · {r['diag'][0]['cause']}" if r.get("diag") else "") for r in done[-5:]]
         p = self.power_info()
-        out.append(f"gml8 is powered by {p['key']} :{p['port']}" if p else "gml8 is unpowered (no chat service up)")
+        out.append((f"gml8 is powered by the external service {p['host']}:{p['port']} (===Lf: not an entry, not tracked)"
+                    if p.get("external") else f"gml8 is powered by {p['key']} :{p['port']}") if p
+                   else "gml8 is unpowered (no chat service up)")
         return "\n".join(out)
 
     def entries_text(self, query: str = "", limit: int = 40) -> str:
@@ -1425,9 +1469,24 @@ class Agent:
             port = int(arg) if arg.isdigit() and not self.ref_entry(arg) else None
             return self.on_op({"op": "stop", "key": None if port else arg, "port": port})
         if cmd == "===L":
+            was_forced, self.power_force = self.power_force, None
             self.power_pref = arg
-            self.power_id = None if arg else self.power_id
+            self.power_id = None if (arg or was_forced) else self.power_id
             chat(f"⚡ power: {arg or 'automatic (the first service up)'}", "Comment")
+            if arg.isdigit() and not any(str(r.get("port")) == arg for r in self.runs.active()) \
+                    and core.probe(int(arg), 1.5).get("state") == "up":
+                chat(f"  :{arg} answers, but no service gml8 runs or found is there (another launcher, a tunnel …): "
+                     f"===Lf {arg} powers gml8 from it as it is", "WarningMsg")
+            self.wake.set()
+            return
+        if cmd == "===Lf":
+            m = re.match(r"^(?:https?://)?(?:([\w.\-]+):)?(\d{2,5})(?:/.*)?$", arg)
+            if not m:
+                return chat("✘ ===Lf <port> (or host:port): power gml8 from the OpenAI API there, as it is", "ErrorMsg")
+            self.power_force = {"host": m.group(1) or "127.0.0.1", "port": int(m.group(2))}
+            self.power_id = None
+            chat(f"⚡ power: forced to {self.power_force['host']}:{self.power_force['port']} as it is (no entry or run is "
+                 "touched · ===L alone: back to automatic)", "Comment")
             self.wake.set()
             return
         if cmd == "===s":

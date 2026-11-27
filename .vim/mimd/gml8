@@ -78,7 +78,9 @@ map gml8q : Gml8Quit<CR>
 "  does not know, the model file, the projector, the device, the build) with the fix; a service that dies after it
 "  was up is relaunched (3 times an hour at most, --no-heal); the LLM is asked to troubleshoot (--no-troubleshoot).
 "- gml8q stops gml8, not the services: they run detached and gml8 adopts them at its next start.
-"- gml8 powers itself from the first chat service that is up (⚡ in GML8's header; ===L <ref|port> picks one). Ask in
+"- gml8 powers itself from the first chat service that is up (⚡ in GML8's header; ===L <ref|port> picks one, ===L
+"  alone: automatic again). ===Lf <port|host:port> powers it from a service gml8 does not run (another launcher, a
+"  tunnel): only probed, no entry or run is touched; ⚡ ext :<port> in the headers. Ask in
 "  GML8: "bring up gemma E2B", "why did #11 crash?", "give #1 a 16k context", "what fits on the GPU?". Launches,
 "  relaunches, stops and commits it decides ask y/n/a (===a, or autopilot.yaml gml8: allow: yes).
 "  ===w <ref> launch · ===R <ref> relaunch · ===k <ref|port> stop · ===l services · ===m merge · ===hw hardware ·
