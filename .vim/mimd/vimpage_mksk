@@ -1,5 +1,6 @@
 let g:mksk_python = 'python'
-let g:mksk_args = ['--port', get(g:, 'LMSH_PORT', 8080)]
+let g:mksk_args = ['--port', 'gml8']   " the LLM service gml8 provides (its bus), else g:LMSH_PORT / 8080
+"let g:mksk_args = ['--port', get(g:, 'LMSH_PORT', 8080)]   " a fixed port
 "let g:mksk_toggle_key = '<M-m>'
 " plan folder = the current directory when mksk starts. Override:
 "let g:mksk_dir = '~/echo-home/Documents/mksk'
@@ -8,7 +9,7 @@ let g:mksk_args = ['--port', get(g:, 'LMSH_PORT', 8080)]
 
 
 map mksk1 : silent source ~/echo-home/.vim/mimd/mksk/mksk.lua<CR>
-map mkski : exec 'Mksk --port '.get(g:, 'LMSH_PORT', 8080)<CR>
+map mkski : Mksk --port gml8<CR>
 map mkskt : MkskToggle<CR>
 map mkskd : MkskDiff<CR>
 map mkskf : MkskFile<CR>
