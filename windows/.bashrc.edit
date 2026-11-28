@@ -3,3 +3,8 @@ export MOZILLA_THUNDERBIRD_PROFILE=
 export GNUPGHOME=
 export GEDRIVE_VOLUME=
 
+# ---- NVIDIA ----
+export CUDA_PATH="/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v13.5"
+export CUDA_HOME="$CUDA_PATH"
+export PATH="$CUDA_PATH/bin/x64:$CUDA_PATH/bin:$PATH"
+# ---- NVIDIA.end ----

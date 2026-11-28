@@ -1359,10 +1359,10 @@ class Agent:
         ram = self.hw.memory(0)
         out = [f"🖥  {core.hostname()} · {ram.get('cpu')} · {ram.get('cores')} threads · RAM {gib(ram.get('avail'))} "
                f"available of {gib(ram.get('total'))}"]
-        for acc in ("CPU", "GPU"):
+        for acc in core.hw_builds():
             b = core.server_bin(acc)
             dv = self.hw.devices(b, 0)
-            out.append(f"   {acc:3s} build {tilde(b)} {dv.get('version')}: " + (
+            out.append(f"   {acc:4s} build {tilde(b)} {dv.get('version')}: " + (
                 ", ".join(f"{d['name']} {d['desc']} {gib(d['free'])} free of {gib(d['total'])}" for d in dv["devices"])
                 or dv.get("err") or "CPU only"))
         return "\n".join(out)
@@ -1966,7 +1966,7 @@ def main():
     threading.Thread(target=agent.worker, daemon=True).start()
     threading.Thread(target=agent.op_worker, daemon=True).start()
     threading.Thread(target=agent.watcher, daemon=True).start()
-    threading.Thread(target=lambda: (agent.hw.devices(core.server_bin("GPU")), agent.hw.devices(core.server_bin("CPU"))),
+    threading.Thread(target=lambda: [agent.hw.devices(core.server_bin(x)) for x in core.hw_builds()],
                      daemon=True).start()
     if args.net_name:
         agent.iface.join()

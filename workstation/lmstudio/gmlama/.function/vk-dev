@@ -1,14 +1,61 @@
+
 #!/bin/bash
 
-SEARCH_STR=$1
+SEARCH_STR="$1"
+BACKEND="${2:-vulkan}"
 
-cd "$LOCAL_BIN/gmlama-vulkan" || exit 1
+case "${BACKEND,,}" in
+    cuda)
+        GPU_TYPE=cuda
+        SERVER="$LOCAL_BIN/gmlama-cuda"
+        EXE="llama-server.exe"
+        ;;
+    vulkan|vk)
+        GPU_TYPE=vulkan
+        SERVER="$LOCAL_BIN/gmlama-vulkan"
+        EXE="llama-server"
+        ;;
+    *)
+        echo "Usage: vk-dev [SEARCH] [vulkan|cuda]"
+        return 1 2>/dev/null || exit 1
+        ;;
+esac
 
-test -z "$SEARCH_STR" && ./llama-server --list-devices && exit 1
+# Find latest/version directory
+if [[ -n "$LLAMACPP_VERSION" ]]; then
+    SERVER="$SERVER/$LLAMACPP_VERSION"
+else
+    SERVER=$(find "$SERVER" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)
+fi
 
-./llama-server --list-devices 2>/dev/null | \
-  grep -Ei "$SEARCH_STR" | \
-  cut -d':' -f1 | \
-  tr -d '[:blank:]' | \
-  paste -sd "," -
+if [[ ! -x "$SERVER/$EXE" ]]; then
+    echo "ERROR: $SERVER/$EXE not found"
+    return 1 2>/dev/null || exit 1
+fi
+
+# CUDA runtime environment
+if [[ "$GPU_TYPE" == cuda ]]; then
+    export CUDA_PATH="/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v13.5"
+    export CUDA_HOME="$CUDA_PATH"
+    export PATH="$CUDA_PATH/bin/x64:$CUDA_PATH/bin:$PATH"
+fi
+
+# Get devices
+if [[ "$GPU_TYPE" == cuda ]]; then
+    DEVICES=$("$SERVER/$EXE" --list-devices --verbose 2>/dev/null)
+else
+    DEVICES=$("$SERVER/$EXE" --list-devices 2>/dev/null)
+fi
+
+if [[ -z "$SEARCH_STR" ]]; then
+    echo "$DEVICES"
+    return 0 2>/dev/null || exit 0
+fi
+
+# Filter device IDs
+echo "$DEVICES" |
+    grep -Ei "$SEARCH_STR" |
+    cut -d':' -f1 |
+    tr -d '[:blank:]' |
+    paste -sd "," -
 
