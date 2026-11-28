@@ -1,56 +1,135 @@
+
 #!/bin/bash
+
 MODEL_ID=$1
-GMLBASE=${GMLBASE:-~/.lmstudio/models}
-PROPERD=~/echo-home/workstation/lmstudio/gmlama/.properd
-GML_YSON=$PROPERD/gml.${HOSTNAME}.yson
+GMLBASE=${GMLBASE:-"$HOME/.lmstudio/models"}
+PROPERD="$HOME/echo-home/workstation/lmstudio/gmlama/.properd"
+GML_YSON="$PROPERD/gml.${HOSTNAME}.yson"
+
 GPU_TYPE=vulkan
 
+# --------------------------------------------------
+# Model selection
+# --------------------------------------------------
 
-
-
-if test -z "$MODEL_ID" ; then
-  cat $GML_YSON | grep --color -n '^.*:' && read -p "MODEL_ID ?= " MODEL_ID
+if [[ -z "$MODEL_ID" ]]; then
+    cat "$GML_YSON" | grep --color -n '^.*:'
+    read -r -p "MODEL_ID ?= " MODEL_ID
 else
-  if ! [[ "$MODEL_ID" =~ ^[0-9]+$ ]] ; then
-    cat <<EOF
+    if ! [[ "$MODEL_ID" =~ ^[0-9]+$ ]]; then
+        cat <<EOF
 Usage: gml8w <model_ID>
 
 Description:
   Run the gml8w command with a specific model ID.
 
 Available Models:
-$(cat $GML_YSON | grep --color -n '^.*:')
+$(cat "$GML_YSON" | grep --color -n '^.*:')
 
 Examples:
-  gml8w 1        # Run with model "1"
-  gml8w 2        # Run with model "2"
+  gml8w 1
+  gml8w 2
 EOF
-    exit 1
-  fi
-fi
-
-
-
-gml_line=$(sed -n ${MODEL_ID}p < $GML_YSON)
-gml_describe=$(echo "$gml_line" | yq 'to_entries  | .[0].value[0]')
-gml_params=$(echo "$gml_line" | yq 'to_entries  | .[0].value[1]' | envsubst | sed -E 's/([A-Z]):\\/\/\L\1\//g' | sed 's,\\,\/,g')
-llamacpp_version=$(echo "$gml_line" | yq 'to_entries  | .[0].value[2]')
-gml_dev=$(echo "$gml_line" | yq 'to_entries  | .[0].value[3]' | envsubst | sed -E 's/([A-Z]):\\/\/\L\1\//g' | sed 's,\\,\/,g')
-gml_model=$(echo $gml_line | yq keys[])
-
-test -n "$GML_DEV" && gpu_dev="-dev $GML_DEV"
-if ! [[ "$gml_dev" =~ 'null' ]] ; then
-    gpu_dev="-dev $gml_dev"
-    GML_DEV=$gml_dev
-fi
-[[ "$llamacpp_version" =~ 'null' ]] && unset llamacpp_version
-if echo $gml_describe | grep -q '^GPU/' ; then
-    if gmlvk-dev | grep -i "  $GML_DEV: NVIDIA" ; then
-        GPU_TYPE=vulkan
+        exit 1
     fi
-    set -x
-    cd $LOCAL_BIN/gmlama-$GPU_TYPE/${llamacpp_version} ; ./llama-server -m $GMLBASE/$gml_model $gml_params $gpu_dev
-    exit 1   
 fi
+
+# --------------------------------------------------
+# Read model configuration
+# --------------------------------------------------
+
+gml_line=$(sed -n "${MODEL_ID}p" "$GML_YSON")
+
+if [[ -z "$gml_line" ]]; then
+    echo "ERROR: Model ID $MODEL_ID not found."
+    exit 1
+fi
+
+gml_describe=$(echo "$gml_line" | yq 'to_entries | .[0].value[0]')
+
+gml_params=$(echo "$gml_line" |
+    yq 'to_entries | .[0].value[1]' |
+    envsubst |
+    sed -E 's/([A-Z]):\\/\/\L\1\//g' |
+    sed 's,\\,/,g')
+
+llamacpp_version=$(echo "$gml_line" |
+    yq 'to_entries | .[0].value[2]')
+
+gml_dev=$(echo "$gml_line" |
+    yq 'to_entries | .[0].value[3]' |
+    envsubst |
+    sed -E 's/([A-Z]):\\/\/\L\1\//g' |
+    sed 's,\\,/,g')
+
+gml_model=$(echo "$gml_line" | yq 'keys[]')
+
+[[ "$llamacpp_version" == "null" ]] && unset llamacpp_version
+
+# --------------------------------------------------
+# Device configuration
+# --------------------------------------------------
+
+gpu_dev=""
+
+if [[ -n "$gml_dev" && "$gml_dev" != "null" ]]; then
+    GML_DEV="$gml_dev"
+    gpu_dev="-dev $GML_DEV"
+fi
+
+# --------------------------------------------------
+# GPU backend detection
+# --------------------------------------------------
+
+if [[ "$gml_describe" == GPU/* ]]; then
+
+
+
+    # --------------------------------------------------
+    # CUDA environment
+    # --------------------------------------------------
+    echo $gml_dev | grep CUDA && GPU_TYPE=cuda
+    if [[ "$GPU_TYPE" == cuda ]]; then
+        export CUDA_PATH="/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v13.5"
+        export CUDA_HOME="$CUDA_PATH"
+        export PATH="$CUDA_PATH/bin/x64:$CUDA_PATH/bin:$PATH"
+    fi
+
+    # --------------------------------------------------
+    # Launch
+    # --------------------------------------------------
+
+    echo "Backend: $GPU_TYPE"
+    echo "Device:  $GML_DEV"
+
+    set -x
+
+    cd "$LOCAL_BIN/gmlama-$GPU_TYPE/$llamacpp_version" || exit 1
+
+    if [[ "$GPU_TYPE" == cuda ]]; then
+        ./llama-server.exe \
+            -m "$GMLBASE/$gml_model" \
+            $gml_params \
+            $gpu_dev
+    else
+        ./llama-server \
+            -m "$GMLBASE/$gml_model" \
+            $gml_params \
+            $gpu_dev
+    fi
+
+    exit $?
+fi
+
+# --------------------------------------------------
+# CPU backend
+# --------------------------------------------------
+
 set -x
-cd $LOCAL_BIN/gmlama/${llamacpp_version} ; ./llama-server -m $GMLBASE/$gml_model $gml_params
+
+cd "$LOCAL_BIN/gmlama/$llamacpp_version" || exit 1
+
+./llama-server \
+    -m "$GMLBASE/$gml_model" \
+    $gml_params
+
