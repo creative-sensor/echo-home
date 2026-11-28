@@ -25,8 +25,9 @@ INVENTORY  ~/echo-home/workstation/lmstudio/gmlama/.properd/gml.<hostname>.yson 
     (["MEGALOADER"]) runs .function/named/MEGALOADER when that file exists. pre runs before the launch (its failure
     stops it), post once the service answers.
   ACCEL: GPU → $LOCAL_BIN/gmlama-vulkan, CPU or none → $LOCAL_BIN/gmlama, CUDA → gmlama-cuda, X → gmlama-x; the version
-  picks a subfolder (b11480). Params and device go through envsubst (an unset $VAR is empty, as in gml8w); GML_DEV is
-  the device of GPU entries that name none. Models live in $GMLBASE (~/.lmstudio/models).
+  picks a subfolder (b11480). A device naming CUDA devices (CUDA0,CUDA2 — the device field, -dev in the params or
+  GML_DEV) runs on gmlama-cuda whatever the ACCEL. Params and device go through envsubst (an unset $VAR is empty, as in
+  gml8w); GML_DEV is the device of GPU entries that name none. Models live in $GMLBASE (~/.lmstudio/models).
 
 MEMORY  ~/echo-home/memory/gml8/<hostname>/ (UTC everywhere): events.jsonl (launch, up, stop, crash, commit, merge …),
   entries.json (per entry: launches, load times, speeds, failures, notes), run/runs.json (every run: pid, port, log,
@@ -345,7 +346,7 @@ class Entry:
 
     @property
     def accel(self) -> str:
-        return self.profile.split("/", 1)[0].upper() if "/" in self.profile else "CPU"
+        return resolve_accel(self.profile, expand_params(self.device), expand_params(self.params))
 
     @property
     def pname(self) -> str:
@@ -857,6 +858,26 @@ def ram_info() -> dict:
 DEV_RE = re.compile(r"^\s*([A-Za-z]+\d*):\s*(.+?)\s*\((\d+)\s*MiB,\s*(\d+)\s*MiB free\)")
 
 
+CUDA_DEV_RE = re.compile(r"^cuda\d*$", re.I)
+
+
+def device_accel(device) -> str:
+    """The ACCEL a -dev value forces: CUDA when it names a CUDA device (CUDA0, CUDA0,CUDA2), else ""."""
+    names = [x.strip() for x in str(device or "").split(",")] if device is not True else []
+    return "CUDA" if any(CUDA_DEV_RE.match(x) for x in names) else ""
+
+
+def resolve_accel(profile: str, device: str = "", params: str = "") -> str:
+    """The ACCEL an entry runs on (expanded device/params), the device chosen as build_spec does: the device field,
+    else GML_DEV for a non-CPU profile, else -dev in the params. A CUDA device wins over the profile's ACCEL."""
+    accel = profile.split("/", 1)[0].upper() if "/" in (profile or "") else "CPU"
+    dev = (device or "").strip()
+    if not dev and accel != "CPU":
+        dev = os.environ.get("GML_DEV", "")
+    dev = dev or pget(parse_params(params), "dev")
+    return device_accel(dev) or accel
+
+
 def accel_dir(accel: str) -> str:
     a = (accel or "CPU").upper()
     sub = {"GPU": "gmlama-vulkan", "CPU": "gmlama", "": "gmlama"}.get(a, "gmlama-" + a.lower())
@@ -868,6 +889,11 @@ def server_bin(accel: str, version: str = "") -> str:
     if version:
         d = os.path.join(d, version)
     return os.path.join(d, "llama-server" + EXE)
+
+
+def hw_builds() -> List[str]:
+    """The builds ===hw / `hw` list: CPU and GPU always, CUDA when gmlama-cuda has a llama-server."""
+    return ["CPU", "GPU"] + (["CUDA"] if os.path.exists(server_bin("CUDA")) else [])
 
 
 class Hardware:
@@ -1394,8 +1420,6 @@ def build_spec(entry: Entry, values: Optional[dict] = None, avoid_ports=(), adap
     for name in missing:
         sp.warnings.append(f"${name} is not set (empty, as envsubst does)")
     sp.model_abs = model_path(sp.model)
-    sp.bin = server_bin(accel, sp.version)
-    sp.cwd = os.path.dirname(sp.bin)
     if not file_facts(sp.model_abs)["exists"]:
         sp.errors.append(f"the model file is not here: {tilde(sp.model_abs)}")
     pairs = parse_params(params)
@@ -1407,14 +1431,15 @@ def build_spec(entry: Entry, values: Optional[dict] = None, avoid_ports=(), adap
             sp.profile, accel = "GPU/", "GPU"
             sp.adapt_profile = "GPU/"
             sp.adapted.append(f"profile GPU/ (this machine has {gpu[0]['name']} {gpu[0]['desc']})")
-            sp.bin = server_bin(accel, sp.version)
-            sp.cwd = os.path.dirname(sp.bin)
         if pget(pairs, "ctx") is None:
             pairs = pset(pairs, "-c", 8192)
             sp.adapt_set["-c"] = "8192"
             sp.adapted.append("-c 8192 (the model's own context would take a large KV cache)")
     if device:
         pairs = pset(pairs, "-dev", device)
+    accel = device_accel(pget(pairs, "dev")) or accel  # -dev CUDA0,CUDA2 → gmlama-cuda
+    sp.bin = server_bin(accel, sp.version)
+    sp.cwd = os.path.dirname(sp.bin)
     port = pget(pairs, "port")
     port_n = int(port) if str(port or "").isdigit() else None
     explicit = extra.get("port")
@@ -1752,7 +1777,7 @@ def _cli():
     if a.cmd == "hw":
         hw = Hardware.shared()
         print(json.dumps({"ram": hw.memory(), "builds": {tilde(server_bin(x)): hw.devices(server_bin(x))
-                                                          for x in ("CPU", "GPU")}}, indent=1, default=str))
+                                                          for x in hw_builds()}}, indent=1, default=str))
         return
     mem = Memory(a.memory)
     inv = Inventory(a.inventory, a.series)
