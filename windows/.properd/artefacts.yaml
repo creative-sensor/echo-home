@@ -56,3 +56,4 @@ abacus-desktop: [0.1.0, "https://github.com/empero-org/abacus-desktop/releases/d
 opencode: [2.2.1, "https://github.com/anomalyco/opencode/releases/download/v2.2.1/opencode-windows-x64.zip", {"suffix": "zip"}]
 opencode-desktop: [1.19.3, "https://github.com/anomalyco/opencode/releases/download/v1.19.3/opencode-desktop-win-x64.exe", {"suffix": "exe"}]
 btop4win: [1.0.5, "https://github.com/aristocratos/btop4win/releases/download/v1.0.5/btop4win-x64.zip", {"suffix": "zip"}]
+cuda: [13.5.0, "", {"suffix": "exe"}]
