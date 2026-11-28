@@ -25,3 +25,7 @@ google/gemma-4-31B-it-qat-q4_0-gguf/gemma-4-31B_q4_0-it.gguf
 llmfan46/gemma-4-12B-coder-fable5-composer2.5-v1-uncensored-heretic-GGUF/gemma-4-12B-coder-fable5-composer2.5-v1-uncensored-heretic-Q8_0.gguf
 lmstudio-community/Qwen3.8-27B-GGUF/Qwen3.8-27B-Q8_0.gguf
 ggml-org/OpenJev-GGUF/OpenJev-Q8_0.gguf
+
+
+lmstudio-community/gemma-4-31B-it-GGUF/gemma-4-31B-it-Q8_0.gguf
+ggml-org/gemma-4-31B-it-GGUF/gemma-4-31B-it-BF16.gguf
