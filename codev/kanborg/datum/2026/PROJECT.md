@@ -31,7 +31,7 @@ APLE : {"description":"Apple bit","last_id":15,"related":""}
 AIVE : {"description":"AI Vertex Eyes","last_id":0,"related":""}
 ADOBE : {"description":"Adobe house","last_id":1,"related":""}
 WGI : {"description":"Web Graphic Interface","last_id":0,"related":""}
-GGPU : {"description":"Graphics Processing and Gaming","last_id":7,"related":""}
+GGPU : {"description":"Graphics Processing and Gaming","last_id":8,"related":""}
 MEMR : {"description":"Memory Slot","last_id":4,"related":""}
 NMEK : {"description":"","last_id":0,"related":""}
 ```
